@@ -1,0 +1,69 @@
+# Copyright (c) 2021 Andrew Paxson. All rights reserved. Used under
+# Licensed under the MIT License. See LICENSE file in the project root for full license information.
+# CMakeLists.txt 
+cmake_minimum_required(VERSION 3.20)
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  if(NOT DEFINED WITH_IN_SOURCE_BUILD)
+    message(FATAL_ERROR
+      "CMake generation for indiemotion is not allowed within the source directory!"
+      "\n Remove \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\" and try again from another folder, e.g.:"
+      "\n "
+      "\n rm CMakeCache.txt"
+      "\n mkdir build"
+      "\n cd buid"
+      "\n cmake .."
+      "\n "
+    )
+  endif()
+endif()
+
+project(
+    "IndieMotion"
+    VERSION 1.0.0
+    LANGUAGES C CXX
+)
+
+# -----------------------------------------------------------------------------
+# Build Options
+# -----------------------------------------------------------------------------
+set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
+# Select C++17 as the standard for C++ projects.
+set(CMAKE_CXX_STANDARD 17)
+# If C++17 is not available, downgrading to an earlier standard is NOT OK.
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Do not enable compiler specific language extentions.
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# -----------------------------------------------------------------------------
+#  Modules and scripts
+# -----------------------------------------------------------------------------
+# Standard CMake modules
+#nclude(CTest)                          # Must be called before adding tests but after calling project(). This automatically calls enable_testing() and configures ctest targets when using Make/Ninja
+include(CMakeDependentOption)           # This is a really useful scripts that creates options that depends on other options. It can even be used with generator expressions !
+include(GNUInstallDirs)                 # This will define the default values for installation directories (all platforms even if named GNU)
+include(InstallRequiredSystemLibraries) # Tell CMake that the `install` target needs to install required system libraries (eg: Windows SDK)
+include(CMakePackageConfigHelpers)      # Helper to create relocatable packages
+
+# Custom modules and scripts
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # Make our cmake scripts available
+
+include(LTO)
+include(Warnings)
+include(CopyDllsForDebug)
+
+# -----------------------------------------------------------------------------
+# Project Options
+# -----------------------------------------------------------------------------
+cmake_dependent_option(${PROJECT_NAME}_BUILD_TESTS
+    "Enable ${PROJECT_NAME} project tests targets" ON # By default we want tests if CTest is enabled
+    "BUILD_TESTING" OFF # Stay coherent with CTest variables
+)
+
+
+# -----------------------------------------------------------------------------
+# Libraries and Executables
+# -----------------------------------------------------------------------------
+add_subdirectory(source)
+add_subdirectory(external EXCLUDE_FROM_ALL)
+# add_subdirectory(tests)
