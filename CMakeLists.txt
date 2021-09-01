@@ -34,6 +34,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Do not enable compiler specific language extentions.
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Share Ouput Locations
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin CACHE INTERNAL "" FORCE)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib CACHE INTERNAL "" FORCE)
+
 # -----------------------------------------------------------------------------
 #  Modules and scripts
 # -----------------------------------------------------------------------------
@@ -65,5 +69,8 @@ cmake_dependent_option(${PROJECT_NAME}_BUILD_TESTS
 # Libraries and Executables
 # -----------------------------------------------------------------------------
 add_subdirectory(source)
+if (EXISTS "${CMAKE_SOURCE_DIR}/private")
+  add_subdirectory(private)
+endif()
 add_subdirectory(external EXCLUDE_FROM_ALL)
 # add_subdirectory(tests)
