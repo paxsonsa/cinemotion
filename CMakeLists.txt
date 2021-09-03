@@ -64,6 +64,17 @@ cmake_dependent_option(${PROJECT_NAME}_BUILD_TESTS
     "BUILD_TESTING" OFF # Stay coherent with CTest variables
 )
 
+option(${PROJECT_NAME}_BUILD_CLI "Enable/Disable the debugging CLI tools" ON)
+
+# -----------------------------------------------------------------------------
+# Dependencies
+# -----------------------------------------------------------------------------
+find_package(Boost 1.75.0 REQUIRED program_options)
+if(Boost_FOUND)
+    message("Found Boost: ${Boost_INCLUDE_DIRS}")
+    include_directories(${Boost_INCLUDE_DIRS})
+    message("Found Boost: ${Boost_LIBRARY_DIRS}")
+endif()
 
 # -----------------------------------------------------------------------------
 # Libraries and Executables
