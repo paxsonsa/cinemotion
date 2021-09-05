@@ -85,3 +85,14 @@ if (EXISTS "${CMAKE_SOURCE_DIR}/private")
 endif()
 add_subdirectory(external EXCLUDE_FROM_ALL)
 # add_subdirectory(tests)
+
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
+# if((CMAKE_PROJECT_NAME STREQUAL IndieMotion OR INDIEMOTION_BUILD_TESTING) AND BUILD_TESTING)
+# Let the user add options to the test runner if needed
+  set(TEST_RUNNER_PARAMS "--force-colors=false" CACHE STRING "Options to add to our test runners commands")
+  add_subdirectory(tests)
+  enable_testing()
+
+# endif()

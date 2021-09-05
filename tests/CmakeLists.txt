@@ -1,0 +1,20 @@
+
+file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/indiemotion/*.cpp)
+foreach(item ${TEST_FILES})
+    get_filename_component(name ${item} NAME_WE)
+    add_executable(${name} ${item})
+    target_link_libraries(${name}  PUBLIC indiemotion doctest::doctest)
+    add_test(
+        NAME IDM.${name} 
+        COMMAND ${name} ${TEST_RUNNER_PARAMS}
+    )
+    target_compile_features(${name}  PRIVATE cxx_std_17)
+endforeach()
+
+# set(TEST_NAME test_server)
+# target_link_libraries(${TEST_NAME} PUBLIC indiemotion doctest::doctest)
+# add_test(
+#     NAME IDM.${TEST_NAME}
+#     COMMAND ${TEST_NAME} ${TEST_RUNNER_PARAMS}
+# )
+# target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
