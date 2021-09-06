@@ -110,13 +110,6 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    replxx::Replxx rx;
-    rx.install_window_change_handler();
-
-    // load the history file if it exists
-    std::string history_file{"$/.indiemotion_history"};
-    rx.history_load(history_file);
-
     std::cout
         << "Welcome to IndieMotion Debugger\n"
         << "Press 'tab' to view autocompletions\n"
@@ -125,19 +118,6 @@ int main(int argc, const char **argv)
 
         << "Starting Server: 0.0.0.0:" << options->port << "\n\n";
 
-    repl::print_something();
-    std::string prompt{"\x1b[1;32mindiemotion\x1b[0m> "};
-
-    /* 
-    Create a Server
-        Wait for connection then:
-        - Bind SessionDelegate
-        - Create SessionResponder
-
-    When REPL Sends Command
-    - Generates Event (unique)
-    - Use Session::send(event)
-    */
     auto server_delegate = std::make_unique<ServerDelegate>();
     auto server_options = std::make_unique<indiemotion::server::Options>();
     server_options->address = "0.0.0.0";
@@ -147,50 +127,20 @@ int main(int argc, const char **argv)
                                                                 std::move(server_delegate));
 
     auto thread = std::thread(&indiemotion::server::Server::start, server);
-    for (;;)
-    {
-        // display the prompt and retrieve input from the user
-        char const *cinput{nullptr};
 
-        do
-        {
-            cinput = rx.input(prompt);
-        } while ((cinput == nullptr) && (errno == EAGAIN));
+    /*
+     *  ------------------------------- 
+     *  Setup REPL
+     *  -------------------------------
+     * x 1) Create REPL Instance and provide instance to server delegate.
+     * 2) Use print command for incoming commands
+     * 3) Use SessionState, SessionStateReader, and SessionStateWriter
+     * 4) When state changes use state observer to track changes (and print usin REPL::display)
+     * 5) REPL recieves command and uses SessionEventWriter to write event to WS.
+     */
+    auto repl = std::make_unique<ReplCore>();
+    repl->start();
 
-        if (cinput == nullptr)
-        {
-            break;
-        }
-
-        // change cinput into a std::string
-        // easier to manipulate
-        std::string input{cinput};
-
-        if (input.empty())
-        {
-            // user hit enter on an empty line
-            continue;
-        }
-        else if (input.compare(0, 5, ".quit") == 0 || input.compare(0, 5, ".exit") == 0)
-        {
-            // exit the repl
-            rx.history_add(input);
-            break;
-        }
-        else
-        {
-            // default action
-            // echo the input
-            rx.print("input: %s\n", input.c_str());
-            rx.history_add(input);
-            continue;
-        }
-
-        // save the history
-        rx.history_sync(history_file);
-
-        std::cout << "\nExiting...\n";
-    }
     thread.join();
     return 0;
 }
