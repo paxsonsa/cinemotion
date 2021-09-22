@@ -58,15 +58,14 @@ namespace indiemotion::server
 
         void start()
         {
+            // Advertise MDNS
+            // Accept connection and start websocket server
+            // TODO On return the session is initialized
+            // Session initializes by send SESSION_INIT command
+            // SessionDelegate::on_event_emit()
             auto session = std::make_shared<motion::Session>();
-            try
-            {
-                _m_delegate->on_new_session(session);
-            }
-            catch (const std::exception &e)
-            {
-                std::cerr << e.what() << '\n';
-            }
+            _m_delegate->on_new_session(session);
+            session->initialize();
         }
     };
 

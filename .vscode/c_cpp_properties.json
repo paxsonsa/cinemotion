@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "name": "macos-gcc-x64",
+      "name": "macos-clang-x64",
       "includePath": [
         "${workspaceFolder}/**"
       ],
@@ -11,8 +11,9 @@
       ],
       "compilerPath": "/usr/bin/clang",
       "cStandard": "${default}",
-      "cppStandard": "${default}",
-      "intelliSenseMode": "macos-gcc-x64",
+      "cppStandard": "c++17",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+      "intelliSenseMode": "macos-clang-x64",
       "configurationProvider": "ms-vscode.cmake-tools",
       "compilerArgs": [
         "-Wall",

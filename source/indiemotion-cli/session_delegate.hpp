@@ -3,20 +3,27 @@
 /* session_delegate.hpp 
 */
 #include <indiemotion/motion.hpp>
-class SessionDelegate : public indiemotion::motion::MotionSessionDelegate
+
+#include "repl.hpp"
+class SessionDelegate : public indiemotion::motion::SessionDelegate
 {
 private:
+    std::weak_ptr<ReplWriter> _m_writer;
+
 public:
     // Default Constructor
-    SessionDelegate(){};
+    SessionDelegate(std::shared_ptr<ReplWriter> writer) : _m_writer(writer){};
 
     // Copy the resource (copy constructor)
-    SessionDelegate(const SessionDelegate &rhs) {}
+    SessionDelegate(const SessionDelegate &rhs)
+    {
+        _m_writer = rhs._m_writer;
+    }
 
     // Transfer Ownership (move constructor)
     SessionDelegate(SessionDelegate &&rhs) noexcept
     {
-        // member = std::exchange(rhs.member, replacevalue);
+        _m_writer = rhs._m_writer;
     }
 
     // Make type `std::swap`able
@@ -37,7 +44,7 @@ public:
 
     void swap(SessionDelegate &rhs) noexcept
     {
-        // using std::swap;
-        //swap(member, rhs.member);
+        using std::swap;
+        swap(_m_writer, rhs._m_writer);
     }
 };

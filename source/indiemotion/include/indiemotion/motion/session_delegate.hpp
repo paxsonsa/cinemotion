@@ -8,11 +8,13 @@
 
 namespace indiemotion::motion
 {
-    class MotionSessionDelegate;
-    using MotionSessionDelegatePtr = std::shared_ptr<MotionSessionDelegate>;
-
-    class MotionSessionDelegate
+    class SessionDelegate
     {
-    };
+    public:
+        virtual void will_initialize_session(){};
+        virtual void did_initialize_session(){};
 
+        virtual void will_shutdown_session(){};
+        virtual void did_shutdown_session(){};
+    };
 }

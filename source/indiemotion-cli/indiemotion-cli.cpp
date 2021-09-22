@@ -33,18 +33,24 @@ class ServerDelegate : public indiemotion::server::ServerDelegate
 {
 private:
     std::shared_ptr<indiemotion::motion::Session> _m_session;
+    std::weak_ptr<ReplWriter> _m_writer;
 
 public:
     // Default Constructor
-    ServerDelegate(){};
+    ServerDelegate(std::shared_ptr<ReplWriter> writer) : _m_writer(writer){};
 
     // Copy the resource (copy constructor)
-    ServerDelegate(const ServerDelegate &rhs) {}
+    ServerDelegate(const ServerDelegate &rhs)
+    {
+        _m_session = rhs._m_session;
+        _m_writer = rhs._m_writer;
+    }
 
     // Transfer Ownership (move constructor)
     ServerDelegate(ServerDelegate &&rhs) noexcept
     {
-        // member = std::exchange(rhs.member, replacevalue);
+        _m_session = std::exchange(rhs._m_session, nullptr);
+        _m_writer = rhs._m_writer;
     }
 
     // Make type `std::swap`able
@@ -65,16 +71,22 @@ public:
 
     void swap(ServerDelegate &rhs) noexcept
     {
-        // using std::swap;
-        //swap(member, rhs.member);
+        using std::swap;
+        swap(_m_session, rhs._m_session);
+        swap(_m_writer, rhs._m_writer);
     }
 
     void on_new_session(std::shared_ptr<indiemotion::motion::Session> new_session)
     {
-        auto session_delegate = std::make_unique<SessionDelegate>();
-        std::cout << "Recieved new session: " << new_session << std::endl;
+        // TODO Return Error Code (object) when the session setup works
         _m_session = new_session;
-        _m_session->set_delegate(std::move(session_delegate));
+        if (auto writer = _m_writer.lock())
+        {
+            writer->write("Recieved new session...\n");
+
+            auto session_delegate = std::make_unique<SessionDelegate>(writer);
+            _m_session->set_delegate(std::move(session_delegate));
+        }
     }
 };
 
@@ -118,7 +130,9 @@ int main(int argc, const char **argv)
 
         << "Starting Server: 0.0.0.0:" << options->port << "\n\n";
 
-    auto server_delegate = std::make_unique<ServerDelegate>();
+    auto repl = std::make_unique<ReplCore>();
+
+    auto server_delegate = std::make_unique<ServerDelegate>(repl->get_writer());
     auto server_options = std::make_unique<indiemotion::server::Options>();
     server_options->address = "0.0.0.0";
     server_options->port = options->port;
@@ -126,20 +140,65 @@ int main(int argc, const char **argv)
     auto server = std::make_shared<indiemotion::server::Server>(std::move(server_options),
                                                                 std::move(server_delegate));
 
+    // Make starting server a command 'START'.
+    repl->start();
     auto thread = std::thread(&indiemotion::server::Server::start, server);
 
-    /*
-     *  ------------------------------- 
-     *  Setup REPL
-     *  -------------------------------
-     * x 1) Create REPL Instance and provide instance to server delegate.
-     * 2) Use print command for incoming commands
-     * 3) Use SessionState, SessionStateReader, and SessionStateWriter
-     * 4) When state changes use state observer to track changes (and print usin REPL::display)
-     * 5) REPL recieves command and uses SessionEventWriter to write event to WS.
-     */
-    auto repl = std::make_unique<ReplCore>();
-    repl->start();
+    // Initialize Session
+    // MessageEvent willInitializeSession()
+    // void didInitializeSession()
+    // -----
+    // Send(InitializeCommand) ->
+    // Initialization:
+    // device_info (os, application, hostname, ip, unique ID)
+    // protocol_version (string)
+    // supported_features:
+    // - video_streaming
+    // - multicam
+    // - camera creation
+
+    // Commands
+    // InitSession - Server/Client
+    // EndSession - Server/Client
+    // ChangeSetting - Server/Client
+    // ReportStatus - Server/Client
+    //
+    // UpdatePlaybackMode - Server/Client
+    // ChangePlayheadPosition - Server/Client
+    //
+    // EnableMotionCapture - Server/Client
+    // DisableMotionCapture - Server/Client
+    //
+
+    // Events
+    // Events have an origin (request id) and originator.
+    // MotionEvent
+    // VideoFrameEvent
+    // SessionInitializedEvent
+    // SessionEndedEvent
+    // SettingsChangedEvent
+    // PlaybackModeUpdated
+    // PlayheadPositionChanged
+    // MotionCaptureEnabled
+    // MotionCaptureDisabled
+
+    // ServerObserver
+    // - observes server events
+    // MotionObserver
+    // - observes motion based events
+    // PlaybackObserver
+    // - observes playback events
+    // VideoObserver
+    // - observes video events
+
+    // CommandQueue
+    // - queue commands to be sent to client/server
+    // CommandEventQueue
+    // - queue command events to be sent to client/server
+
+    // Server Broadcasts itself
+    // Server Accepts Connection and Recieves Session
+    // Session is Initialized
 
     thread.join();
     return 0;
