@@ -1,5 +1,7 @@
 #pragma once
 
+#include <indiemotion/_common.hpp>
+
 namespace indiemotion::messages
 {
 
@@ -9,12 +11,22 @@ namespace indiemotion::messages
 
     enum class MessageKind
     {
-        InitSession = 32
+        InitSession = 32,
+        InitClientSession = 32
     };
 
     struct Message
     {
         MessageKind kind;
+    };
+
+    struct ClientInitMessage: public Message
+    {   
+        std::string message = "";
+
+        ClientInitMessage(std::string msg): message(msg) {
+            kind = MessageKind::InitClientSession;
+        }
     };
 
 }

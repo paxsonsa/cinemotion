@@ -13,7 +13,7 @@
 
 using namespace indiemotion;
 
-TEST_SUITE("sessions")
+TEST_SUITE("session intialization")
 {
     TEST_CASE("test session binds to connection")
     {
@@ -83,5 +83,46 @@ TEST_SUITE("sessions")
             CHECK_MESSAGE(conn->sents_messages.size() == 1, "expected only one queue to be sent");
             CHECK_MESSAGE(conn->sents_messages[0].kind == messages::MessageKind::InitSession, "message should a InitSession message.");
         }
+    }
+
+    TEST_CASE("test session process initclientsession")
+    {
+        class DummyConnection : public server::Connection
+        {
+        public:
+            std::vector<messages::MessageHandler> handlers;
+            std::vector<messages::Message> sents_messages{};
+
+            void bindMessageReciever(messages::MessageHandler handler) noexcept
+            {
+                handlers.push_back(handler);
+            }
+            void send(messages::Message messages)
+            {
+                sents_messages.push_back(messages);
+            }
+        };
+
+        class FakeDelegate : public session::SessionDelegate
+        {
+        public:
+            bool deviceInfoCalled = false;
+
+            void recievedClientDeviceProperties(device::ClientDeviceInfo clientDevice)
+            {
+                deviceInfoCalled = true;
+            }
+        };
+
+        auto delegate = std::make_shared<FakeDelegate>();
+        auto conn = std::make_shared<DummyConnection>();
+        auto session = std::make_unique<session::Session>(conn, delegate);
+
+        auto handler = conn->handlers[0];
+        messages::Message message = messages::ClientInitMessage("my message");
+        handler(message);
+
+        CHECK_MESSAGE(delegate->deviceInfoCalled, "the delegate should be called when the session handles a message");
+        CHECK_MESSAGE(conn->sents_messages.size() == 1, "the session should be sending an ACK message.");
     }
 }

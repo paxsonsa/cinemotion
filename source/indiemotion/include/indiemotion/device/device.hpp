@@ -2,4 +2,5 @@
 
 namespace indiemotion::device {
 struct DeviceInfo {};
+struct ClientDeviceInfo {};
 }

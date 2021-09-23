@@ -14,6 +14,13 @@ namespace indiemotion::session {
 
         void onMessage(messages::Message message)
         {
+            switch (message.kind) {
+                case messages::MessageKind::InitClientSession:
+                    _m_delegate->didRecieveClientDeviceInfo(std::reinterpret_cast<messages::ClientInitMessage>(message))
+                default:
+                    break;
+            }
+
             return;
         }
 
@@ -74,6 +81,10 @@ namespace indiemotion::session {
             _m_delegate = delegate;
         }
 
+        /**
+         * @brief Initialize the session for motion capture
+         * 
+         */
         void initialize() 
         {   
             device::DeviceInfo info;
