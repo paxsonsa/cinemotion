@@ -16,6 +16,7 @@ namespace indiemotion::session {
         {
             switch (message.kind) {
                 case messages::MessageKind::InitClientSession:
+                // TODO implement this
                     _m_delegate->didRecieveClientDeviceInfo(std::reinterpret_cast<messages::ClientInitMessage>(message))
                 default:
                     break;
