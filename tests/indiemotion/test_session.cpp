@@ -5,26 +5,34 @@
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/motion.hpp>
+#include <indiemotion/_common.hpp>
+#include <indiemotion/messages.hpp>
+#include <indiemotion/server.hpp>
+#include <indiemotion/session.hpp>
 
-TEST_CASE("Test Session Initialize")
+using namespace indiemotion;
+
+TEST_CASE("Test Session Binds to Connection")
 {
-    class SpyDelegate : public indiemotion::motion::SessionDelegate
+    class DummyConnection : public server::Connection
     {
-    private:
     public:
-        bool willInitializeSessionCalled = false;
+        int bindMessageRecieverCallCount = 0;
 
-        SpyDelegate() {}
+        void bindMessageReciever(messages::MessageHandler handler) noexcept
+        {
+            bindMessageRecieverCallCount += 1;
+        }
+        void send(messages::Message messages) {}
     };
-    auto session = std::make_unique<Session>();
-    auto spy = std::make_shared<SpyDelegate>();
 
-    session->set_delegate(spy);
-    session->initialize();
+    auto conn = std::make_shared<DummyConnection>();
+    auto session = std::make_unique<session::Session>(conn);
 
-    CHECK_MESSAGE(spy->willInitializeSessionCalled, "Expected delegat 'will init' method to be called.");
+    CHECK_MESSAGE(conn->bindMessageRecieverCallCount == 1,
+                  "expected bindMessageReciever to only be called "
+                  "once when the session is instanced");
 
-#TODO Test Session willInitialize call
-#TODO Test Sessio didInitialize through process messge
+// TODO Test Session willInitialize call
+// TODO Test Sessio didInitialize through process messge
 }

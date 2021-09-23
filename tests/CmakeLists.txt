@@ -4,6 +4,7 @@ foreach(item ${TEST_FILES})
     get_filename_component(name ${item} NAME_WE)
     add_executable(${name} ${item})
     target_link_libraries(${name}  PUBLIC indiemotion doctest::doctest)
+    message("adding ${name}")
     add_test(
         NAME IDM.${name} 
         COMMAND ${name} ${TEST_RUNNER_PARAMS}

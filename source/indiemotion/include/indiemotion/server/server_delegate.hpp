@@ -4,7 +4,7 @@
 
 */
 #include <indiemotion/_common.hpp>
-#include <indiemotion/motion.hpp>
+#include <indiemotion/session/session.hpp>
 
 namespace indiemotion::server
 {
@@ -13,7 +13,7 @@ namespace indiemotion::server
     private:
     public:
         virtual ~ServerDelegate() {}
-        virtual void on_new_session(std::shared_ptr<motion::Session>) = 0;
+        virtual void on_new_session(std::shared_ptr<session::Session>) = 0;
     };
 
 }

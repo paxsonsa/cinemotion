@@ -5,8 +5,8 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
-#include <indiemotion/motion.hpp>
 #include <indiemotion/server/options.hpp>
+#include <indiemotion/session/session.hpp>
 #include <indiemotion/server/server_delegate.hpp>
 
 namespace indiemotion::server
@@ -63,9 +63,9 @@ namespace indiemotion::server
             // TODO On return the session is initialized
             // Session initializes by send SESSION_INIT command
             // SessionDelegate::on_event_emit()
-            auto session = std::make_shared<motion::Session>();
-            _m_delegate->on_new_session(session);
-            session->initialize();
+            // auto session = std::make_shared<session::Session>();
+            // _m_delegate->on_new_session(session);
+            // session->initialize();
         }
     };
 
