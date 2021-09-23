@@ -73,6 +73,19 @@ namespace indiemotion::session {
         {
             _m_delegate = delegate;
         }
+
+        void initialize() 
+        {   
+            device::DeviceInfo info;
+            auto newInfo = _m_delegate->deviceInfo(info);
+            
+            auto msg = messages::Message{
+                .kind=messages::MessageKind::InitSession,
+            };
+
+            _m_conn->send(msg);
+
+        }
     };
 
 }

@@ -1,11 +1,20 @@
-#pragma once 
+#pragma once
 
-namespace indiemotion::messages {
+namespace indiemotion::messages
+{
 
-struct Message;
+    struct Message;
 
-typedef std::function<void(messages::Message)> MessageHandler;
+    typedef std::function<void(messages::Message)> MessageHandler;
 
-struct Message {};
+    enum class MessageKind
+    {
+        InitSession = 32
+    };
+
+    struct Message
+    {
+        MessageKind kind;
+    };
 
 }

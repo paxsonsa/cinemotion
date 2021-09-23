@@ -5,8 +5,11 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
-
+#include <indiemotion/device/device.hpp>
 namespace indiemotion::session
 {
-    class SessionDelegate {};
+    class SessionDelegate {
+        public:
+            virtual device::DeviceInfo deviceInfo(device::DeviceInfo intialInfo) = 0;
+    };
 }
