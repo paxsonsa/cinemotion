@@ -93,11 +93,11 @@ TEST_SUITE("session intialization")
             std::vector<messages::MessageHandler> handlers;
             std::vector<messages::Message> sents_messages{};
 
-            void bindMessageReciever(messages::MessageHandler handler) noexcept
+            void bindMessageReciever(const messages::MessageHandler handler) noexcept
             {
                 handlers.push_back(handler);
             }
-            void send(messages::Message messages)
+            void send(const messages::Message messages)
             {
                 sents_messages.push_back(messages);
             }
@@ -108,7 +108,7 @@ TEST_SUITE("session intialization")
         public:
             bool deviceInfoCalled = false;
 
-            device::DeviceProperties deviceInfo(device::DeviceProperties given)
+            device::DeviceProperties deviceInfo(const device::DeviceProperties given)
             {
                 deviceInfoCalled = true;
                 return given;
