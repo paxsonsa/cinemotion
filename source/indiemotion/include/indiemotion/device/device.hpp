@@ -1,6 +1,13 @@
 #pragma once
 
 namespace indiemotion::device {
-struct DeviceInfo {};
-struct ClientDeviceInfo {};
+struct DeviceProperties {
+
+    static DeviceProperties thisDeviceProperties()
+    {
+        return DeviceProperties();
+    }
+
+};
+struct ClientProperties {};
 }

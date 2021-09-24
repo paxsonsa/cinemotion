@@ -60,10 +60,10 @@ TEST_SUITE("session intialization")
         public:
             bool deviceInfoCalled = false;
 
-            device::DeviceInfo deviceInfo(device::DeviceInfo intialDeviceInfo)
+            device::DeviceProperties deviceInfo(device::DeviceProperties initial)
             {
                 deviceInfoCalled = true;
-                return intialDeviceInfo;
+                return initial;
             }
         };
 
@@ -81,11 +81,11 @@ TEST_SUITE("session intialization")
         SUBCASE("expect conn to recieve new init message")
         {
             CHECK_MESSAGE(conn->sents_messages.size() == 1, "expected only one queue to be sent");
-            CHECK_MESSAGE(conn->sents_messages[0].kind == messages::MessageKind::InitSession, "message should a InitSession message.");
+            CHECK_MESSAGE(conn->sents_messages[0].kind == messages::Message::Kind::InitSession, "message should a InitSession message.");
         }
     }
 
-    TEST_CASE("test session process initclientsession")
+    TEST_CASE("test session process -> init client session")
     {
         class DummyConnection : public server::Connection
         {
@@ -108,9 +108,10 @@ TEST_SUITE("session intialization")
         public:
             bool deviceInfoCalled = false;
 
-            void recievedClientDeviceProperties(device::ClientDeviceInfo clientDevice)
+            device::DeviceProperties deviceInfo(device::DeviceProperties given)
             {
                 deviceInfoCalled = true;
+                return given;
             }
         };
 
@@ -119,7 +120,7 @@ TEST_SUITE("session intialization")
         auto session = std::make_unique<session::Session>(conn, delegate);
 
         auto handler = conn->handlers[0];
-        messages::Message message = messages::ClientInitMessage("my message");
+        messages::Message message = messages::ClientInitSessionMsg("my message");
         handler(message);
 
         CHECK_MESSAGE(delegate->deviceInfoCalled, "the delegate should be called when the session handles a message");

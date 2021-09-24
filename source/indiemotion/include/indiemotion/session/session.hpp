@@ -8,23 +8,39 @@
 namespace indiemotion::session {
     class Session
     {
+    
     private:
         std::shared_ptr<server::Connection> _m_conn = nullptr;
         std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
 
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wswitch"
         void onMessage(messages::Message message)
         {
             switch (message.kind) {
-                case messages::MessageKind::InitClientSession:
-                // TODO implement this
-                    _m_delegate->didRecieveClientDeviceInfo(std::reinterpret_cast<messages::ClientInitMessage>(message))
-                default:
+                case messages::Message::Kind::ClientInitSession: {
+                    
+                    // Store the client properties into the state
+                    // TODO store into state
+                    auto device = device::DeviceProperties::thisDeviceProperties();
+                    device = _m_delegate->deviceInfo(device);
+                    // TODO auto features = _m_delegate->supportedFeatures()
+
+
+                    auto initmsg = messages::InitSessionMsg{
+                        device
+                        // TODO send features
+                        // features
+                    };
+
+                    _m_conn->send(initmsg);
                     break;
+                }
             }
 
             return;
         }
-
+        #pragma GCC diagnostic pop
     public:
         // Default Constructor
         Session(std::shared_ptr<server::Connection> conn): _m_conn(conn) {
@@ -88,11 +104,11 @@ namespace indiemotion::session {
          */
         void initialize() 
         {   
-            device::DeviceInfo info;
+            device::DeviceProperties info;
             auto newInfo = _m_delegate->deviceInfo(info);
             
-            auto msg = messages::Message{
-                .kind=messages::MessageKind::InitSession,
+            auto msg = messages::InitSessionMsg{
+                newInfo
             };
 
             _m_conn->send(msg);

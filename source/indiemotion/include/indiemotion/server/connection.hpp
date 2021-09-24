@@ -9,6 +9,6 @@ namespace indiemotion::server
     {
     public:
         virtual void bindMessageReciever(messages::MessageHandler handler) noexcept = 0;
-        virtual void send(indiemotion::messages::Message messages) = 0;
+        virtual void send(indiemotion::messages::Message message) = 0;
     };
 }
