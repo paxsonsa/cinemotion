@@ -4,5 +4,6 @@
 */
 #pragma once
 
+#include <indiemotion/session/mediator.hpp>
 #include <indiemotion/session/session.hpp>
 #include <indiemotion/session/session_delegate.hpp>

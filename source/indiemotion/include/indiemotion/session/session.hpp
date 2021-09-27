@@ -6,87 +6,61 @@
 #include <indiemotion/session/session_delegate.hpp>
 
 namespace indiemotion::session {
-    class Session
+
+    struct Session {
+        virtual void set_delegate(std::shared_ptr<SessionDelegate> delegate) = 0;
+        virtual void initialize(properties::ClientProperties props) = 0;
+    };
+
+    class SessionImpl
     {
     
     private:
         std::shared_ptr<server::Connection> _m_conn = nullptr;
         std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
 
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wswitch"
-        void onMessage(messages::Message message)
-        {
-            switch (message.kind) {
-                case messages::Message::Kind::ClientInitSession: {
-                    
-                    // Store the client properties into the state
-                    // TODO store into state
-                    auto device = device::DeviceProperties::thisDeviceProperties();
-                    device = _m_delegate->deviceInfo(device);
-                    // TODO auto features = _m_delegate->supportedFeatures()
-
-
-                    auto initmsg = messages::InitSessionMsg{
-                        device
-                        // TODO send features
-                        // features
-                    };
-
-                    _m_conn->send(initmsg);
-                    break;
-                }
-            }
-
-            return;
-        }
-        #pragma GCC diagnostic pop
     public:
         // Default Constructor
-        Session(std::shared_ptr<server::Connection> conn): _m_conn(conn) {
-            _m_conn->bindMessageReciever([this](messages::Message message) {
-                onMessage(std::move(message));
-            });
+        SessionImpl(std::shared_ptr<server::Connection> conn): _m_conn(conn) {
+            _m_conn->bindMessageReciever([this](messages::Message message) {});
         };
 
         // Default Constructor
-        Session(std::shared_ptr<server::Connection> conn, std::shared_ptr<SessionDelegate> delegate): _m_conn(conn), _m_delegate(delegate) {
-            _m_conn->bindMessageReciever([this](messages::Message message) {
-                onMessage(std::move(message));
-            });
+        SessionImpl(std::shared_ptr<server::Connection> conn, std::shared_ptr<SessionDelegate> delegate): _m_conn(conn), _m_delegate(delegate) {
+            _m_conn->bindMessageReciever([this](messages::Message message) {});
         };
 
         // Copy the resource (copy constructor)
         // We do not allow for the Sesion Object ot be copied
-        Session(const Session &rhs) = delete;
+        SessionImpl(const SessionImpl &rhs) = delete;
 
         // Transfer Ownership (move constructor)
-        Session(Session &&rhs) noexcept 
+        SessionImpl(SessionImpl &&rhs) noexcept 
         {
             _m_delegate = std::exchange(rhs._m_delegate, nullptr);
             _m_conn = std::exchange(rhs._m_conn, nullptr);
         }
 
         // Make type `std::swap`able
-        friend void swap(Session &a, Session &b) noexcept
+        friend void swap(SessionImpl &a, SessionImpl &b) noexcept
         {
             a.swap(b);
         }
 
         // Destructor
-        ~Session()
+        ~SessionImpl()
         {
             // std::cout << "Destroyed" << std::endl;
         }
 
         // Assignment by Value
-        Session &operator=(Session copy)
+        SessionImpl &operator=(SessionImpl copy)
         {
             copy.swap(*this);
             return *this;
         }
 
-        void swap(Session &rhs) noexcept
+        void swap(SessionImpl &rhs) noexcept
         {
             using std::swap;
             swap(_m_conn, rhs._m_conn);
@@ -104,14 +78,14 @@ namespace indiemotion::session {
          */
         void initialize() 
         {   
-            device::DeviceProperties info;
-            auto newInfo = _m_delegate->deviceInfo(info);
+            // device::DeviceProperties info;
+            // auto newInfo = _m_delegate->deviceInfo(info);
             
-            auto msg = messages::InitSessionMsg{
-                newInfo
-            };
+            // auto msg = messages::InitSessionMsg{
+            //     newInfo
+            // };
 
-            _m_conn->send(msg);
+            // _m_conn->send(msg);
 
         }
     };

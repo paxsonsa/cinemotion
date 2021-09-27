@@ -30,7 +30,7 @@ TEST_SUITE("session intialization")
         };
 
         auto conn = std::make_shared<DummyConnection>();
-        auto session = std::make_unique<session::Session>(conn);
+        auto session = std::make_unique<session::SessionImpl>(conn);
 
         CHECK_MESSAGE(conn->bindMessageRecieverCallCount == 1,
                       "expected bindMessageReciever to only be called "
@@ -69,7 +69,7 @@ TEST_SUITE("session intialization")
 
         auto delegate = std::make_shared<FakeDelegate>();
         auto conn = std::make_shared<DummyConnection>();
-        auto session = std::make_unique<session::Session>(conn, delegate);
+        auto session = std::make_unique<session::SessionImpl>(conn, delegate);
 
         session->initialize();
 
@@ -117,10 +117,10 @@ TEST_SUITE("session intialization")
 
         auto delegate = std::make_shared<FakeDelegate>();
         auto conn = std::make_shared<DummyConnection>();
-        auto session = std::make_unique<session::Session>(conn, delegate);
+        auto session = std::make_unique<session::SessionImpl>(conn, delegate);
 
         auto handler = conn->handlers[0];
-        messages::Message message = messages::ClientInitSessionMsg("my message");
+        messages::Message message = messages::InitSessionMsg("my message");
         handler(message);
 
         CHECK_MESSAGE(delegate->deviceInfoCalled, "the delegate should be called when the session handles a message");

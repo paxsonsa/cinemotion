@@ -5,7 +5,7 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
-#include <indiemotion/device/device.hpp>
+#include <indiemotion/properties/device.hpp>
 namespace indiemotion::session
 {
     class SessionDelegate {

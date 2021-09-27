@@ -82,7 +82,8 @@
     "format": "cpp",
     "*.ipp": "cpp",
     "codecvt": "cpp",
-    "future": "cpp"
+    "future": "cpp",
+    "__functional_03": "cpp"
   },
   "cmake.configureOnOpen": true,
   "C_Cpp_Runner.cCompilerPath": "/usr/bin/clang",

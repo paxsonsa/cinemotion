@@ -1,4 +1,4 @@
 #pragma once
-#include <indiemotion/device/device.hpp>
+#include <indiemotion/properties/device.hpp>
 
 
