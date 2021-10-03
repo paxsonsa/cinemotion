@@ -7,6 +7,7 @@ Header for providing common include across the library
 #pragma once
 #include <any>
 #include <iostream>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
