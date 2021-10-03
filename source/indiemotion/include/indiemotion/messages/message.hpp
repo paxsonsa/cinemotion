@@ -3,9 +3,6 @@
 #include <type_traits>
 
 #include <indiemotion/_common.hpp>
-#include <indiemotion/properties/client.hpp>
-#include <indiemotion/properties/session.hpp>
-#include <indiemotion/session/features.hpp>
 
 namespace indiemotion::messages
 {
@@ -15,51 +12,40 @@ namespace indiemotion::messages
     enum class Kind
     {
         Invalid = -1,
+        Ack = 0,
 
         InitSession = 100,
-        AckInitSession = 101
-
     };
 
-    template <typename T>
-    struct get_kind
-    {
-        static const Kind value = Kind::Invalid;
+    std::map<Kind, std::string> KindNameMappings {
+        {Kind::Invalid, "Invalid"},
+        {Kind::InitSession, "Init"},
+        {Kind::Ack, "Ack"},
     };
 
-    struct Message;
+    class Message
+    {   
+        private:
+            UID _m_uid;
 
-    typedef std::function<void(Message)> MessageHandler;
+        public:
+            Message()
+            {   
+                using namespace std::chrono;
+                _m_uid = duration_cast<milliseconds>(
+                    system_clock::now().time_since_epoch()
+                ).count();
+            }
 
-    struct Message
-    {
-        UID uid;
+            virtual Kind get_kind()
+            {
+                return Kind::Invalid;
+            };
 
-        Message()
-        {   
-            using namespace std::chrono;
-            uid = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-        }
+            UID get_uid()
+            {
+                return _m_uid;
+            }
+
     };
-
-    /**
-     * @brief The message the client will send to initialize the session.
-     * 
-     */
-    struct InitSessionMsg : public Message
-    {
-        properties::ClientProperties props;
-
-        InitSessionMsg() = default;
-        InitSessionMsg(properties::ClientProperties props) : props(props) {}
-    };
-
-    struct AckInitSessionMsg : public Message
-    {
-        properties::SessionProperties props;
-
-        AckInitSessionMsg() = default;
-        AckInitSessionMsg(properties::SessionProperties props) : props(props) {}
-    };
-
 }

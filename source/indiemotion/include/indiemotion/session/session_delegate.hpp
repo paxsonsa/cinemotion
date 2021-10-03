@@ -10,8 +10,7 @@ namespace indiemotion::session
 {
     class SessionDelegate {
         public:
-            virtual device::DeviceProperties deviceInfo(const device::DeviceProperties intialInfo) {
-                return intialInfo;
-            }
+            virtual void sessionWillInitialize() {};
+            virtual void sessionDidInitialize() {};
     };
 }
