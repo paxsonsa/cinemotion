@@ -7,7 +7,7 @@
 namespace indiemotion::messages
 {
 
-    typedef uint32_t UID;
+    using UID = uint32_t;
 
     enum class Kind
     {
