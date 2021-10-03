@@ -15,10 +15,10 @@ namespace indiemotion::messages
 {
     struct InitSessionMessage: public Message
     {
-        session::SessionProperties properties;
+        session::Properties properties;
 
         InitSessionMessage() = default;
-        InitSessionMessage(session::SessionProperties properties): properties(properties) {}
+        InitSessionMessage(session::Properties properties): properties(properties) {}
 
         Kind get_kind()
         {

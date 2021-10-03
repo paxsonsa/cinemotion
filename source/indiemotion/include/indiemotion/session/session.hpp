@@ -11,8 +11,13 @@
 namespace indiemotion::session
 {
 
+    // Forward Declaration
+    class SessionManager;
+
     class Session
     {
+
+        friend class SessionManager;
 
     private:
         std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
@@ -65,11 +70,11 @@ namespace indiemotion::session
             swap(_m_state, rhs._m_state);
         }
 
-        std::shared_ptr<state::State> state()
-        {
-            return _m_state;
-        }
-
+        /**
+         * @brief Bind the delegate to the session
+         * 
+         * @param delegate 
+         */
         void bind_delegate(std::shared_ptr<SessionDelegate> delegate)
         {
             _m_delegate = delegate;
@@ -81,23 +86,64 @@ namespace indiemotion::session
          */
         void initialize()
         {
-            if (_m_delegate)
-            {
-                _m_delegate->sessionWillInitialize();
-            }
-            _m_state->set(session::state::Key::Status, session::state::SessionStatus::Initializing);
-        }
-
-        SessionProperties properties()
-        {
-            return SessionProperties{
+            auto properties = Properties{
                 // TODO Make Constant
                 "indiemotion-server",
                 indiemotion::API_VERSION,
                 FeatureSet(0)};
+
+            if (_m_delegate)
+            {
+                _m_delegate->sessionWillInitialize();
+
+                if (auto name = _m_delegate->name())
+                {
+                    properties.name = *name;
+                }
+
+                if (auto features = _m_delegate->supportedFeatures())
+                {
+                    properties.features = *features;
+                }
+            }
+            _m_state->set(session::state::Key::Properties, properties);
+            _m_state->set(session::state::Key::Status, session::state::SessionStatus::Initializing);
+        }
+
+        /**
+         * @brief Returns the current properties for the session.
+         * 
+         * @return Properties 
+         */
+        Properties properties()
+        {
+            return _m_state->get<Properties>(session::state::Key::Properties);
+        }
+
+        /**
+         * @brief Returns a pointer to the session state.
+         * 
+         * @return std::shared_ptr<state::State> 
+         */
+        std::shared_ptr<state::State> state()
+        {
+            return _m_state;
+        }
+
+        void activate()
+        {
+            _m_state->set(session::state::Key::Status, session::state::SessionStatus::Active);
+            if (_m_delegate)
+            {
+                _m_delegate->sessionDidInitialize();
+            }
         }
 
     private:
+        /**
+         * @brief Initialize the state object on this class
+         * 
+         */
         void _initializeState()
         {
             _m_state = std::make_shared<state::State>();

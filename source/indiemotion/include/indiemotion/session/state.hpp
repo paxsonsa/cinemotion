@@ -19,7 +19,8 @@ namespace indiemotion::session::state {
 
     enum class Key
     {
-        Status
+        Status,
+        Properties,
     };
     
     std::string keyname(Key key)
@@ -28,6 +29,8 @@ namespace indiemotion::session::state {
         {
             case Key::Status:
                 return "status";
+            case Key::Properties:
+                return "properties";
         };
     }
 
