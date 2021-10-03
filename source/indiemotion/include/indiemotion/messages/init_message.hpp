@@ -20,9 +20,13 @@ namespace indiemotion::messages
         InitSessionMessage() = default;
         InitSessionMessage(session::Properties properties): properties(properties) {}
 
-        Kind get_kind()
+        Kind getKind() override
         {
             return Kind::InitSession;
+        }
+
+        bool requiresAck() override {
+            return true;
         }
     };
 }

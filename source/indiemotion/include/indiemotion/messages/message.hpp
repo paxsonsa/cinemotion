@@ -37,12 +37,17 @@ namespace indiemotion::messages
                 ).count();
             }
 
-            virtual Kind get_kind()
+            virtual Kind getKind()
             {
                 return Kind::Invalid;
             };
 
-            UID get_uid()
+            virtual bool requiresAck()
+            {
+                return false;
+            }
+
+            UID getId()
             {
                 return _m_uid;
             }
