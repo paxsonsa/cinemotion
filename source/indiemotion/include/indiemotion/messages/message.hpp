@@ -11,8 +11,8 @@ namespace indiemotion::messages
 
     enum class Kind
     {
-        Invalid = -1,
-        Ack = 0,
+        Invalid = 0,
+        Ack = 1,
 
         InitSession = 100,
     };
