@@ -132,11 +132,21 @@ namespace indiemotion::session
 
         void activate()
         {
-            _m_state->set(session::state::Key::Status, session::state::SessionStatus::Active);
+            _m_state->set(state::Key::Status, state::SessionStatus::Active);
             if (_m_delegate)
             {
                 _m_delegate->sessionDidInitialize();
             }
+        }
+
+        /**
+         * @brief Current Status of the session
+         * 
+         * @return state::SessionStatus 
+         */
+        state::SessionStatus status()
+        {
+            return _m_state->get<state::SessionStatus>(state::Key::Status);
         }
 
     private:
