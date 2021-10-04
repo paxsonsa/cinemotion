@@ -57,11 +57,11 @@ namespace indiemotion::messages
             virtual Kind getKind() = 0;
 
             /**
-             * @brief Does this message require acknowledgment.
+             * @brief Does this message require acknowledgment messagges
              * 
              * @return true 
              * @return false 
              */
-            virtual bool requiresAck() = 0;
+            virtual bool needsAcknowledgment() = 0;
     };
 }

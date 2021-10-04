@@ -17,7 +17,7 @@ namespace indiemotion::messages::types
         AckMessage() = default;
         AckMessage(messages::UID uid): uid(uid) {}
 
-        bool requiresAck() override { return false; }
+        bool needsAcknowledgment() override { return false; }
 
         Kind getKind() override
         {
