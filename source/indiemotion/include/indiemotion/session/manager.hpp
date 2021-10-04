@@ -28,6 +28,7 @@ namespace indiemotion::session
     public:
         SessionManager()
         {
+            _m_curator = std::make_unique<messages::Curator>();
             _m_handler_factory = std::make_unique<messages::MessageHandlerFactory>();
             _m_session = std::make_shared<Session>();
             _m_logger = spdlog::get("com.apaxson.indiemotion");
@@ -63,6 +64,12 @@ namespace indiemotion::session
             }
             auto properties = _m_session->properties();
             p_msg = std::make_unique<messages::InitSessionMessage>(properties);
+
+            // Register a ack callback with the curator
+            _m_curator->queue(p_msg->getId(), [&](){
+                _m_session->activate();
+            });
+
             return static_unique_pointer_cast<messages::Message>(std::move(p_msg));
         }
 
@@ -74,6 +81,11 @@ namespace indiemotion::session
          */
         std::optional<std::unique_ptr<messages::Message>> processMessage(std::unique_ptr<messages::Message> m)
         {   
+
+            if (m->getKind() == messages::Kind::Ack)
+            {
+                _m_curator->acknowledge(m->getId());
+            }
             auto handler = _m_handler_factory->get_handler(m->getKind());
             return handler->handleMessage(_m_session, std::move(m));
         }
