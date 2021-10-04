@@ -29,7 +29,7 @@ SCENARIO("SessionManager Initialization")
                 AND_THEN("the message should be a properly init message")
                 {
                     REQUIRE(msg->getKind() == messages::Kind::InitSession);
-                    REQUIRE(msg->requiresAck() == true);
+                    REQUIRE(msg->needsAcknowledgment() == true);
                 }
             }            
         }

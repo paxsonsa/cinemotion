@@ -12,10 +12,10 @@ namespace indiemotion::messages::types
 {
     struct AckMessage: public Message
     {
-        messages::UID uid;
+        messages::MessageID uid;
 
         AckMessage() = default;
-        AckMessage(messages::UID uid): uid(uid) {}
+        AckMessage(messages::MessageID uid): uid(uid) {}
 
         bool needsAcknowledgment() override { return false; }
 

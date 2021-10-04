@@ -17,13 +17,13 @@ SCENARIO("Acknoledging Messages with the Curator")
     {
         auto callbackCalled = false;
         auto curator = messages::Curator();
-        curator.queue(messages::UID(1), [&callbackCalled]() {
+        curator.queue(messages::MessageID(1), [&callbackCalled]() {
             callbackCalled = true;
         });
 
         WHEN("the message is acknowledged")
         {
-            curator.acknowledge(messages::UID(1));
+            curator.acknowledge(messages::MessageID(1));
 
             THEN("the callback should have been called")
             {

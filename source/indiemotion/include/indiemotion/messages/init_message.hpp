@@ -25,7 +25,7 @@ namespace indiemotion::messages
             return Kind::InitSession;
         }
 
-        bool requiresAck() override {
+        bool needsAcknowledgment() override {
             return true;
         }
     };

@@ -7,7 +7,7 @@
 namespace indiemotion::messages
 {
 
-    using UID = uint32_t;
+    using MessageID = uint32_t;
 
     enum class Kind
     {
@@ -26,7 +26,7 @@ namespace indiemotion::messages
     class Message
     {   
         private:
-            UID _m_uid;
+            MessageID _m_uid;
 
         public:
             Message()
@@ -44,7 +44,7 @@ namespace indiemotion::messages
              * 
              * @return UID 
              */
-            UID getId()
+            MessageID getId()
             {
                 return _m_uid;
             }

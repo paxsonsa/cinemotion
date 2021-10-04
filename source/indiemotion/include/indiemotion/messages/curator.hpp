@@ -30,7 +30,7 @@ namespace indiemotion::messages
             std::optional<std::function<void()>> callback;
         };
 
-        std::map<UID, record> _m_message_table {};
+        std::map<MessageID, record> _m_message_table {};
 
     public:
         /**
@@ -38,7 +38,7 @@ namespace indiemotion::messages
              * 
              * @param uid The unique identifier for the message to track
              */
-        void acknowledge(UID uid)
+        void acknowledge(MessageID uid)
         {   
             if (_m_message_table.count(uid) > 0)
             {
@@ -58,7 +58,7 @@ namespace indiemotion::messages
             }
         }
 
-        void queue(UID uid, std::function<void()> callback)
+        void queue(MessageID uid, std::function<void()> callback)
         {
             _m_message_table[uid] = record{
                 callback
