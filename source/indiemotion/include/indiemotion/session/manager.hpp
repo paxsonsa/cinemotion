@@ -46,10 +46,11 @@ namespace indiemotion::session
         /**
          * @brief Initialize the session
          * 
-         * @return std::optional<messages::Message> 
+         * @return std::unique_ptr<messages::Message> 
          */
-        std::optional<messages::Message> initialize()
-        {
+        std::unique_ptr<messages::Message> initialize()
+        {   
+            std::unique_ptr<messages::InitSessionMessage> p_msg; 
             try
             {
                 _m_session->initialize();
@@ -61,8 +62,8 @@ namespace indiemotion::session
                     return {};
             }
             auto properties = _m_session->properties();
-            
-            return std::make_optional<messages::InitSessionMessage>(properties);
+            p_msg = std::make_unique<messages::InitSessionMessage>(properties);
+            return static_unique_pointer_cast<messages::Message>(std::move(p_msg));
         }
 
         /**
@@ -71,10 +72,10 @@ namespace indiemotion::session
          * @param m 
          * @return std::optional<std::shared_ptr<messages::handler::MessageHandler>> 
          */
-        std::optional<messages::Message> processMessage(messages::Message m)
+        std::optional<std::unique_ptr<messages::Message>> processMessage(std::unique_ptr<messages::Message> m)
         {   
-            auto handler = _m_handler_factory->get_handler(m.getKind());
-            return handler->handleMessage(_m_session, m);
+            auto handler = _m_handler_factory->get_handler(m->getKind());
+            return handler->handleMessage(_m_session, std::move(m));
         }
     };
 }

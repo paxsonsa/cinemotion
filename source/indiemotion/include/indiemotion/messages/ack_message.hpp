@@ -17,6 +17,8 @@ namespace indiemotion::messages::types
         AckMessage() = default;
         AckMessage(messages::UID uid): uid(uid) {}
 
+        bool requiresAck() override { return false; }
+
         Kind getKind() override
         {
             return Kind::Ack;
@@ -31,7 +33,8 @@ namespace indiemotion::messages::handler
         public:
             AckMessageHandler() = default;
 
-            std::optional<Message> handleMessage(std::weak_ptr<session::Session> session, Message message) override
+            std::optional<std::unique_ptr<Message>> handleMessage(std::weak_ptr<session::Session> session, 
+                                                                  std::unique_ptr<Message> message) override
             {
                 return {};
             }

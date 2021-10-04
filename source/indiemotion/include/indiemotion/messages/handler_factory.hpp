@@ -24,7 +24,7 @@ namespace indiemotion::messages
             switch (kind)
             {
             case Kind::Ack: {
-                return std::shared_ptr<handler::AckMessageHandler>();
+                return std::make_shared<handler::AckMessageHandler>();
             }
             default:
             {
@@ -41,16 +41,13 @@ namespace indiemotion::messages
         {
             std::shared_ptr<handler::MessageHandler> handler_ptr;
 
-            try
-            {
-                handler_ptr = _m_handler_table[kind];
-            }
-            catch(const std::exception& e)
+            handler_ptr = _m_handler_table[kind];
+
+            if (!handler_ptr)
             {
                 _m_handler_table[kind] = make_handler(kind);
                 handler_ptr = _m_handler_table[kind];
             }
-
             return handler_ptr;
         }
     };

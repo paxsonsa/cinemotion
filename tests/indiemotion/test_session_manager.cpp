@@ -24,12 +24,12 @@ SCENARIO("SessionManager Initialization")
 
             THEN("initialize() should have returned a message")
             {
-                REQUIRE(msg.has_value());
+                REQUIRE(msg);
 
                 AND_THEN("the message should be a properly init message")
                 {
-                    REQUIRE(msg.value().getKind() == messages::Kind::InitSession);
-                    REQUIRE(msg.value().requiresAck() == true);
+                    REQUIRE(msg->getKind() == messages::Kind::InitSession);
+                    REQUIRE(msg->requiresAck() == true);
                 }
             }            
         }
@@ -39,11 +39,11 @@ SCENARIO("SessionManager Initialization")
     {
         auto manager = session::SessionManager();
         auto msg = manager.initialize();
-        auto id = msg.value().getId();
+        auto id = msg->getId();
         WHEN("the manager processes an ACK for the init message")
         {
-            auto ackMsg = messages::types::AckMessage(id);
-            auto noMsg = manager.processMessage(ackMsg);
+            auto ackMsg = std::make_unique<messages::types::AckMessage>(id);
+            auto noMsg = manager.processMessage(std::move(ackMsg));
 
             THEN("no message should be returned")
             {

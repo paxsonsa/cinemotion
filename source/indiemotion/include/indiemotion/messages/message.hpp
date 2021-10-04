@@ -37,20 +37,31 @@ namespace indiemotion::messages
                 ).count();
             }
 
-            virtual Kind getKind()
-            {
-                return Kind::Invalid;
-            };
+            virtual ~Message() {}
 
-            virtual bool requiresAck()
-            {
-                return false;
-            }
-
+            /**
+             * @brief Get the Id object
+             * 
+             * @return UID 
+             */
             UID getId()
             {
                 return _m_uid;
             }
 
+            /**
+             * @brief Get the Kind object
+             * 
+             * @return Kind 
+             */
+            virtual Kind getKind() = 0;
+
+            /**
+             * @brief Does this message require acknowledgment.
+             * 
+             * @return true 
+             * @return false 
+             */
+            virtual bool requiresAck() = 0;
     };
 }
