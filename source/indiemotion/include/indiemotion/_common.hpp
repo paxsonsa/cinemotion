@@ -6,12 +6,16 @@ Header for providing common include across the library
 */
 #pragma once
 #include <any>
-#include <iostream>
+#include <exception>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <optional>
 #include <string>
+
 #include <boost/format.hpp>
+#include <spdlog/spdlog.h>
+
 
 
 template<typename TO, typename FROM>

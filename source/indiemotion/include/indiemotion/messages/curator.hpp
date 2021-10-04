@@ -3,6 +3,7 @@
 /* manager.hpp 
 
 */
+#pragma once
 #include <indiemotion/_common.hpp>
 #include <indiemotion/messages/message.hpp>
 
@@ -29,7 +30,7 @@ namespace indiemotion::messages
             std::optional<std::function<void()>> callback;
         };
 
-        std::map<UID, record> _m_message_table;
+        std::map<UID, record> _m_message_table {};
 
     public:
         /**
@@ -39,9 +40,22 @@ namespace indiemotion::messages
              */
         void acknowledge(UID uid)
         {   
-            auto record = _m_message_table[uid];
-            if (auto callback = record.callback)
-                callback.value()();
+            if (_m_message_table.count(uid) > 0)
+            {
+                auto record = _m_message_table[uid];
+                if (auto callback = record.callback)
+                {
+                    callback.value()();
+                }
+                else
+                {
+                    spdlog::warn("no ack callback for message id='{}': id not in curator table", uid);
+                }
+            }
+            else 
+            {
+                spdlog::error("failed to ack message id='{}': id not in curator table", uid);
+            }
         }
 
         void queue(UID uid, std::function<void()> callback)
