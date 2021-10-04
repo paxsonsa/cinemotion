@@ -6,7 +6,7 @@
 #include <indiemotion/messages/message.hpp>
 #include <indiemotion/session/state.hpp>
 #include <indiemotion/session/properties.hpp>
-#include <indiemotion/session/session_delegate.hpp>
+#include <indiemotion/session/delegate.hpp>
 
 namespace indiemotion::session
 {
