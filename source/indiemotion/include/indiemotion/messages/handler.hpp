@@ -8,11 +8,13 @@
 #include <indiemotion/session/session.hpp>
 #include <indiemotion/messages/message.hpp>
 
-namespace indiemotion::messages::handler
+namespace indiemotion::messages
 {
-    class MessageHandler {
+    class Handler {
         public:
-            virtual std::optional<std::unique_ptr<Message>> handleMessage(std::weak_ptr<session::Session> session, 
-                                                                          std::unique_ptr<Message> message) = 0;
+            virtual ~Handler() {}
+            virtual std::optional<std::unique_ptr<messages::response::Response>> 
+            handleMessage(std::weak_ptr<session::Session> session, 
+                          std::unique_ptr<messages::message::Message> message) = 0;
     };
 }

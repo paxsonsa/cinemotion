@@ -7,7 +7,6 @@
 #include <doctest.h>
 #include <indiemotion/_common.hpp>
 #include <indiemotion/session.hpp>
-#include <indiemotion/messages.hpp>
 
 using namespace indiemotion;
 

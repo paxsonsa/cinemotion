@@ -8,12 +8,12 @@
 
 #include <indiemotion/_common.hpp>
 #include <indiemotion/session/session.hpp>
+#include <indiemotion/messages/factory.hpp>
 #include <indiemotion/messages/curator.hpp>
 #include <indiemotion/messages/message.hpp>
-#include <indiemotion/messages/init_message.hpp>
+#include <indiemotion/messages/init.hpp>
 #include <indiemotion/messages/handler.hpp>
-#include <indiemotion/messages/handler_factory.hpp>
-#include <indiemotion/messages/ack_message.hpp>
+#include <indiemotion/messages/acknowledge.hpp>
 
 namespace indiemotion::session
 {
@@ -21,7 +21,6 @@ namespace indiemotion::session
     {
     private:
         std::unique_ptr<messages::Curator> _m_curator;
-        std::unique_ptr<messages::MessageHandlerFactory> _m_handler_factory;
         std::shared_ptr<Session> _m_session;
         std::shared_ptr<spdlog::logger> _m_logger;
 
@@ -29,7 +28,6 @@ namespace indiemotion::session
         SessionManager()
         {
             _m_curator = std::make_unique<messages::Curator>();
-            _m_handler_factory = std::make_unique<messages::MessageHandlerFactory>();
             _m_session = std::make_shared<Session>();
             _m_logger = spdlog::get("com.apaxson.indiemotion");
         };
@@ -47,11 +45,11 @@ namespace indiemotion::session
         /**
          * @brief Initialize the session
          * 
-         * @return std::unique_ptr<messages::Message> 
+         * @return std::unique_ptr<messages::response::Response>
          */
-        std::unique_ptr<messages::Message> initialize()
-        {   
-            std::unique_ptr<messages::InitSessionMessage> p_msg; 
+        std::unique_ptr<messages::response::Response> initialize()
+        {
+            std::unique_ptr<messages::response::Response> p_msg;
             try
             {
                 _m_session->initialize();
@@ -59,34 +57,34 @@ namespace indiemotion::session
             catch (const std::exception &e)
             {
                 _m_logger->error("failed to intialize the session: '{}'", e.what());
-                    // TODO return error message (fatal message);
-                    return {};
+                // TODO return error message (fatal message);
+                return {};
             }
             auto properties = _m_session->properties();
-            p_msg = std::make_unique<messages::InitSessionMessage>(properties);
+            p_msg = std::make_unique<messages::init::InitializeSessionResponse>(properties);
 
             // Register a ack callback with the curator
-            _m_curator->queue(p_msg->getId(), [&](){
-                _m_session->activate();
-            });
+            _m_curator->queue(p_msg->id(), [&]()
+                              { _m_session->activate(); });
 
-            return static_unique_pointer_cast<messages::Message>(std::move(p_msg));
+            return p_msg;
         }
 
         /**
          * @brief Return
          * 
          * @param m 
-         * @return std::optional<std::shared_ptr<messages::handler::MessageHandler>> 
+         * @return std::optional<std::shared_ptr<messages::Handler>> 
          */
-        std::optional<std::unique_ptr<messages::Message>> processMessage(std::unique_ptr<messages::Message> m)
-        {   
+        std::optional<std::unique_ptr<messages::response::Response>> processMessage(std::unique_ptr<messages::message::Message> m)
+        {
 
-            if (m->getKind() == messages::Kind::Ack)
+            if (m->kind() == messages::message::kind::Acknowledgment)
             {
-                _m_curator->acknowledge(m->getId());
-            }
-            auto handler = _m_handler_factory->get_handler(m->getKind());
+                _m_curator->acknowledge(m->id());
+            }  
+            auto kindName = messages::message::kindToStr(m->kind());
+            auto handler = messages::handler::factory::make_handler(kindName);
             return handler->handleMessage(_m_session, std::move(m));
         }
     };

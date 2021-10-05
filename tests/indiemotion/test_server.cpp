@@ -5,10 +5,21 @@
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
+#include <indiemotion/session/session.hpp>
+#include <indiemotion/messages/message.hpp>
+#include <indiemotion/messages/acknowledge.hpp>
+#include <indiemotion/messages/factory.hpp>
+
+using namespace indiemotion;
 
 TEST_CASE("Test Example")
-{
-    CHECK_EQ(2, 2);
+{   
+    auto session = std::make_shared<session::Session>();
+    auto id = messages::message::ID(0);
+    auto message = std::make_unique<messages::acknowledge::AcknowledgeMessage>(id);
+    auto handler = messages::handler::factory::create("Acknowledge");
+    handler->handleMessage(session, std::move(message));
+
 }
 
 TEST_CASE("Test Another Example")
