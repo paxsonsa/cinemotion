@@ -20,6 +20,7 @@ namespace indiemotion::session
     class SessionManager
     {
     private:
+        std::unique_ptr<messages::handler::Factory> _m_factory;
         std::unique_ptr<messages::Curator> _m_curator;
         std::shared_ptr<Session> _m_session;
         std::shared_ptr<spdlog::logger> _m_logger;
@@ -27,6 +28,7 @@ namespace indiemotion::session
     public:
         SessionManager()
         {
+            _m_factory = std::make_unique<messages::handler::Factory>();
             _m_curator = std::make_unique<messages::Curator>();
             _m_session = std::make_shared<Session>();
             _m_logger = spdlog::get("com.apaxson.indiemotion");
@@ -83,8 +85,7 @@ namespace indiemotion::session
             {
                 _m_curator->acknowledge(m->id());
             }  
-            auto kindName = messages::message::kindToStr(m->kind());
-            auto handler = messages::handler::factory::make_handler(kindName);
+            auto handler = _m_factory->makeHandler(m->kind());
             return handler->handleMessage(_m_session, std::move(m));
         }
     };

@@ -22,7 +22,9 @@ namespace indiemotion::messages
         enum class kind
         {
             Acknowledgment = 0,
-            Error = 1
+            // Error = 1,
+
+            ListCameras = 200
         };
 
         /**
@@ -37,8 +39,10 @@ namespace indiemotion::messages
             {
             case kind::Acknowledgment:
                 return "Acknowledgment";
-            case kind::Error:
-                return "Error";
+            // case kind::Error:
+            //     return "Error";
+            case kind::ListCameras:
+                return "ListCameras";
             }
         }
 
@@ -101,7 +105,10 @@ namespace indiemotion::messages
              * @return true 
              * @return false 
              */
-            virtual bool needsAcknowledgment() = 0;
+            virtual bool needsAcknowledgment()
+            {
+                return false;
+            };
         };
     }
 
@@ -119,7 +126,10 @@ namespace indiemotion::messages
         {
             Acknowledgment = 0,
             Error = 1,
-            InitSession = 100
+
+            InitSession = 100,
+
+            ListCameras = 200
         };
 
         /**
@@ -138,6 +148,8 @@ namespace indiemotion::messages
                 return "Error";
             case kind::InitSession:
                 return "InitSession";
+            case kind::ListCameras:
+                return "ListCameras";
             }
         }
 

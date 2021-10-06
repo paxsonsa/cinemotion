@@ -149,6 +149,11 @@ namespace indiemotion::session
             return _m_state->get<state::SessionStatus>(state::Key::Status);
         }
 
+        std::vector<std::string> cameras()
+        {
+            return _m_delegate->cameras();
+        }
+
     private:
         /**
          * @brief Initialize the state object on this class

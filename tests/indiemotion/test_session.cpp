@@ -14,7 +14,6 @@ TEST_SUITE("test session")
 {
     SCENARIO("Initialize a session")
     {
-
         struct SpySessionDelegate: public session::SessionDelegate
         {
             

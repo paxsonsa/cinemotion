@@ -11,7 +11,7 @@ namespace indiemotion::messages::handler
     template<class Base, class... Ps>
     struct _factory
     {
-        static std::unique_ptr<Base> make_handler(std::string_view kind, std::unique_ptr<Base> default_type = nullptr)
+        static std::unique_ptr<Base> make_handler(std::string_view kind)
         {
             static_assert((std::is_base_of_v<Base, Ps> && ...), "");
 
@@ -23,9 +23,6 @@ namespace indiemotion::messages::handler
                     }
                 }(), 0) ...
             };
-            if (result == nullptr) {
-                result = std::move(default_type);
-            }
             return result;
         }
     };

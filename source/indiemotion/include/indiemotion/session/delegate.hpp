@@ -40,5 +40,10 @@ namespace indiemotion::session
             virtual std::optional<FeatureSet> supportedFeatures() {
                 return std::nullopt;
             }
+
+            virtual std::vector<std::string> cameras()
+            {
+                return std::vector<std::string>();
+            }
     };
 }

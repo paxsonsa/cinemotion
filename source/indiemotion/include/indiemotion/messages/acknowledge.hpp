@@ -55,9 +55,15 @@ namespace indiemotion::messages::acknowledge
     class AckMessageHandler : public Handler
     {
     public:
+
+        static std::shared_ptr<Handler> make()
+        {
+            return std::make_shared<AckMessageHandler>();
+        }
+
         AckMessageHandler() = default;
 
-        static constexpr std::string_view kind = "Acknowledge";
+        static constexpr std::string_view kind = "Acknowledgment";
 
         std::optional<std::unique_ptr<messages::response::Response>> handleMessage(std::weak_ptr<session::Session> session,
                                                                                    std::unique_ptr<message::Message> message) override

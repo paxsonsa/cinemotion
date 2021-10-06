@@ -5,15 +5,49 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
+#include <indiemotion/messages/message.hpp>
 #include <indiemotion/messages/handler.hpp>
-#include <indiemotion/messages/_factory.hpp>
 #include <indiemotion/messages/acknowledge.hpp>
-
+#include <indiemotion/messages/cameras.hpp>
 
 namespace indiemotion::messages::handler
 {
-    using factory = _factory<
-        Handler, 
-        messages::acknowledge::AckMessageHandler
-    >;
+
+    template<class handler_t>
+    std::shared_ptr<Handler> _construct()
+    {
+        return handler_t::make();
+    }
+
+    class Factory
+    {
+    private:
+        std::map<message::kind, std::shared_ptr<Handler>> _m_ptr_table {};
+
+    public:
+
+        Factory() = default;
+
+        std::shared_ptr<Handler> makeHandler(message::kind kind)
+        {
+            std::shared_ptr<Handler> p_handler;
+            p_handler = _m_ptr_table[kind];
+
+            if (p_handler)
+            {
+                return p_handler;
+            }
+
+            switch(kind)
+            {
+                case message::kind::Acknowledgment:
+                    p_handler = _construct<acknowledge::AckMessageHandler>();
+                case message::kind::ListCameras:
+                    p_handler = _construct<cameras::ListCamerasMessageHandler>();       
+            }
+
+            _m_ptr_table[kind] = p_handler;
+            return p_handler;
+        };
+    };
 } // namespace indiemotion::messages::handler
