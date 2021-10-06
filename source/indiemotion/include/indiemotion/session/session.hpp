@@ -151,7 +151,14 @@ namespace indiemotion::session
 
         std::vector<std::string> cameras()
         {
-            return _m_delegate->cameras();
+            if (_m_delegate)
+            {
+                return _m_delegate->cameras();
+            }
+            else
+            {
+                return std::vector<std::string>();
+            }
         }
 
     private:
