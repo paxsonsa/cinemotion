@@ -14,9 +14,9 @@
 using namespace indiemotion;
 
 SCENARIO("Initializing the Session")
-{   
+{
     GIVEN("a new manager object")
-    {   
+    {
         auto manager = indiemotion::session::SessionManager();
 
         WHEN("manager.initalize() is called")
@@ -32,7 +32,7 @@ SCENARIO("Initializing the Session")
                     REQUIRE(msg->kind() == messages::response::kind::InitSession);
                     REQUIRE(msg->needsAcknowledgment() == true);
                 }
-            }            
+            }
         }
     }
 
@@ -61,8 +61,6 @@ SCENARIO("Initializing the Session")
 
 SCENARIO("Client Requests Camera List")
 {
-    
-
     GIVEN("An uninitialized manager")
     {
         auto manager = session::SessionManager();
@@ -70,37 +68,38 @@ SCENARIO("Client Requests Camera List")
         WHEN("the client requests a camera list")
         {
             THEN("an error response should be generated")
-            {}
+            {
+            }
         }
     }
 
     GIVEN("An active session,")
-    {   
-        class DummyDelegate: public session::SessionDelegate
+    {
+        class DummyDelegate : public session::SessionDelegate
         {
-            public:
-                std::vector<std::string> cameras()
-                {
-                    return std::vector<std::string>{"cam1", "cam2"};;
-                }
+        public:
+            std::vector<std::string> cameras()
+            {
+                return std::vector<std::string>{"cam1", "cam2"};
+                ;
+            }
         };
         auto delegate = std::make_shared<DummyDelegate>();
         auto manager = session::SessionManager();
         manager.session()->bindDelegate(delegate);
         manager.session()->activate();
-    
+
         WHEN("the client requests a camera list,")
         {
             auto m_ptr = std::make_unique<messages::cameras::ListCamerasMessage>();
             auto resp = manager.processMessage(std::move(m_ptr));
 
             THEN("a camera list response should be generated.")
-            {   
+            {
                 REQUIRE(resp.has_value());
                 REQUIRE(resp.value()->kind() == messages::response::kind::ListCameras);
                 std::unique_ptr<messages::cameras::CameraListResponse> ptr(
-                    dynamic_cast<messages::cameras::CameraListResponse*>(resp->release())
-                );
+                    dynamic_cast<messages::cameras::CameraListResponse *>(resp->release()));
                 REQUIRE(ptr->cameraNames() == delegate->cameras());
             }
         }
