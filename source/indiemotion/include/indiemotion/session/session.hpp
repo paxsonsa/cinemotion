@@ -149,6 +149,11 @@ namespace indiemotion::session
             return _m_state->get<state::SessionStatus>(state::Key::Status);
         }
 
+        bool isActive() noexcept
+        {
+            return _m_state->get<state::SessionStatus>(state::Key::Status) == state::SessionStatus::Active;
+        }
+
         std::vector<std::string> cameras()
         {
             if (_m_delegate)
