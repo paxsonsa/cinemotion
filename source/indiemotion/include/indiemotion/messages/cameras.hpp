@@ -78,7 +78,7 @@ namespace indiemotion::messages::cameras
             spdlog::info("hello, list cameras");
             if (auto session = session_ptr.lock()){
                 auto cameras = session->cameras();
-                auto p_msg = std::make_unique<CameraListResponse>(message->messageId().value(), cameras);
+                auto p_msg = std::make_unique<CameraListResponse>(message->id(), cameras);
                 return p_msg;
             }
             return {};

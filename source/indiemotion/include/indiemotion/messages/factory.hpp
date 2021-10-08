@@ -42,8 +42,10 @@ namespace indiemotion::messages::handler
             {
                 case message::kind::Acknowledgment:
                     p_handler = _construct<acknowledge::AckMessageHandler>();
+                    break;
                 case message::kind::ListCameras:
                     p_handler = _construct<cameras::ListCamerasMessageHandler>();       
+                    break;
             }
 
             _m_ptr_table[kind] = p_handler;

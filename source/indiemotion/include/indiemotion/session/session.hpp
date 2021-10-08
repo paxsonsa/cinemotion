@@ -75,7 +75,7 @@ namespace indiemotion::session
          * 
          * @param delegate 
          */
-        void bind_delegate(std::shared_ptr<SessionDelegate> delegate)
+        void bindDelegate(std::shared_ptr<SessionDelegate> delegate)
         {
             _m_delegate = delegate;
         }

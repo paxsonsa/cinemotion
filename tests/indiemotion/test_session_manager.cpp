@@ -61,6 +61,8 @@ SCENARIO("Initializing the Session")
 
 SCENARIO("Client Requests Camera List")
 {
+    
+
     GIVEN("An uninitialized manager")
     {
         auto manager = session::SessionManager();
@@ -73,11 +75,20 @@ SCENARIO("Client Requests Camera List")
     }
 
     GIVEN("An active session,")
-    {
+    {   
+        class DummyDelegate: public session::SessionDelegate
+        {
+            public:
+                std::vector<std::string> cameras()
+                {
+                    return std::vector<std::string>{"cam1", "cam2"};;
+                }
+        };
+        auto delegate = std::make_shared<DummyDelegate>();
         auto manager = session::SessionManager();
-        auto names = std::vector<std::string>{"cam1", "cam2"};
+        manager.session()->bindDelegate(delegate);
         manager.session()->activate();
-
+    
         WHEN("the client requests a camera list,")
         {
             auto m_ptr = std::make_unique<messages::cameras::ListCamerasMessage>();
@@ -90,7 +101,7 @@ SCENARIO("Client Requests Camera List")
                 std::unique_ptr<messages::cameras::CameraListResponse> ptr(
                     dynamic_cast<messages::cameras::CameraListResponse*>(resp->release())
                 );
-                REQUIRE(ptr->cameraNames() == names);
+                REQUIRE(ptr->cameraNames() == delegate->cameras());
             }
         }
     }
