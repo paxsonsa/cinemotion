@@ -1,9 +1,9 @@
 #pragma once
 
 #include <indiemotion/_common.hpp>
+#include <indiemotion/errors.hpp>
 #include <indiemotion/version.hpp>
 #include <indiemotion/server/server.hpp>
-#include <indiemotion/messages/message.hpp>
 #include <indiemotion/session/state.hpp>
 #include <indiemotion/session/properties.hpp>
 #include <indiemotion/session/delegate.hpp>

@@ -5,11 +5,10 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
-#include <indiemotion/messages/message.hpp>
+#include <indiemotion/messages/base.hpp>
 
 namespace indiemotion::messages
 {
-
     /**
      * @brief A class for managing in-flight messages awaiting acknowledgment.
      * 
@@ -30,7 +29,7 @@ namespace indiemotion::messages
             std::optional<std::function<void()>> callback;
         };
 
-        std::map<messages::message::ID, record> _m_message_table {};
+        std::map<messages::base::ID, record> _m_message_table {};
 
     public:
         /**
@@ -38,7 +37,7 @@ namespace indiemotion::messages
              * 
              * @param uid The unique identifier for the message to track
              */
-        void acknowledge(messages::message::ID uid)
+        void acknowledge(messages::base::ID uid)
         {   
             if (_m_message_table.count(uid) > 0)
             {
@@ -58,7 +57,7 @@ namespace indiemotion::messages
             }
         }
 
-        void queue(messages::message::ID uid, std::function<void()> callback)
+        void queue(messages::base::ID uid, std::function<void()> callback)
         {
             _m_message_table[uid] = record{
                 callback

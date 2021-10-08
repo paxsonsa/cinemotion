@@ -9,12 +9,12 @@
 #include <indiemotion/_common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/session/session.hpp>
+#include <indiemotion/messages/base.hpp>
+#include <indiemotion/messages/kind.hpp>
 #include <indiemotion/messages/factory.hpp>
 #include <indiemotion/messages/curator.hpp>
-#include <indiemotion/messages/message.hpp>
-#include <indiemotion/messages/init.hpp>
-#include <indiemotion/messages/handler.hpp>
-#include <indiemotion/messages/acknowledge.hpp>
+#include <indiemotion/responses/base.hpp>
+#include <indiemotion/responses/initialize.hpp>
 
 
 namespace indiemotion::session
@@ -22,7 +22,7 @@ namespace indiemotion::session
     class SessionManager
     {
     private:
-        std::unique_ptr<messages::handler::Factory> _m_factory;
+        std::unique_ptr<messages::handling::HandlerFactory> _m_factory;
         std::unique_ptr<messages::Curator> _m_curator;
         std::shared_ptr<Session> _m_session;
         std::shared_ptr<spdlog::logger> _m_logger;
@@ -30,7 +30,7 @@ namespace indiemotion::session
     public:
         SessionManager()
         {
-            _m_factory = std::make_unique<messages::handler::Factory>();
+            _m_factory = std::make_unique<messages::handling::HandlerFactory>();
             _m_curator = std::make_unique<messages::Curator>();
             _m_session = std::make_shared<Session>();
             _m_logger = spdlog::get("com.apaxson.indiemotion");
@@ -49,11 +49,11 @@ namespace indiemotion::session
         /**
          * @brief Initialize the session
          * 
-         * @return std::unique_ptr<messages::response::Response>
+         * @return std::unique_ptr<messages::response::BaseResponse>
          */
-        std::unique_ptr<messages::response::Response> initialize()
+        std::unique_ptr<responses::base::Response> initialize()
         {
-            std::unique_ptr<messages::response::Response> p_msg;
+            std::unique_ptr<responses::base::Response> p_msg;
             try
             {
                 _m_session->initialize();
@@ -65,7 +65,7 @@ namespace indiemotion::session
                 return {};
             }
             auto properties = _m_session->properties();
-            p_msg = std::make_unique<messages::init::InitializeSessionResponse>(properties);
+            p_msg = std::make_unique<responses::initialize::Response>(properties);
 
             // Register a ack callback with the curator
             _m_curator->queue(p_msg->id(), [&]()
@@ -80,9 +80,9 @@ namespace indiemotion::session
          * @param m 
          * @return std::optional<std::shared_ptr<messages::Handler>> 
          */
-        std::optional<std::unique_ptr<messages::response::Response>> processMessage(std::unique_ptr<messages::message::Message> m)
+        std::optional<std::unique_ptr<responses::base::Response>> processMessage(std::unique_ptr<messages::base::Message> m)
         {   
-            if (m->kind() == messages::message::kind::Acknowledgment)
+            if (m->kind() == messages::Kind::Acknowledgment)
             {
                 _m_curator->acknowledge(m->id());
             }

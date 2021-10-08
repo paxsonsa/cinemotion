@@ -5,84 +5,58 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
-#include <indiemotion/messages/message.hpp>
+#include <indiemotion/messages/kind.hpp>
+#include <indiemotion/messages/base.hpp>
+#include <indiemotion/messages/handler.hpp>
+#include <indiemotion/responses/base.hpp>
+#include <indiemotion/responses/cameras.hpp>
 
-namespace indiemotion::messages::cameras
+
+namespace indiemotion::messages::listCameras
 {
 
     /**
      * @brief Message from client to list the cameras
      * 
      */
-    struct ListCamerasMessage : public message::Message
+    struct Message : public base::Message
     {
 
-        ListCamerasMessage() = default;
+        Message() = default;
 
         /**
          * @brief Returns the kind
          * 
          * @return kind 
          */
-        message::kind kind() override
+        Kind kind() override
         {
-            return message::kind::ListCameras;
+            return Kind::ListCameras;
         }
     };
 
-    struct CameraListResponse : public response::Response
-    {
-        CameraListResponse(message::ID mid, std::vector<std::string> names) : response::Response(mid)
-        {
-            _m_cameraNames = names;
-        }
-
-        /**
-         * @brief Returns the kind
-         * 
-         * @return kind 
-         */
-        response::kind kind() override {
-            return response::kind::ListCameras;
-        }
-
-        bool needsAcknowledgment() override
-        {
-            return false;
-        }
-
-        std::vector<std::string> cameraNames()
-        {
-            return _m_cameraNames;
-        }
-
-    private:
-        std::vector<std::string> _m_cameraNames;
-    };
-
-    class ListCamerasMessageHandler : public Handler
+    class Handler : public handling::Handler
     {
     public:
         static std::shared_ptr<Handler> make()
         {
-            return std::make_shared<ListCamerasMessageHandler>();
+            return std::make_shared<Handler>();
         }
 
-        ListCamerasMessageHandler() = default;
+        Handler() = default;
 
-        static constexpr std::string_view kind = "ListCameras";
+        inline static const std::string_view kind = KindNames::ListCameras;
 
-        std::optional<std::unique_ptr<messages::response::Response>> handleMessage(std::weak_ptr<session::Session> session_ptr,
-                                                                                   std::unique_ptr<message::Message> message) override
+        std::optional<std::unique_ptr<responses::base::Response>> handleMessage(std::weak_ptr<session::Session> session_ptr,
+                                                                                    std::unique_ptr<base::Message> message) override
         {
-            spdlog::info("hello, list cameras");
             if (auto session = session_ptr.lock()){
                 auto cameras = session->cameras();
-                auto p_msg = std::make_unique<CameraListResponse>(message->id(), cameras);
+                auto p_msg = std::make_unique<responses::cameraList::Response>(message->id(), cameras);
                 return p_msg;
             }
             return {};
         }
     };
 
-} // namespace indiemotion::messages::cameras
+} // namespace indiemotion::messages::listCameras

@@ -1,0 +1,4 @@
+- Move Message Kinds to Common Space
+- Create Playback/Motion State
+- Create Motion Messages
+- Generate Track Manager

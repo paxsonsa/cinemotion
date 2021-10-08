@@ -7,9 +7,8 @@
 #include <doctest.h>
 #include <indiemotion/_common.hpp>
 #include <indiemotion/session.hpp>
-#include <indiemotion/messages/message.hpp>
-#include <indiemotion/messages/acknowledge.hpp>
-#include <indiemotion/messages/cameras.hpp>
+#include <indiemotion/messages/messages.hpp>
+#include <indiemotion/responses/responses.hpp>
 #include <indiemotion/errors.hpp>
 
 using namespace indiemotion;
@@ -30,7 +29,7 @@ SCENARIO("Initializing the Session")
 
                 AND_THEN("the message should be a properly init message")
                 {
-                    REQUIRE(msg->kind() == messages::response::kind::InitSession);
+                    REQUIRE(msg->kind() == responses::Kind::InitSession);
                     REQUIRE(msg->needsAcknowledgment() == true);
                 }
             }
@@ -44,7 +43,7 @@ SCENARIO("Initializing the Session")
         auto id = msg->id();
         WHEN("the manager processes an ACK for the init message")
         {
-            auto ackMsg = std::make_unique<messages::acknowledge::AcknowledgeMessage>(id);
+            auto ackMsg = std::make_unique<messages::acknowledge::Message>(id);
             auto noMsg = manager.processMessage(std::move(ackMsg));
 
             THEN("no message should be returned")
@@ -68,7 +67,7 @@ SCENARIO("Client Requests Camera List")
 
         WHEN("the client requests a camera list")
         {
-            auto m_ptr = std::make_unique<messages::cameras::ListCamerasMessage>();
+            auto m_ptr = std::make_unique<messages::listCameras::Message>();
             THEN("an error response should be generated")
             {
                 REQUIRE_THROWS_AS(manager.processMessage(std::move(m_ptr)), indiemotion::errors::SessionError);
@@ -94,15 +93,15 @@ SCENARIO("Client Requests Camera List")
 
         WHEN("the client requests a camera list,")
         {
-            auto m_ptr = std::make_unique<messages::cameras::ListCamerasMessage>();
+            auto m_ptr = std::make_unique<messages::listCameras::Message>();
             auto resp = manager.processMessage(std::move(m_ptr));
 
             THEN("a camera list response should be generated.")
             {
                 REQUIRE(resp.has_value());
-                REQUIRE(resp.value()->kind() == messages::response::kind::ListCameras);
-                std::unique_ptr<messages::cameras::CameraListResponse> ptr(
-                    dynamic_cast<messages::cameras::CameraListResponse *>(resp->release()));
+                REQUIRE(resp.value()->kind() == responses::Kind::CameraList);
+                std::unique_ptr<responses::cameraList::Response> ptr(
+                    dynamic_cast<responses::cameraList::Response *>(resp->release()));
                 REQUIRE(ptr->cameraNames() == delegate->cameras());
             }
         }

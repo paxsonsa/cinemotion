@@ -3,24 +3,26 @@
 /* acknowledge.hpp 
 */
 #pragma once
-#include <indiemotion/messages/message.hpp>
+#include <indiemotion/messages/kind.hpp>
+#include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
+#include <indiemotion/responses/base.hpp>
 
 namespace indiemotion::messages::acknowledge
 {
-    class AcknowledgeMessage : public message::Message
+    class Message : public base::Message
     {
     public:
-        AcknowledgeMessage(message::ID messageId) : message::Message(messageId) {}
+        Message(base::ID messageId) : base::Message(messageId) {}
 
         /**
          * @brief Returns the initsession kind
          * 
          * @return kind 
          */
-        message::kind kind() override
+        Kind kind() override
         {
-            return message::kind::Acknowledgment;
+            return Kind::Acknowledgment;
         }
 
         bool needsAcknowledgment() override
@@ -30,43 +32,21 @@ namespace indiemotion::messages::acknowledge
         }
     };
 
-    class AcknowledgeResponse : public response::Response
-    {
-    public:
-        AcknowledgeResponse(response::ID messageId) : response::Response(messageId) {}
-
-        /**
-         * @brief Returns the initsession kind
-         * 
-         * @return kind 
-         */
-        response::kind kind() override
-        {
-            return response::kind::Acknowledgment;
-        }
-
-        bool needsAcknowledgment() override
-        {
-            // Require a ack when the message is recieved.
-            return false;
-        }
-    };
-
-    class AckMessageHandler : public Handler
+    class Handler : public handling::Handler
     {
     public:
 
         static std::shared_ptr<Handler> make()
         {
-            return std::make_shared<AckMessageHandler>();
+            return std::make_shared<Handler>();
         }
 
-        AckMessageHandler() = default;
+        Handler() = default;
 
-        static constexpr std::string_view kind = "Acknowledgment";
+        inline static const std::string_view kind = KindNames::Acknowledgment;
 
-        std::optional<std::unique_ptr<messages::response::Response>> handleMessage(std::weak_ptr<session::Session> session,
-                                                                                   std::unique_ptr<message::Message> message) override
+        std::optional<std::unique_ptr<responses::base::Response>> handleMessage(std::weak_ptr<session::Session> session,
+                                                                                std::unique_ptr<base::Message> message) override
         {
             return {};
         }
