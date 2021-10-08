@@ -156,6 +156,8 @@ namespace indiemotion::session
 
         std::vector<std::string> cameras()
         {
+            _checkIsActive();
+            
             if (_m_delegate)
             {
                 return _m_delegate->cameras();
@@ -175,6 +177,17 @@ namespace indiemotion::session
         {
             _m_state = std::make_shared<state::State>();
             _m_state->set(state::Key::Status, state::SessionStatus::Inactive);
+        }
+
+        void _checkIsActive() 
+        {
+            if (!isActive())
+            {
+                throw indiemotion::errors::SessionError(
+                    "com.indiemotion.error.sessionNotInitialized",
+                    "session cannot process messages unti it is activated."
+                );
+            }
         }
     };
 

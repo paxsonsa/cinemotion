@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 
 #include <indiemotion/_common.hpp>
+#include <indiemotion/errors.hpp>
 #include <indiemotion/session/session.hpp>
 #include <indiemotion/messages/factory.hpp>
 #include <indiemotion/messages/curator.hpp>
@@ -14,6 +15,7 @@
 #include <indiemotion/messages/init.hpp>
 #include <indiemotion/messages/handler.hpp>
 #include <indiemotion/messages/acknowledge.hpp>
+
 
 namespace indiemotion::session
 {
@@ -79,12 +81,11 @@ namespace indiemotion::session
          * @return std::optional<std::shared_ptr<messages::Handler>> 
          */
         std::optional<std::unique_ptr<messages::response::Response>> processMessage(std::unique_ptr<messages::message::Message> m)
-        {
-
+        {   
             if (m->kind() == messages::message::kind::Acknowledgment)
             {
                 _m_curator->acknowledge(m->id());
-            }  
+            }
             auto handler = _m_factory->makeHandler(m->kind());
             return handler->handleMessage(_m_session, std::move(m));
         }

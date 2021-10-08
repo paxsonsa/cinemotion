@@ -10,6 +10,7 @@
 #include <indiemotion/messages/message.hpp>
 #include <indiemotion/messages/acknowledge.hpp>
 #include <indiemotion/messages/cameras.hpp>
+#include <indiemotion/errors.hpp>
 
 using namespace indiemotion;
 
@@ -67,8 +68,10 @@ SCENARIO("Client Requests Camera List")
 
         WHEN("the client requests a camera list")
         {
+            auto m_ptr = std::make_unique<messages::cameras::ListCamerasMessage>();
             THEN("an error response should be generated")
             {
+                REQUIRE_THROWS_AS(manager.processMessage(std::move(m_ptr)), indiemotion::errors::SessionError);
             }
         }
     }
