@@ -7,6 +7,7 @@
 #include <indiemotion/_common.hpp>
 #include <indiemotion/session/session.hpp>
 #include <indiemotion/responses/base.hpp>
+#include <indiemotion/messages/kind.hpp>
 #include <indiemotion/messages/handler.hpp>
 #include <indiemotion/messages/acknowledge.hpp>
 #include <indiemotion/messages/cameras.hpp>
@@ -22,11 +23,14 @@ namespace indiemotion::messages::handling
     class HandlerFactory
     {
     private:
-        std::map<Kind, std::shared_ptr<Handler>> _m_ptr_table {};
+        std::shared_ptr<Handler>[KindCount] _m_ptr_table;
 
     public:
 
-        HandlerFactory() = default;
+        HandlerFactory()
+        {
+            _m_ptr_table[Kind::] = _construct<acknowledge::Handler>();
+        };
 
         std::shared_ptr<Handler> makeHandler(Kind kind)
         {
