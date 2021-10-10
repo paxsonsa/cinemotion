@@ -7,7 +7,11 @@
 
 namespace indiemotion::motion
 {
-    enum class Mode
+    /**
+     * @brief A simple value for comparing mode values
+     * 
+     */
+    enum class ModeValue
     {
         Off,
         Live,
@@ -16,110 +20,209 @@ namespace indiemotion::motion
 
     class ModeController;
 
-    class ModeHandler
+    /**
+     * @brief Base class for representing a particular motion mode.
+     * 
+     */
+    class Mode
     {
     protected:
+        /**
+         * @brief Each mode contains a shared reference to the mode controller
+         * 
+         */
         std::shared_ptr<ModeController> _m_controller;
 
     public:
-        virtual ~ModeHandler() {}
+        virtual ~Mode() {}
 
+        /**
+         * @brief Set the Controller object
+         * 
+         * @param ctx 
+         */
         void setController(std::shared_ptr<ModeController> ctx)
         {
             _m_controller = ctx;
         }
 
-        virtual Mode current() const = 0;
+        virtual ModeValue current() const = 0;
         virtual void handleOff() = 0;
         virtual void handleLive() = 0;
         virtual void handleRecord() = 0;
     };
 
-    class OffModeHandler;
-
+    /**
+     * @brief Controls the current motion mode and provides access to the current mode.
+     * 
+     */
     class ModeController : public std::enable_shared_from_this<ModeController>
     {
     private:
-        std::unique_ptr<ModeHandler> _m_state_ptr;
+        std::unique_ptr<Mode> _m_state_ptr;
 
     public:
-        static std::shared_ptr<ModeController> create()
-        {
-            auto controller = std::make_shared<ModeController>();
-            controller->setState(
-                static_unique_pointer_cast<ModeHandler>(
-                    std::make_unique<OffModeHandler>()));
-            return std::move(controller);
-        }
-
         ModeController() {}
 
-        void setState(std::unique_ptr<ModeHandler> m)
+        /**
+         * @brief Helper function to create a controller in Off mode.
+         * 
+         * @return std::shared_ptr<ModeController> 
+         */
+        static std::shared_ptr<ModeController> create();
+
+        /**
+         * @brief Transition to a new mode.
+         * 
+         * @tparam T Should be a Mode subclass.
+         */
+        template <typename T,
+                  typename = std::enable_if_t<std::is_base_of_v<Mode, T>>>
+        void transitionTo()
         {
-            _m_state_ptr = std::move(m);
+            _m_state_ptr = static_unique_pointer_cast<Mode>(std::make_unique<T>());
             _m_state_ptr->setController(shared_from_this());
         }
 
-        Mode current()
+        /**
+         * @brief Returns the current mode value
+         * 
+         * @return ModeValue 
+         */
+        ModeValue current() const
         {
             return _m_state_ptr->current();
         }
 
+        /**
+         * @brief Transition to off mode
+         * 
+         */
         void off()
         {
             _m_state_ptr->handleOff();
         }
+
+        /**
+         * @brief Transition to live mode
+         * 
+         */
         void live()
         {
             _m_state_ptr->handleLive();
         }
+
+        /**
+         * @brief Transition to recording mode
+         * 
+         */
         void record()
         {
             _m_state_ptr->handleRecord();
         }
+
+        bool isRecording() const
+        {
+            return current() == ModeValue::Recording;
+        }
+
+        bool isCapturingMotion() const
+        {
+            return current() > ModeValue::Off;
+        }
     };
 
-    class LiveModeHandler;
-    class RecordingModeHandler;
+    /**
+     * @brief Represent Live Motion Mode
+     * 
+     */
+    class LiveMode : public Mode
+    {
+        ModeValue current() const
+        {
+            return ModeValue::Live;
+        }
+        void handleOff();
+        void handleLive();
+        void handleRecord();
+    };
 
-    class OffModeHandler : public ModeHandler
+    /**
+     * @brief Represents Recording Motion Mode
+     * 
+     */
+    class RecordingMode : public Mode
     {
-        Mode current() const
+        ModeValue current() const
         {
-            return Mode::Off;
+            return ModeValue::Recording;
         }
-        void handleOff() {}
-        void handleLive()
-        {
-            _m_controller->setState(
-                static_unique_pointer_cast<ModeHandler>(
-                    std::make_unique<LiveModeHandler>()));
-        }
-        void handleRecord()
-        {
-            _m_controller->setState(
-                static_unique_pointer_cast<ModeHandler>(
-                    std::make_unique<RecordingModeHandler>()));
-        }
+        void handleOff();
+        void handleLive();
+        void handleRecord();
     };
-    class LiveModeHandler : public ModeHandler
+
+    /**
+     * @brief Representing Off (or no) Motion Mode
+     * 
+     */
+    class OffMode : public Mode
     {
-        Mode current() const
+        ModeValue current() const
         {
-            return Mode::Live;
+            return ModeValue::Off;
         }
-        void handleOff() {}
-        void handleLive() {}
-        void handleRecord() {}
+        void handleOff();
+        void handleLive();
+        void handleRecord();
     };
-    class RecordingModeHandler : public ModeHandler
+
+    /**
+     * @brief Create a new controller preconfigured in off mode.
+     * 
+     * @return std::shared_ptr<ModeController> 
+     */
+    std::shared_ptr<ModeController> ModeController::create()
     {
-        Mode current() const
-        {
-            return Mode::Recording;
-        }
-        void handleOff() {}
-        void handleLive() {}
-        void handleRecord() {}
-    };
+        auto controller = std::make_shared<ModeController>();
+        controller->transitionTo<OffMode>();
+        return std::move(controller);
+    }
+
+    void OffMode::handleOff()
+    {
+    }
+    void OffMode::handleLive()
+    {
+        _m_controller->transitionTo<LiveMode>();
+    }
+    void OffMode::handleRecord()
+    {
+        _m_controller->transitionTo<RecordingMode>();
+    }
+
+    void LiveMode::handleOff()
+    {
+        _m_controller->transitionTo<OffMode>();
+    }
+    void LiveMode::handleLive()
+    {
+    }
+    void LiveMode::handleRecord()
+    {
+        _m_controller->transitionTo<RecordingMode>();
+    }
+
+    void RecordingMode::handleOff()
+    {
+        _m_controller->transitionTo<OffMode>();
+    }
+    void RecordingMode::handleLive()
+    {
+        _m_controller->transitionTo<LiveMode>();
+    }
+    void RecordingMode::handleRecord()
+    {
+    }
+
 }
