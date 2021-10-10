@@ -8,11 +8,12 @@ namespace indiemotion::messages
         /**
          * @brief Represents the kind of messages available
          */
-        enum class Kind
+        static constexpr std::int32_t KindCount = 2;
+        enum class Kind : std::int32_t
         {
             Acknowledgment = 0,
             // Error = 1,
-            ListCameras = 200
+            ListCameras
         };
 
         struct KindNames

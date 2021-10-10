@@ -104,5 +104,6 @@
   "C_Cpp_Runner.enableWarnings": true,
   "C_Cpp_Runner.warningsAsError": false,
   "terminal.explorerKind": "external",
-  "C_Cpp.errorSquiggles": "Disabled"
+
+  "testMate.cpp.log.logSentry": "disable_3"
 }
