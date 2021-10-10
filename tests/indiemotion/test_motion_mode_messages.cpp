@@ -44,3 +44,53 @@ SCENARIO("Initial Motion Mode should be Off")
         }
     }
 }
+
+SCENARIO("Changing Motion Mode")
+{
+    class DummyDelegate : public session::SessionDelegate
+    {
+    public:
+        int motionModeDidUpdateCalled = 0;
+        std::optional<motion::ModeValue> newMode;
+
+        void motionModeDidUpdate(motion::ModeValue mode)
+        {
+            motionModeDidUpdateCalled += 1;
+            newMode = mode;
+        }
+    };
+
+    GIVEN("a new active session")
+    {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto manager = session::SessionManager();
+        manager.session()->bindDelegate(delegate);
+        manager.session()->activate();
+
+        WHEN("the client sends a set mode message")
+        {
+            auto msg = std::make_unique<messages::motion::set_mode::Message>(
+                motion::ModeValue::Live);
+            auto opt_response = manager.processMessage(std::move(msg));
+
+            THEN("the server should acknowledge the message")
+            {
+                REQUIRE(opt_response);
+                auto response = std::move(opt_response.value());
+                REQUIRE(response->kind() == responses::Kind::Acknowledgment);
+                REQUIRE(response->needsAcknowledgment() == false);
+            }
+
+            THEN("the current mode value should be equal to the requested value")
+            {
+                REQUIRE(manager.session()->motionMode() == motion::ModeValue::Live);
+            }
+
+            AND_THEN("the delegate should have been notified of the updated mode")
+            {
+                REQUIRE(delegate->motionModeDidUpdateCalled == 1);
+                REQUIRE(delegate->newMode == motion::ModeValue::Live);
+            }
+        }
+    }
+}

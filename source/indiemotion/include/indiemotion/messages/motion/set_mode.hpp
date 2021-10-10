@@ -5,14 +5,17 @@
 #include <indiemotion/_common.hpp>
 #include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
-#include <indiemotion/responses/base.hpp>
+#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/session/motion_mode.hpp>
 
 namespace indiemotion::messages::motion::set_mode
 {
     class Message : public base::Message
     {
     public:
-        Message(base::ID messageId) : base::Message(messageId) {}
+        indiemotion::motion::ModeValue newMode;
+
+        Message(indiemotion::motion::ModeValue newMode) : newMode(newMode) {}
 
         /**
          * @brief Returns the initsession kind
@@ -42,9 +45,16 @@ namespace indiemotion::messages::motion::set_mode
             return std::make_shared<Handler>();
         }
 
-        std::optional<std::unique_ptr<responses::base::Response>> handleMessage(std::weak_ptr<session::Session> session,
-                                                                                std::unique_ptr<base::Message> message) override
+        std::optional<std::unique_ptr<responses::base::Response>> handleMessage(std::weak_ptr<session::Session> sessionPtr,
+                                                                                std::unique_ptr<base::Message> messagePtr) override
         {
+            auto message = static_unique_pointer_cast<messages::motion::set_mode::Message>(std::move(messagePtr));
+            if (auto session = sessionPtr.lock())
+            {
+                session->updateMotionMode(message->newMode);
+                auto acknowledgeMsg = std::make_unique<responses::acknowledge::Response>(message->id());
+                return acknowledgeMsg;
+            }
             return {};
         }
     };

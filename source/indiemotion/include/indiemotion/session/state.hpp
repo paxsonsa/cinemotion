@@ -6,7 +6,8 @@
 #pragma once
 #include <indiemotion/_common.hpp>
 
-namespace indiemotion::session::state {
+namespace indiemotion::session::state
+{
 
     enum class SessionStatus
     {
@@ -21,42 +22,45 @@ namespace indiemotion::session::state {
     {
         Status,
         Properties,
+        ModeContext,
     };
-    
+
     std::string keyname(Key key)
     {
         switch (key)
         {
-            case Key::Status:
-                return "status";
-            case Key::Properties:
-                return "properties";
+        case Key::Status:
+            return "status";
+        case Key::Properties:
+            return "properties";
+        case Key::ModeContext:
+            return "mode_context";
         };
     }
 
     class State
     {
-        private:
-            std::map<Key, std::any> _m_state_table{};
+    private:
+        std::map<Key, std::any> _m_state_table{};
 
-        public:
-            State() = default;
+    public:
+        State() = default;
 
-            void set(Key key, std::any value)
-            {
-                _m_state_table[key] = value;
-            }
+        void set(Key key, std::any value)
+        {
+            _m_state_table[key] = value;
+        }
 
-            std::any getAny(Key key)
-            {
-                return _m_state_table[key];
-            }
+        std::any getAny(Key key)
+        {
+            return _m_state_table[key];
+        }
 
-            template<typename T>
-            T get(Key key)
-            {
-                return std::any_cast<T>(_m_state_table[key]);
-            }
+        template <typename T>
+        T get(Key key)
+        {
+            return std::any_cast<T>(_m_state_table[key]);
+        }
     };
 
 }

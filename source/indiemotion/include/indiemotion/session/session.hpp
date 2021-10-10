@@ -22,12 +22,14 @@ namespace indiemotion::session
     private:
         std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
         std::shared_ptr<state::State> _m_state = nullptr;
+        std::shared_ptr<motion::ModeController> _m_motionModeController = nullptr;
 
     public:
         // Default Constructor
         Session()
         {
             _initializeState();
+            _initializeMotionModeController();
         };
 
         Session(std::shared_ptr<SessionDelegate> delegate)
@@ -170,9 +172,32 @@ namespace indiemotion::session
 
         motion::ModeValue motionMode() const
         {
-            return motion::ModeValue::Off;
+            return _m_motionModeController->current();
         }
-        void updateMotionMode(motion::ModeValue mode) {}
+        void updateMotionMode(motion::ModeValue mode)
+        {
+            if (_m_motionModeController->current() == mode)
+            {
+                return; // No updates needed.
+            }
+
+            switch (mode)
+            {
+            case motion::ModeValue::Off:
+                _m_motionModeController->off();
+                break;
+
+            case motion::ModeValue::Live:
+                _m_motionModeController->live();
+                break;
+
+            case motion::ModeValue::Recording:
+                _m_motionModeController->record();
+                break;
+            }
+
+            _m_delegate->motionModeDidUpdate(mode);
+        }
 
     private:
         /**
@@ -183,6 +208,11 @@ namespace indiemotion::session
         {
             _m_state = std::make_shared<state::State>();
             _m_state->set(state::Key::Status, state::SessionStatus::Inactive);
+        }
+
+        void _initializeMotionModeController()
+        {
+            _m_motionModeController = motion::ModeController::create();
         }
 
         void _checkIsActive() const

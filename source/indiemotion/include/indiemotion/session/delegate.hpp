@@ -6,44 +6,55 @@
 #pragma once
 #include <indiemotion/_common.hpp>
 #include <indiemotion/session/features.hpp>
+#include <indiemotion/session/motion_mode.hpp>
 
 namespace indiemotion::session
 {
-    class SessionDelegate {
-        public:
-            /**
+    class SessionDelegate
+    {
+    public:
+        /**
              * @brief called when the session is just about to initialize.
              * 
              */
-            virtual void sessionWillInitialize() {}
+        virtual void sessionWillInitialize() {}
 
-            /**
+        /**
              * @brief called when the session finished initializing and is active.
              * 
              */
-            virtual void sessionDidInitialize() {}
-            
-            /**
+        virtual void sessionDidInitialize() {}
+
+        /**
              * @brief Returns the name of the session
              * 
              * @return std::optional<std::string> 
              */
-            virtual std::optional<std::string> name() {
-                return std::nullopt;
-            }
+        virtual std::optional<std::string> name()
+        {
+            return std::nullopt;
+        }
 
-            /**
+        /**
              * @brief Returns the supported features of this server
              * 
              * @return std::optional<FeatureSet> 
              */
-            virtual std::optional<FeatureSet> supportedFeatures() {
-                return std::nullopt;
-            }
+        virtual std::optional<FeatureSet> supportedFeatures()
+        {
+            return std::nullopt;
+        }
 
-            virtual std::vector<std::string> cameras()
-            {
-                return std::vector<std::string>();
-            }
+        virtual std::vector<std::string> cameras()
+        {
+            return std::vector<std::string>();
+        }
+
+        /**
+         * @brief Called whenever the motion mode is updated.
+         * 
+         * @param newMode 
+         */
+        virtual void motionModeDidUpdate(motion::ModeValue newMode) {}
     };
 }
