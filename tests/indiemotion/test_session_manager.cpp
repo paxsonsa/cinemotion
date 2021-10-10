@@ -6,10 +6,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <indiemotion/_common.hpp>
-#include <indiemotion/session.hpp>
+#include <indiemotion/errors.hpp>
 #include <indiemotion/messages/messages.hpp>
 #include <indiemotion/responses/responses.hpp>
-#include <indiemotion/errors.hpp>
+#include <indiemotion/session.hpp>
 
 using namespace indiemotion;
 
@@ -59,7 +59,7 @@ SCENARIO("Initializing the Session")
     }
 }
 
-SCENARIO("Client Requests Camera List")
+SCENARIO("Request for camera list fails")
 {
     GIVEN("An uninitialized manager")
     {
@@ -74,7 +74,10 @@ SCENARIO("Client Requests Camera List")
             }
         }
     }
+}
 
+SCENARIO("Return a camera list")
+{
     GIVEN("An active session,")
     {
         class DummyDelegate : public session::SessionDelegate
