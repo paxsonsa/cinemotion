@@ -9,6 +9,7 @@
 #include <indiemotion/messages/cameras.hpp>
 #include <indiemotion/messages/handler.hpp>
 #include <indiemotion/messages/kind.hpp>
+#include <indiemotion/messages/motion/motion.hpp>
 #include <indiemotion/responses/base.hpp>
 #include <indiemotion/session/session.hpp>
 
@@ -30,6 +31,8 @@ namespace indiemotion::messages::handling
         {
             _m_ptr_table[to_underlying(Kind::Acknowledgment)] = _construct<acknowledge::Handler>();
             _m_ptr_table[to_underlying(Kind::ListCameras)] = _construct<listCameras::Handler>();
+            _m_ptr_table[to_underlying(Kind::MotionGetMode)] = _construct<motion::get_mode::Handler>();
+            _m_ptr_table[to_underlying(Kind::MotionSetMode)] = _construct<motion::set_mode::Handler>();
         };
 
         std::shared_ptr<Handler> makeHandler(Kind kind)

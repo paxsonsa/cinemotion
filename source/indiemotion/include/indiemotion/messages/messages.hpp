@@ -2,8 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* messages.hpp */
 #pragma once
-#include <indiemotion/messages/kind.hpp>
-#include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/acknowledge.hpp>
+#include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/cameras.hpp>
-
+#include <indiemotion/messages/kind.hpp>
+#include <indiemotion/messages/motion/get_mode.hpp>
+#include <indiemotion/messages/motion/set_mode.hpp>

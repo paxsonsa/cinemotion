@@ -10,10 +10,11 @@ namespace indiemotion::responses
      */
     enum class Kind
     {
-        Acknowledgment = 0,
-        Error = 1,
-        InitSession = 100,
-        CameraList = 200
+        Acknowledgment,
+        Error,
+        InitSession,
+        CameraList,
+        MotionCurrentMode
     };
 
     struct KindNames
@@ -22,6 +23,7 @@ namespace indiemotion::responses
         inline static const std::string Error = "Error";
         inline static const std::string InitSession = "InitSession";
         inline static const std::string CameraList = "CameraList";
+        inline static const std::string MotionCurrentMode = "MotionCurrentMode";
     };
 
     /**
@@ -43,6 +45,8 @@ namespace indiemotion::responses
             return KindNames::InitSession;
         case Kind::CameraList:
             return KindNames::CameraList;
+        case Kind::MotionCurrentMode:
+            return KindNames::MotionCurrentMode;
         }
     }
 }

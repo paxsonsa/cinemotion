@@ -8,14 +8,13 @@
 
 #include <indiemotion/_common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/session/session.hpp>
 #include <indiemotion/messages/base.hpp>
-#include <indiemotion/messages/kind.hpp>
-#include <indiemotion/messages/factory.hpp>
 #include <indiemotion/messages/curator.hpp>
+#include <indiemotion/messages/factory.hpp>
+#include <indiemotion/messages/kind.hpp>
 #include <indiemotion/responses/base.hpp>
 #include <indiemotion/responses/initialize.hpp>
-
+#include <indiemotion/session/session.hpp>
 
 namespace indiemotion::session
 {
@@ -81,7 +80,7 @@ namespace indiemotion::session
          * @return std::optional<std::shared_ptr<messages::Handler>> 
          */
         std::optional<std::unique_ptr<responses::base::Response>> processMessage(std::unique_ptr<messages::base::Message> m)
-        {   
+        {
             if (m->kind() == messages::Kind::Acknowledgment)
             {
                 _m_curator->acknowledge(m->id());

@@ -1,4 +1,5 @@
-- Move Message Kinds to Common Space
-- Create Playback/Motion State
+- Update Motion Modes Messages
+- RESET Message
 - Create Motion Messages
 - Generate Track Manager
+- Add CMake CI (macOS/Linux)

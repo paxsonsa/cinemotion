@@ -2,12 +2,12 @@
 
 #include <indiemotion/_common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/version.hpp>
 #include <indiemotion/server/server.hpp>
-#include <indiemotion/session/state.hpp>
-#include <indiemotion/session/properties.hpp>
 #include <indiemotion/session/delegate.hpp>
-
+#include <indiemotion/session/motion_mode.hpp>
+#include <indiemotion/session/properties.hpp>
+#include <indiemotion/session/state.hpp>
+#include <indiemotion/version.hpp>
 namespace indiemotion::session
 {
 
@@ -115,7 +115,7 @@ namespace indiemotion::session
          * 
          * @return Properties 
          */
-        Properties properties()
+        Properties properties() const noexcept
         {
             return _m_state->get<Properties>(session::state::Key::Properties);
         }
@@ -125,7 +125,7 @@ namespace indiemotion::session
          * 
          * @return std::shared_ptr<state::State> 
          */
-        std::shared_ptr<state::State> state()
+        std::shared_ptr<state::State> state() const noexcept
         {
             return _m_state;
         }
@@ -144,20 +144,20 @@ namespace indiemotion::session
          * 
          * @return state::SessionStatus 
          */
-        state::SessionStatus status()
+        state::SessionStatus status() const noexcept
         {
             return _m_state->get<state::SessionStatus>(state::Key::Status);
         }
 
-        bool isActive() noexcept
+        bool isActive() const noexcept
         {
             return _m_state->get<state::SessionStatus>(state::Key::Status) == state::SessionStatus::Active;
         }
 
-        std::vector<std::string> cameras()
+        std::vector<std::string> cameras() const
         {
             _checkIsActive();
-            
+
             if (_m_delegate)
             {
                 return _m_delegate->cameras();
@@ -167,6 +167,12 @@ namespace indiemotion::session
                 return std::vector<std::string>();
             }
         }
+
+        motion::ModeValue motionMode() const
+        {
+            return motion::ModeValue::Off;
+        }
+        void updateMotionMode(motion::ModeValue mode) {}
 
     private:
         /**
@@ -179,14 +185,13 @@ namespace indiemotion::session
             _m_state->set(state::Key::Status, state::SessionStatus::Inactive);
         }
 
-        void _checkIsActive() 
+        void _checkIsActive() const
         {
             if (!isActive())
             {
                 throw indiemotion::errors::SessionError(
                     "com.indiemotion.error.sessionNotInitialized",
-                    "session cannot process messages unti it is activated."
-                );
+                    "session cannot process messages unti it is activated.");
             }
         }
     };
