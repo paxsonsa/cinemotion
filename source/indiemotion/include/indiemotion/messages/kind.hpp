@@ -8,7 +8,7 @@ namespace indiemotion::messages
         /**
          * @brief Represents the kind of messages available
          */
-        static constexpr std::int32_t KindCount = 2
+        static constexpr std::int32_t KindCount = 2;
         enum class Kind : std::int32_t
         {
             Acknowledgment = 0,
