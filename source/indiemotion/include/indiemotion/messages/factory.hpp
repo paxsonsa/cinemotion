@@ -5,16 +5,16 @@
 */
 #pragma once
 #include <indiemotion/_common.hpp>
-#include <indiemotion/session/session.hpp>
-#include <indiemotion/responses/base.hpp>
-#include <indiemotion/messages/kind.hpp>
-#include <indiemotion/messages/handler.hpp>
 #include <indiemotion/messages/acknowledge.hpp>
 #include <indiemotion/messages/cameras.hpp>
+#include <indiemotion/messages/handler.hpp>
+#include <indiemotion/messages/kind.hpp>
+#include <indiemotion/responses/base.hpp>
+#include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::handling
 {
-    template<class handler_t>
+    template <class handler_t>
     std::shared_ptr<Handler> _construct()
     {
         return handler_t::make();
@@ -23,37 +23,18 @@ namespace indiemotion::messages::handling
     class HandlerFactory
     {
     private:
-        std::shared_ptr<Handler>[KindCount] _m_ptr_table;
+        std::shared_ptr<Handler> _m_ptr_table[KindCount];
 
     public:
-
         HandlerFactory()
         {
-            _m_ptr_table[Kind::] = _construct<acknowledge::Handler>();
+            _m_ptr_table[to_underlying(Kind::Acknowledgment)] = _construct<acknowledge::Handler>();
+            _m_ptr_table[to_underlying(Kind::ListCameras)] = _construct<listCameras::Handler>();
         };
 
         std::shared_ptr<Handler> makeHandler(Kind kind)
         {
-            std::shared_ptr<Handler> p_handler;
-            p_handler = _m_ptr_table[kind];
-
-            if (p_handler)
-            {
-                return p_handler;
-            }
-
-            switch(kind)
-            {
-                case Kind::Acknowledgment:
-                    p_handler = _construct<acknowledge::Handler>();
-                    break;
-                case Kind::ListCameras:
-                    p_handler = _construct<listCameras::Handler>();       
-                    break;
-            }
-
-            _m_ptr_table[kind] = p_handler;
-            return p_handler;
+            return _m_ptr_table[to_underlying(kind)];
         };
     };
 }
