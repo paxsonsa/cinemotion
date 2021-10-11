@@ -76,5 +76,5 @@ namespace indiemotion::motion
         {
             return _m_xform->orientation->z;
         }
-    }
+    };
 }
