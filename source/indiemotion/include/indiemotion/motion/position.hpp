@@ -39,4 +39,42 @@ namespace indiemotion::motion
             return ptr;
         }
     };
+
+    /**
+     * @brief Read-0nly view of a motion xform
+     * 
+     */
+    class MotionXFormView
+    {
+    private:
+        std::shared_ptr<MotionXForm> _m_xform;
+
+    public:
+        MotionXFormView(std::shared_ptr<MotionXForm> xform) : _m_xform(xform) {}
+
+        double translationX()
+        {
+            return _m_xform->translation->x;
+        }
+        double translationY()
+        {
+            return _m_xform->translation->y;
+        }
+        double translationZ()
+        {
+            return _m_xform->translation->z;
+        }
+        double orientationX()
+        {
+            return _m_xform->orientation->x;
+        }
+        double orientationY()
+        {
+            return _m_xform->orientation->y;
+        }
+        double orientationZ()
+        {
+            return _m_xform->orientation->z;
+        }
+    }
 }
