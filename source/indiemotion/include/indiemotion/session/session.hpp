@@ -235,6 +235,12 @@ namespace indiemotion::session
         {
             _checkIsActive();
             _m_motionXForm = std::move(xform);
+
+            if (_m_delegate)
+            {
+                _m_delegate->motionDidUpdate(
+                    std::make_unique<motion::MotionXFormView>(_m_motionXForm));
+            }
         }
 
         /**

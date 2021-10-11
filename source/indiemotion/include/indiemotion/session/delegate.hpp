@@ -72,6 +72,6 @@ namespace indiemotion::session
          * 
          * @param xform 
          */
-        virtual void motionDidUpdate(motion::MotionXFormView xform) {}
+        virtual void motionDidUpdate(std::unique_ptr<motion::MotionXFormView> xform) {}
     };
 }
