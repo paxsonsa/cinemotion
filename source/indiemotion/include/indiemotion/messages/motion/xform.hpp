@@ -13,7 +13,7 @@ namespace indiemotion::messages::motion::xform
     class Message : public base::Message
     {
     private:
-        std::shared_ptr<indiemotion::motion::MotionXForm> _m_xform;
+        std::unique_ptr<indiemotion::motion::MotionXForm> _m_xform;
 
     public:
         Message(std::unique_ptr<indiemotion::motion::MotionXForm> xform) : _m_xform(std::move(xform))
@@ -32,7 +32,7 @@ namespace indiemotion::messages::motion::xform
          */
         Kind kind() override
         {
-            return Kind::MotionGetMode;
+            return Kind::MotionXForm;
         }
 
         bool needsAcknowledgment() override
@@ -41,9 +41,9 @@ namespace indiemotion::messages::motion::xform
             return false;
         }
 
-        std::shared_ptr<indiemotion::motion::MotionXForm> xform()
+        std::unique_ptr<indiemotion::motion::MotionXForm> xform()
         {
-            return _m_xform;
+            return std::move(_m_xform);
         }
     };
 
@@ -59,8 +59,14 @@ namespace indiemotion::messages::motion::xform
         }
 
         std::optional<std::unique_ptr<responses::base::Response>> handleMessage(std::weak_ptr<session::Session> sessionPtr,
-                                                                                std::unique_ptr<base::Message> message) override
+                                                                                std::unique_ptr<base::Message> messagePtr) override
         {
+
+            auto message = static_unique_pointer_cast<Message>(std::move(messagePtr));
+            if (auto session = sessionPtr.lock())
+            {
+                session->updateMotionXForm(std::move(message->xform()));
+            }
             return {};
         }
     };
