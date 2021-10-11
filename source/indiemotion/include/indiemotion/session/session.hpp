@@ -24,13 +24,14 @@ namespace indiemotion::session
         std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
         std::shared_ptr<state::State> _m_state = nullptr;
         std::shared_ptr<motion::ModeController> _m_motionModeController = nullptr;
+        std::shared_ptr<motion::MotionXForm> _m_motionXForm = nullptr;
 
     public:
         // Default Constructor
         Session()
         {
             _initializeState();
-            _initializeMotionModeController();
+            _initializeMotion();
         };
 
         Session(std::shared_ptr<SessionDelegate> delegate)
@@ -233,6 +234,20 @@ namespace indiemotion::session
         void updateMotionXForm(std::unique_ptr<motion::MotionXForm> xform)
         {
             _checkIsActive();
+            _m_motionXForm = std::move(xform);
+        }
+
+        /**
+         * @brief Returns a read-only view of the current transform
+         * 
+         * The MotionXFormView can be held onto and as the motion is update the 
+         * view will update as well.
+         * 
+         * @return motion::MotionXFormView 
+         */
+        std::unique_ptr<motion::MotionXFormView> motionView() const
+        {
+            return std::make_unique<motion::MotionXFormView>(_m_motionXForm);
         }
 
         /**
@@ -249,9 +264,10 @@ namespace indiemotion::session
          * @brief Initialize the Motion Mode for the Session
          * 
          */
-        void _initializeMotionModeController()
+        void _initializeMotion()
         {
             _m_motionModeController = motion::ModeController::create();
+            _m_motionXForm = motion::MotionXForm::zero();
         }
 
         void _checkIsActive() const
