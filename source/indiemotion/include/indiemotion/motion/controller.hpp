@@ -18,9 +18,10 @@ namespace indiemotion::motion
     {
     private:
         std::shared_ptr<MotionXForm> _m_xform;
-        std::shared_ptr<MotionDelegate> _m_delegate;
+        std::shared_ptr<MotionDelegate> _m_delegate = nullptr;
 
     public:
+        MotionController() : _m_xform(MotionXForm::zero()) {}
         MotionController(std::unique_ptr<MotionDelegate> delegate) : _m_delegate(std::move(delegate)),
                                                                      _m_xform(MotionXForm::zero())
 
@@ -33,11 +34,27 @@ namespace indiemotion::motion
         {
         }
 
+        void bindDelegate(std::shared_ptr<MotionDelegate> delegate)
+        {
+            _m_delegate = delegate;
+        }
+
+        void bindDelegate(std::unique_ptr<MotionDelegate> delegate)
+        {
+            _m_delegate = std::move(delegate);
+        }
+
         void update(std::unique_ptr<MotionXForm> xform)
         {
             std::shared_ptr<MotionXForm> temp = std::move(xform);
             _m_xform.swap(temp);
-            _m_delegate->didUpdate(_m_xform);
+            if (_m_delegate)
+                _m_delegate->didUpdate(_m_xform);
+        }
+
+        std::shared_ptr<MotionXForm> xform() const noexcept
+        {
+            return _m_xform;
         }
     };
 }

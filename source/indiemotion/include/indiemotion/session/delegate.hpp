@@ -64,14 +64,5 @@ namespace indiemotion::session
          * @param newMode 
          */
         virtual void motionModeDidUpdate(motion::ModeValue newMode) {}
-
-        /**
-         * @brief Called whenever the motion xform is update by the client.
-         * 
-         * use this to respond to changes in the motion of the client.
-         * 
-         * @param xform 
-         */
-        virtual void motionDidUpdate(std::unique_ptr<motion::MotionXFormView> xform) {}
     };
 }

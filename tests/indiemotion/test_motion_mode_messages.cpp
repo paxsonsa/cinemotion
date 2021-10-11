@@ -23,7 +23,7 @@ SCENARIO("Initial Motion Mode should be Off")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto manager = session::SessionManager();
-        manager.session()->bindDelegate(delegate);
+        manager.session()->bindSessionDelegate(delegate);
         manager.session()->activate();
 
         WHEN("the client sends a get mode message")
@@ -64,7 +64,7 @@ SCENARIO("Changing Motion Mode")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto manager = session::SessionManager();
-        manager.session()->bindDelegate(delegate);
+        manager.session()->bindSessionDelegate(delegate);
         manager.session()->activate();
 
         WHEN("the client sends a set mode message")

@@ -11,6 +11,7 @@
 // #include <indiemotion/errors.hpp>
 #include <indiemotion/messages/messages.hpp>
 // #include <indiemotion/responses/responses.hpp>
+#include <indiemotion/motion.hpp>
 #include <indiemotion/session.hpp>
 
 using namespace indiemotion;
@@ -41,15 +42,17 @@ SCENARIO("Inactive Session Fails to Update MotionXForm")
 SCENARIO("Updating motion xform on active session")
 {
 
-    class DummyDelegate : public session::SessionDelegate
+    class DummyDelegate : public session::SessionDelegate, public motion::MotionDelegate
     {
     public:
-        std::unique_ptr<motion::MotionXFormView> xformView;
+        std::shared_ptr<motion::MotionXForm> xformView = nullptr;
         int motionDidUpdateCalled = 0;
 
-        void motionDidUpdate(std::unique_ptr<motion::MotionXFormView> xform)
+        DummyDelegate() = default;
+
+        void didUpdate(std::shared_ptr<motion::MotionXForm> xform)
         {
-            xformView = std::move(xform);
+            xformView = xform;
             motionDidUpdateCalled += 1;
         }
     };
@@ -58,7 +61,8 @@ SCENARIO("Updating motion xform on active session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto manager = session::SessionManager();
-        manager.session()->bindDelegate(delegate);
+        manager.session()->bindSessionDelegate(delegate);
+        manager.session()->bindMotionDelegate(delegate);
 
         WHEN("the session is active")
         {
@@ -68,36 +72,36 @@ SCENARIO("Updating motion xform on active session")
             AND_WHEN("the manager tries to process a position update message")
             {
                 auto xform = indiemotion::motion::MotionXForm::zero();
-                xform->translation->x = 1.0;
-                xform->translation->y = 2.0;
-                xform->translation->z = 3.0;
-                xform->orientation->x = 4.0;
-                xform->orientation->y = 5.0;
-                xform->orientation->z = 6.0;
+                xform->translation.x = 1.0;
+                xform->translation.y = 2.0;
+                xform->translation.z = 3.0;
+                xform->orientation.x = 4.0;
+                xform->orientation.y = 5.0;
+                xform->orientation.z = 6.0;
                 auto messagePtr = indiemotion::messages::motion::xform::Message::create(std::move(xform));
 
                 manager.processMessage(std::move(messagePtr));
-                auto curXformView = manager.session()->motionView();
+                auto curXform = manager.session()->motionController()->xform();
                 THEN("the current xform should be updated")
                 {
                     // TODO auto curXform = manager.session()->motionController()->currentXform();
-                    REQUIRE(curXformView->translationX() == 1.0);
-                    REQUIRE(curXformView->translationY() == 2.0);
-                    REQUIRE(curXformView->translationZ() == 3.0);
-                    REQUIRE(curXformView->orientationX() == 4.0);
-                    REQUIRE(curXformView->orientationY() == 5.0);
-                    REQUIRE(curXformView->orientationZ() == 6.0);
+                    REQUIRE(curXform->translation.x == 1.0);
+                    REQUIRE(curXform->translation.y == 2.0);
+                    REQUIRE(curXform->translation.z == 3.0);
+                    REQUIRE(curXform->orientation.x == 4.0);
+                    REQUIRE(curXform->orientation.y == 5.0);
+                    REQUIRE(curXform->orientation.z == 6.0);
                 }
 
                 THEN("the delegate should have been called")
                 {
                     REQUIRE(delegate->motionDidUpdateCalled == 1);
-                    REQUIRE(delegate->xformView->translationX() == 1.0);
-                    REQUIRE(delegate->xformView->translationY() == 2.0);
-                    REQUIRE(delegate->xformView->translationZ() == 3.0);
-                    REQUIRE(delegate->xformView->orientationX() == 4.0);
-                    REQUIRE(delegate->xformView->orientationY() == 5.0);
-                    REQUIRE(delegate->xformView->orientationZ() == 6.0);
+                    REQUIRE(delegate->xformView->translation.x == 1.0);
+                    REQUIRE(delegate->xformView->translation.y == 2.0);
+                    REQUIRE(delegate->xformView->translation.z == 3.0);
+                    REQUIRE(delegate->xformView->orientation.x == 4.0);
+                    REQUIRE(delegate->xformView->orientation.y == 5.0);
+                    REQUIRE(delegate->xformView->orientation.z == 6.0);
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 #include <indiemotion/_common.hpp>
 #include <indiemotion/errors.hpp>
+#include <indiemotion/motion/controller.hpp>
 #include <indiemotion/motion/xform.hpp>
 #include <indiemotion/server/server.hpp>
 #include <indiemotion/session/delegate.hpp>
@@ -21,10 +22,10 @@ namespace indiemotion::session
         friend class SessionManager;
 
     private:
-        std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
+        std::shared_ptr<SessionDelegate> _m_sessionDelegate = nullptr;
+        std::shared_ptr<motion::MotionController> _m_motionController = nullptr;
         std::shared_ptr<state::State> _m_state = nullptr;
         std::shared_ptr<motion::ModeController> _m_motionModeController = nullptr;
-        std::shared_ptr<motion::MotionXForm> _m_motionXForm = nullptr;
 
     public:
         // Default Constructor
@@ -34,10 +35,11 @@ namespace indiemotion::session
             _initializeMotion();
         };
 
-        Session(std::shared_ptr<SessionDelegate> delegate)
+        Session(std::shared_ptr<SessionDelegate> sessionDelegate, std::shared_ptr<motion::MotionDelegate> motionDelegate)
             : Session()
         {
-            _m_delegate = delegate;
+            _m_sessionDelegate = sessionDelegate;
+            _m_motionController->bindDelegate(motionDelegate);
         }
 
         // Copy the resource (copy constructor)
@@ -47,7 +49,7 @@ namespace indiemotion::session
         // Transfer Ownership (move constructor)
         Session(Session &&rhs) noexcept
         {
-            _m_delegate = std::exchange(rhs._m_delegate, nullptr);
+            _m_sessionDelegate = std::exchange(rhs._m_sessionDelegate, nullptr);
             _m_state = std::exchange(rhs._m_state, nullptr);
         }
 
@@ -70,7 +72,7 @@ namespace indiemotion::session
         void swap(Session &rhs) noexcept
         {
             using std::swap;
-            swap(_m_delegate, rhs._m_delegate);
+            swap(_m_sessionDelegate, rhs._m_sessionDelegate);
             swap(_m_state, rhs._m_state);
         }
 
@@ -79,9 +81,19 @@ namespace indiemotion::session
          * 
          * @param delegate 
          */
-        void bindDelegate(std::shared_ptr<SessionDelegate> delegate)
+        void bindSessionDelegate(std::shared_ptr<SessionDelegate> delegate)
         {
-            _m_delegate = delegate;
+            _m_sessionDelegate = delegate;
+        }
+
+        /**
+         * @brief Bind the delegate to the motion controller
+         * 
+         * @param delegate 
+         */
+        void bindMotionDelegate(std::shared_ptr<motion::MotionDelegate> delegate)
+        {
+            _m_motionController->bindDelegate(delegate);
         }
 
         /**
@@ -96,16 +108,16 @@ namespace indiemotion::session
                 indiemotion::API_VERSION,
                 FeatureSet(0)};
 
-            if (_m_delegate)
+            if (_m_sessionDelegate)
             {
-                _m_delegate->sessionWillInitialize();
+                _m_sessionDelegate->sessionWillInitialize();
 
-                if (auto name = _m_delegate->name())
+                if (auto name = _m_sessionDelegate->name())
                 {
                     properties.name = *name;
                 }
 
-                if (auto features = _m_delegate->supportedFeatures())
+                if (auto features = _m_sessionDelegate->supportedFeatures())
                 {
                     properties.features = *features;
                 }
@@ -134,12 +146,26 @@ namespace indiemotion::session
             return _m_state;
         }
 
+        /**
+         * @brief Return the current motion controller
+         * 
+         * @return std::shared_ptr<motion::MotionController> 
+         */
+        std::shared_ptr<motion::MotionController> motionController() const noexcept
+        {
+            return _m_motionController;
+        }
+
+        /**
+         * @brief Activate the current session
+         * 
+         */
         void activate()
         {
             _m_state->set(state::Key::Status, state::SessionStatus::Active);
-            if (_m_delegate)
+            if (_m_sessionDelegate)
             {
-                _m_delegate->sessionDidInitialize();
+                _m_sessionDelegate->sessionDidInitialize();
             }
         }
 
@@ -173,9 +199,9 @@ namespace indiemotion::session
         {
             _checkIsActive();
 
-            if (_m_delegate)
+            if (_m_sessionDelegate)
             {
-                return _m_delegate->cameras();
+                return _m_sessionDelegate->cameras();
             }
             else
             {
@@ -220,9 +246,9 @@ namespace indiemotion::session
                 break;
             }
 
-            if (_m_delegate)
+            if (_m_sessionDelegate)
             {
-                _m_delegate->motionModeDidUpdate(mode);
+                _m_sessionDelegate->motionModeDidUpdate(mode);
             }
         }
 
@@ -234,28 +260,10 @@ namespace indiemotion::session
         void update(std::unique_ptr<motion::MotionXForm> xform)
         {
             _checkIsActive();
-            _m_motionXForm = std::move(xform);
-
-            if (_m_delegate)
-            {
-                _m_delegate->motionDidUpdate(
-                    std::make_unique<motion::MotionXFormView>(_m_motionXForm));
-            }
+            _m_motionController->update(std::move(xform));
         }
 
-        /**
-         * @brief Returns a read-only view of the current transform
-         * 
-         * The MotionXFormView can be held onto and as the motion is update the 
-         * view will update as well.
-         * 
-         * @return motion::MotionXFormView 
-         */
-        std::unique_ptr<motion::MotionXFormView> motionView() const
-        {
-            return std::make_unique<motion::MotionXFormView>(_m_motionXForm);
-        }
-
+    private:
         /**
          * @brief Initialize the state object on this class
          * 
@@ -273,7 +281,7 @@ namespace indiemotion::session
         void _initializeMotion()
         {
             _m_motionModeController = motion::ModeController::create();
-            _m_motionXForm = motion::MotionXForm::zero();
+            _m_motionController = std::make_shared<motion::MotionController>();
         }
 
         void _checkIsActive() const

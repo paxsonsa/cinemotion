@@ -91,7 +91,7 @@ SCENARIO("Return a camera list")
         };
         auto delegate = std::make_shared<DummyDelegate>();
         auto manager = session::SessionManager();
-        manager.session()->bindDelegate(delegate);
+        manager.session()->bindSessionDelegate(delegate);
         manager.session()->activate();
 
         WHEN("the client requests a camera list,")
