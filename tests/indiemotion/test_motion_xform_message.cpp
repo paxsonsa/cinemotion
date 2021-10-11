@@ -38,3 +38,64 @@ SCENARIO("Inactive Session Fails to Update MotionXForm")
         }
     }
 }
+
+SCENARIO("Updating motion xform on active session")
+{
+
+    class DummyDelegate : public session::SessionDelegate
+    {
+    public:
+        std::unique_ptr<motion::MotionXFormView> xformView;
+        int motionDidUpdateCalled = 0;
+
+        void motionDidUpdate(std::unique_ptr<motion::MotionXFormView> xform)
+        {
+            xformView = std::move(xform);
+            motionDidUpdateCalled += 1;
+        }
+    };
+
+    GIVEN("an activated session")
+    {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto manager = session::SessionManager();
+        manager.session()->bindDelegate(delegate);
+
+        WHEN("the session is active")
+        {
+            manager.session()->activate();
+            REQUIRE(manager.session()->isActive());
+
+            AND_WHEN("the manager tries to process a position update message")
+            {
+                auto xform = indiemotion::motion::MotionXForm::zero();
+                xform->translation->x = 1.0;
+                xform->translation->y = 2.0;
+                xform->translation->z = 3.0;
+                xform->orientation->x = 4.0;
+                xform->orientation->y = 5.0;
+                xform->orientation->z = 6.0;
+                auto messagePtr = indiemotion::messages::motion::xform::Message::create(std::move(xform));
+
+                manager.processMessage(std::move(messagePtr));
+                auto curXformView = manager.session()->motionView();
+                THEN("the current xform should be updated")
+                {
+                    // TODO auto curXform = manager.session()->motionController()->currentXform();
+                    REQUIRE(curXformView->translationX() == 1.0);
+                    REQUIRE(curXformView->translationY() == 2.0);
+                    REQUIRE(curXformView->translationZ() == 3.0);
+                    REQUIRE(curXformView->orientationX() == 4.0);
+                    REQUIRE(curXformView->orientationY() == 5.0);
+                    REQUIRE(curXformView->orientationZ() == 6.0);
+                }
+
+                THEN("the delegate should have been called")
+                {
+                    REQUIRE(delegate->motionDidUpdateCalled == 1);
+                    REQUIRE(delegate->xformView == curXformView);
+                }
+            }
+        }
+    }
+}
