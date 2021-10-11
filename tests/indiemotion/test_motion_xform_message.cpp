@@ -93,7 +93,12 @@ SCENARIO("Updating motion xform on active session")
                 THEN("the delegate should have been called")
                 {
                     REQUIRE(delegate->motionDidUpdateCalled == 1);
-                    REQUIRE(delegate->xformView == curXformView);
+                    REQUIRE(delegate->xformView->translationX() == 1.0);
+                    REQUIRE(delegate->xformView->translationY() == 2.0);
+                    REQUIRE(delegate->xformView->translationZ() == 3.0);
+                    REQUIRE(delegate->xformView->orientationX() == 4.0);
+                    REQUIRE(delegate->xformView->orientationY() == 5.0);
+                    REQUIRE(delegate->xformView->orientationZ() == 6.0);
                 }
             }
         }

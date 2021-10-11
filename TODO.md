@@ -1,5 +1,5 @@
-- Update Motion Modes Messages
+- Test MotionView Maintains View between changes
+- Delegate should be given a MotionView once and then the motion view is in charge of emitting change events.
 - RESET Message
-- Create Motion Messages
 - Generate Track Manager
 - Add CMake CI (macOS/Linux)
