@@ -45,6 +45,14 @@ namespace indiemotion::session
             return std::nullopt;
         }
 
+        /**
+         * @brief Return the current list of camera names
+         * 
+         * This is called by the session when it needs to get a list of 
+         * the available cameras in the scene.
+         * 
+         * @return std::vector<std::string> 
+         */
         virtual std::vector<std::string> cameras()
         {
             return std::vector<std::string>();
@@ -56,5 +64,14 @@ namespace indiemotion::session
          * @param newMode 
          */
         virtual void motionModeDidUpdate(motion::ModeValue newMode) {}
+
+        /**
+         * @brief Called whenever the motion xform is update by the client.
+         * 
+         * use this to respond to changes in the motion of the client.
+         * 
+         * @param xform 
+         */
+        virtual void motionDidUpdate(motion::MotionXFormView xform) {}
     };
 }
