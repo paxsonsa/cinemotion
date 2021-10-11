@@ -231,7 +231,7 @@ namespace indiemotion::session
          * 
          * @param xform 
          */
-        void updateMotionXForm(std::unique_ptr<motion::MotionXForm> xform)
+        void update(std::unique_ptr<motion::MotionXForm> xform)
         {
             _checkIsActive();
             _m_motionXForm = std::move(xform);
