@@ -65,7 +65,7 @@ namespace indiemotion::messages::motion::xform
             auto message = static_unique_pointer_cast<Message>(std::move(messagePtr));
             if (auto session = sessionPtr.lock())
             {
-                session->updateMotionXForm(std::move(message->xform()));
+                session->update(std::move(message->xform()));
             }
             return {};
         }
