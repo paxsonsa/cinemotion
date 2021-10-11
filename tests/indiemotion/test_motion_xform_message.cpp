@@ -5,7 +5,6 @@
 
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../fixtures/managerFixtures.hpp"
 #include <doctest.h>
 
 #include <indiemotion/_common.hpp>
