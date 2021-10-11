@@ -8,14 +8,15 @@ namespace indiemotion::messages
     /**
          * @brief Represents the kind of messages available
          */
-    static constexpr std::int32_t KindCount = 4; // This count should equal count below
+    static constexpr std::int32_t KindCount = 5; // This count should equal count below
     enum class Kind : std::int32_t
     {
         Acknowledgment = 0,
         // Error = 1,
         ListCameras,
         MotionSetMode,
-        MotionGetMode
+        MotionGetMode,
+        MotionXForm,
     };
 
     struct KindNames
@@ -24,6 +25,7 @@ namespace indiemotion::messages
         inline static const std::string ListCameras = "ListCameras";
         inline static const std::string MotionSetMode = "MotionSetMode";
         inline static const std::string MotionGetMode = "MotionGetMode";
+        inline static const std::string MotionXForm = "MotionXForm";
     };
 
     /**
@@ -48,6 +50,9 @@ namespace indiemotion::messages
 
         case Kind::MotionGetMode:
             return KindNames::MotionGetMode;
+
+        case Kind::MotionXForm:
+            return KindNames::MotionXForm;
         }
     }
 }

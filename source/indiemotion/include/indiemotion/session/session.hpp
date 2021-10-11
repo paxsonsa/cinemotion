@@ -174,6 +174,7 @@ namespace indiemotion::session
         {
             return _m_motionModeController->current();
         }
+
         void updateMotionMode(motion::ModeValue mode)
         {
             if (_m_motionModeController->current() == mode)
@@ -196,7 +197,10 @@ namespace indiemotion::session
                 break;
             }
 
-            _m_delegate->motionModeDidUpdate(mode);
+            if (_m_delegate)
+            {
+                _m_delegate->motionModeDidUpdate(mode);
+            }
         }
 
     private:

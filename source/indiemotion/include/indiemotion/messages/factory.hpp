@@ -33,6 +33,7 @@ namespace indiemotion::messages::handling
             _m_ptr_table[to_underlying(Kind::ListCameras)] = _construct<listCameras::Handler>();
             _m_ptr_table[to_underlying(Kind::MotionGetMode)] = _construct<motion::get_mode::Handler>();
             _m_ptr_table[to_underlying(Kind::MotionSetMode)] = _construct<motion::set_mode::Handler>();
+            _m_ptr_table[to_underlying(Kind::MotionXForm)] = _construct<motion::xform::Handler>();
         };
 
         std::shared_ptr<Handler> makeHandler(Kind kind)
