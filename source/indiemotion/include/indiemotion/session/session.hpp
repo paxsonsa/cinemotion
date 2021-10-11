@@ -2,7 +2,7 @@
 
 #include <indiemotion/_common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/motion/position.hpp>
+#include <indiemotion/motion/xform.hpp>
 #include <indiemotion/server/server.hpp>
 #include <indiemotion/session/delegate.hpp>
 #include <indiemotion/session/motion_mode.hpp>

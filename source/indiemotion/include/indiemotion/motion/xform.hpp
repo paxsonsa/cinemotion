@@ -15,10 +15,16 @@ namespace indiemotion::motion
 
         static std::unique_ptr<_XYZContainer> zero()
         {
+            auto ctn = _XYZContainer::create(0, 0, 0);
+            return ctn;
+        }
+
+        static std::unique_ptr<_XYZContainer> create(double x, double y, double z)
+        {
             auto ctn = std::make_unique<_XYZContainer>();
-            ctn->x = 0;
-            ctn->y = 0;
-            ctn->z = 0;
+            ctn->x = x;
+            ctn->y = y;
+            ctn->z = z;
             return ctn;
         }
     };
@@ -36,6 +42,15 @@ namespace indiemotion::motion
             auto ptr = std::make_unique<MotionXForm>();
             ptr->translation = std::move(MotionTranslation::zero());
             ptr->orientation = std::move(MotionOrientation::zero());
+            return ptr;
+        }
+
+        static std::unique_ptr<MotionXForm> create(double tx, double ty, double tz,
+                                                   double ox, double oy, double oz)
+        {
+            auto ptr = std::make_unique<MotionXForm>();
+            ptr->translation = MotionTranslation::create(tx, ty, tz);
+            ptr->orientation = MotionOrientation::create(ox, oy, oz);
             return ptr;
         }
     };

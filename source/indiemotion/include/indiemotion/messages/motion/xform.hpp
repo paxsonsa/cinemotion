@@ -5,7 +5,7 @@
 #include <indiemotion/_common.hpp>
 #include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
-#include <indiemotion/motion/position.hpp>
+#include <indiemotion/motion/xform.hpp>
 #include <indiemotion/responses/responses.hpp>
 
 namespace indiemotion::messages::motion::xform
