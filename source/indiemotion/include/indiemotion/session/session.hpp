@@ -2,6 +2,7 @@
 
 #include <indiemotion/_common.hpp>
 #include <indiemotion/errors.hpp>
+#include <indiemotion/motion/position.hpp>
 #include <indiemotion/server/server.hpp>
 #include <indiemotion/session/delegate.hpp>
 #include <indiemotion/session/motion_mode.hpp>
@@ -151,11 +152,22 @@ namespace indiemotion::session
             return _m_state->get<state::SessionStatus>(state::Key::Status);
         }
 
+        /**
+         * @brief Return whether the current session is active
+         * 
+         * @return true 
+         * @return false 
+         */
         bool isActive() const noexcept
         {
             return _m_state->get<state::SessionStatus>(state::Key::Status) == state::SessionStatus::Active;
         }
 
+        /**
+         * @brief Return the current list of camera names
+         * 
+         * @return std::vector<std::string> 
+         */
         std::vector<std::string> cameras() const
         {
             _checkIsActive();
@@ -170,11 +182,21 @@ namespace indiemotion::session
             }
         }
 
+        /**
+         * @brief Returns the current motion mode set in this session
+         * 
+         * @return motion::ModeValue 
+         */
         motion::ModeValue motionMode() const
         {
             return _m_motionModeController->current();
         }
 
+        /**
+         * @brief Update the current mode to the given on
+         * 
+         * @param mode 
+         */
         void updateMotionMode(motion::ModeValue mode)
         {
             if (_m_motionModeController->current() == mode)
@@ -203,7 +225,16 @@ namespace indiemotion::session
             }
         }
 
-    private:
+        /**
+         * @brief Update the current motion transform
+         * 
+         * @param xform 
+         */
+        void updateMotionXForm(std::unique_ptr<motion::MotionXForm> xform)
+        {
+            _checkIsActive();
+        }
+
         /**
          * @brief Initialize the state object on this class
          * 
@@ -214,6 +245,10 @@ namespace indiemotion::session
             _m_state->set(state::Key::Status, state::SessionStatus::Inactive);
         }
 
+        /**
+         * @brief Initialize the Motion Mode for the Session
+         * 
+         */
         void _initializeMotionModeController()
         {
             _m_motionModeController = motion::ModeController::create();
@@ -225,7 +260,7 @@ namespace indiemotion::session
             {
                 throw indiemotion::errors::SessionError(
                     "com.indiemotion.error.sessionNotInitialized",
-                    "session cannot process messages unti it is activated.");
+                    "session cannot perform action until the session is activated.");
             }
         }
     };
