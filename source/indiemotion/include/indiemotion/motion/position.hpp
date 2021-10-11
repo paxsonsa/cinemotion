@@ -76,5 +76,15 @@ namespace indiemotion::motion
         {
             return _m_xform->orientation->z;
         }
+
+        MotionTranslation translation()
+        {
+            return *(_m_xform->translation);
+        }
+
+        MotionOrientation orientation()
+        {
+            return *(_m_xform->orientation);
+        }
     };
 }
