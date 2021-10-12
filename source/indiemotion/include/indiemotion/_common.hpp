@@ -11,11 +11,16 @@ Header for providing common include across the library
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <type_traits>
 
 #include <boost/format.hpp>
+#include <fmt/core.h>
 #include <spdlog/spdlog.h>
+
+#include <indiemotion/common/boost.hpp>
+#include <indiemotion/common/log.hpp>
 
 template <typename TO, typename FROM>
 std::unique_ptr<TO> static_unique_pointer_cast(std::unique_ptr<FROM> &&old)
