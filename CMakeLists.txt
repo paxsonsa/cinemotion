@@ -76,6 +76,9 @@ if(Boost_FOUND)
     message("Found Boost: ${Boost_LIBRARY_DIRS}")
 endif()
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+
 # -----------------------------------------------------------------------------
 # Libraries and Executables
 # -----------------------------------------------------------------------------

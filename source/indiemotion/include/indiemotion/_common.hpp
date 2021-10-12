@@ -22,6 +22,8 @@ Header for providing common include across the library
 #include <indiemotion/common/boost.hpp>
 #include <indiemotion/common/log.hpp>
 
+#include <indiemotion-protobufs/messages.pb.h>
+
 template <typename TO, typename FROM>
 std::unique_ptr<TO> static_unique_pointer_cast(std::unique_ptr<FROM> &&old)
 {

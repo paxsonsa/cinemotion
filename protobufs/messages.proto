@@ -1,0 +1,56 @@
+syntax = "proto3";
+package indiemotion.protobuf.messages;
+
+import "google/protobuf/timestamp.proto";
+
+message Header {
+  google.protobuf.Timestamp timestamp = 1;
+  string id = 2;
+  optional string responseId = 3;
+}
+
+message ClientMessage {
+  Header header = 1;
+  oneof payload {
+    Acknowledge acknowledge = 20;
+    ListCameras list_cameras = 30;
+    MotionSetMode motion_set_mode = 40;
+    MotionGetMode motion_get_mode = 50;
+    MotionXForm motion_xform = 60;
+  }
+}
+
+message Acknowledge {
+  bool ok = 1;
+  optional string message = 2;
+}
+
+message ListCameras {}
+
+message MotionSetMode {
+  enum Mode {
+    Off = 0;
+    Live = 1;
+    Recording = 2;
+  }
+  Mode mode = 1;
+}
+
+message MotionGetMode {}
+
+message XFormTranslation {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message XFormOrientation {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message MotionXForm {
+  XFormTranslation translation = 1;
+  XFormOrientation orientation = 2;
+}
