@@ -1,0 +1,13 @@
+syntax = "proto3";
+package indiemotion.messages;
+
+message MotionSetMode {
+  enum Mode {
+    Off = 0;
+    Live = 1;
+    Recording = 2;
+  }
+  Mode mode = 1;
+}
+
+message MotionGetMode {}

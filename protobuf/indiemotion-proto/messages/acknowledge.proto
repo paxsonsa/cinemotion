@@ -1,0 +1,7 @@
+syntax = "proto3";
+package indiemotion.messages;
+
+message Acknowledge {
+  bool ok = 1;
+  optional string message = 2;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+package indiemotion.messages;
+
+import "google/protobuf/timestamp.proto";
+
+import "indiemotion-proto/messages/acknowledge.proto";
+import "indiemotion-proto/messages/cameras.proto";
+import "indiemotion-proto/messages/motion_mode.proto";
+import "indiemotion-proto/messages/motion_xform.proto";
+
+message Header {
+  google.protobuf.Timestamp timestamp = 1;
+  string id = 2;
+  optional string responseId = 3;
+}
+
+message ClientMessage {
+  Header header = 1;
+  oneof payload {
+    indiemotion.messages.Acknowledge acknowledge = 20;
+    indiemotion.messages.ListCameras list_cameras = 30;
+    indiemotion.messages.MotionSetMode motion_set_mode = 40;
+    indiemotion.messages.MotionGetMode motion_get_mode = 50;
+    indiemotion.messages.MotionXForm motion_xform = 60;
+  }
+}
