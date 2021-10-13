@@ -21,7 +21,7 @@ message ClientMessage {
 }
 
 message Acknowledge {
-  bool ok = 1;
+  bool ok = 1 [ default = true ];
   optional string message = 2;
 }
 
