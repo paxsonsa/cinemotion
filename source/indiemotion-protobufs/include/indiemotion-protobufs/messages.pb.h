@@ -33,7 +33,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/timestamp.pb.h>
+#include "transports.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_messages_2eproto
@@ -49,7 +49,7 @@ struct TableStruct_messages_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -65,9 +65,6 @@ extern AcknowledgeDefaultTypeInternal _Acknowledge_default_instance_;
 class ClientMessage;
 struct ClientMessageDefaultTypeInternal;
 extern ClientMessageDefaultTypeInternal _ClientMessage_default_instance_;
-class Header;
-struct HeaderDefaultTypeInternal;
-extern HeaderDefaultTypeInternal _Header_default_instance_;
 class ListCameras;
 struct ListCamerasDefaultTypeInternal;
 extern ListCamerasDefaultTypeInternal _ListCameras_default_instance_;
@@ -92,7 +89,6 @@ extern XFormTranslationDefaultTypeInternal _XFormTranslation_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::indiemotion::protobuf::messages::Acknowledge* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::Acknowledge>(Arena*);
 template<> ::indiemotion::protobuf::messages::ClientMessage* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::ClientMessage>(Arena*);
-template<> ::indiemotion::protobuf::messages::Header* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::Header>(Arena*);
 template<> ::indiemotion::protobuf::messages::ListCameras* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::ListCameras>(Arena*);
 template<> ::indiemotion::protobuf::messages::MotionGetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::MotionGetMode>(Arena*);
 template<> ::indiemotion::protobuf::messages::MotionSetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::MotionSetMode>(Arena*);
@@ -131,198 +127,6 @@ inline bool MotionSetMode_Mode_Parse(
     MotionSetMode_Mode_descriptor(), name, value);
 }
 // ===================================================================
-
-class Header final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.Header) */ {
- public:
-  inline Header() : Header(nullptr) {}
-  ~Header() override;
-  explicit constexpr Header(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  Header(const Header& from);
-  Header(Header&& from) noexcept
-    : Header() {
-    *this = ::std::move(from);
-  }
-
-  inline Header& operator=(const Header& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Header& operator=(Header&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Header& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const Header* internal_default_instance() {
-    return reinterpret_cast<const Header*>(
-               &_Header_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    0;
-
-  friend void swap(Header& a, Header& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(Header* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Header* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  Header* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Header>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Header& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const Header& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  uint8_t* _InternalSerialize(
-      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(Header* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "indiemotion.protobuf.messages.Header";
-  }
-  protected:
-  explicit Header(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kIdFieldNumber = 2,
-    kResponseIdFieldNumber = 3,
-    kTimestampFieldNumber = 1,
-  };
-  // string id = 2;
-  void clear_id();
-  const std::string& id() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_id(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_id();
-  PROTOBUF_NODISCARD std::string* release_id();
-  void set_allocated_id(std::string* id);
-  private:
-  const std::string& _internal_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
-  std::string* _internal_mutable_id();
-  public:
-
-  // optional string responseId = 3;
-  bool has_responseid() const;
-  private:
-  bool _internal_has_responseid() const;
-  public:
-  void clear_responseid();
-  const std::string& responseid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_responseid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_responseid();
-  PROTOBUF_NODISCARD std::string* release_responseid();
-  void set_allocated_responseid(std::string* responseid);
-  private:
-  const std::string& _internal_responseid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_responseid(const std::string& value);
-  std::string* _internal_mutable_responseid();
-  public:
-
-  // .google.protobuf.Timestamp timestamp = 1;
-  bool has_timestamp() const;
-  private:
-  bool _internal_has_timestamp() const;
-  public:
-  void clear_timestamp();
-  const ::PROTOBUF_NAMESPACE_ID::Timestamp& timestamp() const;
-  PROTOBUF_NODISCARD ::PROTOBUF_NAMESPACE_ID::Timestamp* release_timestamp();
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_timestamp();
-  void set_allocated_timestamp(::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp);
-  private:
-  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_timestamp() const;
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_timestamp();
-  public:
-  void unsafe_arena_set_allocated_timestamp(
-      ::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp);
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_timestamp();
-
-  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.Header)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr responseid_;
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp_;
-  friend struct ::TableStruct_messages_2eproto;
-};
-// -------------------------------------------------------------------
 
 class ClientMessage final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.ClientMessage) */ {
@@ -381,7 +185,7 @@ class ClientMessage final :
                &_ClientMessage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    0;
 
   friend void swap(ClientMessage& a, ClientMessage& b) {
     a.Swap(&b);
@@ -462,23 +266,23 @@ class ClientMessage final :
     kMotionGetModeFieldNumber = 50,
     kMotionXformFieldNumber = 60,
   };
-  // .indiemotion.protobuf.messages.Header header = 1;
+  // .indiemotion.protobuf.transport.Header header = 1;
   bool has_header() const;
   private:
   bool _internal_has_header() const;
   public:
   void clear_header();
-  const ::indiemotion::protobuf::messages::Header& header() const;
-  PROTOBUF_NODISCARD ::indiemotion::protobuf::messages::Header* release_header();
-  ::indiemotion::protobuf::messages::Header* mutable_header();
-  void set_allocated_header(::indiemotion::protobuf::messages::Header* header);
+  const ::indiemotion::protobuf::transport::Header& header() const;
+  PROTOBUF_NODISCARD ::indiemotion::protobuf::transport::Header* release_header();
+  ::indiemotion::protobuf::transport::Header* mutable_header();
+  void set_allocated_header(::indiemotion::protobuf::transport::Header* header);
   private:
-  const ::indiemotion::protobuf::messages::Header& _internal_header() const;
-  ::indiemotion::protobuf::messages::Header* _internal_mutable_header();
+  const ::indiemotion::protobuf::transport::Header& _internal_header() const;
+  ::indiemotion::protobuf::transport::Header* _internal_mutable_header();
   public:
   void unsafe_arena_set_allocated_header(
-      ::indiemotion::protobuf::messages::Header* header);
-  ::indiemotion::protobuf::messages::Header* unsafe_arena_release_header();
+      ::indiemotion::protobuf::transport::Header* header);
+  ::indiemotion::protobuf::transport::Header* unsafe_arena_release_header();
 
   // .indiemotion.protobuf.messages.Acknowledge acknowledge = 20;
   bool has_acknowledge() const;
@@ -587,7 +391,7 @@ class ClientMessage final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::indiemotion::protobuf::messages::Header* header_;
+  ::indiemotion::protobuf::transport::Header* header_;
   union PayloadUnion {
     constexpr PayloadUnion() : _constinit_{} {}
       ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
@@ -652,7 +456,7 @@ class Acknowledge final :
                &_Acknowledge_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    1;
 
   friend void swap(Acknowledge& a, Acknowledge& b) {
     a.Swap(&b);
@@ -818,7 +622,7 @@ class ListCameras final :
                &_ListCameras_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    2;
 
   friend void swap(ListCameras& a, ListCameras& b) {
     a.Swap(&b);
@@ -937,7 +741,7 @@ class MotionSetMode final :
                &_MotionSetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    3;
 
   friend void swap(MotionSetMode& a, MotionSetMode& b) {
     a.Swap(&b);
@@ -1114,7 +918,7 @@ class MotionGetMode final :
                &_MotionGetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    4;
 
   friend void swap(MotionGetMode& a, MotionGetMode& b) {
     a.Swap(&b);
@@ -1233,7 +1037,7 @@ class XFormTranslation final :
                &_XFormTranslation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    5;
 
   friend void swap(XFormTranslation& a, XFormTranslation& b) {
     a.Swap(&b);
@@ -1401,7 +1205,7 @@ class XFormOrientation final :
                &_XFormOrientation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    6;
 
   friend void swap(XFormOrientation& a, XFormOrientation& b) {
     a.Swap(&b);
@@ -1569,7 +1373,7 @@ class MotionXForm final :
                &_MotionXForm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    7;
 
   friend void swap(MotionXForm& a, MotionXForm& b) {
     a.Swap(&b);
@@ -1703,242 +1507,26 @@ class MotionXForm final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// Header
-
-// .google.protobuf.Timestamp timestamp = 1;
-inline bool Header::_internal_has_timestamp() const {
-  return this != internal_default_instance() && timestamp_ != nullptr;
-}
-inline bool Header::has_timestamp() const {
-  return _internal_has_timestamp();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& Header::_internal_timestamp() const {
-  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = timestamp_;
-  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
-      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
-}
-inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& Header::timestamp() const {
-  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Header.timestamp)
-  return _internal_timestamp();
-}
-inline void Header::unsafe_arena_set_allocated_timestamp(
-    ::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(timestamp_);
-  }
-  timestamp_ = timestamp;
-  if (timestamp) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.Header.timestamp)
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* Header::release_timestamp() {
-  
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = timestamp_;
-  timestamp_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* Header::unsafe_arena_release_timestamp() {
-  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Header.timestamp)
-  
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = timestamp_;
-  timestamp_ = nullptr;
-  return temp;
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* Header::_internal_mutable_timestamp() {
-  
-  if (timestamp_ == nullptr) {
-    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
-    timestamp_ = p;
-  }
-  return timestamp_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* Header::mutable_timestamp() {
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_timestamp();
-  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Header.timestamp)
-  return _msg;
-}
-inline void Header::set_allocated_timestamp(::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(timestamp_);
-  }
-  if (timestamp) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
-            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(timestamp));
-    if (message_arena != submessage_arena) {
-      timestamp = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, timestamp, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  timestamp_ = timestamp;
-  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.Header.timestamp)
-}
-
-// string id = 2;
-inline void Header::clear_id() {
-  id_.ClearToEmpty();
-}
-inline const std::string& Header::id() const {
-  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Header.id)
-  return _internal_id();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Header::set_id(ArgT0&& arg0, ArgT... args) {
- 
- id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.Header.id)
-}
-inline std::string* Header::mutable_id() {
-  std::string* _s = _internal_mutable_id();
-  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Header.id)
-  return _s;
-}
-inline const std::string& Header::_internal_id() const {
-  return id_.Get();
-}
-inline void Header::_internal_set_id(const std::string& value) {
-  
-  id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* Header::_internal_mutable_id() {
-  
-  return id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* Header::release_id() {
-  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Header.id)
-  return id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void Header::set_allocated_id(std::string* id) {
-  if (id != nullptr) {
-    
-  } else {
-    
-  }
-  id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id,
-      GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (id_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.Header.id)
-}
-
-// optional string responseId = 3;
-inline bool Header::_internal_has_responseid() const {
-  bool value = (_has_bits_[0] & 0x00000001u) != 0;
-  return value;
-}
-inline bool Header::has_responseid() const {
-  return _internal_has_responseid();
-}
-inline void Header::clear_responseid() {
-  responseid_.ClearToEmpty();
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline const std::string& Header::responseid() const {
-  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Header.responseId)
-  return _internal_responseid();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Header::set_responseid(ArgT0&& arg0, ArgT... args) {
- _has_bits_[0] |= 0x00000001u;
- responseid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.Header.responseId)
-}
-inline std::string* Header::mutable_responseid() {
-  std::string* _s = _internal_mutable_responseid();
-  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Header.responseId)
-  return _s;
-}
-inline const std::string& Header::_internal_responseid() const {
-  return responseid_.Get();
-}
-inline void Header::_internal_set_responseid(const std::string& value) {
-  _has_bits_[0] |= 0x00000001u;
-  responseid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* Header::_internal_mutable_responseid() {
-  _has_bits_[0] |= 0x00000001u;
-  return responseid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* Header::release_responseid() {
-  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Header.responseId)
-  if (!_internal_has_responseid()) {
-    return nullptr;
-  }
-  _has_bits_[0] &= ~0x00000001u;
-  auto* p = responseid_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (responseid_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    responseid_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  return p;
-}
-inline void Header::set_allocated_responseid(std::string* responseid) {
-  if (responseid != nullptr) {
-    _has_bits_[0] |= 0x00000001u;
-  } else {
-    _has_bits_[0] &= ~0x00000001u;
-  }
-  responseid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), responseid,
-      GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (responseid_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    responseid_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.Header.responseId)
-}
-
-// -------------------------------------------------------------------
-
 // ClientMessage
 
-// .indiemotion.protobuf.messages.Header header = 1;
+// .indiemotion.protobuf.transport.Header header = 1;
 inline bool ClientMessage::_internal_has_header() const {
   return this != internal_default_instance() && header_ != nullptr;
 }
 inline bool ClientMessage::has_header() const {
   return _internal_has_header();
 }
-inline void ClientMessage::clear_header() {
-  if (GetArenaForAllocation() == nullptr && header_ != nullptr) {
-    delete header_;
-  }
-  header_ = nullptr;
+inline const ::indiemotion::protobuf::transport::Header& ClientMessage::_internal_header() const {
+  const ::indiemotion::protobuf::transport::Header* p = header_;
+  return p != nullptr ? *p : reinterpret_cast<const ::indiemotion::protobuf::transport::Header&>(
+      ::indiemotion::protobuf::transport::_Header_default_instance_);
 }
-inline const ::indiemotion::protobuf::messages::Header& ClientMessage::_internal_header() const {
-  const ::indiemotion::protobuf::messages::Header* p = header_;
-  return p != nullptr ? *p : reinterpret_cast<const ::indiemotion::protobuf::messages::Header&>(
-      ::indiemotion::protobuf::messages::_Header_default_instance_);
-}
-inline const ::indiemotion::protobuf::messages::Header& ClientMessage::header() const {
+inline const ::indiemotion::protobuf::transport::Header& ClientMessage::header() const {
   // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.ClientMessage.header)
   return _internal_header();
 }
 inline void ClientMessage::unsafe_arena_set_allocated_header(
-    ::indiemotion::protobuf::messages::Header* header) {
+    ::indiemotion::protobuf::transport::Header* header) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(header_);
   }
@@ -1950,9 +1538,9 @@ inline void ClientMessage::unsafe_arena_set_allocated_header(
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.ClientMessage.header)
 }
-inline ::indiemotion::protobuf::messages::Header* ClientMessage::release_header() {
+inline ::indiemotion::protobuf::transport::Header* ClientMessage::release_header() {
   
-  ::indiemotion::protobuf::messages::Header* temp = header_;
+  ::indiemotion::protobuf::transport::Header* temp = header_;
   header_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -1965,34 +1553,36 @@ inline ::indiemotion::protobuf::messages::Header* ClientMessage::release_header(
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::indiemotion::protobuf::messages::Header* ClientMessage::unsafe_arena_release_header() {
+inline ::indiemotion::protobuf::transport::Header* ClientMessage::unsafe_arena_release_header() {
   // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.ClientMessage.header)
   
-  ::indiemotion::protobuf::messages::Header* temp = header_;
+  ::indiemotion::protobuf::transport::Header* temp = header_;
   header_ = nullptr;
   return temp;
 }
-inline ::indiemotion::protobuf::messages::Header* ClientMessage::_internal_mutable_header() {
+inline ::indiemotion::protobuf::transport::Header* ClientMessage::_internal_mutable_header() {
   
   if (header_ == nullptr) {
-    auto* p = CreateMaybeMessage<::indiemotion::protobuf::messages::Header>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::indiemotion::protobuf::transport::Header>(GetArenaForAllocation());
     header_ = p;
   }
   return header_;
 }
-inline ::indiemotion::protobuf::messages::Header* ClientMessage::mutable_header() {
-  ::indiemotion::protobuf::messages::Header* _msg = _internal_mutable_header();
+inline ::indiemotion::protobuf::transport::Header* ClientMessage::mutable_header() {
+  ::indiemotion::protobuf::transport::Header* _msg = _internal_mutable_header();
   // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.ClientMessage.header)
   return _msg;
 }
-inline void ClientMessage::set_allocated_header(::indiemotion::protobuf::messages::Header* header) {
+inline void ClientMessage::set_allocated_header(::indiemotion::protobuf::transport::Header* header) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete header_;
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(header_);
   }
   if (header) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::indiemotion::protobuf::messages::Header>::GetOwningArena(header);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(header));
     if (message_arena != submessage_arena) {
       header = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, header, submessage_arena);
@@ -2824,8 +2414,6 @@ inline void MotionXForm::set_allocated_orientation(::indiemotion::protobuf::mess
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
