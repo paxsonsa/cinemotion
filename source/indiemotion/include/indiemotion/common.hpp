@@ -20,6 +20,7 @@ Header for providing common include across the library
 #include <spdlog/spdlog.h>
 
 #include <indiemotion/common/boost.hpp>
+#include <indiemotion/common/info.hpp>
 #include <indiemotion/common/log.hpp>
 
 template <typename TO, typename FROM>

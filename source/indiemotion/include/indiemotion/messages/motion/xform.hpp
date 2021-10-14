@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* motion_modes.hpp */
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
 #include <indiemotion/motion/xform.hpp>

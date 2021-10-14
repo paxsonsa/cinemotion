@@ -4,9 +4,9 @@
 namespace indiemotion::session
 {
 
-    typedef uint8_t FeatureSet;
+    typedef uint32_t FeatureSet;
 
-    enum class Features: uint8_t
+    enum class Features: uint32_t
     {
         VideoStreaming = 0x01,
         TrackHistory = 0x02,

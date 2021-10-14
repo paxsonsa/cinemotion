@@ -6,7 +6,7 @@
 #pragma once
 #include <boost/asio.hpp>
 
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 namespace indiemotion::server

@@ -3,7 +3,7 @@
 /* test_motion_controller.hpp */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/motion.hpp>
 
 SCENARIO("Motion transforms are updated")

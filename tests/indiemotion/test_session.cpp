@@ -5,7 +5,7 @@
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/session.hpp>
 
 using namespace indiemotion;
@@ -14,9 +14,9 @@ TEST_SUITE("test session")
 {
     SCENARIO("Initialize a session")
     {
-        struct SpySessionDelegate: public session::SessionDelegate
+        struct SpySessionDelegate : public session::SessionDelegate
         {
-            
+
             std::string m_name = "testname";
             session::FeatureSet m_features = session::FeatureSet(session::Features::VideoStreaming);
 
@@ -62,7 +62,7 @@ TEST_SUITE("test session")
 
                 THEN("the delegate's session will initialized method is called")
                 {
-                    REQUIRE(delegateSpy ->sessionWillInitializeCalled == 1);
+                    REQUIRE(delegateSpy->sessionWillInitializeCalled == 1);
                 }
 
                 THEN("the session properties should be configured in the state using the delegates input.")

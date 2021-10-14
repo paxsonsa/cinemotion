@@ -1,6 +1,6 @@
 #pragma once
 
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/motion/controller.hpp>
 #include <indiemotion/motion/xform.hpp>
@@ -10,6 +10,7 @@
 #include <indiemotion/session/properties.hpp>
 #include <indiemotion/session/state.hpp>
 #include <indiemotion/version.hpp>
+
 namespace indiemotion::session
 {
 

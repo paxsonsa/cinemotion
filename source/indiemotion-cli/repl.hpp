@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <replxx.h>
 
 class ReplWriter

@@ -3,7 +3,7 @@
 /* motion_state.hpp */
 #pragma once
 
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 
 namespace indiemotion::motion
 {

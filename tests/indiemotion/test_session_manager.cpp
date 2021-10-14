@@ -5,7 +5,7 @@
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/messages/messages.hpp>
 #include <indiemotion/responses/responses.hpp>

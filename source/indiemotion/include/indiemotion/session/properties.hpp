@@ -1,21 +1,18 @@
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/session/features.hpp>
 
-namespace indiemotion::session 
+namespace indiemotion::session
 {
-    struct Properties {
+    struct Properties
+    {
         std::string name;
         std::string apiVersion;
         FeatureSet features;
 
         Properties() = default;
-        Properties(std::string name, 
-                          std::string apiVersion, 
-                          session::FeatureSet features):
-            name(name), apiVersion(apiVersion), features(features) {}
-
-        
-
+        Properties(std::string name,
+                   std::string apiVersion,
+                   session::FeatureSet features) : name(name), apiVersion(apiVersion), features(features) {}
     };
 }

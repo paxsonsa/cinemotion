@@ -1,6 +1,6 @@
 #pragma once
 
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/messages/messages.hpp>
 
 namespace indiemotion::server

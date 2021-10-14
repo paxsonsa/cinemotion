@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* listener.hpp */
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/server/connection.hpp>
 
 #include <boost/asio/dispatch.hpp>

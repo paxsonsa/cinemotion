@@ -1,7 +1,7 @@
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 
-namespace indiemotion::properties 
+namespace indiemotion::properties
 {
     struct ClientProperties
     {
@@ -11,7 +11,6 @@ namespace indiemotion::properties
 
         ClientProperties() {}
 
-        ClientProperties(std::string name, std::string deviceID, std::vector<std::string> supportedAPIVersions): 
-            name(name), deviceID(deviceID), supportedAPIVersions(supportedAPIVersions) {}
+        ClientProperties(std::string name, std::string deviceID, std::vector<std::string> supportedAPIVersions) : name(name), deviceID(deviceID), supportedAPIVersions(supportedAPIVersions) {}
     };
 }

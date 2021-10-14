@@ -3,24 +3,48 @@ file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/indiemotion/*.cpp)
 foreach(item ${TEST_FILES})
     get_filename_component(name ${item} NAME_WE)
     add_executable(${name} ${item})
-    target_link_libraries(${name}  PUBLIC indiemotion doctest::doctest)
+    target_link_libraries(${name}
+    #PUBLIC # Useful for libraries, see https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html for more details about transitive usage requirements.
+        #libraries/targets to link when linking this library
+        #this will automatically setup the needed flags and dependencies when linking against this target
+    PRIVATE # The following libraries are only linked for this target, and its flags/dependencies will not be used when linking against this target
+        indiemotion
+
+        doctest::doctest
+        #debug DEBUGLIBS
+        #optimized RELEASELIBS
+)
     message("adding ${name}")
     add_test(
-        NAME IDM.${name} 
+        NAME IndieMotion.${name} 
         COMMAND ${name} ${TEST_RUNNER_PARAMS}
     )
     target_compile_features(${name}  PRIVATE cxx_std_17)
+    # target_set_warnings(${name} DISABLE deprecated-declarations)
+    target_set_warnings(${name} ENABLE pedantic unused DISABLE deprecated-declarations)
 endforeach()
 
 file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/indiemotion/**/*.cpp)
 foreach(item ${TEST_FILES})
     get_filename_component(name ${item} NAME_WE)
     add_executable(${name} ${item})
-    target_link_libraries(${name}  PUBLIC indiemotion doctest::doctest)
+    target_link_libraries(${name}
+        #PUBLIC # Useful for libraries, see https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html for more details about transitive usage requirements.
+            #libraries/targets to link when linking this library
+            #this will automatically setup the needed flags and dependencies when linking against this target
+        PRIVATE # The following libraries are only linked for this target, and its flags/dependencies will not be used when linking against this target
+            indiemotion
+
+            doctest::doctest
+            #debug DEBUGLIBS
+            #optimized RELEASELIBS
+    )
     message("adding ${name}")
     add_test(
-        NAME IDM.${name} 
+        NAME IndieMotion.${name} 
         COMMAND ${name} ${TEST_RUNNER_PARAMS}
     )
     target_compile_features(${name}  PRIVATE cxx_std_17)
+    # target_set_warnings(${name} DISABLE deprecated-declarations)
+    target_set_warnings(${name} ENABLE pedantic unused DISABLE deprecated-declarations)
 endforeach()

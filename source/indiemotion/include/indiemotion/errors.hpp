@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* errors.hpp */
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 
 namespace indiemotion::errors
 {
@@ -11,11 +11,12 @@ namespace indiemotion::errors
     public:
         std::string etype;
         std::string message;
+
     private:
-            std::string _m_error;
-    
+        std::string _m_error;
+
     public:
-        SessionError(std::string type, std::string message) noexcept : etype(type), message(message) 
+        SessionError(std::string type, std::string message) noexcept : etype(type), message(message)
         {
             _m_error = etype + ": " + message;
         }

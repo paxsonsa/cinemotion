@@ -2,9 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* error.hpp */
 #pragma once
-#include <indiemotion/_common.hpp>
-#include <indiemotion/responses/base.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/messages/messages.hpp>
+#include <indiemotion/responses/base.hpp>
 
 namespace indiemotion::messages::errors
 {
@@ -15,7 +15,7 @@ namespace indiemotion::messages::errors
         std::string _m_message;
 
     public:
-        ErrorResponse(response::base::ID messageId, std::string errorId, std::string message) : responses::base::Response(messageId) 
+        ErrorResponse(response::base::ID messageId, std::string errorId, std::string message) : responses::base::Response(messageId)
         {
             _m_eid = errorId;
             _m_message = message;
@@ -56,8 +56,8 @@ namespace indiemotion::messages::errors
          * 
          * @return std::string 
          */
-        std::string error() const 
-        { 
+        std::string error() const
+        {
             std::string error = _m_eid;
             error += ": ";
             error += _m_message;

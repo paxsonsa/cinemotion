@@ -10,7 +10,6 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 )
 
 
-
 target_link_libraries(${TARGET_NAME}
     #PUBLIC # Useful for libraries, see https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html for more details about transitive usage requirements.
         #libraries/targets to link when linking this library
@@ -20,7 +19,7 @@ target_link_libraries(${TARGET_NAME}
     
         general fmt::fmt 
         spdlog::spdlog
-
+        # Boost::uuid
         #debug DEBUGLIBS
         #optimized RELEASELIBS
 )

@@ -5,9 +5,9 @@
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/_common.hpp>
-#include <indiemotion/messages/messages.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/messages/curator.hpp>
+#include <indiemotion/messages/messages.hpp>
 
 using namespace indiemotion;
 
@@ -18,9 +18,8 @@ SCENARIO("Acknoledging Messages with the Curator")
     {
         auto callbackCalled = false;
         auto curator = messages::Curator();
-        curator.queue(messages::base::ID(1), [&callbackCalled]() {
-            callbackCalled = true;
-        });
+        curator.queue(messages::base::ID(1), [&callbackCalled]()
+                      { callbackCalled = true; });
 
         WHEN("the message is acknowledged")
         {

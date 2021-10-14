@@ -3,6 +3,7 @@
 /* kind.hpp 
 */
 #pragma once
+#include <indiemotion/common.hpp>
 namespace indiemotion::messages
 {
     /**

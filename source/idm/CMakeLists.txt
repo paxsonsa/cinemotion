@@ -20,3 +20,5 @@ target_link_libraries(${TARGET_NAME}
         #debug DEBUGLIBS
         #optimized RELEASELIBS
 )
+target_compile_features(${TARGET_NAME}  PRIVATE cxx_std_17)
+target_set_warnings(${TARGET_NAME} ENABLE pedantic unused)

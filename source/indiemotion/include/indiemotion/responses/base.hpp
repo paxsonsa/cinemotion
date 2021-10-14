@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* responses.hpp */
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/messages/kind.hpp>
 #include <indiemotion/responses/kind.hpp>
 

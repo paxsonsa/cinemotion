@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 /* acknowledge.hpp */
 #pragma once
-#include <indiemotion/_common.hpp>
+#include <indiemotion/common.hpp>
 #include <indiemotion/responses/base.hpp>
 #include <indiemotion/responses/kind.hpp>
 
