@@ -56,3 +56,23 @@ SCENARIO("Processing a ListCameras Message")
         }
     }
 }
+
+SCENARIO("Request for camera list fails")
+{
+    GIVEN("An uninitialized manager")
+    {
+        auto manager = indiemotion::session::SessionManager();
+
+        WHEN("the client requests a camera list")
+        {
+            auto header = std::make_unique<indiemotion::transport::Header>("messageId");
+            auto payload = std::make_unique<indiemotion::messages::cameras::list::Payload>();
+            auto container = std::make_unique<indiemotion::messages::base::Container>(std::move(header),
+                                                                                      std::move(payload));
+            THEN("an error response should be generated")
+            {
+                REQUIRE_THROWS_AS(manager.processMessage(std::move(container)), indiemotion::errors::SessionError);
+            }
+        }
+    }
+}
