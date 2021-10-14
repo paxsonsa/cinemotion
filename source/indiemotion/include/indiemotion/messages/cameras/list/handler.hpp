@@ -12,9 +12,9 @@ namespace indiemotion::messages::cameras::list
     class Handler : public base::Handler
     {
     public:
-        std::optional<std::unique_ptr<responses::base::Container>>
+        std::optional<std::unique_ptr<responses::base::Wrapper>>
         handleMessage(std::weak_ptr<session::Session> sessionPtr,
-                      std::unique_ptr<base::Container> messagePtr)
+                      std::unique_ptr<base::Wrapper> messagePtr)
         {
             if (auto session = sessionPtr.lock())
             {

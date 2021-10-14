@@ -6,7 +6,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 // #include <indiemotion/errors.hpp>
-// #include <indiemotion/messages/base/container.hpp>
+// #include <indiemotion/messages/base/wrapper.hpp>
 // #include <indiemotion/messages/cameras/list/payload.hpp>
 #include <indiemotion/messages/messages.hpp>
 #include <indiemotion/responses/cameras/list/payload.hpp>
@@ -38,8 +38,8 @@ SCENARIO("Processing a ListCameras Message")
         {
             auto header = std::make_unique<indiemotion::transport::Header>("messageId");
             auto payload = std::make_unique<indiemotion::messages::cameras::list::Payload>();
-            auto container = std::make_unique<indiemotion::messages::base::Container>(std::move(header),
-                                                                                      std::move(payload));
+            auto container = std::make_unique<indiemotion::messages::base::Wrapper>(std::move(header),
+                                                                                    std::move(payload));
 
             auto resp = manager.processMessage(std::move(container));
             THEN("a camera list response should exist.")
@@ -67,8 +67,8 @@ SCENARIO("Request for camera list fails")
         {
             auto header = std::make_unique<indiemotion::transport::Header>("messageId");
             auto payload = std::make_unique<indiemotion::messages::cameras::list::Payload>();
-            auto container = std::make_unique<indiemotion::messages::base::Container>(std::move(header),
-                                                                                      std::move(payload));
+            auto container = std::make_unique<indiemotion::messages::base::Wrapper>(std::move(header),
+                                                                                    std::move(payload));
             THEN("an error response should be generated")
             {
                 REQUIRE_THROWS_AS(manager.processMessage(std::move(container)), indiemotion::errors::SessionError);

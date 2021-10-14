@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/acknowledge/payload.hpp>
-#include <indiemotion/messages/base/container.hpp>
+#include <indiemotion/messages/base/wrapper.hpp>
 #include <indiemotion/protobuf.hpp>
 #include <indiemotion/transport/header.hpp>
 
@@ -16,7 +16,7 @@ namespace indiemotion::messages::wrappers
     public:
         Factory() = default;
 
-        static std::unique_ptr<base::Container> create(const protobuf::messages::ClientMessage clientMessage)
+        static std::unique_ptr<base::Wrapper> create(const protobuf::messages::ClientMessage clientMessage)
         {
             auto rawHeaderPtr = clientMessage.header();
             std::unique_ptr<transport::Header> headerPtr;
@@ -33,7 +33,7 @@ namespace indiemotion::messages::wrappers
                 break;
             }
 
-            return std::make_unique<base::Container>(std::move(headerPtr), std::move(payloadPtr));
+            return std::make_unique<base::Wrapper>(std::move(headerPtr), std::move(payloadPtr));
         }
     };
 }

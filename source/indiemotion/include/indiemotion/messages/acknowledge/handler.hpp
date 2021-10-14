@@ -5,7 +5,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/acknowledge/payload.hpp>
 #include <indiemotion/messages/handlers/handler.hpp>
-#include <indiemotion/responses/base/container.hpp>
+#include <indiemotion/responses/base/wrapper.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::acknowledge
@@ -13,9 +13,9 @@ namespace indiemotion::messages::acknowledge
     class Handler : base::Handler
     {
     public:
-        std::optional<std::unique_ptr<responses::base::Container>>
+        std::optional<std::unique_ptr<responses::base::Wrapper>>
         handleMessage(std::weak_ptr<session::Session> session,
-                      std::unique_ptr<base::Container> message)
+                      std::unique_ptr<base::Wrapper> message)
         {
             return {};
         }

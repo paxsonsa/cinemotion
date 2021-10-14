@@ -5,9 +5,9 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base/payload.hpp>
 #include <indiemotion/messages/kind.hpp>
-#include <indiemotion/transport/container.hpp>
+#include <indiemotion/transport/wrapper.hpp>
 
 namespace indiemotion::messages::base
 {
-    using Container = transport::Container<Payload, Kind>;
+    using Wrapper = transport::Wrapper<Payload, Kind>;
 }

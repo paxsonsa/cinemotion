@@ -10,7 +10,7 @@ namespace indiemotion::transport
 {
     template <typename Payload_T, typename Kind_T,
               typename = std::enable_if_t<std::is_base_of_v<Payload<Kind_T>, Payload_T>>>
-    class Container
+    class Wrapper
     {
     public:
     private:
@@ -18,9 +18,9 @@ namespace indiemotion::transport
         std::shared_ptr<Payload_T> _m_payload;
 
     public:
-        Container(std::unique_ptr<Header> headerPtr,
-                  std::unique_ptr<Payload_T> payloadPtr) : _m_header(std::move(headerPtr)),
-                                                           _m_payload(std::move(payloadPtr))
+        Wrapper(std::unique_ptr<Header> headerPtr,
+                std::unique_ptr<Payload_T> payloadPtr) : _m_header(std::move(headerPtr)),
+                                                         _m_payload(std::move(payloadPtr))
         {
         }
 

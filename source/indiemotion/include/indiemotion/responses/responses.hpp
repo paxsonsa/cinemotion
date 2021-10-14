@@ -6,7 +6,7 @@
 // #include <indiemotion/responses/base.hpp>
 // #include <indiemotion/responses/cameras.hpp>
 // #include <indiemotion/responses/initialize.hpp>
-#include <indiemotion/responses/base/container.hpp>
+#include <indiemotion/responses/base/wrapper.hpp>
 #include <indiemotion/responses/cameras/list/payload.hpp>
 #include <indiemotion/responses/kind.hpp>
 // #include <indiemotion/responses/motion/current_mode.hpp>
