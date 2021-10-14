@@ -1,16 +1,10 @@
 syntax = "proto3";
 package indiemotion.protobuf.messages;
 
-import "google/protobuf/timestamp.proto";
-
-message Header {
-  google.protobuf.Timestamp timestamp = 1;
-  string id = 2;
-  optional string responseId = 3;
-}
+import "transports.proto";
 
 message ClientMessage {
-  Header header = 1;
+  indiemotion.protobuf.transport.Header header = 1;
   oneof payload {
     Acknowledge acknowledge = 20;
     ListCameras list_cameras = 30;
@@ -21,7 +15,7 @@ message ClientMessage {
 }
 
 message Acknowledge {
-  bool ok = 1 [ default = true ];
+  bool ok = 1;
   optional string message = 2;
 }
 
