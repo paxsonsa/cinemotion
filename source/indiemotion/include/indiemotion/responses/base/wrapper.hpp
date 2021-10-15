@@ -8,10 +8,6 @@
 #include <indiemotion/transport/header.hpp>
 #include <indiemotion/transport/wrapper.hpp>
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
 namespace indiemotion::responses::base
 {
     using Wrapper = transport::Wrapper<Payload, Kind>;
@@ -19,10 +15,7 @@ namespace indiemotion::responses::base
     std::unique_ptr<Wrapper> createContainer(std::string inResponseToId,
                                              std::unique_ptr<Payload> payloadPtr)
     {
-        boost::uuids::random_generator generator;
-        boost::uuids::uuid uuid = generator();
-        auto mid = boost::uuids::to_string(uuid);
-
+        auto mid = transport::generateNewId();
         auto headerPtr = std::make_unique<transport::Header>(mid, inResponseToId);
         auto containerPtr = std::make_unique<Wrapper>(std::move(headerPtr), std::move(payloadPtr));
 
