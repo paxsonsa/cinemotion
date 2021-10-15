@@ -4,6 +4,10 @@
 #pragma once
 #include <indiemotion/common.hpp>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 namespace indiemotion::transport
 {
     class Header
@@ -26,4 +30,11 @@ namespace indiemotion::transport
             return _m_inResponseToId;
         }
     };
+
+    std::string generateNewId()
+    {
+        boost::uuids::random_generator generator;
+        boost::uuids::uuid uuid = generator();
+        return boost::uuids::to_string(uuid);
+    }
 }
