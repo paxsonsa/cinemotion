@@ -8,12 +8,8 @@
 
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/messages/base/wrapper.hpp>
-#include <indiemotion/messages/curator.hpp>
-#include <indiemotion/messages/handler_factory.hpp>
-#include <indiemotion/messages/kind.hpp>
+#include <indiemotion/messages.hpp>
 #include <indiemotion/responses.hpp>
-#include <indiemotion/responses/base/wrapper.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::session

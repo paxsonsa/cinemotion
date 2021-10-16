@@ -1,5 +1,4 @@
-#include <indiemotion/messages/kind.hpp>
-#include <indiemotion/messages/wrappers/factory.hpp>
+#include <indiemotion/messages.hpp>
 #include <indiemotion/protobuf.hpp>
 #include <indiemotion/server.hpp>
 
