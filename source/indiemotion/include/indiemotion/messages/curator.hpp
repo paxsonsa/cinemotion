@@ -59,6 +59,7 @@ namespace indiemotion::messages
 
         void queue(std::string uid, std::function<void()> callback)
         {
+            spdlog::info("queued '{}' for acknowledgement", uid);
             _m_message_table[uid] = record{
                 callback};
         }

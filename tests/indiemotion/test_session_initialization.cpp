@@ -7,7 +7,8 @@
 #include <doctest.h>
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/messages/messages.hpp>
+#include <indiemotion/messages.hpp>
+#include <indiemotion/messages/acknowledge/payload.hpp>
 #include <indiemotion/responses.hpp>
 #include <indiemotion/session.hpp>
 
@@ -21,16 +22,15 @@ SCENARIO("Initializing the Session")
 
         WHEN("manager.initalize() is called")
         {
-            auto msg = manager.initialize();
+            auto response = manager.initialize();
 
             THEN("initialize() should have returned a response")
             {
-                REQUIRE(msg);
+                REQUIRE(response);
 
                 AND_THEN("the message should be a properly init message")
                 {
-                    REQUIRE(msg->kind() == responses::Kind::InitSession);
-                    REQUIRE(msg->needsAcknowledgment() == true);
+                    REQUIRE(response->payloadKind() == responses::Kind::SessionInit);
                 }
             }
         }
@@ -39,12 +39,13 @@ SCENARIO("Initializing the Session")
     GIVEN("an initialized session manager")
     {
         auto manager = session::SessionManager();
-        auto msg = manager.initialize();
-        auto id = msg->id();
+        auto response = manager.initialize();
+        auto responseId = response->id();
         WHEN("the manager processes an ACK for the init message")
         {
-            auto ackMsg = std::make_unique<messages::acknowledge::Message>(id);
-            auto noMsg = manager.processMessage(std::move(ackMsg));
+            auto payload = messages::acknowledge::Payload::create(true, "");
+            auto message = messages::base::createMessage(responseId, std::move(payload));
+            auto noMsg = manager.processMessage(std::move(message));
 
             THEN("no message should be returned")
             {

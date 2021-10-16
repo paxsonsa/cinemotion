@@ -34,6 +34,25 @@ namespace indiemotion::transport
             return _m_payload;
         }
 
+        std::string id()
+        {
+            return _m_header->id();
+        }
+
+        std::optional<std::string> inResponseToId()
+        {
+            return _m_header->inResponseToId();
+        }
+
+        bool isInReponseTo(std::string id)
+        {
+            if (_m_header->inResponseToId().has_value())
+            {
+                return _m_header->inResponseToId().value() == id;
+            }
+            return false;
+        }
+
         Kind_T payloadKind()
         {
             return _m_payload->kind();

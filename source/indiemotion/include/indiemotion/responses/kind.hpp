@@ -12,7 +12,7 @@ namespace indiemotion::responses
     {
         Acknowledgment,
         Error,
-        InitSession,
+        SessionInit,
         CameraList,
         MotionCurrentMode
     };
@@ -21,7 +21,7 @@ namespace indiemotion::responses
     {
         inline static const std::string Acknowledgment = "Acknowledgment";
         inline static const std::string Error = "Error";
-        inline static const std::string InitSession = "InitSession";
+        inline static const std::string SessionInit = "SessionInit";
         inline static const std::string CameraList = "CameraList";
         inline static const std::string MotionCurrentMode = "MotionCurrentMode";
     };
@@ -41,8 +41,8 @@ namespace indiemotion::responses
             return KindNames::Acknowledgment;
         case Kind::Error:
             return KindNames::Error;
-        case Kind::InitSession:
-            return KindNames::InitSession;
+        case Kind::SessionInit:
+            return KindNames::SessionInit;
         case Kind::CameraList:
             return KindNames::CameraList;
         case Kind::MotionCurrentMode:

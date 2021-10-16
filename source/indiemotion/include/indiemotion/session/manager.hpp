@@ -46,9 +46,8 @@ namespace indiemotion::session
          *
          * @return std::unique_ptr<messages::response::BaseResponse>
          */
-        std::unique_ptr<response::base::Response> initialize()
+        std::unique_ptr<responses::base::Response> initialize()
         {
-            std::unique_ptr<responses::base::Response> p_msg;
             try
             {
                 _m_session->initialize();
@@ -60,13 +59,15 @@ namespace indiemotion::session
                 return {};
             }
             auto properties = _m_session->properties();
-            p_msg = std::make_unique<responses::initialize::Response>(properties);
+            auto payload = std::make_unique<responses::session::initialize::Payload>(properties);
+
+            auto responsePtr = responses::base::createResponse(std::move(payload));
 
             // Register a ack callback with the curator
-            _m_curator->queue(p_msg->id(), [&]()
+            _m_curator->queue(responsePtr->id(), [&]()
                               { _m_session->activate(); });
 
-            return p_msg;
+            return responsePtr;
         }
 
         /**
@@ -77,10 +78,18 @@ namespace indiemotion::session
          */
         std::optional<std::unique_ptr<responses::base::Response>> processMessage(std::unique_ptr<messages::base::Wrapper> m)
         {
-            // if (m->kind() == messages::Kind::Acknowledgment)
-            // {
-            //     _m_curator->acknowledge(m->id());
-            // }
+            if (m->payloadKind() == messages::Kind::Acknowledgment)
+            {
+                if (!m->inResponseToId().has_value())
+                {
+                    // TODO back to client
+                    spdlog::error("acknowledgement '{}' does not have a 'inResponseTo' ID", m->id());
+                    return {};
+                }
+
+                _m_curator->acknowledge(m->inResponseToId().value());
+                return {};
+            }
             auto handler = _m_factory->getHandler(m->payloadKind());
             return handler->handleMessage(_m_session, std::move(m));
         }

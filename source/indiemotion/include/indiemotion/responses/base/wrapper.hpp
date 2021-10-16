@@ -12,11 +12,20 @@ namespace indiemotion::responses::base
 {
     using Response = transport::Wrapper<Payload, Kind>;
 
-    std::unique_ptr<Response> createContainer(std::string inResponseToId,
-                                              std::unique_ptr<Payload> payloadPtr)
+    std::unique_ptr<Response> createResponse(std::string inResponseToId,
+                                             std::unique_ptr<Payload> payloadPtr)
     {
-        auto mid = transport::generateNewId();
-        auto headerPtr = std::make_unique<transport::Header>(mid, inResponseToId);
+        auto id = transport::generateNewId();
+        auto headerPtr = std::make_unique<transport::Header>(id, inResponseToId);
+        auto containerPtr = std::make_unique<Response>(std::move(headerPtr), std::move(payloadPtr));
+
+        return std::move(containerPtr);
+    }
+
+    std::unique_ptr<Response> createResponse(std::unique_ptr<Payload> payloadPtr)
+    {
+        auto id = transport::generateNewId();
+        auto headerPtr = std::make_unique<transport::Header>(id);
         auto containerPtr = std::make_unique<Response>(std::move(headerPtr), std::move(payloadPtr));
 
         return std::move(containerPtr);

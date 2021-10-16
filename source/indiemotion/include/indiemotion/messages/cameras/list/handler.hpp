@@ -20,7 +20,7 @@ namespace indiemotion::messages::cameras::list
             {
                 auto cameras = session->cameras();
                 auto payloadPtr = std::make_unique<responses::cameras::list::Payload>(cameras);
-                auto ctnPtr = responses::base::createContainer(messagePtr->header().lock()->id(), std::move(payloadPtr));
+                auto ctnPtr = responses::base::createResponse(messagePtr->header().lock()->id(), std::move(payloadPtr));
                 return ctnPtr;
             }
             return {};
