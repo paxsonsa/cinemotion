@@ -5,7 +5,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
-#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/responses.hpp>
 
 namespace indiemotion::messages::motion::get_mode
 {
@@ -16,8 +16,8 @@ namespace indiemotion::messages::motion::get_mode
 
         /**
          * @brief Returns the initsession kind
-         * 
-         * @return kind 
+         *
+         * @return kind
          */
         Kind kind() override
         {

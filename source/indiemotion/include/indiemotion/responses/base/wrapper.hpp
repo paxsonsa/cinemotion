@@ -10,14 +10,14 @@
 
 namespace indiemotion::responses::base
 {
-    using Wrapper = transport::Wrapper<Payload, Kind>;
+    using Response = transport::Wrapper<Payload, Kind>;
 
-    std::unique_ptr<Wrapper> createContainer(std::string inResponseToId,
-                                             std::unique_ptr<Payload> payloadPtr)
+    std::unique_ptr<Response> createContainer(std::string inResponseToId,
+                                              std::unique_ptr<Payload> payloadPtr)
     {
         auto mid = transport::generateNewId();
         auto headerPtr = std::make_unique<transport::Header>(mid, inResponseToId);
-        auto containerPtr = std::make_unique<Wrapper>(std::move(headerPtr), std::move(payloadPtr));
+        auto containerPtr = std::make_unique<Response>(std::move(headerPtr), std::move(payloadPtr));
 
         return std::move(containerPtr);
     }

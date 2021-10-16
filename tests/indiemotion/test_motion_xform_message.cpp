@@ -1,6 +1,6 @@
 // Copyright (c) 2021 Andrew Paxson. All rights reserved. Used under
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
-/* test_motion_postion_message.hpp 
+/* test_motion_postion_message.hpp
 
 
 */
@@ -10,7 +10,7 @@
 #include <indiemotion/common.hpp>
 // #include <indiemotion/errors.hpp>
 #include <indiemotion/messages/messages.hpp>
-// #include <indiemotion/responses/responses.hpp>
+// #include <indiemotion/responses.hpp>
 #include <indiemotion/motion.hpp>
 #include <indiemotion/session.hpp>
 

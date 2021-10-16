@@ -1,6 +1,6 @@
 // Copyright (c) 2021 Andrew Paxson. All rights reserved. Used under
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
-/* server.hpp 
+/* server.hpp
 
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -8,7 +8,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/messages/messages.hpp>
-#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/responses.hpp>
 #include <indiemotion/session.hpp>
 
 using namespace indiemotion;

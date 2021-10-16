@@ -8,7 +8,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/messages/messages.hpp>
-#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/responses.hpp>
 #include <indiemotion/session.hpp>
 
 using namespace indiemotion;

@@ -6,7 +6,7 @@
 #include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
 #include <indiemotion/motion/xform.hpp>
-#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/responses.hpp>
 
 namespace indiemotion::messages::motion::xform
 {
@@ -27,8 +27,8 @@ namespace indiemotion::messages::motion::xform
 
         /**
          * @brief Returns the initsession kind
-         * 
-         * @return kind 
+         *
+         * @return kind
          */
         Kind kind() override
         {

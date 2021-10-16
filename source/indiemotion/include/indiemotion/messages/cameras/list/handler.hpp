@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base/handler.hpp>
-#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/responses.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::cameras::list
@@ -12,7 +12,7 @@ namespace indiemotion::messages::cameras::list
     class Handler : public base::Handler
     {
     public:
-        std::optional<std::unique_ptr<responses::base::Wrapper>>
+        std::optional<std::unique_ptr<responses::base::Response>>
         handleMessage(std::weak_ptr<session::Session> sessionPtr,
                       std::unique_ptr<base::Wrapper> messagePtr)
         {

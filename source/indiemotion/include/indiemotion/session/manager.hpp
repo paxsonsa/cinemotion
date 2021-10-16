@@ -10,10 +10,10 @@
 #include <indiemotion/errors.hpp>
 #include <indiemotion/messages/base/wrapper.hpp>
 #include <indiemotion/messages/curator.hpp>
-#include <indiemotion/messages/kind.hpp>
-#include <indiemotion/responses/base/wrapper.hpp>
-// #include <indiemotion/responses/initialize.hpp>
 #include <indiemotion/messages/handler_factory.hpp>
+#include <indiemotion/messages/kind.hpp>
+#include <indiemotion/responses.hpp>
+#include <indiemotion/responses/base/wrapper.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::session
@@ -50,28 +50,28 @@ namespace indiemotion::session
          *
          * @return std::unique_ptr<messages::response::BaseResponse>
          */
-        // std::unique_ptr<responses::base::Response> initialize()
-        // {
-        //     std::unique_ptr<responses::base::Response> p_msg;
-        //     try
-        //     {
-        //         _m_session->initialize();
-        //     }
-        //     catch (const std::exception &e)
-        //     {
-        //         _m_logger->error("failed to intialize the session: '{}'", e.what());
-        //         // TODO return error message (fatal message);
-        //         return {};
-        //     }
-        //     auto properties = _m_session->properties();
-        //     p_msg = std::make_unique<responses::initialize::Response>(properties);
+        std::unique_ptr<response::base::Response> initialize()
+        {
+            std::unique_ptr<responses::base::Response> p_msg;
+            try
+            {
+                _m_session->initialize();
+            }
+            catch (const std::exception &e)
+            {
+                _m_logger->error("failed to intialize the session: '{}'", e.what());
+                // TODO return error message (fatal message);
+                return {};
+            }
+            auto properties = _m_session->properties();
+            p_msg = std::make_unique<responses::initialize::Response>(properties);
 
-        //     // Register a ack callback with the curator
-        //     _m_curator->queue(p_msg->id(), [&]()
-        //                       { _m_session->activate(); });
+            // Register a ack callback with the curator
+            _m_curator->queue(p_msg->id(), [&]()
+                              { _m_session->activate(); });
 
-        //     return p_msg;
-        // }
+            return p_msg;
+        }
 
         /**
          * @brief Return
@@ -79,7 +79,7 @@ namespace indiemotion::session
          * @param m
          * @return std::optional<std::shared_ptr<messages::Handler>>
          */
-        std::optional<std::unique_ptr<responses::base::Wrapper>> processMessage(std::unique_ptr<messages::base::Wrapper> m)
+        std::optional<std::unique_ptr<responses::base::Response>> processMessage(std::unique_ptr<messages::base::Wrapper> m)
         {
             // if (m->kind() == messages::Kind::Acknowledgment)
             // {

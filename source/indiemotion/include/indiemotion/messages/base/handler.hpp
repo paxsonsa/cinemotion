@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base/wrapper.hpp>
-#include <indiemotion/responses/responses.hpp>
+#include <indiemotion/responses.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::base
@@ -13,7 +13,7 @@ namespace indiemotion::messages::base
     {
     public:
         virtual ~Handler() {}
-        virtual std::optional<std::unique_ptr<responses::base::Wrapper>>
+        virtual std::optional<std::unique_ptr<responses::base::Response>>
         handleMessage(std::weak_ptr<session::Session> sessionPtr,
                       std::unique_ptr<Wrapper> messagePtr) = 0;
     };

@@ -13,7 +13,7 @@ namespace indiemotion::messages::acknowledge
     class Handler : base::Handler
     {
     public:
-        std::optional<std::unique_ptr<responses::base::Wrapper>>
+        std::optional<std::unique_ptr<responses::base::Response>>
         handleMessage(std::weak_ptr<session::Session> session,
                       std::unique_ptr<base::Wrapper> message)
         {
