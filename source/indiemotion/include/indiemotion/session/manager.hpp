@@ -76,7 +76,7 @@ namespace indiemotion::session
          * @param m
          * @return std::optional<std::shared_ptr<messages::Handler>>
          */
-        std::optional<std::unique_ptr<responses::base::Response>> processMessage(std::unique_ptr<messages::base::Wrapper> m)
+        std::optional<std::unique_ptr<responses::base::Response>> processMessage(std::unique_ptr<messages::base::Message> m)
         {
             if (m->payloadKind() == messages::Kind::Acknowledgment)
             {

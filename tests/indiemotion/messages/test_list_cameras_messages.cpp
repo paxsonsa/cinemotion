@@ -38,7 +38,7 @@ SCENARIO("Processing a ListCameras Message")
         {
             auto header = std::make_unique<indiemotion::transport::Header>("messageId");
             auto payload = std::make_unique<indiemotion::messages::cameras::list::Payload>();
-            auto container = std::make_unique<indiemotion::messages::base::Wrapper>(std::move(header),
+            auto container = std::make_unique<indiemotion::messages::base::Message>(std::move(header),
                                                                                     std::move(payload));
 
             auto resp = manager.processMessage(std::move(container));
@@ -67,7 +67,7 @@ SCENARIO("Request for camera list fails")
         {
             auto header = std::make_unique<indiemotion::transport::Header>("messageId");
             auto payload = std::make_unique<indiemotion::messages::cameras::list::Payload>();
-            auto container = std::make_unique<indiemotion::messages::base::Wrapper>(std::move(header),
+            auto container = std::make_unique<indiemotion::messages::base::Message>(std::move(header),
                                                                                     std::move(payload));
             THEN("an error response should be generated")
             {

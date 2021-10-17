@@ -15,6 +15,6 @@ namespace indiemotion::messages::base
         virtual ~Handler() {}
         virtual std::optional<std::unique_ptr<responses::base::Response>>
         handleMessage(std::weak_ptr<session::Session> sessionPtr,
-                      std::unique_ptr<Wrapper> messagePtr) = 0;
+                      std::unique_ptr<Message> messagePtr) = 0;
     };
 }

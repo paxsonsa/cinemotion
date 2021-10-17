@@ -30,7 +30,7 @@ int main()
 
     auto wrapper = indiemotion::messages::wrappers::Factory::create(message);
 
-    std::cout << "Wrapper Payload Kind: " << indiemotion::messages::kindToStr(wrapper->payloadKind()) << "\n";
+    std::cout << "Message Payload Kind: " << indiemotion::messages::kindToStr(wrapper->payloadKind()) << "\n";
 
     std::string json_message;
     auto opt = google::protobuf::util::JsonPrintOptions();

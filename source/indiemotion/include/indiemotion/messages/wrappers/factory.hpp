@@ -16,7 +16,7 @@ namespace indiemotion::messages::wrappers
     public:
         Factory() = default;
 
-        static std::unique_ptr<base::Wrapper> create(const protobuf::messages::ClientMessage clientMessage)
+        static std::unique_ptr<base::Message> create(const protobuf::messages::ClientMessage clientMessage)
         {
             auto rawHeaderPtr = clientMessage.header();
             std::unique_ptr<transport::Header> headerPtr;
@@ -33,7 +33,7 @@ namespace indiemotion::messages::wrappers
                 break;
             }
 
-            return std::make_unique<base::Wrapper>(std::move(headerPtr), std::move(payloadPtr));
+            return std::make_unique<base::Message>(std::move(headerPtr), std::move(payloadPtr));
         }
     };
 }

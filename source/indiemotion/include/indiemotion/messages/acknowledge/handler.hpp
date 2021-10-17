@@ -15,7 +15,7 @@ namespace indiemotion::messages::acknowledge
     public:
         std::optional<std::unique_ptr<responses::base::Response>>
         handleMessage(std::weak_ptr<session::Session> session,
-                      std::unique_ptr<base::Wrapper> message)
+                      std::unique_ptr<base::Message> message)
         {
             return {};
         }

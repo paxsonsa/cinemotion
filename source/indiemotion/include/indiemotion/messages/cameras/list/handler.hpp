@@ -14,7 +14,7 @@ namespace indiemotion::messages::cameras::list
     public:
         std::optional<std::unique_ptr<responses::base::Response>>
         handleMessage(std::weak_ptr<session::Session> sessionPtr,
-                      std::unique_ptr<base::Wrapper> messagePtr)
+                      std::unique_ptr<base::Message> messagePtr)
         {
             if (auto session = sessionPtr.lock())
             {
