@@ -4,17 +4,16 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/acknowledge/payload.hpp>
-#include <indiemotion/messages/base/wrapper.hpp>
+#include <indiemotion/messages/base/message.hpp>
 #include <indiemotion/protobuf.hpp>
 #include <indiemotion/transport/header.hpp>
 
-// TODO Change wrappers
-namespace indiemotion::messages::wrappers
+namespace indiemotion::messages
 {
     class Factory
     {
     public:
-        Factory() = default;
+        FactoryFactory() = default;
 
         static std::unique_ptr<base::Message> create(const protobuf::messages::ClientMessage clientMessage)
         {

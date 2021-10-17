@@ -28,7 +28,7 @@ int main()
     acknowledge->set_ok(true);
     acknowledge->set_message("hello world");
 
-    auto wrapper = indiemotion::messages::wrappers::Factory::create(message);
+    auto wrapper = indiemotion::messages::Factory::create(message);
 
     std::cout << "Message Payload Kind: " << indiemotion::messages::kindToStr(wrapper->payloadKind()) << "\n";
 

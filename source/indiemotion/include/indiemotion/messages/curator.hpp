@@ -5,7 +5,7 @@
 */
 #pragma once
 #include <indiemotion/common.hpp>
-#include <indiemotion/messages/base/wrapper.hpp>
+#include <indiemotion/messages/base/message.hpp>
 
 namespace indiemotion::messages
 {

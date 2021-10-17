@@ -6,7 +6,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 // #include <indiemotion/errors.hpp>
-// #include <indiemotion/messages/base/wrapper.hpp>
+// #include <indiemotion/messages/base/message.hpp>
 // #include <indiemotion/messages/cameras/list/payload.hpp>
 #include <indiemotion/messages/messages.hpp>
 #include <indiemotion/responses/cameras/list/payload.hpp>

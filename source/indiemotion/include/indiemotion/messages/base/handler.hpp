@@ -3,7 +3,7 @@
 /* handlers.hpp */
 #pragma once
 #include <indiemotion/common.hpp>
-#include <indiemotion/messages/base/wrapper.hpp>
+#include <indiemotion/messages/base/message.hpp>
 #include <indiemotion/responses.hpp>
 #include <indiemotion/session/session.hpp>
 

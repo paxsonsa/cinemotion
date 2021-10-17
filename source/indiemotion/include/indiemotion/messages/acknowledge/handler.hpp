@@ -5,7 +5,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/acknowledge/payload.hpp>
 #include <indiemotion/messages/handlers/handler.hpp>
-#include <indiemotion/responses/base/wrapper.hpp>
+#include <indiemotion/responses.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::acknowledge
