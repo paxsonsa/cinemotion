@@ -7,7 +7,8 @@
 #include <doctest.h>
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/messages/messages.hpp>
+#include <indiemotion/messages.hpp>
+#include <indiemotion/motion.hpp>
 #include <indiemotion/responses.hpp>
 #include <indiemotion/session.hpp>
 
@@ -28,18 +29,18 @@ SCENARIO("Initial Motion Mode should be Off")
 
         WHEN("the client sends a get mode message")
         {
-            auto msg = std::make_unique<messages::motion::get_mode::Message>();
-            auto opt_response = manager.processMessage(std::move(msg));
+            auto payload = std::make_unique<messages::motion::getmode::Payload>();
+            auto message = messages::base::createMessage(std::move(payload));
+            auto opt_response = manager.processMessage(std::move(message));
 
             THEN("the response should return the current motion mode on the session")
             {
                 REQUIRE(opt_response);
                 auto response = std::move(opt_response.value());
-                REQUIRE(response->kind() == responses::Kind::MotionCurrentMode);
-                REQUIRE(response->needsAcknowledgment() == false);
+                REQUIRE(response->payloadKind() == responses::Kind::MotionCurrentMode);
 
-                auto curModeMsg = static_unique_pointer_cast<responses::motion::current_mode::Response>(std::move(response));
-                REQUIRE(curModeMsg->mode() == manager.session()->motionMode());
+                auto responsePayload = response->payloadPtrAs<responses::motion::curmode::Payload>();
+                REQUIRE(responsePayload->mode() == manager.session()->motionMode());
             }
         }
     }
@@ -69,16 +70,16 @@ SCENARIO("Changing Motion Mode")
 
         WHEN("the client sends a set mode message")
         {
-            auto msg = std::make_unique<messages::motion::set_mode::Message>(
-                motion::ModeValue::Live);
+            auto payload = std::make_unique<indiemotion::messages::motion::setmode::Payload>(
+                indiemotion::motion::ModeValue::Live);
+            auto message = messages::base::createMessage(std::move(payload));
             auto opt_response = manager.processMessage(std::move(msg));
 
             THEN("the server should acknowledge the message")
             {
                 REQUIRE(opt_response);
                 auto response = std::move(opt_response.value());
-                REQUIRE(response->kind() == responses::Kind::Acknowledgment);
-                REQUIRE(response->needsAcknowledgment() == false);
+                REQUIRE(response->payloadKind() == responses::Kind::Acknowledgment);
             }
 
             THEN("the current mode value should be equal to the requested value")

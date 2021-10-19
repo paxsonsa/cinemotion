@@ -13,7 +13,7 @@ namespace indiemotion::messages
     class Factory
     {
     public:
-        FactoryFactory() = default;
+        Factory() = default;
 
         static std::unique_ptr<base::Message> create(const protobuf::messages::ClientMessage clientMessage)
         {

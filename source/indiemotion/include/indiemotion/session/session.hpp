@@ -3,10 +3,10 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/motion/controller.hpp>
+#include <indiemotion/motion/mode.hpp>
 #include <indiemotion/motion/xform.hpp>
 #include <indiemotion/server/server.hpp>
 #include <indiemotion/session/delegate.hpp>
-#include <indiemotion/session/motion_mode.hpp>
 #include <indiemotion/session/properties.hpp>
 #include <indiemotion/session/state.hpp>
 #include <indiemotion/version.hpp>
@@ -79,8 +79,8 @@ namespace indiemotion::session
 
         /**
          * @brief Bind the delegate to the session
-         * 
-         * @param delegate 
+         *
+         * @param delegate
          */
         void bindSessionDelegate(std::shared_ptr<SessionDelegate> delegate)
         {
@@ -89,8 +89,8 @@ namespace indiemotion::session
 
         /**
          * @brief Bind the delegate to the motion controller
-         * 
-         * @param delegate 
+         *
+         * @param delegate
          */
         void bindMotionDelegate(std::shared_ptr<motion::MotionDelegate> delegate)
         {
@@ -99,7 +99,7 @@ namespace indiemotion::session
 
         /**
          * @brief Initialize the session for motion capture
-         * 
+         *
          */
         void initialize()
         {
@@ -129,8 +129,8 @@ namespace indiemotion::session
 
         /**
          * @brief Returns the current properties for the session.
-         * 
-         * @return Properties 
+         *
+         * @return Properties
          */
         Properties properties() const noexcept
         {
@@ -139,8 +139,8 @@ namespace indiemotion::session
 
         /**
          * @brief Returns a pointer to the session state.
-         * 
-         * @return std::shared_ptr<state::State> 
+         *
+         * @return std::shared_ptr<state::State>
          */
         std::shared_ptr<state::State> state() const noexcept
         {
@@ -149,8 +149,8 @@ namespace indiemotion::session
 
         /**
          * @brief Return the current motion controller
-         * 
-         * @return std::shared_ptr<motion::MotionController> 
+         *
+         * @return std::shared_ptr<motion::MotionController>
          */
         std::shared_ptr<motion::MotionController> motionController() const noexcept
         {
@@ -159,7 +159,7 @@ namespace indiemotion::session
 
         /**
          * @brief Activate the current session
-         * 
+         *
          */
         void activate()
         {
@@ -172,8 +172,8 @@ namespace indiemotion::session
 
         /**
          * @brief Current Status of the session
-         * 
-         * @return state::SessionStatus 
+         *
+         * @return state::SessionStatus
          */
         state::SessionStatus status() const noexcept
         {
@@ -182,9 +182,9 @@ namespace indiemotion::session
 
         /**
          * @brief Return whether the current session is active
-         * 
-         * @return true 
-         * @return false 
+         *
+         * @return true
+         * @return false
          */
         bool isActive() const noexcept
         {
@@ -193,8 +193,8 @@ namespace indiemotion::session
 
         /**
          * @brief Return the current list of camera names
-         * 
-         * @return std::vector<std::string> 
+         *
+         * @return std::vector<std::string>
          */
         std::vector<std::string> cameras() const
         {
@@ -212,8 +212,8 @@ namespace indiemotion::session
 
         /**
          * @brief Returns the current motion mode set in this session
-         * 
-         * @return motion::ModeValue 
+         *
+         * @return motion::ModeValue
          */
         motion::ModeValue motionMode() const
         {
@@ -222,8 +222,8 @@ namespace indiemotion::session
 
         /**
          * @brief Update the current mode to the given on
-         * 
-         * @param mode 
+         *
+         * @param mode
          */
         void updateMotionMode(motion::ModeValue mode)
         {
@@ -255,8 +255,8 @@ namespace indiemotion::session
 
         /**
          * @brief Update the current motion transform
-         * 
-         * @param xform 
+         *
+         * @param xform
          */
         void update(std::unique_ptr<motion::MotionXForm> xform)
         {
@@ -267,7 +267,7 @@ namespace indiemotion::session
     private:
         /**
          * @brief Initialize the state object on this class
-         * 
+         *
          */
         void _initializeState()
         {
@@ -277,7 +277,7 @@ namespace indiemotion::session
 
         /**
          * @brief Initialize the Motion Mode for the Session
-         * 
+         *
          */
         void _initializeMotion()
         {

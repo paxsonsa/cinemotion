@@ -5,8 +5,8 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base.hpp>
 #include <indiemotion/messages/handler.hpp>
+#include <indiemotion/motion/mode.hpp>
 #include <indiemotion/responses.hpp>
-#include <indiemotion/session/motion_mode.hpp>
 
 namespace indiemotion::messages::motion::set_mode
 {
@@ -40,10 +40,6 @@ namespace indiemotion::messages::motion::set_mode
         inline static const std::string_view kind = KindNames::MotionSetMode;
 
         Handler() = default;
-        static std::shared_ptr<Handler> make()
-        {
-            return std::make_shared<Handler>();
-        }
 
         std::optional<std::unique_ptr<responses::base::Response>> handleMessage(std::weak_ptr<session::Session> sessionPtr,
                                                                                 std::unique_ptr<base::Message> messagePtr) override

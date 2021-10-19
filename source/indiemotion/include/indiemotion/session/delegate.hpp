@@ -5,8 +5,8 @@
 */
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/motion/mode.hpp>
 #include <indiemotion/session/features.hpp>
-#include <indiemotion/session/motion_mode.hpp>
 
 namespace indiemotion::session
 {

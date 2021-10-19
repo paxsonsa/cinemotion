@@ -34,9 +34,10 @@ namespace indiemotion::transport
             return _m_payload;
         }
 
-        std::string id()
+        template <typename PayloadImpl_T>
+        std::shared_ptr<PayloadImpl_T> payloadPtrAs()
         {
-            return _m_header->id();
+            return std::dynamic_pointer_cast<PayloadImpl_T>(_m_payload);
         }
 
         std::optional<std::string> inResponseToId()

@@ -4,9 +4,9 @@
 /* current_mode.hpp */
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/motion/mode.hpp>
 #include <indiemotion/responses/base.hpp>
 #include <indiemotion/responses/kind.hpp>
-#include <indiemotion/session/motion_mode.hpp>
 
 namespace indiemotion::responses::motion::current_mode
 {
@@ -23,8 +23,8 @@ namespace indiemotion::responses::motion::current_mode
 
         /**
          * @brief Returns the initsession kind
-         * 
-         * @return kind 
+         *
+         * @return kind
          */
         Kind kind() override
         {

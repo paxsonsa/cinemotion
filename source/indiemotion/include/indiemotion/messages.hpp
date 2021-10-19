@@ -7,3 +7,7 @@
 #include <indiemotion/messages/factory.hpp>
 #include <indiemotion/messages/handler_factory.hpp>
 #include <indiemotion/messages/kind.hpp>
+#include <indiemotion/messages/motion/get_mode/handler.hpp>
+#include <indiemotion/messages/motion/get_mode/payload.hpp>
+#include <indiemotion/messages/motion/set_mode/handler.hpp>
+#include <indiemotion/messages/motion/set_mode/payload.hpp>

@@ -5,7 +5,7 @@
 // #include <indiemotion/responses/acknowledge.hpp>
 // #include <indiemotion/responses/base.hpp>
 #include <indiemotion/responses/base/response.hpp>
-#include <indiemotion/responses/kind.hpp>
 #include <indiemotion/responses/cameras/list/payload.hpp>
+#include <indiemotion/responses/kind.hpp>
+#include <indiemotion/responses/motion/curmode/payload.hpp>
 #include <indiemotion/responses/session/initialize/payload.hpp>
-// #include <indiemotion/responses/motion/current_mode.hpp>

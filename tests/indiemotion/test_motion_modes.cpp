@@ -3,7 +3,7 @@
 /* test_motion_modes.cpp */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/session/motion_mode.hpp>
+#include <indiemotion/motion/mode.hpp>
 
 using namespace indiemotion;
 
