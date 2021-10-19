@@ -100,31 +100,31 @@ namespace indiemotion {
 namespace protobuf {
 namespace messages {
 
-enum MotionSetMode_Mode : int {
-  MotionSetMode_Mode_Off = 0,
-  MotionSetMode_Mode_Live = 1,
-  MotionSetMode_Mode_Recording = 2,
-  MotionSetMode_Mode_MotionSetMode_Mode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  MotionSetMode_Mode_MotionSetMode_Mode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum MotionMode : int {
+  Off = 0,
+  Live = 1,
+  Recording = 2,
+  MotionMode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  MotionMode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool MotionSetMode_Mode_IsValid(int value);
-constexpr MotionSetMode_Mode MotionSetMode_Mode_Mode_MIN = MotionSetMode_Mode_Off;
-constexpr MotionSetMode_Mode MotionSetMode_Mode_Mode_MAX = MotionSetMode_Mode_Recording;
-constexpr int MotionSetMode_Mode_Mode_ARRAYSIZE = MotionSetMode_Mode_Mode_MAX + 1;
+bool MotionMode_IsValid(int value);
+constexpr MotionMode MotionMode_MIN = Off;
+constexpr MotionMode MotionMode_MAX = Recording;
+constexpr int MotionMode_ARRAYSIZE = MotionMode_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MotionSetMode_Mode_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MotionMode_descriptor();
 template<typename T>
-inline const std::string& MotionSetMode_Mode_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, MotionSetMode_Mode>::value ||
+inline const std::string& MotionMode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, MotionMode>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function MotionSetMode_Mode_Name.");
+    "Incorrect type passed to function MotionMode_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    MotionSetMode_Mode_descriptor(), enum_t_value);
+    MotionMode_descriptor(), enum_t_value);
 }
-inline bool MotionSetMode_Mode_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, MotionSetMode_Mode* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MotionSetMode_Mode>(
-    MotionSetMode_Mode_descriptor(), name, value);
+inline bool MotionMode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, MotionMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MotionMode>(
+    MotionMode_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -812,50 +812,18 @@ class MotionSetMode final :
 
   // nested types ----------------------------------------------------
 
-  typedef MotionSetMode_Mode Mode;
-  static constexpr Mode Off =
-    MotionSetMode_Mode_Off;
-  static constexpr Mode Live =
-    MotionSetMode_Mode_Live;
-  static constexpr Mode Recording =
-    MotionSetMode_Mode_Recording;
-  static inline bool Mode_IsValid(int value) {
-    return MotionSetMode_Mode_IsValid(value);
-  }
-  static constexpr Mode Mode_MIN =
-    MotionSetMode_Mode_Mode_MIN;
-  static constexpr Mode Mode_MAX =
-    MotionSetMode_Mode_Mode_MAX;
-  static constexpr int Mode_ARRAYSIZE =
-    MotionSetMode_Mode_Mode_ARRAYSIZE;
-  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-  Mode_descriptor() {
-    return MotionSetMode_Mode_descriptor();
-  }
-  template<typename T>
-  static inline const std::string& Mode_Name(T enum_t_value) {
-    static_assert(::std::is_same<T, Mode>::value ||
-      ::std::is_integral<T>::value,
-      "Incorrect type passed to function Mode_Name.");
-    return MotionSetMode_Mode_Name(enum_t_value);
-  }
-  static inline bool Mode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
-      Mode* value) {
-    return MotionSetMode_Mode_Parse(name, value);
-  }
-
   // accessors -------------------------------------------------------
 
   enum : int {
     kModeFieldNumber = 1,
   };
-  // .indiemotion.protobuf.messages.MotionSetMode.Mode mode = 1;
+  // .indiemotion.protobuf.messages.MotionMode mode = 1;
   void clear_mode();
-  ::indiemotion::protobuf::messages::MotionSetMode_Mode mode() const;
-  void set_mode(::indiemotion::protobuf::messages::MotionSetMode_Mode value);
+  ::indiemotion::protobuf::messages::MotionMode mode() const;
+  void set_mode(::indiemotion::protobuf::messages::MotionMode value);
   private:
-  ::indiemotion::protobuf::messages::MotionSetMode_Mode _internal_mode() const;
-  void _internal_set_mode(::indiemotion::protobuf::messages::MotionSetMode_Mode value);
+  ::indiemotion::protobuf::messages::MotionMode _internal_mode() const;
+  void _internal_set_mode(::indiemotion::protobuf::messages::MotionMode value);
   public:
 
   // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.MotionSetMode)
@@ -872,9 +840,10 @@ class MotionSetMode final :
 // -------------------------------------------------------------------
 
 class MotionGetMode final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.MotionGetMode) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.MotionGetMode) */ {
  public:
   inline MotionGetMode() : MotionGetMode(nullptr) {}
+  ~MotionGetMode() override;
   explicit constexpr MotionGetMode(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   MotionGetMode(const MotionGetMode& from);
@@ -947,15 +916,27 @@ class MotionGetMode final :
   MotionGetMode* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<MotionGetMode>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const MotionGetMode& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const MotionGetMode& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
-  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const MotionGetMode& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const MotionGetMode& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(MotionGetMode* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -966,6 +947,8 @@ class MotionGetMode final :
   explicit MotionGetMode(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -977,6 +960,18 @@ class MotionGetMode final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kModeFieldNumber = 1,
+  };
+  // .indiemotion.protobuf.messages.MotionMode mode = 1;
+  void clear_mode();
+  ::indiemotion::protobuf::messages::MotionMode mode() const;
+  void set_mode(::indiemotion::protobuf::messages::MotionMode value);
+  private:
+  ::indiemotion::protobuf::messages::MotionMode _internal_mode() const;
+  void _internal_set_mode(::indiemotion::protobuf::messages::MotionMode value);
+  public:
+
   // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.MotionGetMode)
  private:
   class _Internal;
@@ -984,6 +979,7 @@ class MotionGetMode final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  int mode_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_messages_2eproto;
 };
@@ -2075,22 +2071,22 @@ inline void Acknowledge::set_allocated_message(std::string* message) {
 
 // MotionSetMode
 
-// .indiemotion.protobuf.messages.MotionSetMode.Mode mode = 1;
+// .indiemotion.protobuf.messages.MotionMode mode = 1;
 inline void MotionSetMode::clear_mode() {
   mode_ = 0;
 }
-inline ::indiemotion::protobuf::messages::MotionSetMode_Mode MotionSetMode::_internal_mode() const {
-  return static_cast< ::indiemotion::protobuf::messages::MotionSetMode_Mode >(mode_);
+inline ::indiemotion::protobuf::messages::MotionMode MotionSetMode::_internal_mode() const {
+  return static_cast< ::indiemotion::protobuf::messages::MotionMode >(mode_);
 }
-inline ::indiemotion::protobuf::messages::MotionSetMode_Mode MotionSetMode::mode() const {
+inline ::indiemotion::protobuf::messages::MotionMode MotionSetMode::mode() const {
   // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.MotionSetMode.mode)
   return _internal_mode();
 }
-inline void MotionSetMode::_internal_set_mode(::indiemotion::protobuf::messages::MotionSetMode_Mode value) {
+inline void MotionSetMode::_internal_set_mode(::indiemotion::protobuf::messages::MotionMode value) {
   
   mode_ = value;
 }
-inline void MotionSetMode::set_mode(::indiemotion::protobuf::messages::MotionSetMode_Mode value) {
+inline void MotionSetMode::set_mode(::indiemotion::protobuf::messages::MotionMode value) {
   _internal_set_mode(value);
   // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.MotionSetMode.mode)
 }
@@ -2098,6 +2094,26 @@ inline void MotionSetMode::set_mode(::indiemotion::protobuf::messages::MotionSet
 // -------------------------------------------------------------------
 
 // MotionGetMode
+
+// .indiemotion.protobuf.messages.MotionMode mode = 1;
+inline void MotionGetMode::clear_mode() {
+  mode_ = 0;
+}
+inline ::indiemotion::protobuf::messages::MotionMode MotionGetMode::_internal_mode() const {
+  return static_cast< ::indiemotion::protobuf::messages::MotionMode >(mode_);
+}
+inline ::indiemotion::protobuf::messages::MotionMode MotionGetMode::mode() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.MotionGetMode.mode)
+  return _internal_mode();
+}
+inline void MotionGetMode::_internal_set_mode(::indiemotion::protobuf::messages::MotionMode value) {
+  
+  mode_ = value;
+}
+inline void MotionGetMode::set_mode(::indiemotion::protobuf::messages::MotionMode value) {
+  _internal_set_mode(value);
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.MotionGetMode.mode)
+}
 
 // -------------------------------------------------------------------
 
@@ -2437,10 +2453,10 @@ inline void MotionXForm::set_allocated_orientation(::indiemotion::protobuf::mess
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::indiemotion::protobuf::messages::MotionSetMode_Mode> : ::std::true_type {};
+template <> struct is_proto_enum< ::indiemotion::protobuf::messages::MotionMode> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::indiemotion::protobuf::messages::MotionSetMode_Mode>() {
-  return ::indiemotion::protobuf::messages::MotionSetMode_Mode_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::indiemotion::protobuf::messages::MotionMode>() {
+  return ::indiemotion::protobuf::messages::MotionMode_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE
