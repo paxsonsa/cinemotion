@@ -21,16 +21,15 @@ message Acknowledge {
 
 message ListCameras {}
 
-message MotionSetMode {
-  enum Mode {
-    Off = 0;
-    Live = 1;
-    Recording = 2;
-  }
-  Mode mode = 1;
+enum MotionMode {
+  Off = 0;
+  Live = 1;
+  Recording = 2;
 }
 
-message MotionGetMode {}
+message MotionSetMode { MotionMode mode = 1; }
+
+message MotionGetMode { MotionMode mode = 1; }
 
 message XFormTranslation {
   double x = 1;
