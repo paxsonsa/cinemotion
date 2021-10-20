@@ -82,34 +82,20 @@ struct MotionGetModeDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MotionGetModeDefaultTypeInternal _MotionGetMode_default_instance_;
-constexpr XFormTranslation::XFormTranslation(
+constexpr XFormData::XFormData(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : x_(0)
   , y_(0)
   , z_(0){}
-struct XFormTranslationDefaultTypeInternal {
-  constexpr XFormTranslationDefaultTypeInternal()
+struct XFormDataDefaultTypeInternal {
+  constexpr XFormDataDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~XFormTranslationDefaultTypeInternal() {}
+  ~XFormDataDefaultTypeInternal() {}
   union {
-    XFormTranslation _instance;
+    XFormData _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT XFormTranslationDefaultTypeInternal _XFormTranslation_default_instance_;
-constexpr XFormOrientation::XFormOrientation(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : x_(0)
-  , y_(0)
-  , z_(0){}
-struct XFormOrientationDefaultTypeInternal {
-  constexpr XFormOrientationDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~XFormOrientationDefaultTypeInternal() {}
-  union {
-    XFormOrientation _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT XFormOrientationDefaultTypeInternal _XFormOrientation_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT XFormDataDefaultTypeInternal _XFormData_default_instance_;
 constexpr MotionXForm::MotionXForm(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : translation_(nullptr)
@@ -126,7 +112,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MotionXFormDefaultTypeInternal 
 }  // namespace messages
 }  // namespace protobuf
 }  // namespace indiemotion
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_messages_2eproto[8];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_messages_2eproto[7];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_messages_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_messages_2eproto = nullptr;
 
@@ -175,23 +161,14 @@ const uint32_t TableStruct_messages_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::MotionGetMode, mode_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormTranslation, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormData, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormTranslation, x_),
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormTranslation, y_),
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormTranslation, z_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormOrientation, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormOrientation, x_),
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormOrientation, y_),
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormOrientation, z_),
+  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormData, x_),
+  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormData, y_),
+  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::XFormData, z_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::MotionXForm, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -207,9 +184,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 23, -1, -1, sizeof(::indiemotion::protobuf::messages::ListCameras)},
   { 29, -1, -1, sizeof(::indiemotion::protobuf::messages::MotionSetMode)},
   { 36, -1, -1, sizeof(::indiemotion::protobuf::messages::MotionGetMode)},
-  { 43, -1, -1, sizeof(::indiemotion::protobuf::messages::XFormTranslation)},
-  { 52, -1, -1, sizeof(::indiemotion::protobuf::messages::XFormOrientation)},
-  { 61, -1, -1, sizeof(::indiemotion::protobuf::messages::MotionXForm)},
+  { 43, -1, -1, sizeof(::indiemotion::protobuf::messages::XFormData)},
+  { 52, -1, -1, sizeof(::indiemotion::protobuf::messages::MotionXForm)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -218,8 +194,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_ListCameras_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_MotionSetMode_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_MotionGetMode_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_XFormTranslation_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_XFormOrientation_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_XFormData_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::messages::_MotionXForm_default_instance_),
 };
 
@@ -242,23 +217,21 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   "\030\001 \001(\0162).indiemotion.protobuf.messages.M"
   "otionMode\"H\n\rMotionGetMode\0227\n\004mode\030\001 \001(\016"
   "2).indiemotion.protobuf.messages.MotionM"
-  "ode\"3\n\020XFormTranslation\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030"
-  "\002 \001(\001\022\t\n\001z\030\003 \001(\001\"3\n\020XFormOrientation\022\t\n\001"
-  "x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001\"\231\001\n\013Motion"
-  "XForm\022D\n\013translation\030\001 \001(\0132/.indiemotion"
-  ".protobuf.messages.XFormTranslation\022D\n\013o"
-  "rientation\030\002 \001(\0132/.indiemotion.protobuf."
-  "messages.XFormOrientation*.\n\nMotionMode\022"
-  "\007\n\003Off\020\000\022\010\n\004Live\020\001\022\r\n\tRecording\020\002b\006proto"
-  "3"
+  "ode\",\n\tXFormData\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t"
+  "\n\001z\030\003 \001(\001\"\213\001\n\013MotionXForm\022=\n\013translation"
+  "\030\001 \001(\0132(.indiemotion.protobuf.messages.X"
+  "FormData\022=\n\013orientation\030\002 \001(\0132(.indiemot"
+  "ion.protobuf.messages.XFormData*.\n\nMotio"
+  "nMode\022\007\n\003Off\020\000\022\010\n\004Live\020\001\022\r\n\tRecording\020\002b"
+  "\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_messages_2eproto_deps[1] = {
   &::descriptor_table_transports_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_messages_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_messages_2eproto = {
-  false, false, 1041, descriptor_table_protodef_messages_2eproto, "messages.proto", 
-  &descriptor_table_messages_2eproto_once, descriptor_table_messages_2eproto_deps, 1, 8,
+  false, false, 967, descriptor_table_protodef_messages_2eproto, "messages.proto", 
+  &descriptor_table_messages_2eproto_once, descriptor_table_messages_2eproto_deps, 1, 7,
   schemas, file_default_instances, TableStruct_messages_2eproto::offsets,
   file_level_metadata_messages_2eproto, file_level_enum_descriptors_messages_2eproto, file_level_service_descriptors_messages_2eproto,
 };
@@ -1452,58 +1425,58 @@ void MotionGetMode::InternalSwap(MotionGetMode* other) {
 
 // ===================================================================
 
-class XFormTranslation::_Internal {
+class XFormData::_Internal {
  public:
 };
 
-XFormTranslation::XFormTranslation(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+XFormData::XFormData(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:indiemotion.protobuf.messages.XFormTranslation)
+  // @@protoc_insertion_point(arena_constructor:indiemotion.protobuf.messages.XFormData)
 }
-XFormTranslation::XFormTranslation(const XFormTranslation& from)
+XFormData::XFormData(const XFormData& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&x_, &from.x_,
     static_cast<size_t>(reinterpret_cast<char*>(&z_) -
     reinterpret_cast<char*>(&x_)) + sizeof(z_));
-  // @@protoc_insertion_point(copy_constructor:indiemotion.protobuf.messages.XFormTranslation)
+  // @@protoc_insertion_point(copy_constructor:indiemotion.protobuf.messages.XFormData)
 }
 
-inline void XFormTranslation::SharedCtor() {
+inline void XFormData::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&x_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&z_) -
     reinterpret_cast<char*>(&x_)) + sizeof(z_));
 }
 
-XFormTranslation::~XFormTranslation() {
-  // @@protoc_insertion_point(destructor:indiemotion.protobuf.messages.XFormTranslation)
+XFormData::~XFormData() {
+  // @@protoc_insertion_point(destructor:indiemotion.protobuf.messages.XFormData)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void XFormTranslation::SharedDtor() {
+inline void XFormData::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void XFormTranslation::ArenaDtor(void* object) {
-  XFormTranslation* _this = reinterpret_cast< XFormTranslation* >(object);
+void XFormData::ArenaDtor(void* object) {
+  XFormData* _this = reinterpret_cast< XFormData* >(object);
   (void)_this;
 }
-void XFormTranslation::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void XFormData::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void XFormTranslation::SetCachedSize(int size) const {
+void XFormData::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
-void XFormTranslation::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotion.protobuf.messages.XFormTranslation)
+void XFormData::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotion.protobuf.messages.XFormData)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1514,7 +1487,7 @@ void XFormTranslation::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* XFormTranslation::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* XFormData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -1567,9 +1540,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* XFormTranslation::_InternalSerialize(
+uint8_t* XFormData::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotion.protobuf.messages.XFormTranslation)
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotion.protobuf.messages.XFormData)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1595,12 +1568,12 @@ uint8_t* XFormTranslation::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotion.protobuf.messages.XFormTranslation)
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotion.protobuf.messages.XFormData)
   return target;
 }
 
-size_t XFormTranslation::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotion.protobuf.messages.XFormTranslation)
+size_t XFormData::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotion.protobuf.messages.XFormData)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -1625,21 +1598,21 @@ size_t XFormTranslation::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XFormTranslation::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XFormData::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    XFormTranslation::MergeImpl
+    XFormData::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XFormTranslation::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XFormData::GetClassData() const { return &_class_data_; }
 
-void XFormTranslation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+void XFormData::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
                       const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<XFormTranslation *>(to)->MergeFrom(
-      static_cast<const XFormTranslation &>(from));
+  static_cast<XFormData *>(to)->MergeFrom(
+      static_cast<const XFormData &>(from));
 }
 
 
-void XFormTranslation::MergeFrom(const XFormTranslation& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotion.protobuf.messages.XFormTranslation)
+void XFormData::MergeFrom(const XFormData& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotion.protobuf.messages.XFormData)
   GOOGLE_DCHECK_NE(&from, this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1656,29 +1629,29 @@ void XFormTranslation::MergeFrom(const XFormTranslation& from) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void XFormTranslation::CopyFrom(const XFormTranslation& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotion.protobuf.messages.XFormTranslation)
+void XFormData::CopyFrom(const XFormData& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotion.protobuf.messages.XFormData)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool XFormTranslation::IsInitialized() const {
+bool XFormData::IsInitialized() const {
   return true;
 }
 
-void XFormTranslation::InternalSwap(XFormTranslation* other) {
+void XFormData::InternalSwap(XFormData* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XFormTranslation, z_)
-      + sizeof(XFormTranslation::z_)
-      - PROTOBUF_FIELD_OFFSET(XFormTranslation, x_)>(
+      PROTOBUF_FIELD_OFFSET(XFormData, z_)
+      + sizeof(XFormData::z_)
+      - PROTOBUF_FIELD_OFFSET(XFormData, x_)>(
           reinterpret_cast<char*>(&x_),
           reinterpret_cast<char*>(&other->x_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata XFormTranslation::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata XFormData::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_messages_2eproto_getter, &descriptor_table_messages_2eproto_once,
       file_level_metadata_messages_2eproto[5]);
@@ -1686,251 +1659,17 @@ void XFormTranslation::InternalSwap(XFormTranslation* other) {
 
 // ===================================================================
 
-class XFormOrientation::_Internal {
- public:
-};
-
-XFormOrientation::XFormOrientation(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
-  // @@protoc_insertion_point(arena_constructor:indiemotion.protobuf.messages.XFormOrientation)
-}
-XFormOrientation::XFormOrientation(const XFormOrientation& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&x_, &from.x_,
-    static_cast<size_t>(reinterpret_cast<char*>(&z_) -
-    reinterpret_cast<char*>(&x_)) + sizeof(z_));
-  // @@protoc_insertion_point(copy_constructor:indiemotion.protobuf.messages.XFormOrientation)
-}
-
-inline void XFormOrientation::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&x_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&z_) -
-    reinterpret_cast<char*>(&x_)) + sizeof(z_));
-}
-
-XFormOrientation::~XFormOrientation() {
-  // @@protoc_insertion_point(destructor:indiemotion.protobuf.messages.XFormOrientation)
-  if (GetArenaForAllocation() != nullptr) return;
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-inline void XFormOrientation::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-}
-
-void XFormOrientation::ArenaDtor(void* object) {
-  XFormOrientation* _this = reinterpret_cast< XFormOrientation* >(object);
-  (void)_this;
-}
-void XFormOrientation::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void XFormOrientation::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-
-void XFormOrientation::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotion.protobuf.messages.XFormOrientation)
-  uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  ::memset(&x_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&z_) -
-      reinterpret_cast<char*>(&x_)) + sizeof(z_));
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* XFormOrientation::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // double x = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 9)) {
-          x_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
-          ptr += sizeof(double);
-        } else
-          goto handle_unusual;
-        continue;
-      // double y = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
-          y_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
-          ptr += sizeof(double);
-        } else
-          goto handle_unusual;
-        continue;
-      // double z = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
-          z_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
-          ptr += sizeof(double);
-        } else
-          goto handle_unusual;
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-uint8_t* XFormOrientation::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotion.protobuf.messages.XFormOrientation)
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // double x = 1;
-  if (!(this->_internal_x() <= 0 && this->_internal_x() >= 0)) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(1, this->_internal_x(), target);
-  }
-
-  // double y = 2;
-  if (!(this->_internal_y() <= 0 && this->_internal_y() >= 0)) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_y(), target);
-  }
-
-  // double z = 3;
-  if (!(this->_internal_z() <= 0 && this->_internal_z() >= 0)) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_z(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotion.protobuf.messages.XFormOrientation)
-  return target;
-}
-
-size_t XFormOrientation::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotion.protobuf.messages.XFormOrientation)
-  size_t total_size = 0;
-
-  uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // double x = 1;
-  if (!(this->_internal_x() <= 0 && this->_internal_x() >= 0)) {
-    total_size += 1 + 8;
-  }
-
-  // double y = 2;
-  if (!(this->_internal_y() <= 0 && this->_internal_y() >= 0)) {
-    total_size += 1 + 8;
-  }
-
-  // double z = 3;
-  if (!(this->_internal_z() <= 0 && this->_internal_z() >= 0)) {
-    total_size += 1 + 8;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XFormOrientation::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    XFormOrientation::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XFormOrientation::GetClassData() const { return &_class_data_; }
-
-void XFormOrientation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<XFormOrientation *>(to)->MergeFrom(
-      static_cast<const XFormOrientation &>(from));
-}
-
-
-void XFormOrientation::MergeFrom(const XFormOrientation& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotion.protobuf.messages.XFormOrientation)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!(from._internal_x() <= 0 && from._internal_x() >= 0)) {
-    _internal_set_x(from._internal_x());
-  }
-  if (!(from._internal_y() <= 0 && from._internal_y() >= 0)) {
-    _internal_set_y(from._internal_y());
-  }
-  if (!(from._internal_z() <= 0 && from._internal_z() >= 0)) {
-    _internal_set_z(from._internal_z());
-  }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void XFormOrientation::CopyFrom(const XFormOrientation& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotion.protobuf.messages.XFormOrientation)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool XFormOrientation::IsInitialized() const {
-  return true;
-}
-
-void XFormOrientation::InternalSwap(XFormOrientation* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(XFormOrientation, z_)
-      + sizeof(XFormOrientation::z_)
-      - PROTOBUF_FIELD_OFFSET(XFormOrientation, x_)>(
-          reinterpret_cast<char*>(&x_),
-          reinterpret_cast<char*>(&other->x_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata XFormOrientation::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_messages_2eproto_getter, &descriptor_table_messages_2eproto_once,
-      file_level_metadata_messages_2eproto[6]);
-}
-
-// ===================================================================
-
 class MotionXForm::_Internal {
  public:
-  static const ::indiemotion::protobuf::messages::XFormTranslation& translation(const MotionXForm* msg);
-  static const ::indiemotion::protobuf::messages::XFormOrientation& orientation(const MotionXForm* msg);
+  static const ::indiemotion::protobuf::messages::XFormData& translation(const MotionXForm* msg);
+  static const ::indiemotion::protobuf::messages::XFormData& orientation(const MotionXForm* msg);
 };
 
-const ::indiemotion::protobuf::messages::XFormTranslation&
+const ::indiemotion::protobuf::messages::XFormData&
 MotionXForm::_Internal::translation(const MotionXForm* msg) {
   return *msg->translation_;
 }
-const ::indiemotion::protobuf::messages::XFormOrientation&
+const ::indiemotion::protobuf::messages::XFormData&
 MotionXForm::_Internal::orientation(const MotionXForm* msg) {
   return *msg->orientation_;
 }
@@ -1947,12 +1686,12 @@ MotionXForm::MotionXForm(const MotionXForm& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_translation()) {
-    translation_ = new ::indiemotion::protobuf::messages::XFormTranslation(*from.translation_);
+    translation_ = new ::indiemotion::protobuf::messages::XFormData(*from.translation_);
   } else {
     translation_ = nullptr;
   }
   if (from._internal_has_orientation()) {
-    orientation_ = new ::indiemotion::protobuf::messages::XFormOrientation(*from.orientation_);
+    orientation_ = new ::indiemotion::protobuf::messages::XFormData(*from.orientation_);
   } else {
     orientation_ = nullptr;
   }
@@ -2012,7 +1751,7 @@ const char* MotionXForm::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .indiemotion.protobuf.messages.XFormTranslation translation = 1;
+      // .indiemotion.protobuf.messages.XFormData translation = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_translation(), ptr);
@@ -2020,7 +1759,7 @@ const char* MotionXForm::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
         } else
           goto handle_unusual;
         continue;
-      // .indiemotion.protobuf.messages.XFormOrientation orientation = 2;
+      // .indiemotion.protobuf.messages.XFormData orientation = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_orientation(), ptr);
@@ -2057,7 +1796,7 @@ uint8_t* MotionXForm::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .indiemotion.protobuf.messages.XFormTranslation translation = 1;
+  // .indiemotion.protobuf.messages.XFormData translation = 1;
   if (this->_internal_has_translation()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -2065,7 +1804,7 @@ uint8_t* MotionXForm::_InternalSerialize(
         1, _Internal::translation(this), target, stream);
   }
 
-  // .indiemotion.protobuf.messages.XFormOrientation orientation = 2;
+  // .indiemotion.protobuf.messages.XFormData orientation = 2;
   if (this->_internal_has_orientation()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -2089,14 +1828,14 @@ size_t MotionXForm::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .indiemotion.protobuf.messages.XFormTranslation translation = 1;
+  // .indiemotion.protobuf.messages.XFormData translation = 1;
   if (this->_internal_has_translation()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *translation_);
   }
 
-  // .indiemotion.protobuf.messages.XFormOrientation orientation = 2;
+  // .indiemotion.protobuf.messages.XFormData orientation = 2;
   if (this->_internal_has_orientation()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -2126,10 +1865,10 @@ void MotionXForm::MergeFrom(const MotionXForm& from) {
   (void) cached_has_bits;
 
   if (from._internal_has_translation()) {
-    _internal_mutable_translation()->::indiemotion::protobuf::messages::XFormTranslation::MergeFrom(from._internal_translation());
+    _internal_mutable_translation()->::indiemotion::protobuf::messages::XFormData::MergeFrom(from._internal_translation());
   }
   if (from._internal_has_orientation()) {
-    _internal_mutable_orientation()->::indiemotion::protobuf::messages::XFormOrientation::MergeFrom(from._internal_orientation());
+    _internal_mutable_orientation()->::indiemotion::protobuf::messages::XFormData::MergeFrom(from._internal_orientation());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2159,7 +1898,7 @@ void MotionXForm::InternalSwap(MotionXForm* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MotionXForm::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_messages_2eproto_getter, &descriptor_table_messages_2eproto_once,
-      file_level_metadata_messages_2eproto[7]);
+      file_level_metadata_messages_2eproto[6]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -2182,11 +1921,8 @@ template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::messages::MotionSetMode* A
 template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::messages::MotionGetMode* Arena::CreateMaybeMessage< ::indiemotion::protobuf::messages::MotionGetMode >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotion::protobuf::messages::MotionGetMode >(arena);
 }
-template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::messages::XFormTranslation* Arena::CreateMaybeMessage< ::indiemotion::protobuf::messages::XFormTranslation >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotion::protobuf::messages::XFormTranslation >(arena);
-}
-template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::messages::XFormOrientation* Arena::CreateMaybeMessage< ::indiemotion::protobuf::messages::XFormOrientation >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotion::protobuf::messages::XFormOrientation >(arena);
+template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::messages::XFormData* Arena::CreateMaybeMessage< ::indiemotion::protobuf::messages::XFormData >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotion::protobuf::messages::XFormData >(arena);
 }
 template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::messages::MotionXForm* Arena::CreateMaybeMessage< ::indiemotion::protobuf::messages::MotionXForm >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotion::protobuf::messages::MotionXForm >(arena);
