@@ -31,19 +31,13 @@ message MotionSetMode { MotionMode mode = 1; }
 
 message MotionGetMode { MotionMode mode = 1; }
 
-message XFormTranslation {
-  double x = 1;
-  double y = 2;
-  double z = 3;
-}
-
-message XFormOrientation {
+message XFormData {
   double x = 1;
   double y = 2;
   double z = 3;
 }
 
 message MotionXForm {
-  XFormTranslation translation = 1;
-  XFormOrientation orientation = 2;
+  XFormData translation = 1;
+  XFormData orientation = 2;
 }
