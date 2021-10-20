@@ -83,7 +83,7 @@ namespace indiemotion::session
                 if (!m->inResponseToId().has_value())
                 {
                     // TODO back to client
-                    spdlog::error("acknowledgement '{}' does not have a 'inResponseTo' ID", m->id());
+                    spdlog::error("acknowledgement '{}' does not have a 'inResponseTo' ID", m->header()->id());
                     return {};
                 }
 

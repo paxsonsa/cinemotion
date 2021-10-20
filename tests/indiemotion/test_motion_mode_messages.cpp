@@ -79,6 +79,7 @@ SCENARIO("Changing Motion Mode")
             {
                 REQUIRE(opt_response);
                 auto response = std::move(opt_response.value());
+                std::cout << "payLoad: " << responses::kindToStr(response->payloadKind()) << "\n";
                 REQUIRE(response->payloadKind() == responses::Kind::Acknowledgment);
             }
 

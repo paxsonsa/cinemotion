@@ -22,7 +22,7 @@ namespace indiemotion::responses::motion::curmode
 
         Kind kind() override
         {
-            return Kind::SessionInit;
+            return Kind::MotionCurrentMode;
         }
 
         indiemotion::motion::ModeValue mode()

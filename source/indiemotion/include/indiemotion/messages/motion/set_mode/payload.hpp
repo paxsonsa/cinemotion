@@ -18,7 +18,7 @@ namespace indiemotion::messages::motion::setmode
 
         Kind kind() override
         {
-            return Kind::ListCameras;
+            return Kind::MotionSetMode;
         }
 
         static std::unique_ptr<Payload> create([[maybe_unused]] const protobuf::messages::MotionSetMode rawPayload)

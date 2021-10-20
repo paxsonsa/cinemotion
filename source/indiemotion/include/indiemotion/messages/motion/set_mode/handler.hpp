@@ -4,6 +4,7 @@
 #pragma once
 #include <indiemotion/messages/base/handler.hpp>
 #include <indiemotion/messages/motion/set_mode/payload.hpp>
+#include <indiemotion/responses/acknowledge/payload.hpp>
 #include <indiemotion/responses.hpp>
 
 namespace indiemotion::messages::motion::setmode
@@ -20,8 +21,7 @@ namespace indiemotion::messages::motion::setmode
             if (auto session = sessionPtr.lock())
             {
                 session->updateMotionMode(mode);
-                auto newMode = session->motionMode();
-                auto payloadPtr = std::make_unique<responses::motion::curmode::Payload>(newMode);
+                auto payloadPtr = std::make_unique<responses::acknowledge::Payload>(true, "mode set.");
                 auto ctnPtr = responses::base::createResponse(messagePtr->header()->id(), std::move(payloadPtr));
                 return ctnPtr;
             }
