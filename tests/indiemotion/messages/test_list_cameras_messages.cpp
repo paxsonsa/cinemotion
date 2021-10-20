@@ -50,7 +50,7 @@ SCENARIO("Processing a ListCameras Message")
             AND_THEN("the camera list should match what the delegate returned")
             {
                 auto ctn = std::move(resp.value());
-                auto ptr = dynamic_cast<indiemotion::responses::cameras::list::Payload *>(ctn->payload().lock().get());
+                auto ptr = dynamic_cast<indiemotion::responses::cameras::list::Payload *>(ctn->payload().get());
                 REQUIRE(ptr->cameraNames() == delegate->cameras());
             }
         }

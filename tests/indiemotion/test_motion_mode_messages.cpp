@@ -73,7 +73,7 @@ SCENARIO("Changing Motion Mode")
             auto payload = std::make_unique<indiemotion::messages::motion::setmode::Payload>(
                 indiemotion::motion::ModeValue::Live);
             auto message = messages::base::createMessage(std::move(payload));
-            auto opt_response = manager.processMessage(std::move(msg));
+            auto opt_response = manager.processMessage(std::move(message));
 
             THEN("the server should acknowledge the message")
             {

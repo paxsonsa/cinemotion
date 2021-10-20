@@ -24,12 +24,12 @@ namespace indiemotion::transport
         {
         }
 
-        std::weak_ptr<Header> header()
+        std::shared_ptr<Header> header()
         {
             return _m_header;
         }
 
-        std::weak_ptr<Payload_T> payload()
+        std::shared_ptr<Payload_T> payload()
         {
             return _m_payload;
         }

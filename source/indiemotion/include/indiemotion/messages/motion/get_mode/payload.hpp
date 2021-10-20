@@ -26,15 +26,15 @@ namespace indiemotion::messages::motion::getmode
 
             switch (rawPayload.mode())
             {
-            case indiemotion::protobuf::MotionMode::Off:
+            case indiemotion::protobuf::messages::MotionMode::Off:
                 mode = indiemotion::motion::ModeValue::Off;
                 break;
 
-            case indiemotion::protobuf::MotionMode::Live:
+            case indiemotion::protobuf::messages::MotionMode::Live:
                 mode = indiemotion::motion::ModeValue::Live;
                 break;
 
-            case indiemotion::protobuf::MotionMode::Recording:
+            case indiemotion::protobuf::messages::MotionMode::Recording:
                 mode = indiemotion::motion::ModeValue::Recording;
                 break;
             }

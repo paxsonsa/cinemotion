@@ -18,8 +18,8 @@ namespace indiemotion::messages::motion::getmode
             if (auto session = sessionPtr.lock())
             {
                 auto mode = session->motionMode();
-                auto payloadPtr = std::make_unique<indiemotion::responses::motion::curmode::Payload>(newMode);
-                auto respPtr = responses::base::createResponse(messagePtr->header().lock()->id(),
+                auto payloadPtr = std::make_unique<indiemotion::responses::motion::curmode::Payload>(mode);
+                auto respPtr = responses::base::createResponse(messagePtr->header()->id(),
                                                                std::move(payloadPtr));
                 return respPtr;
             }

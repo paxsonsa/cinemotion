@@ -64,7 +64,7 @@ namespace indiemotion::session
             auto responsePtr = responses::base::createResponse(std::move(payload));
 
             // Register a ack callback with the curator
-            _m_curator->queue(responsePtr->id(), [&]()
+            _m_curator->queue(responsePtr->header()->id(), [&]()
                               { _m_session->activate(); });
 
             return responsePtr;

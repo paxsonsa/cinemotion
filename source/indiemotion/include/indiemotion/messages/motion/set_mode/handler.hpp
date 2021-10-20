@@ -22,7 +22,7 @@ namespace indiemotion::messages::motion::setmode
                 session->updateMotionMode(mode);
                 auto newMode = session->motionMode();
                 auto payloadPtr = std::make_unique<responses::motion::curmode::Payload>(newMode);
-                auto ctnPtr = responses::base::createResponse(messagePtr->header().lock()->id(), std::move(payloadPtr));
+                auto ctnPtr = responses::base::createResponse(messagePtr->header()->id(), std::move(payloadPtr));
                 return ctnPtr;
             }
 
