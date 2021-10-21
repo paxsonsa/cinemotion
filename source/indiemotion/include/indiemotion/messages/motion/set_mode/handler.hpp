@@ -5,10 +5,12 @@
 #pragma once
 #include <indiemotion/messages/base/handler.hpp>
 #include <indiemotion/messages/motion/set_mode/payload.hpp>
-#include <indiemotion/responses.hpp>
+#include <indiemotion/responses/base/response.hpp>
+#include <indiemotion/session/session.hpp>
+#include <indiemotion/responses/acknowledge/payload.hpp>
 
 namespace indiemotion::messages::motion::setmode {
-class Handler : public base::Handler {
+class Handler : public indiemotion::messages::base::Handler {
 public:
   std::optional<std::unique_ptr<responses::base::Response>>
   handleMessage(std::weak_ptr<session::Session> sessionPtr,

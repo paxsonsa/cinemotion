@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base/message.hpp>
-#include <indiemotion/responses.hpp>
+#include <indiemotion/responses/base/response.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::base

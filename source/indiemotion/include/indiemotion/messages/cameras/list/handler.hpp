@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/messages/base/handler.hpp>
-#include <indiemotion/responses.hpp>
+#include <indiemotion/responses/cameras/list/payload.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::cameras::list

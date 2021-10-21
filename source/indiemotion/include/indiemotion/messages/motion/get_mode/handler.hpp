@@ -4,7 +4,9 @@
 #pragma once
 #include <indiemotion/messages/base/handler.hpp>
 #include <indiemotion/messages/motion/set_mode/payload.hpp>
-#include <indiemotion/responses.hpp>
+#include <indiemotion/responses/base/response.hpp>
+#include <indiemotion/responses/motion/curmode/payload.hpp>
+#include <indiemotion/session/session.hpp>
 
 namespace indiemotion::messages::motion::getmode
 {
