@@ -1,9 +1,23 @@
+Refactor Payloads and Messages into new System Message:
+- Bridge: Initialize Test
+- Bridge: handler
+- PayloadType: Move outside net
 - Refactor Message/Responses
-    - MotionSetMode
-    - MotionGetMode
     - MotionXForm
+        - Fix Tests for Motion XForm
 
-- Reset
+- Refactor
+    - net
+        - payloads
+        - handlers
+        - transport
+            - message
+            - repsonse
+    - session
+    - motion
+    - view
+    
+
 
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
