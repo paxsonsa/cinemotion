@@ -3,20 +3,18 @@
 // license information.
 /* payload.hpp */
 #pragma once
+#include <indiemotion/messages/kind.hpp>
 #include <indiemotion/messages/base/payload.hpp>
-#include <indiemotion/motions/motion.hpp
+#include <indiemotion/motion.hpp>
+#include <indiemotion/protobuf.hpp>
 
 namespace indiemotion::messages::motion::xform {
 class Payload : public base::Payload {
 private:
-  indiemotion::motion::MotionTranslation _m_translation;
-  indiemotion::motion::MotionOrientation _m_orientation;
+  indiemotion::motion::MotionXForm _m_xform;
 
 public:
-  Payload(indiemotion::motion::MotionTranslation &&translation,
-          indiemotion::motion::MotionOrientation &&orientation)
-      : _m_translation(std::move(translation)),
-        _m_orientation(std::move(orientation)) {}
+  Payload(indiemotion::motion::MotionXForm xform) : _m_xform(xform) {}
 
   /**
    * @brief Create a new MotionXForm Payload
@@ -27,16 +25,17 @@ public:
   static std::unique_ptr<Payload>
   create(const protobuf::messages::MotionXForm rawPayload) {
 
-    auto translation = indiemotion::motion::MotionTranslation::create(
-        rawPayload.translation.x, rawPayload.translation.y,
-        rawPayload.translation.z);
+    auto xform = indiemotion::motion::MotionXForm::create(
+        rawPayload.translation().x(), rawPayload.translation().y(),
+        rawPayload.translation().z(), rawPayload.orientation().x(),
+        rawPayload.orientation().y(), rawPayload.orientation().z());
 
-    auto orientation = indiemotion::motion::MotionOrientation::create(
-        rawPayload.orientation.x, rawPayload.orientation.y,
-        rawPayload.orientation.z);
+    return std::make_unique<Payload>(std::move(xform));
+  }
 
-    return std::make_unique<Payload>(std::move(translation),
-                                     std::move(orientation));
+  Kind kind() override
+  {
+    return Kind::MotionXForm;
   }
 };
 } // namespace indiemotion::messages::motion::xform

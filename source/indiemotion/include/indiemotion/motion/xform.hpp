@@ -41,21 +41,21 @@ namespace indiemotion::motion
         MotionTranslation translation;
         MotionOrientation orientation;
 
-        static std::unique_ptr<MotionXForm> zero()
+        static MotionXForm zero()
         {
-            auto ptr = std::make_unique<MotionXForm>();
-            ptr->translation = MotionTranslation::zero();
-            ptr->orientation = MotionOrientation::zero();
-            return ptr;
+            auto xform = MotionXForm();
+            xform.translation = MotionTranslation::zero();
+            xform.orientation = MotionOrientation::zero();
+            return xform;
         }
 
-        static std::unique_ptr<MotionXForm> create(double tx, double ty, double tz,
+        static MotionXForm create(double tx, double ty, double tz,
                                                    double ox, double oy, double oz)
         {
-            auto ptr = std::make_unique<MotionXForm>();
-            ptr->translation = MotionTranslation::create(tx, ty, tz);
-            ptr->orientation = MotionOrientation::create(ox, oy, oz);
-            return ptr;
+            auto xform = MotionXForm();
+            xform.translation = MotionTranslation::create(tx, ty, tz);
+            xform.orientation = MotionOrientation::create(ox, oy, oz);
+            return xform;
         }
     };
 }
