@@ -7,7 +7,8 @@ namespace indiemotion::net
     {
         Error = 0,
         Acknowledge,
-        SessionInitilization,
+
+        SessionInitilization = 100,
         SessionShutdown
     };
 

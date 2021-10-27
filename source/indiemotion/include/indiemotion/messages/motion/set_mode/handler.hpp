@@ -5,29 +5,33 @@
 #pragma once
 #include <indiemotion/messages/base/handler.hpp>
 #include <indiemotion/messages/motion/set_mode/payload.hpp>
+#include <indiemotion/responses/acknowledge/payload.hpp>
 #include <indiemotion/responses/base/response.hpp>
 #include <indiemotion/session/session.hpp>
-#include <indiemotion/responses/acknowledge/payload.hpp>
 
-namespace indiemotion::messages::motion::setmode {
-class Handler : public indiemotion::messages::base::Handler {
-public:
-  std::optional<std::unique_ptr<responses::base::Response>>
-  handleMessage(std::weak_ptr<session::Session> sessionPtr,
-                std::unique_ptr<base::Message> messagePtr) {
-    auto payloadPtr = messagePtr->payloadPtrAs<Payload>();
-    auto mode = payloadPtr->newMode();
-    if (auto session = sessionPtr.lock()) {
-      session->updateMotionMode(mode);
-      auto payloadPtr =
-          std::make_unique<responses::acknowledge::Payload>(true, "mode set.");
-      auto ctnPtr = responses::base::createResponse(messagePtr->header()->id(),
-                                                    std::move(payloadPtr));
-      return ctnPtr;
+namespace indiemotion::messages::motion::setmode
+{
+  class Handler : public indiemotion::messages::base::Handler
+  {
+  public:
+    std::optional<std::unique_ptr<responses::base::Response>>
+    handleMessage(std::weak_ptr<session::Session> sessionPtr,
+                  std::unique_ptr<base::Message> messagePtr)
+    {
+      auto payloadPtr = messagePtr->payloadPtrAs<Payload>();
+      auto mode = payloadPtr->newMode();
+      if (auto session = sessionPtr.lock())
+      {
+        session->updateMotionMode(mode);
+        auto payloadPtr =
+            std::make_unique<responses::acknowledge::Payload>(true, "mode set.");
+        auto ctnPtr = responses::base::createResponse(messagePtr->header()->id(),
+                                                      std::move(payloadPtr));
+        return ctnPtr;
+      }
+
+      // TODO Error (Session Gone)
+      return {};
     }
-
-    // TODO Error (Session Gone)
-    return {};
-  }
-};
+  };
 } // namespace indiemotion::messages::motion::setmode

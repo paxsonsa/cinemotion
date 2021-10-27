@@ -6,6 +6,7 @@ Header for providing common include across the library
 */
 #pragma once
 #include <any>
+#include <cassert>
 #include <exception>
 #include <functional>
 #include <iostream>

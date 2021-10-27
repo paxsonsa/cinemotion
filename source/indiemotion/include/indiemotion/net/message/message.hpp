@@ -13,26 +13,28 @@ namespace indiemotion::net
     {
     public:
     private:
-        std::shared_ptr<Header> _m_header;
-        std::shared_ptr<Payload_T> _m_body;
+        std::shared_ptr<Header> _m_headerPtr;
+        std::shared_ptr<Payload_T> _m_payloadPtr;
 
     public:
         Message(std::unique_ptr<Header> headerPtr,
-                std::unique_ptr<Payload_T> bodyPtr)
-            : _m_header(std::move(headerPtr)), _m_body(std::move(bodyPtr))
+                std::unique_ptr<Payload_T> payloadPtr)
+            : _m_headerPtr(std::move(headerPtr)), _m_payloadPtr(std::move(payloadPtr))
         {
+            assert(_m_headerPtr != nullptr && "message header cannot be nullptr");
+            assert(_m_payloadPtr != nullptr && "message payload cannot be nullptr");
         }
 
         std::shared_ptr<Header>
         header()
         {
-            return _m_header;
+            return _m_headerPtr;
         }
 
         std::shared_ptr<Payload_T>
         body()
         {
-            return _m_body;
+            return _m_payloadPtr;
         }
 
         /**
@@ -45,21 +47,21 @@ namespace indiemotion::net
         std::shared_ptr<T>
         bodyPtrAs()
         {
-            return std::dynamic_pointer_cast<T>(_m_body);
+            return std::dynamic_pointer_cast<T>(_m_payloadPtr);
         }
 
         std::optional<Identifier>
         inResponseToId()
         {
-            return _m_header->responseToId();
+            return _m_headerPtr->responseToId();
         }
 
         bool
         isInReponseTo(Identifier id)
         {
-            if (_m_header->responseToId().has_value())
+            if (_m_headerPtr->responseToId().has_value())
             {
-                return _m_header->responseToId().value() == id;
+                return _m_headerPtr->responseToId().value() == id;
             }
             return false;
         }
@@ -67,7 +69,7 @@ namespace indiemotion::net
         PayloadType
         payloadType()
         {
-            return _m_body->type();
+            return _m_payloadPtr->type();
         }
     };
 
