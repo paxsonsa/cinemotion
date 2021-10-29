@@ -30,7 +30,7 @@ namespace indiemotion::net
             return _m_headerPtr;
         }
 
-        std::shared_ptr<Payload_T> body() const
+        std::shared_ptr<Payload_T> payload() const
         {
             return _m_payloadPtr;
         }
@@ -70,13 +70,13 @@ namespace indiemotion::net
         }
 
         /**
-         * @brief Return the body at a cast to a particular type
+         * @brief Return the payload at a cast to a particular type
          * 
-         * @tparam T the object type to try and cast the body too
+         * @tparam T the object type to try and cast the payload too
          * @return std::shared_ptr<T> 
          */
         template <typename T>
-        std::shared_ptr<T> bodyPtrAs() const
+        std::shared_ptr<T> payloadPtrAs() const
         {
             return std::dynamic_pointer_cast<T>(_m_payloadPtr);
         }

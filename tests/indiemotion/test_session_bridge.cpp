@@ -8,6 +8,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/net/acknowledge.hpp>
+#include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/session.hpp>
 
@@ -43,7 +44,7 @@ SCENARIO("Initializing the Session")
         auto response = bridge.initialize();
 
         REQUIRE(response->doesRequireAcknowledgement());
-        REQUIRE(session->status() == session::SessionStatus::Initialized);
+        REQUIRE(session->status() == session::Status::Initialized);
 
         WHEN("the client sends an acknowledge message")
         {
@@ -57,7 +58,46 @@ SCENARIO("Initializing the Session")
 
             AND_THEN("the sesison should be active")
             {
-                REQUIRE(session->status() == session::SessionStatus::Activated);
+                REQUIRE(session->status() == session::Status::Activated);
+            }
+        }
+    }
+}
+
+SCENARIO("List the Cameras")
+{
+    struct DummyDelegate : session::Delegate
+    {
+
+        std::vector<cameras::Camera> cameraList{
+            cameras::Camera("cam1"),
+            cameras::Camera("cam2"),
+            cameras::Camera("cam3"),
+        };
+
+        std::vector<cameras::Camera> cameras()
+        {
+            return cameraList;
+        }
+    };
+
+    GIVEN("a session bridge")
+    {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto session = std::make_shared<session::Session>(delegate);
+        session->setStatus(session::Status::Activated);
+        auto bridge = indiemotion::session::SessionBridge(session);
+
+        WHEN("bridge processes list camera messages")
+        {
+            auto msg = std::make_unique<indiemotion::net::GetCameraList>();
+            auto message = indiemotion::net::createMessage(std::move(msg));
+            auto response = bridge.processMessage(std::move(message));
+            THEN("the delegates camera list should be returned")
+            {
+                REQUIRE(response);
+                auto camList = response.value()->payloadPtrAs<indiemotion::net::CameraList>();
+                REQUIRE(camList->cameras == delegate->cameraList);
             }
         }
     }

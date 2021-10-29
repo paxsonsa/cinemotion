@@ -9,7 +9,7 @@
 namespace indiemotion::session::state
 {
 
-    enum class SessionStatus
+    enum class Status
     {
         Dead = -1,
         Inactive = 0,

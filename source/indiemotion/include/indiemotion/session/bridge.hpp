@@ -1,6 +1,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/net/acknowledge.hpp>
+#include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/session/handler.hpp>
 #include <indiemotion/session/properties.hpp>
@@ -8,7 +9,6 @@
 
 namespace indiemotion::session
 {
-
     class SessionBridge
     {
     private:
@@ -29,13 +29,13 @@ namespace indiemotion::session
                 "fakeserver",
                 "1.0",
                 newFeatureSet(0));
-            _m_sessionPtr->setStatus(SessionStatus::Initialized);
+            _m_sessionPtr->setStatus(Status::Initialized);
             auto message = net::createMessage(std::move(payload));
             message->requiresAcknowledgement(true);
 
             _m_ackCoordinator->queue(message->id(),
                                      [&]()
-                                     { _m_sessionPtr->setStatus(SessionStatus::Activated); });
+                                     { _m_sessionPtr->setStatus(Status::Activated); });
 
             return std::move(message);
         }
@@ -46,6 +46,7 @@ namespace indiemotion::session
             switch (messagePtr->payloadType())
             {
             case net::PayloadType::Acknowledge:
+            {
                 if (messagePtr->inResponseToId())
                 {
                     _m_ackCoordinator->acknowledge(messagePtr->inResponseToId().value());
@@ -53,7 +54,14 @@ namespace indiemotion::session
                 // TODO Handle Malformed Acknowledge
 
                 return {};
-
+            }
+            case net::PayloadType::GetCameraList:
+            {
+                auto cameras = _m_sessionPtr->getCameras();
+                auto payload = std::make_unique<net::CameraList>(std::move(cameras));
+                auto response = net::createMessage(std::move(payload));
+                return response;
+            }
             case net::PayloadType::SessionInitilization:
             case net::PayloadType::SessionShutdown: // TODO how do we shut down
             case net::PayloadType::Error:           // TODO Process Errors

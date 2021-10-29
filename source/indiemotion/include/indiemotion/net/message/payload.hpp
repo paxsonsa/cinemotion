@@ -7,9 +7,13 @@ namespace indiemotion::net
     {
         Error = 0,
         Acknowledge,
+        SessionInitilization,
+        SessionShutdown,
+        GetCameraList,
+        CameraList,
+        SetCamera,
+        CameraInfo,
 
-        SessionInitilization = 100,
-        SessionShutdown
     };
 
     /**

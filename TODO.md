@@ -1,15 +1,17 @@
 Refactor Payloads and Messages into new System Message:
-- Remove Handler for Time Being
-- Session Initialization
-    - Test Delegate
-    - Test Active after ACK
-        - ResponseTracker (aka curator)
-            - Do we need a 'requiresAck' identifier?
+
 - ListCameras
 - SetCamera
 - Motion Mode
 - Motion Xform
 - Reset
+
+- Initialization
+    - Delegate
+        - Session Initialization
+        - Session Name
+    - API Version from Lib
+
 
 - Converters (message to protobuf)
 

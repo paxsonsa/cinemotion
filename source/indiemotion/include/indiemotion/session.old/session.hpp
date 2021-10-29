@@ -38,7 +38,6 @@ namespace indiemotion::session
             : Session()
         {
             _m_sessionDelegate = sessionDelegate;
-
         }
 
         // Copy the resource (copy constructor)
@@ -112,7 +111,7 @@ namespace indiemotion::session
                 }
             }
             _m_state->set(session::state::Key::Properties, properties);
-            _m_state->set(session::state::Key::Status, session::state::SessionStatus::Initializing);
+            _m_state->set(session::state::Key::Status, session::state::Status::Initializing);
         }
 
         /**
@@ -141,7 +140,7 @@ namespace indiemotion::session
          */
         void activate()
         {
-            _m_state->set(state::Key::Status, state::SessionStatus::Active);
+            _m_state->set(state::Key::Status, state::Status::Active);
             if (_m_sessionDelegate)
             {
                 _m_sessionDelegate->sessionDidInitialize();
@@ -151,11 +150,11 @@ namespace indiemotion::session
         /**
          * @brief Current Status of the session
          *
-         * @return state::SessionStatus
+         * @return state::Status
          */
-        state::SessionStatus status() const noexcept
+        state::Status status() const noexcept
         {
-            return _m_state->get<state::SessionStatus>(state::Key::Status);
+            return _m_state->get<state::Status>(state::Key::Status);
         }
 
         /**
@@ -166,7 +165,7 @@ namespace indiemotion::session
          */
         bool isActive() const noexcept
         {
-            return _m_state->get<state::SessionStatus>(state::Key::Status) == state::SessionStatus::Active;
+            return _m_state->get<state::Status>(state::Key::Status) == state::Status::Active;
         }
 
         /**
@@ -249,7 +248,7 @@ namespace indiemotion::session
         void _initializeState()
         {
             _m_state = std::make_shared<state::State>();
-            _m_state->set(state::Key::Status, state::SessionStatus::Inactive);
+            _m_state->set(state::Key::Status, state::Status::Inactive);
         }
 
         /**

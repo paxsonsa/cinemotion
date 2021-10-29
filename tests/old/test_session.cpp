@@ -48,16 +48,16 @@ TEST_SUITE("test session")
 
         GIVEN("a session with a provided delegate")
         {
-            auto status = session.state()->get<session::state::SessionStatus>(session::state::Key::Status);
-            REQUIRE(status == session::state::SessionStatus::Inactive);
+            auto status = session.state()->get<session::state::Status>(session::state::Key::Status);
+            REQUIRE(status == session::state::Status::Inactive);
 
             WHEN("the session is initialized")
             {
                 session.initialize();
                 THEN("the session state should be set to 'initializing'")
                 {
-                    status = session.state()->get<session::state::SessionStatus>(session::state::Key::Status);
-                    REQUIRE(status == session::state::SessionStatus::Initializing);
+                    status = session.state()->get<session::state::Status>(session::state::Key::Status);
+                    REQUIRE(status == session::state::Status::Initializing);
                 }
 
                 THEN("the delegate's session will initialized method is called")
@@ -91,8 +91,8 @@ TEST_SUITE("test session")
 
                 AND_THEN("the sessions status should be active")
                 {
-                    auto status = session.state()->get<session::state::SessionStatus>(session::state::Key::Status);
-                    REQUIRE(status == session::state::SessionStatus::Active);
+                    auto status = session.state()->get<session::state::Status>(session::state::Key::Status);
+                    REQUIRE(status == session::state::Status::Active);
                 }
             }
         }

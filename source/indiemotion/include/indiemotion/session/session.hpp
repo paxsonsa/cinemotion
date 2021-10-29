@@ -4,7 +4,7 @@
 namespace indiemotion::session
 {
 
-    enum class SessionStatus
+    enum class Status
     {
         Offline,
         Initialized,
@@ -14,18 +14,27 @@ namespace indiemotion::session
     class Session
     {
     private:
-        SessionStatus _m_status = SessionStatus::Offline;
-        std::shared_ptr<SessionDelegate> _m_delegate = nullptr;
+        Status _m_status = Status::Offline;
+        std::shared_ptr<Delegate> _m_delegate = nullptr;
 
     public:
         Session() {}
 
-        Session(std::shared_ptr<SessionDelegate> delegate) : Session()
+        Session(std::shared_ptr<Delegate> delegate) : Session()
         {
             _m_delegate = delegate;
         }
 
-        SessionStatus status() const { return _m_status; }
-        void setStatus(SessionStatus status) { _m_status = status; }
+        Status status() const { return _m_status; }
+        void setStatus(Status status) { _m_status = status; }
+
+        std::vector<cameras::Camera> getCameras() const 
+        {
+            if (_m_delegate)
+            {
+                return _m_delegate->cameras();
+            }
+            return {};
+        }
     };
 }
