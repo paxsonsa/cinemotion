@@ -1,23 +1,24 @@
 Refactor Payloads and Messages into new System Message:
-- Bridge: Initialize Test
-- Bridge: handler
-- PayloadType: Move outside net
-- Refactor Message/Responses
-    - MotionXForm
-        - Fix Tests for Motion XForm
+- Remove Handler for Time Being
+- Session Initialization
+    - Test Delegate
+    - Test Active after ACK
+        - ResponseTracker (aka curator)
+            - Do we need a 'requiresAck' identifier?
+- ListCameras
+- SetCamera
+- Motion Mode
+- Motion Xform
+- Reset
 
-- Refactor
-    - net
-        - payloads
-        - handlers
-        - transport
-            - message
-            - repsonse
-    - session
-    - motion
-    - view
-    
+- Converters (message to protobuf)
 
+class Bridge
+    processMessage()
+
+
+
+- 
 
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]

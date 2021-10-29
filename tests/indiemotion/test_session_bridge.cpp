@@ -7,6 +7,7 @@
 #include <doctest.h>
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
+#include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/session.hpp>
 
@@ -35,26 +36,29 @@ SCENARIO("Initializing the Session")
         }
     }
 
-    // GIVEN("an initialized session manager")
-    // {
-    //     auto manager = session::SessionManager();
-    //     auto response = manager.initialize();
-    //     auto responseId = response->id();
-    //     WHEN("the manager processes an ACK for the init message")
-    //     {
-    //         auto payload = messages::acknowledge::Payload::create(true, "");
-    //         auto message = messages::base::createMessage(responseId, std::move(payload));
-    //         auto noMsg = manager.processMessage(std::move(message));
+    GIVEN("an initialized session manager")
+    {
+        auto session = std::make_shared<session::Session>();
+        auto bridge = indiemotion::session::SessionBridge(session);
+        auto response = bridge.initialize();
 
-    //         THEN("no message should be returned")
-    //         {
-    //             REQUIRE_FALSE(noMsg.has_value());
-    //         }
+        REQUIRE(response->doesRequireAcknowledgement());
+        REQUIRE(session->status() == session::SessionStatus::Initialized);
 
-    //         THEN("the session should be in an activated status")
-    //         {
-    //             REQUIRE(manager.session()->status() == session::state::SessionStatus::Active);
-    //         }
-    //     }
-    // }
+        WHEN("the client sends an acknowledge message")
+        {
+            auto ackPtr = std::make_unique<indiemotion::net::Acknowledge>();
+            auto message = indiemotion::net::createMessage(response->id(), std::move(ackPtr));
+            auto expected = bridge.processMessage(std::move(message));
+            THEN("no message should be returned")
+            {
+                REQUIRE_FALSE(expected.has_value());
+            }
+
+            AND_THEN("the sesison should be active")
+            {
+                REQUIRE(session->status() == session::SessionStatus::Activated);
+            }
+        }
+    }
 }

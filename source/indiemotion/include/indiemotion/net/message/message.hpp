@@ -11,8 +11,8 @@ namespace indiemotion::net
      */
     class Message
     {
-    public:
     private:
+        bool _m_requiresAck = false;
         std::shared_ptr<Header> _m_headerPtr;
         std::shared_ptr<Payload_T> _m_payloadPtr;
 
@@ -25,16 +25,48 @@ namespace indiemotion::net
             assert(_m_payloadPtr != nullptr && "message payload cannot be nullptr");
         }
 
-        std::shared_ptr<Header>
-        header()
+        std::shared_ptr<Header> header() const
         {
             return _m_headerPtr;
         }
 
-        std::shared_ptr<Payload_T>
-        body()
+        std::shared_ptr<Payload_T> body() const
         {
             return _m_payloadPtr;
+        }
+
+        void requiresAcknowledgement(bool s)
+        {
+            _m_requiresAck = s;
+        }
+
+        bool doesRequireAcknowledgement() const
+        {
+            return _m_requiresAck;
+        }
+
+        std::optional<Identifier> inResponseToId() const
+        {
+            return _m_headerPtr->responseToId();
+        }
+
+        bool isInReponseTo(Identifier id) const
+        {
+            if (_m_headerPtr->responseToId().has_value())
+            {
+                return _m_headerPtr->responseToId().value() == id;
+            }
+            return false;
+        }
+
+        Identifier id() const
+        {
+            return _m_headerPtr->id();
+        }
+
+        PayloadType payloadType() const
+        {
+            return _m_payloadPtr->type();
         }
 
         /**
@@ -44,32 +76,9 @@ namespace indiemotion::net
          * @return std::shared_ptr<T> 
          */
         template <typename T>
-        std::shared_ptr<T>
-        bodyPtrAs()
+        std::shared_ptr<T> bodyPtrAs() const
         {
             return std::dynamic_pointer_cast<T>(_m_payloadPtr);
-        }
-
-        std::optional<Identifier>
-        inResponseToId()
-        {
-            return _m_headerPtr->responseToId();
-        }
-
-        bool
-        isInReponseTo(Identifier id)
-        {
-            if (_m_headerPtr->responseToId().has_value())
-            {
-                return _m_headerPtr->responseToId().value() == id;
-            }
-            return false;
-        }
-
-        PayloadType
-        payloadType()
-        {
-            return _m_payloadPtr->type();
         }
     };
 
