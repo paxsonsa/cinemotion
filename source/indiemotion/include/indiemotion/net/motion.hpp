@@ -21,8 +21,8 @@ namespace indiemotion::net
     {
         motion::MotionXForm xform;
 
-        UpdateMotionXForm(motion::MotionXForm xform) : xform(xform) {}
-        UpdateMotionXForm(motion::MotionXForm &&xform) : xform(xform) {}
+        UpdateMotionXForm(const motion::MotionXForm &xform) : xform(xform) {}
+        UpdateMotionXForm(motion::MotionXForm &&xform) : xform(std::move(xform)) {}
 
         PayloadType type() const
         {

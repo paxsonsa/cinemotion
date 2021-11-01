@@ -13,8 +13,31 @@ namespace indiemotion::motion
         double z = 0.0f;
 
         _XYZContainer() {}
-        _XYZContainer(_XYZContainer &&mE) = default;
-        _XYZContainer &operator=(_XYZContainer &&mE) = default;
+        _XYZContainer(const _XYZContainer &other) : x(other.x), y(other.y), z(other.z) {}
+        _XYZContainer(_XYZContainer &&other) : x(std::move(other.x)), y(std::move(other.y)), z(std::move(other.z)) {}
+
+        _XYZContainer &operator=(_XYZContainer &&rhs)
+        {
+            x = std::move(rhs.x);
+            y = std::move(rhs.y);
+            z = std::move(rhs.z);
+
+            return *this;
+        }
+
+        _XYZContainer &operator=(const _XYZContainer &rhs)
+        {
+            x = rhs.x;
+            y = rhs.y;
+            z = rhs.z;
+
+            return *this;
+        }
+
+        bool operator==(const _XYZContainer &rhs) const
+        {
+            return x == rhs.x && y == rhs.y && z == rhs.z;
+        }
 
         static _XYZContainer zero()
         {
@@ -50,14 +73,33 @@ namespace indiemotion::motion
             orientation = MotionOrientation::zero();
         }
 
-        MotionXForm(MotionXForm &&rhs)
+        MotionXForm(const MotionXForm &other)
         {
-            swap(std::move(rhs));
+            translation = other.translation;
+            translation = other.orientation;
         }
+
+        MotionXForm &operator=(const MotionXForm &rhs)
+        {
+            translation = rhs.translation;
+            translation = rhs.orientation;
+            return *this;
+        }
+
+        MotionXForm(MotionXForm &&other)
+        {
+            swap(std::move(other));
+        }
+
         MotionXForm &operator=(MotionXForm &&rhs)
         {
             swap(std::move(rhs));
             return *this;
+        }
+
+        bool operator==(const MotionXForm &rhs) const
+        {
+            return translation == rhs.translation && orientation == rhs.orientation;
         }
 
         void swap(MotionXForm &&rhs)

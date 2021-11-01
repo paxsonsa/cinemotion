@@ -237,3 +237,47 @@ SCENARIO("updating the motion mode")
         }
     }
 }
+
+SCENARIO("updating the motion xform")
+{
+    struct DummyDelegate : session::Delegate
+    {
+        bool wasReceivedMotionUpdateCalled = false;
+        motion::MotionXForm xform;
+
+        void recievedMotionUpdate(motion::MotionXForm m)
+        {
+            wasReceivedMotionUpdateCalled = true;
+            xform = m;
+        }
+    };
+
+    GIVEN("a fresh active session")
+    {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto session = std::make_shared<session::Session>(delegate);
+        session->setStatus(session::Status::Activated);
+        session->setMotionMode(motion::MotionMode::Live);
+        auto bridge = indiemotion::session::SessionBridge(session);
+
+        WHEN("a motion message is processed")
+        {
+            auto xform = motion::MotionXForm::create(
+                1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
+            auto payload = std::make_unique<indiemotion::net::UpdateMotionXForm>(xform);
+            auto message = indiemotion::net::createMessage(std::move(payload));
+            auto response = bridge.processMessage(std::move(message));
+
+            THEN("no response should be returned")
+            {
+                REQUIRE_FALSE(response);
+            }
+
+            THEN("delegate's recieved motion routine should be invoked")
+            {
+                REQUIRE(delegate->wasReceivedMotionUpdateCalled);
+                REQUIRE(delegate->xform == xform);
+            }
+        }
+    }
+}
