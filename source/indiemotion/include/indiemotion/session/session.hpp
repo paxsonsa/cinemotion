@@ -1,4 +1,8 @@
 #pragma once
+
+#include <indiemotion/cameras/manager.hpp>
+#include <indiemotion/common.hpp>
+#include <indiemotion/motion/manager.hpp>
 #include <indiemotion/session/delegate.hpp>
 
 namespace indiemotion::session
@@ -17,24 +21,71 @@ namespace indiemotion::session
         Status _m_status = Status::Offline;
         std::shared_ptr<Delegate> _m_delegate = nullptr;
 
+        std::unique_ptr<cameras::CameraManager> _m_camManager = nullptr;
+        std::unique_ptr<motion::MotionManager> _m_motionManager = nullptr;
+
     public:
-        Session() {}
+        Session()
+        {
+            _m_camManager = std::make_unique<cameras::CameraManager>();
+            _m_motionManager = std::make_unique<motion::MotionManager>();
+        }
 
         Session(std::shared_ptr<Delegate> delegate) : Session()
         {
             _m_delegate = delegate;
         }
 
+        // ----------------------------------------------------------------
+        // Session Status
         Status status() const { return _m_status; }
         void setStatus(Status status) { _m_status = status; }
 
-        std::vector<cameras::Camera> getCameras() const 
+        // ----------------------------------------------------------------
+        // Cameras List
+        std::vector<cameras::Camera> getCameras() const
         {
             if (_m_delegate)
             {
-                return _m_delegate->cameras();
+                return _m_delegate->getAvailableCameras();
             }
             return {};
+        }
+
+        std::optional<cameras::Camera> getActiveCamera() const
+        {
+            return _m_camManager->getActiveCamera();
+        }
+
+        void setActiveCamera(std::string cameraId)
+        {
+            auto cameraOpt = _m_delegate->getCameraById(cameraId);
+            if (!cameraOpt)
+            {
+                // TODO Raise an error when camera optional is empty
+            }
+            auto camera = cameraOpt.value();
+            _m_camManager->setActiveCamera(camera);
+            if (_m_delegate)
+            {
+                _m_delegate->didSetActiveCamera(camera);
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // Motion Mode
+        void setMotionMode(motion::MotionMode m)
+        {
+            _m_motionManager->seCurrentMotionMode(m);
+            if (_m_delegate)
+            {
+                _m_delegate->didSetMotionMode(m);
+            }
+        }
+
+        motion::MotionMode currentMotionMode() const
+        {
+            return _m_motionManager->currentMotionMode();
         }
     };
 }

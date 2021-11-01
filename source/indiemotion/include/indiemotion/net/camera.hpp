@@ -24,4 +24,28 @@ namespace indiemotion::net
             return PayloadType::CameraList;
         }
     };
+
+    struct SetCamera : public net::Payload_T
+    {
+        std::string cameraId;
+
+        SetCamera(std::string id) : cameraId(id) {}
+
+        PayloadType type() const
+        {
+            return PayloadType::SetCamera;
+        }
+    };
+
+    struct CameraInfo : public net::Payload_T
+    {
+        std::optional<cameras::Camera> camera;
+
+        CameraInfo(cameras::Camera camera) : camera(camera) {}
+
+        PayloadType type() const
+        {
+            return PayloadType::CameraInfo;
+        }
+    };
 } // namespace indiemotion::cameras

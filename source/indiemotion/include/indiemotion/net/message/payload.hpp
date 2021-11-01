@@ -13,6 +13,7 @@ namespace indiemotion::net
         CameraList,
         SetCamera,
         CameraInfo,
+        SetMotionMode,
 
     };
 
