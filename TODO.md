@@ -1,9 +1,6 @@
 Refactor Payloads and Messages into new System Message:
-
-- ListCameras
-- SetCamera
-- Motion Mode
-- Motion Xform
+- MotionManager
+    - Motion Xform
 - Reset
 
 - Initialization
@@ -15,11 +12,10 @@ Refactor Payloads and Messages into new System Message:
 
 - Converters (message to protobuf)
 
-class Bridge
-    processMessage()
-
-
-
+Delegates get a SessionNotify class
+- cameraListUpdated()
+- cameraChanged()
+- errorDidOccur()
 - 
 
 - WebSocket Server
