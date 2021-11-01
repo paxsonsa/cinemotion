@@ -1,22 +1,11 @@
-Refactor Payloads and Messages into new System Message:
-
-- Reset
-
+- Error TODOs
+- Add Logging System
 - Initialization
     - Delegate
         - Session Initialization
         - Session Name
     - API Version from Lib
-
-
 - Converters (message to protobuf)
-
-Delegates get a SessionNotify class
-- cameraListUpdated()
-- cameraChanged()
-- errorDidOccur()
-- 
-
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
         - Only Accept Single Connection
@@ -26,12 +15,11 @@ Delegates get a SessionNotify class
         and the SessionManager are created.
         Do we need a queue for the converted messages?
 
-- Add Logging System
+- Reset Call
 - [MAYBE] Use HTTP for all information requests and streamed data via http?
 - Generate Track Manager
 - Add CMake CI (macOS/Linux)
 - Add Message Queue?
-
 
 [Logging Sudo]
 ``` c++
