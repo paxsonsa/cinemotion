@@ -16,5 +16,10 @@ namespace indiemotion::motion
         {
             _m_mode = m;
         }
+
+        bool canAcceptMotionUpdate()
+        {
+            return _m_mode == MotionMode::Live || _m_mode == MotionMode::Recording;
+        }
     };
 }

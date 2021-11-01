@@ -87,5 +87,18 @@ namespace indiemotion::session
         {
             return _m_motionManager->currentMotionMode();
         }
+
+        // ----------------------------------------------------------------
+        // Motion Operation
+        void updateMotionXForm(motion::MotionXForm xform)
+        {
+            if (_m_motionManager->canAcceptMotionUpdate())
+            {
+                if (_m_delegate)
+                {
+                    _m_delegate->recievedMotionUpdate(xform);
+                }
+            }
+                }
     };
 }

@@ -1,6 +1,5 @@
 Refactor Payloads and Messages into new System Message:
-- MotionManager
-    - Motion Xform
+
 - Reset
 
 - Initialization

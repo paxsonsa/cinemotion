@@ -76,13 +76,13 @@ namespace indiemotion::motion
         MotionXForm(const MotionXForm &other)
         {
             translation = other.translation;
-            translation = other.orientation;
+            orientation = other.orientation;
         }
 
         MotionXForm &operator=(const MotionXForm &rhs)
         {
             translation = rhs.translation;
-            translation = rhs.orientation;
+            orientation = rhs.orientation;
             return *this;
         }
 

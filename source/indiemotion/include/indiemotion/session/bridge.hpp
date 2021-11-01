@@ -57,9 +57,8 @@ namespace indiemotion::session
                 return {};
             }
 
-                // ---------------------------------------------------------------------------------------------------
-                // Camera Operations
-
+            // ---------------------------------------------------------------------------------------------------
+            // Camera Operations
             case net::PayloadType::GetCameraList:
             {
                 auto cameras = _m_sessionPtr->getCameras();
@@ -78,13 +77,21 @@ namespace indiemotion::session
                 return response;
             }
 
-                // ---------------------------------------------------------------------------------------------------
-                // Motion Mode Operations
-
+            // ---------------------------------------------------------------------------------------------------
+            // Motion Mode Operations
             case net::PayloadType::SetMotionMode:
             {
                 auto msgPayload = messagePtr->payloadPtrAs<net::SetMotionMode>();
                 _m_sessionPtr->setMotionMode(msgPayload->mode);
+                return {};
+            }
+
+            // ---------------------------------------------------------------------------------------------------
+            // Motion XForm Operations
+            case net::PayloadType::UpdateMotionXForm:
+            {
+                auto msgPayload = messagePtr->payloadPtrAs<net::UpdateMotionXForm>();
+                _m_sessionPtr->updateMotionXForm(msgPayload->xform);
                 return {};
             }
 
