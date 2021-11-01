@@ -5,15 +5,27 @@ namespace indiemotion::net
 {
     enum class PayloadType : std::int32_t
     {
+        // ---------------------------------------------------------
+        // General Payload Types
         Error = 0,
         Acknowledge,
+
+        // ---------------------------------------------------------
+        // Sesion Payload Types
         SessionInitilization,
         SessionShutdown,
+
+        // ---------------------------------------------------------
+        // Camera Payload Types
         GetCameraList,
         CameraList,
         SetCamera,
         CameraInfo,
+
+        // ---------------------------------------------------------
+        // Motion Payload Types
         SetMotionMode,
+        UpdateMotionXForm,
 
     };
 
