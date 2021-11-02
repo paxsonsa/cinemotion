@@ -49,7 +49,7 @@ struct TableStruct_messages_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -62,12 +62,24 @@ namespace messages {
 class Acknowledge;
 struct AcknowledgeDefaultTypeInternal;
 extern AcknowledgeDefaultTypeInternal _Acknowledge_default_instance_;
+class Camera;
+struct CameraDefaultTypeInternal;
+extern CameraDefaultTypeInternal _Camera_default_instance_;
+class CameraList;
+struct CameraListDefaultTypeInternal;
+extern CameraListDefaultTypeInternal _CameraList_default_instance_;
 class ClientMessage;
 struct ClientMessageDefaultTypeInternal;
 extern ClientMessageDefaultTypeInternal _ClientMessage_default_instance_;
+class InitializeSession;
+struct InitializeSessionDefaultTypeInternal;
+extern InitializeSessionDefaultTypeInternal _InitializeSession_default_instance_;
 class ListCameras;
 struct ListCamerasDefaultTypeInternal;
 extern ListCamerasDefaultTypeInternal _ListCameras_default_instance_;
+class MotionActiveMode;
+struct MotionActiveModeDefaultTypeInternal;
+extern MotionActiveModeDefaultTypeInternal _MotionActiveMode_default_instance_;
 class MotionGetMode;
 struct MotionGetModeDefaultTypeInternal;
 extern MotionGetModeDefaultTypeInternal _MotionGetMode_default_instance_;
@@ -85,8 +97,12 @@ extern XFormDataDefaultTypeInternal _XFormData_default_instance_;
 }  // namespace indiemotion
 PROTOBUF_NAMESPACE_OPEN
 template<> ::indiemotion::protobuf::messages::Acknowledge* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::Acknowledge>(Arena*);
+template<> ::indiemotion::protobuf::messages::Camera* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::Camera>(Arena*);
+template<> ::indiemotion::protobuf::messages::CameraList* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::CameraList>(Arena*);
 template<> ::indiemotion::protobuf::messages::ClientMessage* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::ClientMessage>(Arena*);
+template<> ::indiemotion::protobuf::messages::InitializeSession* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::InitializeSession>(Arena*);
 template<> ::indiemotion::protobuf::messages::ListCameras* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::ListCameras>(Arena*);
+template<> ::indiemotion::protobuf::messages::MotionActiveMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::MotionActiveMode>(Arena*);
 template<> ::indiemotion::protobuf::messages::MotionGetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::MotionGetMode>(Arena*);
 template<> ::indiemotion::protobuf::messages::MotionSetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::MotionSetMode>(Arena*);
 template<> ::indiemotion::protobuf::messages::MotionXForm* Arena::CreateMaybeMessage<::indiemotion::protobuf::messages::MotionXForm>(Arena*);
@@ -170,8 +186,10 @@ class ClientMessage final :
   enum PayloadCase {
     kAcknowledge = 20,
     kListCameras = 30,
+    kCameraList = 31,
     kMotionSetMode = 40,
-    kMotionGetMode = 50,
+    kMotionGetMode = 41,
+    kMotionActiveMode = 42,
     kMotionXform = 60,
     PAYLOAD_NOT_SET = 0,
   };
@@ -258,8 +276,10 @@ class ClientMessage final :
     kHeaderFieldNumber = 1,
     kAcknowledgeFieldNumber = 20,
     kListCamerasFieldNumber = 30,
+    kCameraListFieldNumber = 31,
     kMotionSetModeFieldNumber = 40,
-    kMotionGetModeFieldNumber = 50,
+    kMotionGetModeFieldNumber = 41,
+    kMotionActiveModeFieldNumber = 42,
     kMotionXformFieldNumber = 60,
   };
   // .indiemotion.protobuf.transport.Header header = 1;
@@ -316,6 +336,24 @@ class ClientMessage final :
       ::indiemotion::protobuf::messages::ListCameras* list_cameras);
   ::indiemotion::protobuf::messages::ListCameras* unsafe_arena_release_list_cameras();
 
+  // .indiemotion.protobuf.messages.CameraList camera_list = 31;
+  bool has_camera_list() const;
+  private:
+  bool _internal_has_camera_list() const;
+  public:
+  void clear_camera_list();
+  const ::indiemotion::protobuf::messages::CameraList& camera_list() const;
+  PROTOBUF_NODISCARD ::indiemotion::protobuf::messages::CameraList* release_camera_list();
+  ::indiemotion::protobuf::messages::CameraList* mutable_camera_list();
+  void set_allocated_camera_list(::indiemotion::protobuf::messages::CameraList* camera_list);
+  private:
+  const ::indiemotion::protobuf::messages::CameraList& _internal_camera_list() const;
+  ::indiemotion::protobuf::messages::CameraList* _internal_mutable_camera_list();
+  public:
+  void unsafe_arena_set_allocated_camera_list(
+      ::indiemotion::protobuf::messages::CameraList* camera_list);
+  ::indiemotion::protobuf::messages::CameraList* unsafe_arena_release_camera_list();
+
   // .indiemotion.protobuf.messages.MotionSetMode motion_set_mode = 40;
   bool has_motion_set_mode() const;
   private:
@@ -334,7 +372,7 @@ class ClientMessage final :
       ::indiemotion::protobuf::messages::MotionSetMode* motion_set_mode);
   ::indiemotion::protobuf::messages::MotionSetMode* unsafe_arena_release_motion_set_mode();
 
-  // .indiemotion.protobuf.messages.MotionGetMode motion_get_mode = 50;
+  // .indiemotion.protobuf.messages.MotionGetMode motion_get_mode = 41;
   bool has_motion_get_mode() const;
   private:
   bool _internal_has_motion_get_mode() const;
@@ -351,6 +389,24 @@ class ClientMessage final :
   void unsafe_arena_set_allocated_motion_get_mode(
       ::indiemotion::protobuf::messages::MotionGetMode* motion_get_mode);
   ::indiemotion::protobuf::messages::MotionGetMode* unsafe_arena_release_motion_get_mode();
+
+  // .indiemotion.protobuf.messages.MotionActiveMode motion_active_mode = 42;
+  bool has_motion_active_mode() const;
+  private:
+  bool _internal_has_motion_active_mode() const;
+  public:
+  void clear_motion_active_mode();
+  const ::indiemotion::protobuf::messages::MotionActiveMode& motion_active_mode() const;
+  PROTOBUF_NODISCARD ::indiemotion::protobuf::messages::MotionActiveMode* release_motion_active_mode();
+  ::indiemotion::protobuf::messages::MotionActiveMode* mutable_motion_active_mode();
+  void set_allocated_motion_active_mode(::indiemotion::protobuf::messages::MotionActiveMode* motion_active_mode);
+  private:
+  const ::indiemotion::protobuf::messages::MotionActiveMode& _internal_motion_active_mode() const;
+  ::indiemotion::protobuf::messages::MotionActiveMode* _internal_mutable_motion_active_mode();
+  public:
+  void unsafe_arena_set_allocated_motion_active_mode(
+      ::indiemotion::protobuf::messages::MotionActiveMode* motion_active_mode);
+  ::indiemotion::protobuf::messages::MotionActiveMode* unsafe_arena_release_motion_active_mode();
 
   // .indiemotion.protobuf.messages.MotionXForm motion_xform = 60;
   bool has_motion_xform() const;
@@ -377,8 +433,10 @@ class ClientMessage final :
   class _Internal;
   void set_has_acknowledge();
   void set_has_list_cameras();
+  void set_has_camera_list();
   void set_has_motion_set_mode();
   void set_has_motion_get_mode();
+  void set_has_motion_active_mode();
   void set_has_motion_xform();
 
   inline bool has_payload() const;
@@ -393,8 +451,10 @@ class ClientMessage final :
       ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
     ::indiemotion::protobuf::messages::Acknowledge* acknowledge_;
     ::indiemotion::protobuf::messages::ListCameras* list_cameras_;
+    ::indiemotion::protobuf::messages::CameraList* camera_list_;
     ::indiemotion::protobuf::messages::MotionSetMode* motion_set_mode_;
     ::indiemotion::protobuf::messages::MotionGetMode* motion_get_mode_;
+    ::indiemotion::protobuf::messages::MotionActiveMode* motion_active_mode_;
     ::indiemotion::protobuf::messages::MotionXForm* motion_xform_;
   } payload_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -689,6 +749,636 @@ class ListCameras final :
 };
 // -------------------------------------------------------------------
 
+class Camera final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.Camera) */ {
+ public:
+  inline Camera() : Camera(nullptr) {}
+  ~Camera() override;
+  explicit constexpr Camera(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  Camera(const Camera& from);
+  Camera(Camera&& from) noexcept
+    : Camera() {
+    *this = ::std::move(from);
+  }
+
+  inline Camera& operator=(const Camera& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Camera& operator=(Camera&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Camera& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const Camera* internal_default_instance() {
+    return reinterpret_cast<const Camera*>(
+               &_Camera_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(Camera& a, Camera& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Camera* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Camera* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  Camera* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<Camera>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const Camera& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const Camera& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Camera* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.messages.Camera";
+  }
+  protected:
+  explicit Camera(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdFieldNumber = 10,
+  };
+  // string id = 10;
+  void clear_id();
+  const std::string& id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_id();
+  PROTOBUF_NODISCARD std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.Camera)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_messages_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CameraList final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.CameraList) */ {
+ public:
+  inline CameraList() : CameraList(nullptr) {}
+  ~CameraList() override;
+  explicit constexpr CameraList(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CameraList(const CameraList& from);
+  CameraList(CameraList&& from) noexcept
+    : CameraList() {
+    *this = ::std::move(from);
+  }
+
+  inline CameraList& operator=(const CameraList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CameraList& operator=(CameraList&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CameraList& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CameraList* internal_default_instance() {
+    return reinterpret_cast<const CameraList*>(
+               &_CameraList_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(CameraList& a, CameraList& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CameraList* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CameraList* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CameraList* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CameraList>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CameraList& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const CameraList& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CameraList* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.messages.CameraList";
+  }
+  protected:
+  explicit CameraList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCameraFieldNumber = 1,
+  };
+  // repeated .indiemotion.protobuf.messages.Camera camera = 1;
+  int camera_size() const;
+  private:
+  int _internal_camera_size() const;
+  public:
+  void clear_camera();
+  ::indiemotion::protobuf::messages::Camera* mutable_camera(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotion::protobuf::messages::Camera >*
+      mutable_camera();
+  private:
+  const ::indiemotion::protobuf::messages::Camera& _internal_camera(int index) const;
+  ::indiemotion::protobuf::messages::Camera* _internal_add_camera();
+  public:
+  const ::indiemotion::protobuf::messages::Camera& camera(int index) const;
+  ::indiemotion::protobuf::messages::Camera* add_camera();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotion::protobuf::messages::Camera >&
+      camera() const;
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.CameraList)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotion::protobuf::messages::Camera > camera_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_messages_2eproto;
+};
+// -------------------------------------------------------------------
+
+class InitializeSession final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.InitializeSession) */ {
+ public:
+  inline InitializeSession() : InitializeSession(nullptr) {}
+  ~InitializeSession() override;
+  explicit constexpr InitializeSession(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  InitializeSession(const InitializeSession& from);
+  InitializeSession(InitializeSession&& from) noexcept
+    : InitializeSession() {
+    *this = ::std::move(from);
+  }
+
+  inline InitializeSession& operator=(const InitializeSession& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline InitializeSession& operator=(InitializeSession&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const InitializeSession& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const InitializeSession* internal_default_instance() {
+    return reinterpret_cast<const InitializeSession*>(
+               &_InitializeSession_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(InitializeSession& a, InitializeSession& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(InitializeSession* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(InitializeSession* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  InitializeSession* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<InitializeSession>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const InitializeSession& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const InitializeSession& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(InitializeSession* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.messages.InitializeSession";
+  }
+  protected:
+  explicit InitializeSession(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 10,
+    kApiVersionFieldNumber = 20,
+    kFeaturesFieldNumber = 30,
+  };
+  // string name = 10;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // string apiVersion = 20;
+  void clear_apiversion();
+  const std::string& apiversion() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_apiversion(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_apiversion();
+  PROTOBUF_NODISCARD std::string* release_apiversion();
+  void set_allocated_apiversion(std::string* apiversion);
+  private:
+  const std::string& _internal_apiversion() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_apiversion(const std::string& value);
+  std::string* _internal_mutable_apiversion();
+  public:
+
+  // uint32 features = 30;
+  void clear_features();
+  uint32_t features() const;
+  void set_features(uint32_t value);
+  private:
+  uint32_t _internal_features() const;
+  void _internal_set_features(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.InitializeSession)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr apiversion_;
+  uint32_t features_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_messages_2eproto;
+};
+// -------------------------------------------------------------------
+
+class MotionActiveMode final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.MotionActiveMode) */ {
+ public:
+  inline MotionActiveMode() : MotionActiveMode(nullptr) {}
+  ~MotionActiveMode() override;
+  explicit constexpr MotionActiveMode(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  MotionActiveMode(const MotionActiveMode& from);
+  MotionActiveMode(MotionActiveMode&& from) noexcept
+    : MotionActiveMode() {
+    *this = ::std::move(from);
+  }
+
+  inline MotionActiveMode& operator=(const MotionActiveMode& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline MotionActiveMode& operator=(MotionActiveMode&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const MotionActiveMode& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const MotionActiveMode* internal_default_instance() {
+    return reinterpret_cast<const MotionActiveMode*>(
+               &_MotionActiveMode_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(MotionActiveMode& a, MotionActiveMode& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(MotionActiveMode* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(MotionActiveMode* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  MotionActiveMode* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<MotionActiveMode>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const MotionActiveMode& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const MotionActiveMode& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(MotionActiveMode* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.messages.MotionActiveMode";
+  }
+  protected:
+  explicit MotionActiveMode(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kModeFieldNumber = 1,
+  };
+  // .indiemotion.protobuf.messages.MotionMode mode = 1;
+  void clear_mode();
+  ::indiemotion::protobuf::messages::MotionMode mode() const;
+  void set_mode(::indiemotion::protobuf::messages::MotionMode value);
+  private:
+  ::indiemotion::protobuf::messages::MotionMode _internal_mode() const;
+  void _internal_set_mode(::indiemotion::protobuf::messages::MotionMode value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.MotionActiveMode)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  int mode_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_messages_2eproto;
+};
+// -------------------------------------------------------------------
+
 class MotionSetMode final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.messages.MotionSetMode) */ {
  public:
@@ -737,7 +1427,7 @@ class MotionSetMode final :
                &_MotionSetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    7;
 
   friend void swap(MotionSetMode& a, MotionSetMode& b) {
     a.Swap(&b);
@@ -883,7 +1573,7 @@ class MotionGetMode final :
                &_MotionGetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    8;
 
   friend void swap(MotionGetMode& a, MotionGetMode& b) {
     a.Swap(&b);
@@ -1029,7 +1719,7 @@ class XFormData final :
                &_XFormData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    9;
 
   friend void swap(XFormData& a, XFormData& b) {
     a.Swap(&b);
@@ -1197,7 +1887,7 @@ class MotionXForm final :
                &_MotionXForm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    10;
 
   friend void swap(MotionXForm& a, MotionXForm& b) {
     a.Swap(&b);
@@ -1567,6 +2257,80 @@ inline ::indiemotion::protobuf::messages::ListCameras* ClientMessage::mutable_li
   return _msg;
 }
 
+// .indiemotion.protobuf.messages.CameraList camera_list = 31;
+inline bool ClientMessage::_internal_has_camera_list() const {
+  return payload_case() == kCameraList;
+}
+inline bool ClientMessage::has_camera_list() const {
+  return _internal_has_camera_list();
+}
+inline void ClientMessage::set_has_camera_list() {
+  _oneof_case_[0] = kCameraList;
+}
+inline void ClientMessage::clear_camera_list() {
+  if (_internal_has_camera_list()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.camera_list_;
+    }
+    clear_has_payload();
+  }
+}
+inline ::indiemotion::protobuf::messages::CameraList* ClientMessage::release_camera_list() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.ClientMessage.camera_list)
+  if (_internal_has_camera_list()) {
+    clear_has_payload();
+      ::indiemotion::protobuf::messages::CameraList* temp = payload_.camera_list_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.camera_list_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotion::protobuf::messages::CameraList& ClientMessage::_internal_camera_list() const {
+  return _internal_has_camera_list()
+      ? *payload_.camera_list_
+      : reinterpret_cast< ::indiemotion::protobuf::messages::CameraList&>(::indiemotion::protobuf::messages::_CameraList_default_instance_);
+}
+inline const ::indiemotion::protobuf::messages::CameraList& ClientMessage::camera_list() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.ClientMessage.camera_list)
+  return _internal_camera_list();
+}
+inline ::indiemotion::protobuf::messages::CameraList* ClientMessage::unsafe_arena_release_camera_list() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotion.protobuf.messages.ClientMessage.camera_list)
+  if (_internal_has_camera_list()) {
+    clear_has_payload();
+    ::indiemotion::protobuf::messages::CameraList* temp = payload_.camera_list_;
+    payload_.camera_list_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::unsafe_arena_set_allocated_camera_list(::indiemotion::protobuf::messages::CameraList* camera_list) {
+  clear_payload();
+  if (camera_list) {
+    set_has_camera_list();
+    payload_.camera_list_ = camera_list;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.ClientMessage.camera_list)
+}
+inline ::indiemotion::protobuf::messages::CameraList* ClientMessage::_internal_mutable_camera_list() {
+  if (!_internal_has_camera_list()) {
+    clear_payload();
+    set_has_camera_list();
+    payload_.camera_list_ = CreateMaybeMessage< ::indiemotion::protobuf::messages::CameraList >(GetArenaForAllocation());
+  }
+  return payload_.camera_list_;
+}
+inline ::indiemotion::protobuf::messages::CameraList* ClientMessage::mutable_camera_list() {
+  ::indiemotion::protobuf::messages::CameraList* _msg = _internal_mutable_camera_list();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.ClientMessage.camera_list)
+  return _msg;
+}
+
 // .indiemotion.protobuf.messages.MotionSetMode motion_set_mode = 40;
 inline bool ClientMessage::_internal_has_motion_set_mode() const {
   return payload_case() == kMotionSetMode;
@@ -1641,7 +2405,7 @@ inline ::indiemotion::protobuf::messages::MotionSetMode* ClientMessage::mutable_
   return _msg;
 }
 
-// .indiemotion.protobuf.messages.MotionGetMode motion_get_mode = 50;
+// .indiemotion.protobuf.messages.MotionGetMode motion_get_mode = 41;
 inline bool ClientMessage::_internal_has_motion_get_mode() const {
   return payload_case() == kMotionGetMode;
 }
@@ -1712,6 +2476,80 @@ inline ::indiemotion::protobuf::messages::MotionGetMode* ClientMessage::_interna
 inline ::indiemotion::protobuf::messages::MotionGetMode* ClientMessage::mutable_motion_get_mode() {
   ::indiemotion::protobuf::messages::MotionGetMode* _msg = _internal_mutable_motion_get_mode();
   // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.ClientMessage.motion_get_mode)
+  return _msg;
+}
+
+// .indiemotion.protobuf.messages.MotionActiveMode motion_active_mode = 42;
+inline bool ClientMessage::_internal_has_motion_active_mode() const {
+  return payload_case() == kMotionActiveMode;
+}
+inline bool ClientMessage::has_motion_active_mode() const {
+  return _internal_has_motion_active_mode();
+}
+inline void ClientMessage::set_has_motion_active_mode() {
+  _oneof_case_[0] = kMotionActiveMode;
+}
+inline void ClientMessage::clear_motion_active_mode() {
+  if (_internal_has_motion_active_mode()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.motion_active_mode_;
+    }
+    clear_has_payload();
+  }
+}
+inline ::indiemotion::protobuf::messages::MotionActiveMode* ClientMessage::release_motion_active_mode() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.ClientMessage.motion_active_mode)
+  if (_internal_has_motion_active_mode()) {
+    clear_has_payload();
+      ::indiemotion::protobuf::messages::MotionActiveMode* temp = payload_.motion_active_mode_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.motion_active_mode_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotion::protobuf::messages::MotionActiveMode& ClientMessage::_internal_motion_active_mode() const {
+  return _internal_has_motion_active_mode()
+      ? *payload_.motion_active_mode_
+      : reinterpret_cast< ::indiemotion::protobuf::messages::MotionActiveMode&>(::indiemotion::protobuf::messages::_MotionActiveMode_default_instance_);
+}
+inline const ::indiemotion::protobuf::messages::MotionActiveMode& ClientMessage::motion_active_mode() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.ClientMessage.motion_active_mode)
+  return _internal_motion_active_mode();
+}
+inline ::indiemotion::protobuf::messages::MotionActiveMode* ClientMessage::unsafe_arena_release_motion_active_mode() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotion.protobuf.messages.ClientMessage.motion_active_mode)
+  if (_internal_has_motion_active_mode()) {
+    clear_has_payload();
+    ::indiemotion::protobuf::messages::MotionActiveMode* temp = payload_.motion_active_mode_;
+    payload_.motion_active_mode_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::unsafe_arena_set_allocated_motion_active_mode(::indiemotion::protobuf::messages::MotionActiveMode* motion_active_mode) {
+  clear_payload();
+  if (motion_active_mode) {
+    set_has_motion_active_mode();
+    payload_.motion_active_mode_ = motion_active_mode;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.ClientMessage.motion_active_mode)
+}
+inline ::indiemotion::protobuf::messages::MotionActiveMode* ClientMessage::_internal_mutable_motion_active_mode() {
+  if (!_internal_has_motion_active_mode()) {
+    clear_payload();
+    set_has_motion_active_mode();
+    payload_.motion_active_mode_ = CreateMaybeMessage< ::indiemotion::protobuf::messages::MotionActiveMode >(GetArenaForAllocation());
+  }
+  return payload_.motion_active_mode_;
+}
+inline ::indiemotion::protobuf::messages::MotionActiveMode* ClientMessage::mutable_motion_active_mode() {
+  ::indiemotion::protobuf::messages::MotionActiveMode* _msg = _internal_mutable_motion_active_mode();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.ClientMessage.motion_active_mode)
   return _msg;
 }
 
@@ -1894,6 +2732,255 @@ inline void Acknowledge::set_allocated_message(std::string* message) {
 // -------------------------------------------------------------------
 
 // ListCameras
+
+// -------------------------------------------------------------------
+
+// Camera
+
+// string id = 10;
+inline void Camera::clear_id() {
+  id_.ClearToEmpty();
+}
+inline const std::string& Camera::id() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Camera.id)
+  return _internal_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Camera::set_id(ArgT0&& arg0, ArgT... args) {
+ 
+ id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.Camera.id)
+}
+inline std::string* Camera::mutable_id() {
+  std::string* _s = _internal_mutable_id();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Camera.id)
+  return _s;
+}
+inline const std::string& Camera::_internal_id() const {
+  return id_.Get();
+}
+inline void Camera::_internal_set_id(const std::string& value) {
+  
+  id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* Camera::_internal_mutable_id() {
+  
+  return id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* Camera::release_id() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Camera.id)
+  return id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void Camera::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (id_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.Camera.id)
+}
+
+// -------------------------------------------------------------------
+
+// CameraList
+
+// repeated .indiemotion.protobuf.messages.Camera camera = 1;
+inline int CameraList::_internal_camera_size() const {
+  return camera_.size();
+}
+inline int CameraList::camera_size() const {
+  return _internal_camera_size();
+}
+inline void CameraList::clear_camera() {
+  camera_.Clear();
+}
+inline ::indiemotion::protobuf::messages::Camera* CameraList::mutable_camera(int index) {
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.CameraList.camera)
+  return camera_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotion::protobuf::messages::Camera >*
+CameraList::mutable_camera() {
+  // @@protoc_insertion_point(field_mutable_list:indiemotion.protobuf.messages.CameraList.camera)
+  return &camera_;
+}
+inline const ::indiemotion::protobuf::messages::Camera& CameraList::_internal_camera(int index) const {
+  return camera_.Get(index);
+}
+inline const ::indiemotion::protobuf::messages::Camera& CameraList::camera(int index) const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.CameraList.camera)
+  return _internal_camera(index);
+}
+inline ::indiemotion::protobuf::messages::Camera* CameraList::_internal_add_camera() {
+  return camera_.Add();
+}
+inline ::indiemotion::protobuf::messages::Camera* CameraList::add_camera() {
+  ::indiemotion::protobuf::messages::Camera* _add = _internal_add_camera();
+  // @@protoc_insertion_point(field_add:indiemotion.protobuf.messages.CameraList.camera)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotion::protobuf::messages::Camera >&
+CameraList::camera() const {
+  // @@protoc_insertion_point(field_list:indiemotion.protobuf.messages.CameraList.camera)
+  return camera_;
+}
+
+// -------------------------------------------------------------------
+
+// InitializeSession
+
+// string name = 10;
+inline void InitializeSession::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& InitializeSession::name() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.InitializeSession.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void InitializeSession::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.InitializeSession.name)
+}
+inline std::string* InitializeSession::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.InitializeSession.name)
+  return _s;
+}
+inline const std::string& InitializeSession::_internal_name() const {
+  return name_.Get();
+}
+inline void InitializeSession::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* InitializeSession::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* InitializeSession::release_name() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.InitializeSession.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void InitializeSession::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (name_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.InitializeSession.name)
+}
+
+// string apiVersion = 20;
+inline void InitializeSession::clear_apiversion() {
+  apiversion_.ClearToEmpty();
+}
+inline const std::string& InitializeSession::apiversion() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.InitializeSession.apiVersion)
+  return _internal_apiversion();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void InitializeSession::set_apiversion(ArgT0&& arg0, ArgT... args) {
+ 
+ apiversion_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.InitializeSession.apiVersion)
+}
+inline std::string* InitializeSession::mutable_apiversion() {
+  std::string* _s = _internal_mutable_apiversion();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.InitializeSession.apiVersion)
+  return _s;
+}
+inline const std::string& InitializeSession::_internal_apiversion() const {
+  return apiversion_.Get();
+}
+inline void InitializeSession::_internal_set_apiversion(const std::string& value) {
+  
+  apiversion_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* InitializeSession::_internal_mutable_apiversion() {
+  
+  return apiversion_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* InitializeSession::release_apiversion() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.InitializeSession.apiVersion)
+  return apiversion_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void InitializeSession::set_allocated_apiversion(std::string* apiversion) {
+  if (apiversion != nullptr) {
+    
+  } else {
+    
+  }
+  apiversion_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), apiversion,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (apiversion_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    apiversion_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.InitializeSession.apiVersion)
+}
+
+// uint32 features = 30;
+inline void InitializeSession::clear_features() {
+  features_ = 0u;
+}
+inline uint32_t InitializeSession::_internal_features() const {
+  return features_;
+}
+inline uint32_t InitializeSession::features() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.InitializeSession.features)
+  return _internal_features();
+}
+inline void InitializeSession::_internal_set_features(uint32_t value) {
+  
+  features_ = value;
+}
+inline void InitializeSession::set_features(uint32_t value) {
+  _internal_set_features(value);
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.InitializeSession.features)
+}
+
+// -------------------------------------------------------------------
+
+// MotionActiveMode
+
+// .indiemotion.protobuf.messages.MotionMode mode = 1;
+inline void MotionActiveMode::clear_mode() {
+  mode_ = 0;
+}
+inline ::indiemotion::protobuf::messages::MotionMode MotionActiveMode::_internal_mode() const {
+  return static_cast< ::indiemotion::protobuf::messages::MotionMode >(mode_);
+}
+inline ::indiemotion::protobuf::messages::MotionMode MotionActiveMode::mode() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.MotionActiveMode.mode)
+  return _internal_mode();
+}
+inline void MotionActiveMode::_internal_set_mode(::indiemotion::protobuf::messages::MotionMode value) {
+  
+  mode_ = value;
+}
+inline void MotionActiveMode::set_mode(::indiemotion::protobuf::messages::MotionMode value) {
+  _internal_set_mode(value);
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.messages.MotionActiveMode.mode)
+}
 
 // -------------------------------------------------------------------
 
@@ -2194,6 +3281,14 @@ inline void MotionXForm::set_allocated_orientation(::indiemotion::protobuf::mess
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
