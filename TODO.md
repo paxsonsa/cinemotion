@@ -1,4 +1,4 @@
-- Converters (message to protobuf)
+- Translator (message to protobuf)
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
         - Only Accept Single Connection
