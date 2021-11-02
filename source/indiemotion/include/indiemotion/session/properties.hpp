@@ -5,14 +5,14 @@
 namespace indiemotion::session
 {
 
-    typedef uint32_t FeatureSet;
+    typedef std::uint32_t FeatureSet;
 
-    FeatureSet newFeatureSet(uint32_t features)
+    FeatureSet newFeatureSet(std::uint32_t features)
     {
         return FeatureSet(features);
     }
 
-    enum class Feature : uint32_t
+    enum class Feature : std::uint32_t
     {
         VideoStreaming = 0x01,
         TrackHistory = 0x02,

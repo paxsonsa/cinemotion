@@ -4,7 +4,7 @@
 
 namespace indiemotion::net
 {
-    enum class ErrorType : uint32_t
+    enum class ErrorType : std::uint32_t
     {
         UnexpectedError = 1,
         InvalidMessage,
