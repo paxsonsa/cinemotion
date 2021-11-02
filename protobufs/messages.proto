@@ -8,8 +8,10 @@ message ClientMessage {
   oneof payload {
     Acknowledge acknowledge = 20;
     ListCameras list_cameras = 30;
+    CameraList camera_list = 31;
     MotionSetMode motion_set_mode = 40;
-    MotionGetMode motion_get_mode = 50;
+    MotionGetMode motion_get_mode = 41;
+    MotionActiveMode motion_active_mode = 42;
     MotionXForm motion_xform = 60;
   }
 }
@@ -21,11 +23,23 @@ message Acknowledge {
 
 message ListCameras {}
 
+message Camera { string id = 10; }
+
+message CameraList { repeated Camera camera = 1; }
+
+message InitializeSession {
+  string name = 10;
+  string apiVersion = 20;
+  uint32 features = 30;
+}
+
 enum MotionMode {
   Off = 0;
   Live = 1;
   Recording = 2;
 }
+
+message MotionActiveMode { MotionMode mode = 1; }
 
 message MotionSetMode { MotionMode mode = 1; }
 
