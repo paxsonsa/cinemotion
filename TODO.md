@@ -1,10 +1,3 @@
-- Error TODOs
-- Add Logging System
-- Initialization
-    - Delegate
-        - Session Initialization
-        - Session Name
-    - API Version from Lib
 - Converters (message to protobuf)
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
@@ -29,35 +22,6 @@ LOGGER.error();
 ```
 [Protobuf Session Handler]
 ```c++
-
-class MessageWrapper
-{
-    MessageKind kind;
-    class Header
-    {
-        Timestamp timestamp;
-        string id;
-        std::optional<string> inResponseToId;
-    }
-
-    class Contents
-    {
-
-    }
-
-    std::unique_ptr<Header> header
-    std::unique_ptr<Contents> payload;
-};
-
-
-class ResponseWrapper
-{
-    Response kind;
-    class Header
-    {
-        Timestamp
-    }
-}
 
 class Connection {
 ...
