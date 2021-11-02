@@ -6,19 +6,37 @@
 
 namespace indiemotion::errors
 {
+    enum class ErrorType : uint32_t
+    {
+        UnknownError = 0,
+        InvalidMessage,
+    };
+
+    std::string ErrorType_toString(ErrorType e)
+    {
+        switch (e)
+        {
+        case ErrorType::UnknownError:
+            return "UnknownError";
+        case ErrorType::InvalidMessage:
+            return "InvalidMessage";
+        }
+    }
+
     class SessionError : public std::exception
     {
     public:
-        std::string etype;
+        ErrorType etype;
         std::string message;
 
     private:
         std::string _m_error;
 
     public:
-        SessionError(std::string type, std::string message) noexcept : etype(type), message(message)
+        SessionError(ErrorType type, std::string message) noexcept : etype(type), message(message)
         {
-            _m_error = etype + ": " + message;
+            _m_error = ErrorType_toString(etype);
+            _m_error += ": " + message;
         }
 
         const char *what() const noexcept

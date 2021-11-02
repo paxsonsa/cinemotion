@@ -2,6 +2,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
+#include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/session/handler.hpp>
@@ -37,7 +38,6 @@ namespace indiemotion::session
 
         std::unique_ptr<net::Message> initialize()
         {
-            // TODO Return Initialize
             auto payload = std::make_unique<SessionProperties>(
                 _m_name,
                 apiVersion(),
@@ -64,7 +64,14 @@ namespace indiemotion::session
                 {
                     _m_ackCoordinator->acknowledge(messagePtr->inResponseToId().value());
                 }
-                // TODO Handle Malformed Acknowledge
+                else
+                {
+                    auto error = std::make_unique<net::Error>(
+                        net::ErrorType::InvalidMessage,
+                        "acknowledgement message missing id for which message it should acknowledge");
+                    auto response = net::createMessage(messagePtr->id(), std::move(error));
+                    return response;
+                }
 
                 return {};
             }

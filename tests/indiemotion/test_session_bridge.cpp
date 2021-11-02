@@ -9,6 +9,7 @@
 #include <indiemotion/errors.hpp>
 #include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
+#include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/session.hpp>
@@ -69,6 +70,31 @@ SCENARIO("Initializing the Session")
             AND_THEN("the sesison should be active")
             {
                 REQUIRE(session->status() == session::Status::Activated);
+            }
+        }
+    }
+}
+
+SCENARIO("acknowledge message with no ID should return an error")
+{
+    GIVEN("an active session bridge")
+    {
+        auto session = std::make_shared<session::Session>();
+        auto bridge = indiemotion::session::SessionBridge(session);
+        session->setStatus(session::Status::Activated);
+
+        WHEN("an acknowledge message is processed without an inResponseToId")
+        {
+            auto ackPtr = std::make_unique<indiemotion::net::Acknowledge>();
+            auto message = indiemotion::net::createMessage(std::move(ackPtr));
+            auto expected = bridge.processMessage(std::move(message));
+
+            THEN("an invalid message error should be returned")
+            {
+                REQUIRE(expected);
+                REQUIRE(expected.value()->payloadType() == indiemotion::net::PayloadType::Error);
+                auto payload = expected.value()->payloadPtrAs<indiemotion::net::Error>();
+                REQUIRE(payload->errorType == indiemotion::net::ErrorType::InvalidMessage);
             }
         }
     }
