@@ -7,7 +7,8 @@ namespace indiemotion::net
     {
         // ---------------------------------------------------------
         // General Payload Types
-        Error = 0,
+        Unknown,
+        Error,
         Acknowledge,
 
         // ---------------------------------------------------------

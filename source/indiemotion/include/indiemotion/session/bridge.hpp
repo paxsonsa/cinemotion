@@ -119,9 +119,19 @@ namespace indiemotion::session
             case net::PayloadType::Error:           // TODO Process Errors
                 return {};
 
+            case net::PayloadType::Unknown:
+            {
+                auto error = std::make_unique<net::Error>(net::ErrorType::CannotProcessMessage,
+                                                          "could not process message, unknown payload type.");
+                auto response = net::createMessage(messagePtr->id(), std::move(error));
+                return response;
+            }
+
             default:
-                // TODO Send Error
-                return {};
+                auto error = std::make_unique<net::Error>(net::ErrorType::CannotProcessMessage,
+                                                          "could not process message, handler is not implemented to process contents.");
+                auto response = net::createMessage(messagePtr->id(), std::move(error));
+                return response;
             }
         }
     };
