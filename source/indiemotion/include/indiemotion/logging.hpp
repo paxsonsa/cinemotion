@@ -41,6 +41,8 @@ namespace indiemotion::logging
         auto consoleSink = std::make_shared<ConsoleSinkMT>();
         consoleSink->set_level(spdlog::level::trace);
         auto logger = std::make_shared<spdlog::logger>("root", consoleSink);
+        logger->set_level(spdlog::level::debug);
+        spdlog::register_logger(logger);
     }
 
     auto getLogger(std::string name)
