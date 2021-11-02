@@ -1,5 +1,6 @@
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/logging.hpp>
 #include <indiemotion/net/message/header.hpp>
 #include <indiemotion/net/message/payload.hpp>
 
@@ -15,12 +16,14 @@ namespace indiemotion::net
         bool _m_requiresAck = false;
         std::shared_ptr<Header> _m_headerPtr;
         std::shared_ptr<Payload_T> _m_payloadPtr;
+        std::shared_ptr<spdlog::logger> _logger;
 
     public:
         Message(std::unique_ptr<Header> headerPtr,
                 std::unique_ptr<Payload_T> payloadPtr)
             : _m_headerPtr(std::move(headerPtr)), _m_payloadPtr(std::move(payloadPtr))
         {
+            _logger = logging::getLogger("com.indiemotion.net.message");
             assert(_m_headerPtr != nullptr && "message header cannot be nullptr");
             assert(_m_payloadPtr != nullptr && "message payload cannot be nullptr");
         }
@@ -78,6 +81,7 @@ namespace indiemotion::net
         template <typename T>
         std::shared_ptr<T> payloadPtrAs() const
         {
+            _logger->trace("casting message paylaod as {}", typeid(T).name());
             return std::dynamic_pointer_cast<T>(_m_payloadPtr);
         }
     };
