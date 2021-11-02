@@ -8,6 +8,7 @@ namespace indiemotion::net
     {
         UnexpectedError = 1,
         InvalidMessage,
+        CannotProcessMessage,
     };
 
     struct Error : public Payload_T
