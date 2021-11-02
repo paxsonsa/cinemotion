@@ -1,5 +1,6 @@
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/logging.hpp>
 #include <indiemotion/net/message/header.hpp>
 #include <indiemotion/net/message/payload.hpp>
 
@@ -36,8 +37,13 @@ namespace indiemotion::net
 
         std::map<Identifier, record> _m_message_table{};
 
+        std::shared_ptr<spdlog::logger> _logger;
+
     public:
-        AcknowledgeCoordinator() {}
+        AcknowledgeCoordinator()
+        {
+            _logger = logging::getLogger("com.indiemotion.net.acknowledge.coordinator");
+        }
 
         /**
          * @brief Acknowledge a message and remove it from the curator
@@ -55,18 +61,18 @@ namespace indiemotion::net
                 }
                 else
                 {
-                    spdlog::warn("no ack callback for message id='{}', skipping", uid);
+                    _logger->warn("no ack callback for message id='{}', skipping", uid);
                 }
             }
             else
             {
-                spdlog::error("failed to ack message id='{}': id not in curator table", uid);
+                _logger->error("failed to ack message id='{}': id not in curator table", uid);
             }
         }
 
         void queue(Identifier uid, std::function<void()> callback)
         {
-            spdlog::info("queued '{}' for acknowledgement", uid);
+            _logger->trace("queued '{}' for acknowledgement", uid);
             _m_message_table[uid] = record{callback};
         }
     };
