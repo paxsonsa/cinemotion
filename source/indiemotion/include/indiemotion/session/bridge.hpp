@@ -114,9 +114,11 @@ namespace indiemotion::session
                 return {};
             }
 
-            case net::PayloadType::SessionInitilization:
-            case net::PayloadType::SessionShutdown: // TODO how do we shut down
-            case net::PayloadType::Error:           // TODO Process Errors
+
+            // ---------------------------------------------------------------------------------------------------
+            // Generic Operations
+            case net::PayloadType::Error:           
+                // TODO Process Errors
                 return {};
 
             case net::PayloadType::Unknown:
