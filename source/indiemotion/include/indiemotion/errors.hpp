@@ -6,7 +6,7 @@
 
 namespace indiemotion::errors
 {
-    enum class ErrorType : uint32_t
+    enum class ErrorType : std::uint32_t
     {
         UnknownError = 0,
         InvalidMessage,
