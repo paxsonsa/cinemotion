@@ -13,22 +13,34 @@ namespace indiemotion::session
     class SessionBridge
     {
     private:
+        std::string _m_name = "indiemotion-default";
         std::shared_ptr<Session> _m_sessionPtr;
         std::unique_ptr<net::AcknowledgeCoordinator> _m_ackCoordinator;
 
     public:
+        static const std::string APIVersion;
+
         SessionBridge(std::shared_ptr<Session> sessionPtr)
         {
             _m_sessionPtr = sessionPtr;
             _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
         }
 
+        SessionBridge(std::string name, std::shared_ptr<Session> sessionPtr)
+        {
+            _m_name = name;
+            _m_sessionPtr = sessionPtr;
+            _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
+        }
+
+        std::string apiVersion() const { return SessionBridge::APIVersion; }
+
         std::unique_ptr<net::Message> initialize()
         {
             // TODO Return Initialize
             auto payload = std::make_unique<SessionProperties>(
-                "fakeserver",
-                "1.0",
+                _m_name,
+                apiVersion(),
                 newFeatureSet(0));
             _m_sessionPtr->setStatus(Status::Initialized);
             auto message = net::createMessage(std::move(payload));
@@ -106,4 +118,6 @@ namespace indiemotion::session
             }
         }
     };
+
+    const std::string SessionBridge::APIVersion = "1.0";
 }

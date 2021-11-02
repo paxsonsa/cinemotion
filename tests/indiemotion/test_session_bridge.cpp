@@ -19,8 +19,9 @@ SCENARIO("Initializing the Session")
 {
     GIVEN("a new manager object")
     {
+        auto name = "SessionName";
         auto session = std::make_shared<session::Session>();
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto bridge = session::SessionBridge(name, session);
 
         WHEN("manager.initalize() is called")
         {
@@ -30,9 +31,17 @@ SCENARIO("Initializing the Session")
             {
                 REQUIRE(response);
 
-                AND_THEN("the message should be a properly init message")
+                AND_THEN("the response should be a properly init message")
                 {
                     REQUIRE(response->payloadType() == indiemotion::net::PayloadType::SessionInitilization);
+                }
+
+                AND_THEN("the repsonse should be the session properties we expect")
+                {
+                    auto properties = response->payloadPtrAs<session::SessionProperties>();
+                    REQUIRE(properties->name == name);
+                    REQUIRE(properties->apiVersion == session::SessionBridge::APIVersion);
+                    REQUIRE(properties->features == 0);
                 }
             }
         }
