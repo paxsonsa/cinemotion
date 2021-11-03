@@ -4,6 +4,7 @@
 #include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
+#include <indiemotion/net/protobuf.hpp>
 #include <indiemotion/net/translator.hpp>
 
 SCENARIO("Translate Acknowledge Messages")
@@ -34,7 +35,7 @@ SCENARIO("Translate Acknowledge Messages")
     }
 }
 
-SCENARIO("Translate GetCameraList Messages")
+SCENARIO("Translate GetCameraList Messages (Not Supported)")
 {
     GIVEN("A message translator")
     {
@@ -45,9 +46,46 @@ SCENARIO("Translate GetCameraList Messages")
             auto payload = std::make_unique<indiemotion::net::GetCameraList>();
             auto message = indiemotion::net::createMessage(std::move(payload));
 
-            THEN("protobuf message has acknowledge payload")
+            THEN("thorws when trying to translate")
             {
                 REQUIRE_THROWS_AS(translator.translateMessage(std::move(message)), std::runtime_error);
+            }
+        }
+    }
+}
+
+SCENARIO("Translate CameraList Messages")
+{
+    GIVEN("A message translator")
+    {
+        auto translator = indiemotion::net::MessageTranslator();
+
+        WHEN("translating the message")
+        {
+            auto expectedCams = std::vector<indiemotion::cameras::Camera>{
+                indiemotion::cameras::Camera("cam1"),
+                indiemotion::cameras::Camera("cam2"),
+                indiemotion::cameras::Camera("cam3"),
+            };
+            auto payload = std::make_unique<indiemotion::net::CameraList>(expectedCams);
+            auto message = indiemotion::net::createMessage("inResponseToID", std::move(payload));
+
+            auto p = translator.translateMessage(std::move(message));
+
+            THEN("protobuf message has message header")
+            {
+                REQUIRE(p.header().has_responseid());
+                REQUIRE(p.header().responseid() == "inResponseToID");
+            }
+
+            THEN("protobuf message is filled with cameras")
+            {
+                REQUIRE(p.has_camera_list());
+                REQUIRE(p.camera_list().camera_size() == 3);
+
+                REQUIRE((p.camera_list().camera()[0]).id() == "cam1");
+                REQUIRE((p.camera_list().camera()[1]).id() == "cam2");
+                REQUIRE((p.camera_list().camera()[2]).id() == "cam3");
             }
         }
     }
