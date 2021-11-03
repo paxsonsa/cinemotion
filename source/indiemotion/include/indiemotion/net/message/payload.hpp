@@ -25,10 +25,10 @@ namespace indiemotion::net
 
         // ---------------------------------------------------------
         // Motion Payload Types
+        MotionGetMode,
         MotionSetMode,
         MotionActiveMode,
         MotionUpdateXForm,
-
     };
 
     /**

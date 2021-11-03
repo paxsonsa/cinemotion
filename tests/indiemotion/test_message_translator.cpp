@@ -105,3 +105,15 @@ TEST_CASE("Translate Motion Set Mode Messages (Not Supported)")
         REQUIRE_THROWS_AS(translator.translateMessage(std::move(message)), std::runtime_error);
     }
 }
+
+TEST_CASE("Translate Motion Get Mode Messages (Not Supported)")
+{
+    auto translator = indiemotion::net::MessageTranslator();
+    auto payload = std::make_unique<indiemotion::net::MotionGetMode>();
+    auto message = indiemotion::net::createMessage(std::move(payload));
+
+    SUBCASE("translator should throw runtime error")
+    {
+        REQUIRE_THROWS_AS(translator.translateMessage(std::move(message)), std::runtime_error);
+    }
+}

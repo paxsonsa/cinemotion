@@ -79,6 +79,11 @@ namespace indiemotion::net
                 throw std::runtime_error("cannot translate PayloadType::MotionSetMode");
             }
 
+            case PayloadType::MotionGetMode:
+            {
+                throw std::runtime_error("cannot translate PayloadType::MotionSetMode");
+            }
+
             case PayloadType::MotionActiveMode:
             {
                 auto m = _makeBaseMessage(message);

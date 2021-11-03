@@ -5,6 +5,16 @@
 
 namespace indiemotion::net
 {
+    struct MotionGetMode : public net::Payload_T
+    {
+        MotionGetMode() {}
+
+        PayloadType type() const
+        {
+            return PayloadType::MotionGetMode;
+        }
+    };
+
     struct MotionSetMode : public net::Payload_T
     {
         motion::MotionMode mode;
