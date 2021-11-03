@@ -2,6 +2,7 @@
 #include <doctest.h>
 #include <indiemotion/common.hpp>
 #include <indiemotion/net/acknowledge.hpp>
+#include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/translator.hpp>
 
@@ -28,6 +29,25 @@ SCENARIO("Translate Acknowledge Messages")
             {
                 REQUIRE(protobuf.header().has_responseid());
                 REQUIRE(protobuf.header().responseid() == "somemessageID");
+            }
+        }
+    }
+}
+
+SCENARIO("Translate GetCameraList Messages")
+{
+    GIVEN("A message translator")
+    {
+        auto translator = indiemotion::net::MessageTranslator();
+
+        WHEN("translating the message")
+        {
+            auto payload = std::make_unique<indiemotion::net::GetCameraList>();
+            auto message = indiemotion::net::createMessage(std::move(payload));
+
+            THEN("protobuf message has acknowledge payload")
+            {
+                REQUIRE_THROWS_AS(translator.translateMessage(std::move(message)), std::runtime_error);
             }
         }
     }

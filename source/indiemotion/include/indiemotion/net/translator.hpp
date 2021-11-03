@@ -26,6 +26,11 @@ namespace indiemotion::net
 
                 return std::move(m);
             }
+
+            case PayloadType::GetCameraList:
+            {
+                throw std::runtime_error("cannot translate PayloadType::GetCameraList(s)");
+            }
             }
         }
     };
