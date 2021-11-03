@@ -107,20 +107,20 @@ namespace indiemotion::session
 
             // ---------------------------------------------------------------------------------------------------
             // Motion Mode Operations
-            case net::PayloadType::SetMotionMode:
+            case net::PayloadType::MotionSetMode:
             {
-                _logger->trace("PayloadType=SetMotionMode");
-                auto msgPayload = messagePtr->payloadPtrAs<net::SetMotionMode>();
+                _logger->trace("PayloadType=MotionSetMode");
+                auto msgPayload = messagePtr->payloadPtrAs<net::MotionSetMode>();
                 _m_sessionPtr->setMotionMode(msgPayload->mode);
                 return {};
             }
 
             // ---------------------------------------------------------------------------------------------------
             // Motion XForm Operations
-            case net::PayloadType::UpdateMotionXForm:
+            case net::PayloadType::MotionUpdateXForm:
             {
-                _logger->trace("PayloadType=UpdateMotionXForm");
-                auto msgPayload = messagePtr->payloadPtrAs<net::UpdateMotionXForm>();
+                _logger->trace("PayloadType=MotionUpdateXForm");
+                auto msgPayload = messagePtr->payloadPtrAs<net::MotionUpdateXForm>();
                 _m_sessionPtr->updateMotionXForm(msgPayload->xform);
                 return {};
             }

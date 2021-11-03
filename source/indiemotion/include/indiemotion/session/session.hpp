@@ -79,7 +79,7 @@ namespace indiemotion::session
             _m_motionManager->seCurrentMotionMode(m);
             if (_m_delegate)
             {
-                _m_delegate->didSetMotionMode(m);
+                _m_delegate->didMotionSetMode(m);
             }
         }
 
@@ -99,6 +99,6 @@ namespace indiemotion::session
                     _m_delegate->recievedMotionUpdate(xform);
                 }
             }
-                }
+        }
     };
 }

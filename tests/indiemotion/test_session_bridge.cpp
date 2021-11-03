@@ -200,7 +200,7 @@ SCENARIO("updating the motion mode")
         bool wasMotionModeDidUpdateCalled = false;
         motion::MotionMode mode = motion::MotionMode::Off;
 
-        void didSetMotionMode(motion::MotionMode m)
+        void didMotionSetMode(motion::MotionMode m)
         {
             wasMotionModeDidUpdateCalled = true;
             mode = m;
@@ -216,7 +216,7 @@ SCENARIO("updating the motion mode")
 
         WHEN("bridge processes setmotionmode=live message")
         {
-            auto payload = std::make_unique<indiemotion::net::SetMotionMode>(motion::MotionMode::Live);
+            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Live);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
             REQUIRE_FALSE(response);
@@ -235,7 +235,7 @@ SCENARIO("updating the motion mode")
 
         WHEN("bridge processes setmotionmode=record message")
         {
-            auto payload = std::make_unique<indiemotion::net::SetMotionMode>(motion::MotionMode::Recording);
+            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Recording);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
             REQUIRE(!response);
@@ -254,7 +254,7 @@ SCENARIO("updating the motion mode")
 
         WHEN("bridge processes setmotionmode=off message")
         {
-            auto payload = std::make_unique<indiemotion::net::SetMotionMode>(motion::MotionMode::Off);
+            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Off);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
             REQUIRE(!response);
@@ -299,7 +299,7 @@ SCENARIO("updating the motion xform")
         {
             auto xform = motion::MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
-            auto payload = std::make_unique<indiemotion::net::UpdateMotionXForm>(xform);
+            auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
 
@@ -343,7 +343,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             session->setMotionMode(motion::MotionMode::Off);
             auto xform = motion::MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
-            auto payload = std::make_unique<indiemotion::net::UpdateMotionXForm>(xform);
+            auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
 
@@ -364,7 +364,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             session->setMotionMode(motion::MotionMode::Live);
             auto xform = motion::MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
-            auto payload = std::make_unique<indiemotion::net::UpdateMotionXForm>(xform);
+            auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
 
@@ -388,7 +388,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             session->setMotionMode(motion::MotionMode::Live);
             auto xform = motion::MotionXForm::create(
                 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f);
-            auto payload = std::make_unique<indiemotion::net::UpdateMotionXForm>(xform);
+            auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
             auto response = bridge.processMessage(std::move(message));
 

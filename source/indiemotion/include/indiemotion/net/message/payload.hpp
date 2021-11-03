@@ -25,8 +25,9 @@ namespace indiemotion::net
 
         // ---------------------------------------------------------
         // Motion Payload Types
-        SetMotionMode,
-        UpdateMotionXForm,
+        MotionSetMode,
+        MotionActiveMode,
+        MotionUpdateXForm,
 
     };
 

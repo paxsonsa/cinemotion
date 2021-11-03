@@ -1,7 +1,9 @@
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/motion/mode.hpp>
 #include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
+#include <indiemotion/net/motion.hpp>
 #include <indiemotion/net/protobuf.hpp>
 
 namespace indiemotion::net
@@ -68,6 +70,32 @@ namespace indiemotion::net
                 {
                     auto cam = payload->add_camera();
                     cam->set_id(srcCam.name);
+                }
+                return std::move(m);
+            }
+
+            case PayloadType::MotionActiveMode:
+            {
+                auto m = _makeBaseMessage(message);
+                auto p = message->payloadPtrAs<MotionActiveMode>();
+                auto payload = m.mutable_motion_active_mode();
+                switch (p->mode)
+                {
+                case motion::MotionMode::Off:
+                {
+                    payload->set_mode(protobuf::payloads::v1::MotionMode::Off);
+                    break;
+                }
+                case motion::MotionMode::Live:
+                {
+                    payload->set_mode(protobuf::payloads::v1::MotionMode::Live);
+                    break;
+                }
+                case motion::MotionMode::Recording:
+                {
+                    payload->set_mode(protobuf::payloads::v1::MotionMode::Recording);
+                    break;
+                }
                 }
                 return std::move(m);
             }

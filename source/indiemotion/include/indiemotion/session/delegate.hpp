@@ -55,7 +55,7 @@ namespace indiemotion::session
          * 
          * @param m 
          */
-        virtual void didSetMotionMode(motion::MotionMode m) {}
+        virtual void didMotionSetMode(motion::MotionMode m) {}
 
         // ----------------------------------------------------------------
         // Motion XForm Operations
