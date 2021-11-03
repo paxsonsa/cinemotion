@@ -157,7 +157,7 @@ static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptor
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_payload_2ev1_2eproto = nullptr;
 
 const uint32_t TableStruct_payload_2ev1_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::Acknowledge, _has_bits_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::Acknowledge, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -165,8 +165,6 @@ const uint32_t TableStruct_payload_2ev1_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::Acknowledge, ok_),
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::Acknowledge, message_),
-  ~0u,
-  0,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::ListCameras, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -236,16 +234,16 @@ const uint32_t TableStruct_payload_2ev1_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::MotionXForm, orientation_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 8, -1, sizeof(::indiemotion::protobuf::payloads::v1::Acknowledge)},
-  { 10, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::ListCameras)},
-  { 16, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::Camera)},
-  { 23, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::CameraList)},
-  { 30, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::InitializeSession)},
-  { 39, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionActiveMode)},
-  { 46, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionSetMode)},
-  { 53, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionGetMode)},
-  { 60, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::XFormData)},
-  { 69, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionXForm)},
+  { 0, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::Acknowledge)},
+  { 8, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::ListCameras)},
+  { 14, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::Camera)},
+  { 21, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::CameraList)},
+  { 28, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::InitializeSession)},
+  { 37, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionActiveMode)},
+  { 44, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionSetMode)},
+  { 51, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionGetMode)},
+  { 58, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::XFormData)},
+  { 67, -1, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionXForm)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -263,29 +261,29 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_payload_2ev1_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\020payload.v1.proto\022 indiemotion.protobuf"
-  ".payloads.v1\";\n\013Acknowledge\022\n\n\002ok\030\001 \001(\010\022"
-  "\024\n\007message\030\002 \001(\tH\000\210\001\001B\n\n\010_message\"\r\n\013Lis"
-  "tCameras\"\024\n\006Camera\022\n\n\002id\030\n \001(\t\"F\n\nCamera"
-  "List\0228\n\006camera\030\001 \003(\0132(.indiemotion.proto"
-  "buf.payloads.v1.Camera\"G\n\021InitializeSess"
-  "ion\022\014\n\004name\030\n \001(\t\022\022\n\napiVersion\030\024 \001(\t\022\020\n"
-  "\010features\030\036 \001(\r\"N\n\020MotionActiveMode\022:\n\004m"
-  "ode\030\001 \001(\0162,.indiemotion.protobuf.payload"
-  "s.v1.MotionMode\"K\n\rMotionSetMode\022:\n\004mode"
-  "\030\001 \001(\0162,.indiemotion.protobuf.payloads.v"
-  "1.MotionMode\"K\n\rMotionGetMode\022:\n\004mode\030\001 "
-  "\001(\0162,.indiemotion.protobuf.payloads.v1.M"
-  "otionMode\",\n\tXFormData\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002"
-  " \001(\001\022\t\n\001z\030\003 \001(\001\"\221\001\n\013MotionXForm\022@\n\013trans"
-  "lation\030\001 \001(\0132+.indiemotion.protobuf.payl"
-  "oads.v1.XFormData\022@\n\013orientation\030\002 \001(\0132+"
-  ".indiemotion.protobuf.payloads.v1.XFormD"
-  "ata*.\n\nMotionMode\022\007\n\003Off\020\000\022\010\n\004Live\020\001\022\r\n\t"
-  "Recording\020\002b\006proto3"
+  ".payloads.v1\"*\n\013Acknowledge\022\n\n\002ok\030\001 \001(\010\022"
+  "\017\n\007message\030\002 \001(\t\"\r\n\013ListCameras\"\024\n\006Camer"
+  "a\022\n\n\002id\030\n \001(\t\"F\n\nCameraList\0228\n\006camera\030\001 "
+  "\003(\0132(.indiemotion.protobuf.payloads.v1.C"
+  "amera\"G\n\021InitializeSession\022\014\n\004name\030\n \001(\t"
+  "\022\022\n\napiVersion\030\024 \001(\t\022\020\n\010features\030\036 \001(\r\"N"
+  "\n\020MotionActiveMode\022:\n\004mode\030\001 \001(\0162,.indie"
+  "motion.protobuf.payloads.v1.MotionMode\"K"
+  "\n\rMotionSetMode\022:\n\004mode\030\001 \001(\0162,.indiemot"
+  "ion.protobuf.payloads.v1.MotionMode\"K\n\rM"
+  "otionGetMode\022:\n\004mode\030\001 \001(\0162,.indiemotion"
+  ".protobuf.payloads.v1.MotionMode\",\n\tXFor"
+  "mData\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001\"\221"
+  "\001\n\013MotionXForm\022@\n\013translation\030\001 \001(\0132+.in"
+  "diemotion.protobuf.payloads.v1.XFormData"
+  "\022@\n\013orientation\030\002 \001(\0132+.indiemotion.prot"
+  "obuf.payloads.v1.XFormData*.\n\nMotionMode"
+  "\022\007\n\003Off\020\000\022\010\n\004Live\020\001\022\r\n\tRecording\020\002b\006prot"
+  "o3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_payload_2ev1_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_payload_2ev1_2eproto = {
-  false, false, 779, descriptor_table_protodef_payload_2ev1_2eproto, "payload.v1.proto", 
+  false, false, 762, descriptor_table_protodef_payload_2ev1_2eproto, "payload.v1.proto", 
   &descriptor_table_payload_2ev1_2eproto_once, nullptr, 0, 10,
   schemas, file_default_instances, TableStruct_payload_2ev1_2eproto::offsets,
   file_level_metadata_payload_2ev1_2eproto, file_level_enum_descriptors_payload_2ev1_2eproto, file_level_service_descriptors_payload_2ev1_2eproto,
@@ -320,10 +318,6 @@ bool MotionMode_IsValid(int value) {
 
 class Acknowledge::_Internal {
  public:
-  using HasBits = decltype(std::declval<Acknowledge>()._has_bits_);
-  static void set_has_message(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
 };
 
 Acknowledge::Acknowledge(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -336,14 +330,13 @@ Acknowledge::Acknowledge(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   // @@protoc_insertion_point(arena_constructor:indiemotion.protobuf.payloads.v1.Acknowledge)
 }
 Acknowledge::Acknowledge(const Acknowledge& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_message()) {
+  if (!from._internal_message().empty()) {
     message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_message(), 
       GetArenaForAllocation());
   }
@@ -387,18 +380,13 @@ void Acknowledge::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    message_.ClearNonDefaultToEmpty();
-  }
+  message_.ClearToEmpty();
   ok_ = false;
-  _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* Acknowledge::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
@@ -411,7 +399,7 @@ const char* Acknowledge::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
         } else
           goto handle_unusual;
         continue;
-      // optional string message = 2;
+      // string message = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_message();
@@ -437,7 +425,6 @@ const char* Acknowledge::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -457,8 +444,8 @@ uint8_t* Acknowledge::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_ok(), target);
   }
 
-  // optional string message = 2;
-  if (_internal_has_message()) {
+  // string message = 2;
+  if (!this->_internal_message().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -483,9 +470,8 @@ size_t Acknowledge::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // optional string message = 2;
-  cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
+  // string message = 2;
+  if (!this->_internal_message().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_message());
@@ -518,7 +504,7 @@ void Acknowledge::MergeFrom(const Acknowledge& from) {
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_message()) {
+  if (!from._internal_message().empty()) {
     _internal_set_message(from._internal_message());
   }
   if (from._internal_ok() != 0) {
@@ -543,7 +529,6 @@ void Acknowledge::InternalSwap(Acknowledge* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &message_, lhs_arena,

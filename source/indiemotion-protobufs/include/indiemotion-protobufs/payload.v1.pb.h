@@ -263,11 +263,7 @@ class Acknowledge final :
     kMessageFieldNumber = 2,
     kOkFieldNumber = 1,
   };
-  // optional string message = 2;
-  bool has_message() const;
-  private:
-  bool _internal_has_message() const;
-  public:
+  // string message = 2;
   void clear_message();
   const std::string& message() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -297,10 +293,9 @@ class Acknowledge final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
   bool ok_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_payload_2ev1_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1717,17 +1712,9 @@ inline void Acknowledge::set_ok(bool value) {
   // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.Acknowledge.ok)
 }
 
-// optional string message = 2;
-inline bool Acknowledge::_internal_has_message() const {
-  bool value = (_has_bits_[0] & 0x00000001u) != 0;
-  return value;
-}
-inline bool Acknowledge::has_message() const {
-  return _internal_has_message();
-}
+// string message = 2;
 inline void Acknowledge::clear_message() {
   message_.ClearToEmpty();
-  _has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& Acknowledge::message() const {
   // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.Acknowledge.message)
@@ -1736,7 +1723,7 @@ inline const std::string& Acknowledge::message() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void Acknowledge::set_message(ArgT0&& arg0, ArgT... args) {
- _has_bits_[0] |= 0x00000001u;
+ 
  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.Acknowledge.message)
 }
@@ -1749,32 +1736,22 @@ inline const std::string& Acknowledge::_internal_message() const {
   return message_.Get();
 }
 inline void Acknowledge::_internal_set_message(const std::string& value) {
-  _has_bits_[0] |= 0x00000001u;
+  
   message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
 inline std::string* Acknowledge::_internal_mutable_message() {
-  _has_bits_[0] |= 0x00000001u;
+  
   return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* Acknowledge::release_message() {
   // @@protoc_insertion_point(field_release:indiemotion.protobuf.payloads.v1.Acknowledge.message)
-  if (!_internal_has_message()) {
-    return nullptr;
-  }
-  _has_bits_[0] &= ~0x00000001u;
-  auto* p = message_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (message_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  return p;
+  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
 inline void Acknowledge::set_allocated_message(std::string* message) {
   if (message != nullptr) {
-    _has_bits_[0] |= 0x00000001u;
+    
   } else {
-    _has_bits_[0] &= ~0x00000001u;
+    
   }
   message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
       GetArenaForAllocation());
