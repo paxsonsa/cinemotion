@@ -1,6 +1,15 @@
 - Translator (message to protobuf)
     - translateMessage
+        - MotionUpdatXForm
+        - CameraInfo
+        - SessionInitialization
+        - SessionShutdown
+        - Error
+        - Unknown (not supported)
     - translateProtobuf
+
+SessionBridge
+- MotionGetMode
 
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
