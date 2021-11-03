@@ -92,3 +92,16 @@ TEST_CASE("Translate Motion Active Mode Messages")
         REQUIRE(p.motion_active_mode().mode() == indiemotion::protobuf::payloads::v1::MotionMode::Live);
     }
 }
+
+TEST_CASE("Translate Motion Set Mode Messages (Not Supported)")
+{
+    auto translator = indiemotion::net::MessageTranslator();
+    auto payload = std::make_unique<indiemotion::net::MotionSetMode>(
+        indiemotion::motion::MotionMode::Live);
+    auto message = indiemotion::net::createMessage(std::move(payload));
+
+    SUBCASE("translator should throw runtime error")
+    {
+        REQUIRE_THROWS_AS(translator.translateMessage(std::move(message)), std::runtime_error);
+    }
+}

@@ -1,4 +1,7 @@
 - Translator (message to protobuf)
+    - translateMessage
+    - translateProtobuf
+
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
         - Only Accept Single Connection
@@ -13,6 +16,8 @@
 - Generate Track Manager
 - Add CMake CI (macOS/Linux)
 - Add Message Queue?
+- Messages: add an needs acknowledgement flag so client/server can flag when an ack/error is expected
+    - Not sure if its totally nessecary because we can use the ack tracker to emit an error after an ack is not returned
 
 [Logging Sudo]
 ``` c++

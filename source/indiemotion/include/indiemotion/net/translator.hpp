@@ -58,7 +58,7 @@ namespace indiemotion::net
 
             case PayloadType::GetCameraList:
             {
-                throw std::runtime_error("cannot translate PayloadType::GetCameraList(s)");
+                throw std::runtime_error("cannot translate PayloadType::GetCameraList");
             }
 
             case PayloadType::CameraList:
@@ -72,6 +72,11 @@ namespace indiemotion::net
                     cam->set_id(srcCam.name);
                 }
                 return std::move(m);
+            }
+
+            case PayloadType::MotionSetMode:
+            {
+                throw std::runtime_error("cannot translate PayloadType::MotionSetMode");
             }
 
             case PayloadType::MotionActiveMode:
