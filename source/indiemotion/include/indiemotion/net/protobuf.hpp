@@ -5,5 +5,4 @@ Helper header to abstract the include of the indiemotion protocol bufs
 */
 #pragma once
 #include <indiemotion-protobufs/messages.pb.h>
-#include <indiemotion-protobufs/responses.pb.h>
-#include <indiemotion-protobufs/transports.pb.h>
+#include <indiemotion-protobufs/payload.v1.pb.h>

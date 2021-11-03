@@ -1,57 +1,24 @@
 syntax = "proto3";
 package indiemotion.protobuf.messages;
 
-import "transports.proto";
+import "google/protobuf/timestamp.proto";
+import "payload.v1.proto";
 
-message ClientMessage {
-  indiemotion.protobuf.transport.Header header = 1;
+message Header {
+  google.protobuf.Timestamp timestamp = 1;
+  string id = 2;
+  optional string responseId = 3;
+}
+
+message Message {
+  Header header = 1;
   oneof payload {
-    Acknowledge acknowledge = 20;
-    ListCameras list_cameras = 30;
-    CameraList camera_list = 31;
-    MotionSetMode motion_set_mode = 40;
-    MotionGetMode motion_get_mode = 41;
-    MotionActiveMode motion_active_mode = 42;
-    MotionXForm motion_xform = 60;
+    indiemotion.protobuf.payloads.v1.Acknowledge acknowledge = 20;
+    indiemotion.protobuf.payloads.v1.ListCameras list_cameras = 30;
+    indiemotion.protobuf.payloads.v1.CameraList camera_list = 31;
+    indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;
+    indiemotion.protobuf.payloads.v1.MotionGetMode motion_get_mode = 41;
+    indiemotion.protobuf.payloads.v1.MotionActiveMode motion_active_mode = 42;
+    indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 50;
   }
-}
-
-message Acknowledge {
-  bool ok = 1;
-  optional string message = 2;
-}
-
-message ListCameras {}
-
-message Camera { string id = 10; }
-
-message CameraList { repeated Camera camera = 1; }
-
-message InitializeSession {
-  string name = 10;
-  string apiVersion = 20;
-  uint32 features = 30;
-}
-
-enum MotionMode {
-  Off = 0;
-  Live = 1;
-  Recording = 2;
-}
-
-message MotionActiveMode { MotionMode mode = 1; }
-
-message MotionSetMode { MotionMode mode = 1; }
-
-message MotionGetMode { MotionMode mode = 1; }
-
-message XFormData {
-  double x = 1;
-  double y = 2;
-  double z = 3;
-}
-
-message MotionXForm {
-  XFormData translation = 1;
-  XFormData orientation = 2;
 }

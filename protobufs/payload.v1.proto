@@ -1,0 +1,42 @@
+syntax = "proto3";
+package indiemotion.protobuf.payloads.v1;
+
+message Acknowledge {
+  bool ok = 1;
+  optional string message = 2;
+}
+
+message ListCameras {}
+
+message Camera { string id = 10; }
+
+message CameraList { repeated Camera camera = 1; }
+
+message InitializeSession {
+  string name = 10;
+  string apiVersion = 20;
+  uint32 features = 30;
+}
+
+enum MotionMode {
+  Off = 0;
+  Live = 1;
+  Recording = 2;
+}
+
+message MotionActiveMode { MotionMode mode = 1; }
+
+message MotionSetMode { MotionMode mode = 1; }
+
+message MotionGetMode { MotionMode mode = 1; }
+
+message XFormData {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message MotionXForm {
+  XFormData translation = 1;
+  XFormData orientation = 2;
+}
