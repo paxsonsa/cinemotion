@@ -11,6 +11,3 @@
 [submodule "external/replxx"]
 	path = external/replxx
 	url = https://github.com/AmokHuginnsson/replxx.git
-[submodule "external/better-enums"]
-	path = external/better-enums
-	url = https://github.com/aantron/better-enums.git
