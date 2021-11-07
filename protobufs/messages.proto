@@ -14,6 +14,7 @@ message Message {
   Header header = 1;
   oneof payload {
     indiemotion.protobuf.payloads.v1.Acknowledge acknowledge = 20;
+    indiemotion.protobuf.payloads.v1.Error error = 25;
     indiemotion.protobuf.payloads.v1.GetCameraList get_camera_list = 30;
     indiemotion.protobuf.payloads.v1.CameraList camera_list = 31;
     indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;

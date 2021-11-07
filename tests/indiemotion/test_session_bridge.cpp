@@ -109,7 +109,7 @@ SCENARIO("acknowledge message with no ID should return an error")
                 REQUIRE(didGetItem);
                 REQUIRE(expected->payloadType() == indiemotion::net::PayloadType::Error);
                 auto payload = expected->payloadPtrAs<indiemotion::net::Error>();
-                REQUIRE(payload->errorType == indiemotion::net::ErrorType::InvalidMessage);
+                REQUIRE(payload->errorType == indiemotion::net::Error::Type::InvalidMessage);
             }
         }
     }

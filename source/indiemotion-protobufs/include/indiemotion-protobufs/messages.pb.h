@@ -303,6 +303,7 @@ class Message final :
   }
   enum PayloadCase {
     kAcknowledge = 20,
+    kError = 25,
     kGetCameraList = 30,
     kCameraList = 31,
     kMotionSetMode = 40,
@@ -390,6 +391,7 @@ class Message final :
   enum : int {
     kHeaderFieldNumber = 1,
     kAcknowledgeFieldNumber = 20,
+    kErrorFieldNumber = 25,
     kGetCameraListFieldNumber = 30,
     kCameraListFieldNumber = 31,
     kMotionSetModeFieldNumber = 40,
@@ -432,6 +434,24 @@ class Message final :
   void unsafe_arena_set_allocated_acknowledge(
       ::indiemotion::protobuf::payloads::v1::Acknowledge* acknowledge);
   ::indiemotion::protobuf::payloads::v1::Acknowledge* unsafe_arena_release_acknowledge();
+
+  // .indiemotion.protobuf.payloads.v1.Error error = 25;
+  bool has_error() const;
+  private:
+  bool _internal_has_error() const;
+  public:
+  void clear_error();
+  const ::indiemotion::protobuf::payloads::v1::Error& error() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotion::protobuf::payloads::v1::Error* release_error();
+  ::indiemotion::protobuf::payloads::v1::Error* mutable_error();
+  void set_allocated_error(::indiemotion::protobuf::payloads::v1::Error* error);
+  private:
+  const ::indiemotion::protobuf::payloads::v1::Error& _internal_error() const;
+  ::indiemotion::protobuf::payloads::v1::Error* _internal_mutable_error();
+  public:
+  void unsafe_arena_set_allocated_error(
+      ::indiemotion::protobuf::payloads::v1::Error* error);
+  ::indiemotion::protobuf::payloads::v1::Error* unsafe_arena_release_error();
 
   // .indiemotion.protobuf.payloads.v1.GetCameraList get_camera_list = 30;
   bool has_get_camera_list() const;
@@ -547,6 +567,7 @@ class Message final :
  private:
   class _Internal;
   void set_has_acknowledge();
+  void set_has_error();
   void set_has_get_camera_list();
   void set_has_camera_list();
   void set_has_motion_set_mode();
@@ -565,6 +586,7 @@ class Message final :
     constexpr PayloadUnion() : _constinit_{} {}
       ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
     ::indiemotion::protobuf::payloads::v1::Acknowledge* acknowledge_;
+    ::indiemotion::protobuf::payloads::v1::Error* error_;
     ::indiemotion::protobuf::payloads::v1::GetCameraList* get_camera_list_;
     ::indiemotion::protobuf::payloads::v1::CameraList* camera_list_;
     ::indiemotion::protobuf::payloads::v1::MotionSetMode* motion_set_mode_;
@@ -935,6 +957,72 @@ inline ::indiemotion::protobuf::payloads::v1::Acknowledge* Message::_internal_mu
 inline ::indiemotion::protobuf::payloads::v1::Acknowledge* Message::mutable_acknowledge() {
   ::indiemotion::protobuf::payloads::v1::Acknowledge* _msg = _internal_mutable_acknowledge();
   // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Message.acknowledge)
+  return _msg;
+}
+
+// .indiemotion.protobuf.payloads.v1.Error error = 25;
+inline bool Message::_internal_has_error() const {
+  return payload_case() == kError;
+}
+inline bool Message::has_error() const {
+  return _internal_has_error();
+}
+inline void Message::set_has_error() {
+  _oneof_case_[0] = kError;
+}
+inline ::indiemotion::protobuf::payloads::v1::Error* Message::release_error() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Message.error)
+  if (_internal_has_error()) {
+    clear_has_payload();
+      ::indiemotion::protobuf::payloads::v1::Error* temp = payload_.error_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.error_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotion::protobuf::payloads::v1::Error& Message::_internal_error() const {
+  return _internal_has_error()
+      ? *payload_.error_
+      : reinterpret_cast< ::indiemotion::protobuf::payloads::v1::Error&>(::indiemotion::protobuf::payloads::v1::_Error_default_instance_);
+}
+inline const ::indiemotion::protobuf::payloads::v1::Error& Message::error() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Message.error)
+  return _internal_error();
+}
+inline ::indiemotion::protobuf::payloads::v1::Error* Message::unsafe_arena_release_error() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotion.protobuf.messages.Message.error)
+  if (_internal_has_error()) {
+    clear_has_payload();
+    ::indiemotion::protobuf::payloads::v1::Error* temp = payload_.error_;
+    payload_.error_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Message::unsafe_arena_set_allocated_error(::indiemotion::protobuf::payloads::v1::Error* error) {
+  clear_payload();
+  if (error) {
+    set_has_error();
+    payload_.error_ = error;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.Message.error)
+}
+inline ::indiemotion::protobuf::payloads::v1::Error* Message::_internal_mutable_error() {
+  if (!_internal_has_error()) {
+    clear_payload();
+    set_has_error();
+    payload_.error_ = CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::Error >(GetArenaForAllocation());
+  }
+  return payload_.error_;
+}
+inline ::indiemotion::protobuf::payloads::v1::Error* Message::mutable_error() {
+  ::indiemotion::protobuf::payloads::v1::Error* _msg = _internal_mutable_error();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Message.error)
   return _msg;
 }
 

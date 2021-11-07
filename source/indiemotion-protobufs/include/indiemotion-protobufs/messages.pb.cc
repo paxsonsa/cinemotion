@@ -78,6 +78,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_messages_2eproto::offsets[] PR
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::Message, payload_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -96,22 +97,23 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   "\032\020payload.v1.proto\"k\n\006Header\022-\n\ttimestam"
   "p\030\001 \001(\0132\032.google.protobuf.Timestamp\022\n\n\002i"
   "d\030\002 \001(\t\022\027\n\nresponseId\030\003 \001(\tH\000\210\001\001B\r\n\013_res"
-  "ponseId\"\323\004\n\007Message\0225\n\006header\030\001 \001(\0132%.in"
+  "ponseId\"\215\005\n\007Message\0225\n\006header\030\001 \001(\0132%.in"
   "diemotion.protobuf.messages.Header\022D\n\013ac"
   "knowledge\030\024 \001(\0132-.indiemotion.protobuf.p"
-  "ayloads.v1.AcknowledgeH\000\022J\n\017get_camera_l"
-  "ist\030\036 \001(\0132/.indiemotion.protobuf.payload"
-  "s.v1.GetCameraListH\000\022C\n\013camera_list\030\037 \001("
-  "\0132,.indiemotion.protobuf.payloads.v1.Cam"
-  "eraListH\000\022J\n\017motion_set_mode\030( \001(\0132/.ind"
-  "iemotion.protobuf.payloads.v1.MotionSetM"
-  "odeH\000\022J\n\017motion_get_mode\030) \001(\0132/.indiemo"
-  "tion.protobuf.payloads.v1.MotionGetModeH"
-  "\000\022P\n\022motion_active_mode\030* \001(\01322.indiemot"
-  "ion.protobuf.payloads.v1.MotionActiveMod"
-  "eH\000\022E\n\014motion_xform\0302 \001(\0132-.indiemotion."
-  "protobuf.payloads.v1.MotionXFormH\000B\t\n\007pa"
-  "yloadb\006proto3"
+  "ayloads.v1.AcknowledgeH\000\0228\n\005error\030\031 \001(\0132"
+  "\'.indiemotion.protobuf.payloads.v1.Error"
+  "H\000\022J\n\017get_camera_list\030\036 \001(\0132/.indiemotio"
+  "n.protobuf.payloads.v1.GetCameraListH\000\022C"
+  "\n\013camera_list\030\037 \001(\0132,.indiemotion.protob"
+  "uf.payloads.v1.CameraListH\000\022J\n\017motion_se"
+  "t_mode\030( \001(\0132/.indiemotion.protobuf.payl"
+  "oads.v1.MotionSetModeH\000\022J\n\017motion_get_mo"
+  "de\030) \001(\0132/.indiemotion.protobuf.payloads"
+  ".v1.MotionGetModeH\000\022P\n\022motion_active_mod"
+  "e\030* \001(\01322.indiemotion.protobuf.payloads."
+  "v1.MotionActiveModeH\000\022E\n\014motion_xform\0302 "
+  "\001(\0132-.indiemotion.protobuf.payloads.v1.M"
+  "otionXFormH\000B\t\n\007payloadb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_messages_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
@@ -119,7 +121,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_messages_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_messages_2eproto = {
-  false, false, 813, descriptor_table_protodef_messages_2eproto, "messages.proto", 
+  false, false, 871, descriptor_table_protodef_messages_2eproto, "messages.proto", 
   &descriptor_table_messages_2eproto_once, descriptor_table_messages_2eproto_deps, 2, 2,
   schemas, file_default_instances, TableStruct_messages_2eproto::offsets,
   file_level_metadata_messages_2eproto, file_level_enum_descriptors_messages_2eproto, file_level_service_descriptors_messages_2eproto,
@@ -443,6 +445,7 @@ class Message::_Internal {
  public:
   static const ::indiemotion::protobuf::messages::Header& header(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::Acknowledge& acknowledge(const Message* msg);
+  static const ::indiemotion::protobuf::payloads::v1::Error& error(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::GetCameraList& get_camera_list(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::CameraList& camera_list(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::MotionSetMode& motion_set_mode(const Message* msg);
@@ -458,6 +461,10 @@ Message::_Internal::header(const Message* msg) {
 const ::indiemotion::protobuf::payloads::v1::Acknowledge&
 Message::_Internal::acknowledge(const Message* msg) {
   return *msg->payload_.acknowledge_;
+}
+const ::indiemotion::protobuf::payloads::v1::Error&
+Message::_Internal::error(const Message* msg) {
+  return *msg->payload_.error_;
 }
 const ::indiemotion::protobuf::payloads::v1::GetCameraList&
 Message::_Internal::get_camera_list(const Message* msg) {
@@ -504,6 +511,31 @@ void Message::clear_acknowledge() {
   if (_internal_has_acknowledge()) {
     if (GetArenaForAllocation() == nullptr) {
       delete payload_.acknowledge_;
+    }
+    clear_has_payload();
+  }
+}
+void Message::set_allocated_error(::indiemotion::protobuf::payloads::v1::Error* error) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_payload();
+  if (error) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(error));
+    if (message_arena != submessage_arena) {
+      error = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, error, submessage_arena);
+    }
+    set_has_error();
+    payload_.error_ = error;
+  }
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.Message.error)
+}
+void Message::clear_error() {
+  if (_internal_has_error()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.error_;
     }
     clear_has_payload();
   }
@@ -681,6 +713,10 @@ Message::Message(const Message& from)
       _internal_mutable_acknowledge()->::indiemotion::protobuf::payloads::v1::Acknowledge::MergeFrom(from._internal_acknowledge());
       break;
     }
+    case kError: {
+      _internal_mutable_error()->::indiemotion::protobuf::payloads::v1::Error::MergeFrom(from._internal_error());
+      break;
+    }
     case kGetCameraList: {
       _internal_mutable_get_camera_list()->::indiemotion::protobuf::payloads::v1::GetCameraList::MergeFrom(from._internal_get_camera_list());
       break;
@@ -748,6 +784,12 @@ void Message::clear_payload() {
     case kAcknowledge: {
       if (GetArenaForAllocation() == nullptr) {
         delete payload_.acknowledge_;
+      }
+      break;
+    }
+    case kError: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete payload_.error_;
       }
       break;
     }
@@ -826,6 +868,13 @@ const char* Message::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
       case 20:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 162)) {
           ptr = ctx->ParseMessage(_internal_mutable_acknowledge(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .indiemotion.protobuf.payloads.v1.Error error = 25;
+      case 25:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 202)) {
+          ptr = ctx->ParseMessage(_internal_mutable_error(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -916,6 +965,14 @@ failure:
         20, _Internal::acknowledge(this), target, stream);
   }
 
+  // .indiemotion.protobuf.payloads.v1.Error error = 25;
+  if (_internal_has_error()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        25, _Internal::error(this), target, stream);
+  }
+
   // .indiemotion.protobuf.payloads.v1.GetCameraList get_camera_list = 30;
   if (_internal_has_get_camera_list()) {
     target = stream->EnsureSpace(target);
@@ -993,6 +1050,13 @@ size_t Message::ByteSizeLong() const {
       total_size += 2 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *payload_.acknowledge_);
+      break;
+    }
+    // .indiemotion.protobuf.payloads.v1.Error error = 25;
+    case kError: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *payload_.error_);
       break;
     }
     // .indiemotion.protobuf.payloads.v1.GetCameraList get_camera_list = 30;
@@ -1075,6 +1139,10 @@ void Message::MergeFrom(const Message& from) {
   switch (from.payload_case()) {
     case kAcknowledge: {
       _internal_mutable_acknowledge()->::indiemotion::protobuf::payloads::v1::Acknowledge::MergeFrom(from._internal_acknowledge());
+      break;
+    }
+    case kError: {
+      _internal_mutable_error()->::indiemotion::protobuf::payloads::v1::Error::MergeFrom(from._internal_error());
       break;
     }
     case kGetCameraList: {

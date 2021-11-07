@@ -80,7 +80,7 @@ namespace indiemotion::session
                 else
                 {
                     auto error = std::make_unique<net::Error>(
-                        net::ErrorType::InvalidMessage,
+                        net::Error::Type::InvalidMessage,
                         "acknowledgement message missing id for which message it should acknowledge");
                     auto response = net::createMessage(messagePtr->id(), std::move(error));
                     _m_queuePtr->push(std::move(response));
@@ -142,7 +142,7 @@ namespace indiemotion::session
             case net::PayloadType::Unknown:
             {
                 _logger->trace("PayloadType=Unknown");
-                auto error = std::make_unique<net::Error>(net::ErrorType::CannotProcessMessage,
+                auto error = std::make_unique<net::Error>(net::Error::Type::CannotProcessMessage,
                                                           "could not process message, unknown payload type.");
                 auto response = net::createMessage(messagePtr->id(), std::move(error));
                 _m_queuePtr->push(std::move(response));
@@ -151,7 +151,7 @@ namespace indiemotion::session
 
             default:
                 _logger->trace("PayloadType=default");
-                auto error = std::make_unique<net::Error>(net::ErrorType::CannotProcessMessage,
+                auto error = std::make_unique<net::Error>(net::Error::Type::CannotProcessMessage,
                                                           "could not process message, handler is not implemented to process contents.");
                 auto response = net::createMessage(messagePtr->id(), std::move(error));
                 _logger->error("could not process message '{}', payload type handler not implemented: {}", messagePtr->id(), messagePtr->payloadType());

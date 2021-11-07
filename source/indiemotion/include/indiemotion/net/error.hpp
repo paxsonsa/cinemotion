@@ -4,23 +4,26 @@
 
 namespace indiemotion::net
 {
-    enum class ErrorType : std::uint32_t
-    {
-        UnexpectedError = 1,
-        InvalidMessage,
-        CannotProcessMessage,
-    };
-
     struct Error : public Payload_T
     {
-        ErrorType errorType;
+        struct Type
+        {
+            static const std::string UnexpectedError;
+            static const std::string InvalidMessage;
+            static const std::string CannotProcessMessage;
+        };
+        std::string errorType;
         std::string message;
 
-        Error(ErrorType errorType, std::string msg) : errorType(errorType), message(msg) {}
+        Error(std::string errorType, std::string msg) : errorType(errorType), message(msg) {}
 
         PayloadType type() const
         {
             return PayloadType::Error;
         }
     };
+
+    const std::string Error::Type::UnexpectedError = "UnexpectedError";
+    const std::string Error::Type::InvalidMessage = "InvalidMessage";
+    const std::string Error::Type::CannotProcessMessage = "CannotProcessMessage";
 } // namespace indiemotion::net

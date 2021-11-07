@@ -1,8 +1,10 @@
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/logging.hpp>
 #include <indiemotion/motion/mode.hpp>
 #include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
+#include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/net/protobuf.hpp>
@@ -12,6 +14,9 @@ namespace indiemotion::net
     class MessageTranslator
     {
     private:
+
+      std::shared_ptr<spdlog::logger> _logger;
+
         void populateHeader(protobuf::messages::Header *headerPtr,
                             Identifier msgId,
                             Identifier responseId) const
@@ -42,16 +47,30 @@ namespace indiemotion::net
     public:
         MessageTranslator()
         {
+            _logger = logging::getLogger("com.indiemotion.net.translator");
         }
 
         indiemotion::protobuf::messages::Message translateMessage(const std::unique_ptr<Message> message) const
         {
+            _logger->trace("Translating Message to Protobug: {}", message->id());
             switch (message->payloadType())
             {
             case PayloadType::Acknowledge:
             {
                 auto m = _makeBaseMessage(message);
                 m.mutable_acknowledge();
+                return std::move(m);
+            }
+
+            case PayloadType::Error:
+            {
+                auto payload = message->payloadPtrAs<Error>();
+
+                auto m = _makeBaseMessage(message);
+                auto error = m.mutable_error();
+                error->set_type(payload->errorType);
+                error->set_message(payload->message);
+
                 return std::move(m);
             }
 
@@ -115,8 +134,6 @@ namespace indiemotion::net
 
             case PayloadType::Unknown:
                 break;
-            case PayloadType::Error:
-                break;
             case PayloadType::SessionInitilization:
                 break;
             case PayloadType::SessionShutdown:
@@ -137,17 +154,25 @@ namespace indiemotion::net
             case protobuf::messages::Message::kAcknowledge: {
                 auto payload =
                     std::make_unique<indiemotion::net::Acknowledge>();
-                auto message = indiemotion::net::createMessage(
-                    indiemotion::net::Identifier(header.id()),
-                    indiemotion::net::Identifier(header.responseid()),
+                auto message = createMessage(
+                    Identifier(header.id()),
+                    Identifier(header.responseid()),
                     std::move(payload));
                 return std::move(message);
             }
+            case protobuf::messages::Message::kError:
+            {
+                auto inError = protobuf.error();
+                auto payload = std::make_unique<Error>(
+                    inError.type(),
+                    inError.message()
+                );
+            }
             case protobuf::messages::Message::kGetCameraList: {
                 auto payload =
-                    std::make_unique<indiemotion::net::GetCameraList>();
-                auto message = indiemotion::net::createMessageWithId(
-                    indiemotion::net::Identifier(header.id()),
+                    std::make_unique<GetCameraList>();
+                auto message = createMessageWithId(
+                    Identifier(header.id()),
                     std::move(payload));
                 return std::move(message);
             }
@@ -156,7 +181,7 @@ namespace indiemotion::net
 
                 auto inPayload = protobuf.motion_set_mode();
                 auto outPayload =
-                    std::make_unique<indiemotion::net::MotionSetMode>();
+                    std::make_unique<MotionSetMode>();
                 switch(inPayload.mode())
                 {
                 case protobuf::payloads::v1::MotionMode::Off:
@@ -174,19 +199,23 @@ namespace indiemotion::net
                     outPayload->mode = motion::MotionMode::Recording;
                     break;
                 }
+                case protobuf::payloads::v1::MotionMode_INT_MIN_SENTINEL_DO_NOT_USE_:
+                case protobuf::payloads::v1::MotionMode_INT_MAX_SENTINEL_DO_NOT_USE_:
+
+                    break;
                 }
 
-                auto message = indiemotion::net::createMessageWithId(
-                    indiemotion::net::Identifier(header.id()),
+                auto message = createMessageWithId(
+                    Identifier(header.id()),
                     std::move(outPayload));
                 return std::move(message);
             }
             case protobuf::messages::Message::kMotionGetMode:
             {
                 auto payload =
-                    std::make_unique<indiemotion::net::MotionGetMode>();
-                auto message = indiemotion::net::createMessageWithId(
-                    indiemotion::net::Identifier(header.id()),
+                    std::make_unique<MotionGetMode>();
+                auto message = createMessageWithId(
+                    Identifier(header.id()),
                     std::move(payload));
                 return std::move(message);
             }
@@ -202,9 +231,9 @@ namespace indiemotion::net
                 xform.orientation.z = inXForm.orientation().z();
 
                 auto outPayload =
-                    std::make_unique<indiemotion::net::MotionUpdateXForm>(std::move(xform));
-                auto message = indiemotion::net::createMessageWithId(
-                    indiemotion::net::Identifier(header.id()),
+                    std::make_unique<MotionUpdateXForm>(std::move(xform));
+                auto message = createMessageWithId(
+                    Identifier(header.id()),
                     std::move(outPayload));
                 return std::move(message);
             }
