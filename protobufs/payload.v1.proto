@@ -6,14 +6,19 @@ message Acknowledge {
   string message = 2;
 }
 
-message ListCameras {}
+message Error {
+  string type = 10;
+  string message = 11;
+}
+
+message GetCameraList {}
 
 message Camera { string id = 10; }
 
 message CameraList { repeated Camera camera = 1; }
 
 message InitializeSession {
-  string name = 10;
+  string id = 10;
   string apiVersion = 20;
   uint32 features = 30;
 }

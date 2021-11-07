@@ -19,6 +19,7 @@ namespace indiemotion::net
     {
         motion::MotionMode mode;
 
+        MotionSetMode(): mode(motion::MotionMode::Off) {}
         MotionSetMode(motion::MotionMode mode) : mode(mode) {}
 
         PayloadType type() const

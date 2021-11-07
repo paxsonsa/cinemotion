@@ -1,6 +1,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/motion/mode.hpp>
+#include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
@@ -29,12 +30,10 @@ namespace indiemotion::net
         {
             protobuf::messages::Message m;
             auto headerPtr = m.mutable_header();
-            if (msg->inResponseToId())
-            {
-                populateHeader(headerPtr, msg->id(), msg->inResponseToId().value());
-            }
-            else
-            {
+            if (msg->inResponseToId()) {
+                populateHeader(headerPtr, msg->id(),
+                               msg->inResponseToId().value());
+            } else {
                 populateHeader(headerPtr, msg->id());
             }
             return std::move(m);
@@ -45,7 +44,7 @@ namespace indiemotion::net
         {
         }
 
-        indiemotion::protobuf::messages::Message translateMessage(std::unique_ptr<Message> message) const
+        indiemotion::protobuf::messages::Message translateMessage(const std::unique_ptr<Message> message) const
         {
             switch (message->payloadType())
             {
@@ -113,7 +112,110 @@ namespace indiemotion::net
                 }
                 return std::move(m);
             }
+
+            case PayloadType::Unknown:
+                break;
+            case PayloadType::Error:
+                break;
+            case PayloadType::SessionInitilization:
+                break;
+            case PayloadType::SessionShutdown:
+                break;
+            case PayloadType::SetCamera:
+                break;
+            case PayloadType::CameraInfo:
+                break;
             }
+            throw std::runtime_error("unsupported message payload type.");
+        }
+
+        std::unique_ptr<Message> translateProtobuf(const protobuf::messages::Message protobuf) const
+        {
+            auto header = protobuf.header();
+            switch(protobuf.payload_case())
+            {
+            case protobuf::messages::Message::kAcknowledge: {
+                auto payload =
+                    std::make_unique<indiemotion::net::Acknowledge>();
+                auto message = indiemotion::net::createMessage(
+                    indiemotion::net::Identifier(header.id()),
+                    indiemotion::net::Identifier(header.responseid()),
+                    std::move(payload));
+                return std::move(message);
+            }
+            case protobuf::messages::Message::kGetCameraList: {
+                auto payload =
+                    std::make_unique<indiemotion::net::GetCameraList>();
+                auto message = indiemotion::net::createMessageWithId(
+                    indiemotion::net::Identifier(header.id()),
+                    std::move(payload));
+                return std::move(message);
+            }
+            case protobuf::messages::Message::kMotionSetMode:
+            {
+
+                auto inPayload = protobuf.motion_set_mode();
+                auto outPayload =
+                    std::make_unique<indiemotion::net::MotionSetMode>();
+                switch(inPayload.mode())
+                {
+                case protobuf::payloads::v1::MotionMode::Off:
+                {
+                    outPayload->mode = motion::MotionMode::Off;
+                    break;
+                }
+                case protobuf::payloads::v1::MotionMode::Live:
+                {
+                    outPayload->mode = motion::MotionMode::Live;
+                    break;
+                }
+                case protobuf::payloads::v1::MotionMode::Recording:
+                {
+                    outPayload->mode = motion::MotionMode::Recording;
+                    break;
+                }
+                }
+
+                auto message = indiemotion::net::createMessageWithId(
+                    indiemotion::net::Identifier(header.id()),
+                    std::move(outPayload));
+                return std::move(message);
+            }
+            case protobuf::messages::Message::kMotionGetMode:
+            {
+                auto payload =
+                    std::make_unique<indiemotion::net::MotionGetMode>();
+                auto message = indiemotion::net::createMessageWithId(
+                    indiemotion::net::Identifier(header.id()),
+                    std::move(payload));
+                return std::move(message);
+            }
+            case protobuf::messages::Message::kMotionXform:
+            {
+                auto inXForm = protobuf.motion_xform();
+                auto xform = motion::MotionXForm();
+                xform.translation.x = inXForm.translation().x();
+                xform.translation.y = inXForm.translation().y();
+                xform.translation.z = inXForm.translation().z();
+                xform.orientation.x = inXForm.orientation().x();
+                xform.orientation.y = inXForm.orientation().y();
+                xform.orientation.z = inXForm.orientation().z();
+
+                auto outPayload =
+                    std::make_unique<indiemotion::net::MotionUpdateXForm>(std::move(xform));
+                auto message = indiemotion::net::createMessageWithId(
+                    indiemotion::net::Identifier(header.id()),
+                    std::move(outPayload));
+                return std::move(message);
+            }
+            case protobuf::messages::Message::kMotionActiveMode:
+            case protobuf::messages::Message::kCameraList:
+                throw std::runtime_error("message type is not supported as a client message.");
+            case protobuf::messages::Message::PAYLOAD_NOT_SET:
+                throw std::runtime_error("malformed message, protobuf payload is not set..");
+            }
+
+            return nullptr;
         }
     };
 } // namespace indiemotion::net

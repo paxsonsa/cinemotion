@@ -92,6 +92,25 @@ namespace indiemotion::net
         }
     };
 
+    std::unique_ptr<Message> createMessageWithId(const Identifier &id,
+                                           std::unique_ptr<Payload_T> payloadPtr)
+    {
+        auto headerPtr = std::make_unique<Header>(id);
+        auto containerPtr = std::make_unique<Message>(std::move(headerPtr), std::move(payloadPtr));
+        return std::move(containerPtr);
+    }
+
+
+    std::unique_ptr<Message> createMessage(const Identifier &id,
+                                           const Identifier &inResponseToId,
+                                           std::unique_ptr<Payload_T> payloadPtr)
+    {
+        auto headerPtr = std::make_unique<Header>(id, inResponseToId);
+        auto containerPtr = std::make_unique<Message>(std::move(headerPtr), std::move(payloadPtr));
+
+        return std::move(containerPtr);
+    }
+
     std::unique_ptr<Message> createMessage(const Identifier &inResponseToId,
                                            std::unique_ptr<Payload_T> payloadPtr)
     {

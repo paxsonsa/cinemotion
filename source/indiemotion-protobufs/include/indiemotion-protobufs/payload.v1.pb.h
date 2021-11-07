@@ -47,7 +47,7 @@ struct TableStruct_payload_2ev1_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[10]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -67,12 +67,15 @@ extern CameraDefaultTypeInternal _Camera_default_instance_;
 class CameraList;
 struct CameraListDefaultTypeInternal;
 extern CameraListDefaultTypeInternal _CameraList_default_instance_;
+class Error;
+struct ErrorDefaultTypeInternal;
+extern ErrorDefaultTypeInternal _Error_default_instance_;
+class GetCameraList;
+struct GetCameraListDefaultTypeInternal;
+extern GetCameraListDefaultTypeInternal _GetCameraList_default_instance_;
 class InitializeSession;
 struct InitializeSessionDefaultTypeInternal;
 extern InitializeSessionDefaultTypeInternal _InitializeSession_default_instance_;
-class ListCameras;
-struct ListCamerasDefaultTypeInternal;
-extern ListCamerasDefaultTypeInternal _ListCameras_default_instance_;
 class MotionActiveMode;
 struct MotionActiveModeDefaultTypeInternal;
 extern MotionActiveModeDefaultTypeInternal _MotionActiveMode_default_instance_;
@@ -96,8 +99,9 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::indiemotion::protobuf::payloads::v1::Acknowledge* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::Acknowledge>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::Camera* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::Camera>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::CameraList* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::CameraList>(Arena*);
+template<> ::indiemotion::protobuf::payloads::v1::Error* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::Error>(Arena*);
+template<> ::indiemotion::protobuf::payloads::v1::GetCameraList* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::GetCameraList>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::InitializeSession* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::InitializeSession>(Arena*);
-template<> ::indiemotion::protobuf::payloads::v1::ListCameras* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::ListCameras>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::MotionActiveMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::MotionActiveMode>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::MotionGetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::MotionGetMode>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::MotionSetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::MotionSetMode>(Arena*);
@@ -292,24 +296,24 @@ class Acknowledge final :
 };
 // -------------------------------------------------------------------
 
-class ListCameras final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.ListCameras) */ {
+class Error final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.Error) */ {
  public:
-  inline ListCameras() : ListCameras(nullptr) {}
-  ~ListCameras() override;
-  explicit constexpr ListCameras(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline Error() : Error(nullptr) {}
+  ~Error() override;
+  explicit constexpr Error(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  ListCameras(const ListCameras& from);
-  ListCameras(ListCameras&& from) noexcept
-    : ListCameras() {
+  Error(const Error& from);
+  Error(Error&& from) noexcept
+    : Error() {
     *this = ::std::move(from);
   }
 
-  inline ListCameras& operator=(const ListCameras& from) {
+  inline Error& operator=(const Error& from) {
     CopyFrom(from);
     return *this;
   }
-  inline ListCameras& operator=(ListCameras&& from) noexcept {
+  inline Error& operator=(Error&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()) {
       InternalSwap(&from);
@@ -328,20 +332,20 @@ class ListCameras final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const ListCameras& default_instance() {
+  static const Error& default_instance() {
     return *internal_default_instance();
   }
-  static inline const ListCameras* internal_default_instance() {
-    return reinterpret_cast<const ListCameras*>(
-               &_ListCameras_default_instance_);
+  static inline const Error* internal_default_instance() {
+    return reinterpret_cast<const Error*>(
+               &_Error_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(ListCameras& a, ListCameras& b) {
+  friend void swap(Error& a, Error& b) {
     a.Swap(&b);
   }
-  inline void Swap(ListCameras* other) {
+  inline void Swap(Error* other) {
     if (other == this) return;
     if (GetOwningArena() == other->GetOwningArena()) {
       InternalSwap(other);
@@ -349,7 +353,7 @@ class ListCameras final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(ListCameras* other) {
+  void UnsafeArenaSwap(Error* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -357,17 +361,17 @@ class ListCameras final :
 
   // implements Message ----------------------------------------------
 
-  inline ListCameras* New() const final {
-    return new ListCameras();
+  inline Error* New() const final {
+    return new Error();
   }
 
-  ListCameras* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<ListCameras>(arena);
+  Error* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Error>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ListCameras& from);
+  void CopyFrom(const Error& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const ListCameras& from);
+  void MergeFrom(const Error& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
   public:
@@ -384,13 +388,13 @@ class ListCameras final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(ListCameras* other);
+  void InternalSwap(Error* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "indiemotion.protobuf.payloads.v1.ListCameras";
+    return "indiemotion.protobuf.payloads.v1.Error";
   }
   protected:
-  explicit ListCameras(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit Error(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -406,7 +410,167 @@ class ListCameras final :
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.ListCameras)
+  enum : int {
+    kTypeFieldNumber = 10,
+    kMessageFieldNumber = 11,
+  };
+  // string type = 10;
+  void clear_type();
+  const std::string& type() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_type(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_type();
+  PROTOBUF_MUST_USE_RESULT std::string* release_type();
+  void set_allocated_type(std::string* type);
+  private:
+  const std::string& _internal_type() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_type(const std::string& value);
+  std::string* _internal_mutable_type();
+  public:
+
+  // string message = 11;
+  void clear_message();
+  const std::string& message() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_message(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_message();
+  PROTOBUF_MUST_USE_RESULT std::string* release_message();
+  void set_allocated_message(std::string* message);
+  private:
+  const std::string& _internal_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
+  public:
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.Error)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr type_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_payload_2ev1_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetCameraList final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.GetCameraList) */ {
+ public:
+  inline GetCameraList() : GetCameraList(nullptr) {}
+  ~GetCameraList() override;
+  explicit constexpr GetCameraList(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetCameraList(const GetCameraList& from);
+  GetCameraList(GetCameraList&& from) noexcept
+    : GetCameraList() {
+    *this = ::std::move(from);
+  }
+
+  inline GetCameraList& operator=(const GetCameraList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetCameraList& operator=(GetCameraList&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetCameraList& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetCameraList* internal_default_instance() {
+    return reinterpret_cast<const GetCameraList*>(
+               &_GetCameraList_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(GetCameraList& a, GetCameraList& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetCameraList* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetCameraList* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetCameraList* New() const final {
+    return new GetCameraList();
+  }
+
+  GetCameraList* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetCameraList>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GetCameraList& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GetCameraList& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetCameraList* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.payloads.v1.GetCameraList";
+  }
+  protected:
+  explicit GetCameraList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.GetCameraList)
  private:
   class _Internal;
 
@@ -462,7 +626,7 @@ class Camera final :
                &_Camera_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(Camera& a, Camera& b) {
     a.Swap(&b);
@@ -606,7 +770,7 @@ class CameraList final :
                &_CameraList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(CameraList& a, CameraList& b) {
     a.Swap(&b);
@@ -754,7 +918,7 @@ class InitializeSession final :
                &_InitializeSession_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(InitializeSession& a, InitializeSession& b) {
     a.Swap(&b);
@@ -825,22 +989,22 @@ class InitializeSession final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 10,
+    kIdFieldNumber = 10,
     kApiVersionFieldNumber = 20,
     kFeaturesFieldNumber = 30,
   };
-  // string name = 10;
-  void clear_name();
-  const std::string& name() const;
+  // string id = 10;
+  void clear_id();
+  const std::string& id() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_name(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_name();
-  PROTOBUF_MUST_USE_RESULT std::string* release_name();
-  void set_allocated_name(std::string* name);
+  void set_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_id();
+  PROTOBUF_MUST_USE_RESULT std::string* release_id();
+  void set_allocated_id(std::string* id);
   private:
-  const std::string& _internal_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
-  std::string* _internal_mutable_name();
+  const std::string& _internal_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
   public:
 
   // string apiVersion = 20;
@@ -873,7 +1037,7 @@ class InitializeSession final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr apiversion_;
   ::PROTOBUF_NAMESPACE_ID::uint32 features_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -925,7 +1089,7 @@ class MotionActiveMode final :
                &_MotionActiveMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(MotionActiveMode& a, MotionActiveMode& b) {
     a.Swap(&b);
@@ -1064,7 +1228,7 @@ class MotionSetMode final :
                &_MotionSetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(MotionSetMode& a, MotionSetMode& b) {
     a.Swap(&b);
@@ -1203,7 +1367,7 @@ class MotionGetMode final :
                &_MotionGetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(MotionGetMode& a, MotionGetMode& b) {
     a.Swap(&b);
@@ -1342,7 +1506,7 @@ class XFormData final :
                &_XFormData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(XFormData& a, XFormData& b) {
     a.Swap(&b);
@@ -1503,7 +1667,7 @@ class MotionXForm final :
                &_MotionXForm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(MotionXForm& a, MotionXForm& b) {
     a.Swap(&b);
@@ -1704,7 +1868,103 @@ inline void Acknowledge::set_allocated_message(std::string* message) {
 
 // -------------------------------------------------------------------
 
-// ListCameras
+// Error
+
+// string type = 10;
+inline void Error::clear_type() {
+  type_.ClearToEmpty();
+}
+inline const std::string& Error::type() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.Error.type)
+  return _internal_type();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Error::set_type(ArgT0&& arg0, ArgT... args) {
+ 
+ type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.Error.type)
+}
+inline std::string* Error::mutable_type() {
+  std::string* _s = _internal_mutable_type();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.payloads.v1.Error.type)
+  return _s;
+}
+inline const std::string& Error::_internal_type() const {
+  return type_.Get();
+}
+inline void Error::_internal_set_type(const std::string& value) {
+  
+  type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* Error::_internal_mutable_type() {
+  
+  return type_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* Error::release_type() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.payloads.v1.Error.type)
+  return type_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void Error::set_allocated_type(std::string* type) {
+  if (type != nullptr) {
+    
+  } else {
+    
+  }
+  type_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), type,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.Error.type)
+}
+
+// string message = 11;
+inline void Error::clear_message() {
+  message_.ClearToEmpty();
+}
+inline const std::string& Error::message() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.Error.message)
+  return _internal_message();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Error::set_message(ArgT0&& arg0, ArgT... args) {
+ 
+ message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.Error.message)
+}
+inline std::string* Error::mutable_message() {
+  std::string* _s = _internal_mutable_message();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.payloads.v1.Error.message)
+  return _s;
+}
+inline const std::string& Error::_internal_message() const {
+  return message_.Get();
+}
+inline void Error::_internal_set_message(const std::string& value) {
+  
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* Error::_internal_mutable_message() {
+  
+  return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* Error::release_message() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.payloads.v1.Error.message)
+  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void Error::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
+    
+  } else {
+    
+  }
+  message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.Error.message)
+}
+
+// -------------------------------------------------------------------
+
+// GetCameraList
 
 // -------------------------------------------------------------------
 
@@ -1804,50 +2064,50 @@ CameraList::camera() const {
 
 // InitializeSession
 
-// string name = 10;
-inline void InitializeSession::clear_name() {
-  name_.ClearToEmpty();
+// string id = 10;
+inline void InitializeSession::clear_id() {
+  id_.ClearToEmpty();
 }
-inline const std::string& InitializeSession::name() const {
-  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.InitializeSession.name)
-  return _internal_name();
+inline const std::string& InitializeSession::id() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.InitializeSession.id)
+  return _internal_id();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void InitializeSession::set_name(ArgT0&& arg0, ArgT... args) {
+void InitializeSession::set_id(ArgT0&& arg0, ArgT... args) {
  
- name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.InitializeSession.name)
+ id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.InitializeSession.id)
 }
-inline std::string* InitializeSession::mutable_name() {
-  std::string* _s = _internal_mutable_name();
-  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.payloads.v1.InitializeSession.name)
+inline std::string* InitializeSession::mutable_id() {
+  std::string* _s = _internal_mutable_id();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.payloads.v1.InitializeSession.id)
   return _s;
 }
-inline const std::string& InitializeSession::_internal_name() const {
-  return name_.Get();
+inline const std::string& InitializeSession::_internal_id() const {
+  return id_.Get();
 }
-inline void InitializeSession::_internal_set_name(const std::string& value) {
+inline void InitializeSession::_internal_set_id(const std::string& value) {
   
-  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* InitializeSession::_internal_mutable_name() {
+inline std::string* InitializeSession::_internal_mutable_id() {
   
-  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  return id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* InitializeSession::release_name() {
-  // @@protoc_insertion_point(field_release:indiemotion.protobuf.payloads.v1.InitializeSession.name)
-  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline std::string* InitializeSession::release_id() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.payloads.v1.InitializeSession.id)
+  return id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void InitializeSession::set_allocated_name(std::string* name) {
-  if (name != nullptr) {
+inline void InitializeSession::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
     
   } else {
     
   }
-  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+  id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.InitializeSession.name)
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.InitializeSession.id)
 }
 
 // string apiVersion = 20;
@@ -2239,6 +2499,8 @@ inline void MotionXForm::set_allocated_orientation(::indiemotion::protobuf::payl
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

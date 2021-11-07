@@ -1,12 +1,11 @@
 - Translator (message to protobuf)
-    - translateMessage
-        - MotionUpdatXForm
-        - CameraInfo
-        - SessionInitialization
-        - SessionShutdown
-        - Error
-        - Unknown (not supported)
     - translateProtobuf
+      - acknowledge
+      - get camera list
+      - set motion mode
+      - get motion mode
+      - get session properties (new)
+      - Unknown (send error)
 
 SessionBridge
 - MotionGetMode
