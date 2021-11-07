@@ -96,7 +96,7 @@ namespace indiemotion::session
             {
                 if (_m_delegate)
                 {
-                    _m_delegate->recievedMotionUpdate(xform);
+                    _m_delegate->receivedMotionUpdate(xform);
                 }
             }
         }

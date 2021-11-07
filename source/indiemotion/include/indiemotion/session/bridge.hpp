@@ -5,48 +5,54 @@
 #include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
+#include <indiemotion/net/queue.hpp>
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/session/handler.hpp>
 #include <indiemotion/session/properties.hpp>
 #include <indiemotion/session/session.hpp>
 
-const std::string _LOGGER_NAME = "com.indiemotion.session.bridge";
 
 namespace indiemotion::session
 {
+    const std::string LOGGER_NAME = "com.indiemotion.session.bridge";
     class SessionBridge
     {
     private:
         std::shared_ptr<spdlog::logger> _logger;
-        std::string _m_name = "indiemotion-default";
+        std::string _m_id = "default";
+        std::shared_ptr<net::MessageQueue> _m_queuePtr;
         std::shared_ptr<Session> _m_sessionPtr;
         std::unique_ptr<net::AcknowledgeCoordinator> _m_ackCoordinator;
 
     public:
         static const std::string APIVersion;
 
-        SessionBridge(std::shared_ptr<Session> sessionPtr)
+        SessionBridge(std::shared_ptr<net::MessageQueue> queuePtr, std::shared_ptr<Session> sessionPtr)
         {
-            _logger = logging::getLogger(_LOGGER_NAME);
-            _m_sessionPtr = sessionPtr;
+            _m_queuePtr = std::move(queuePtr);
+            _logger = logging::getLogger(LOGGER_NAME);
+            _m_sessionPtr = std::move(sessionPtr);
             _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
         }
 
-        SessionBridge(std::string name, std::shared_ptr<Session> sessionPtr)
+        SessionBridge(std::string name, std::shared_ptr<net::MessageQueue> queuePtr, std::shared_ptr<Session> sessionPtr)
         {
-            _m_name = name;
-            _m_sessionPtr = sessionPtr;
+            _m_queuePtr = std::move(queuePtr);
+            _logger = logging::getLogger(LOGGER_NAME);
+            _m_id = std::move(name);
+            _m_sessionPtr = std::move(sessionPtr);
             _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
         }
 
-        std::string apiVersion() const { return SessionBridge::APIVersion; }
+        [[nodiscard]] static std::string apiVersion() { return SessionBridge::APIVersion; }
 
-        std::unique_ptr<net::Message> initialize()
+        void initialize()
         {
             auto payload = std::make_unique<SessionProperties>(
-                _m_name,
+                _m_id,
                 apiVersion(),
                 newFeatureSet(0));
+
             _m_sessionPtr->setStatus(Status::Initialized);
             auto message = net::createMessage(std::move(payload));
             message->requiresAcknowledgement(true);
@@ -55,10 +61,10 @@ namespace indiemotion::session
                                      [&]()
                                      { _m_sessionPtr->setStatus(Status::Activated); });
 
-            return std::move(message);
+            _m_queuePtr->push(std::move(message));
         }
 
-        std::optional<std::unique_ptr<net::Message>> processMessage(std::unique_ptr<net::Message> messagePtr) const
+        void processMessage(std::unique_ptr<net::Message> messagePtr) const
         {
             _logger->trace("Processing message: {}", messagePtr->id());
 
@@ -77,10 +83,9 @@ namespace indiemotion::session
                         net::ErrorType::InvalidMessage,
                         "acknowledgement message missing id for which message it should acknowledge");
                     auto response = net::createMessage(messagePtr->id(), std::move(error));
-                    return response;
+                    _m_queuePtr->push(std::move(response));
                 }
-
-                return {};
+                return;
             }
 
             // ---------------------------------------------------------------------------------------------------
@@ -91,7 +96,8 @@ namespace indiemotion::session
                 auto cameras = _m_sessionPtr->getCameras();
                 auto payload = std::make_unique<net::CameraList>(std::move(cameras));
                 auto response = net::createMessage(messagePtr->id(), std::move(payload));
-                return response;
+                _m_queuePtr->push(std::move(response));
+                return;
             }
 
             case net::PayloadType::SetCamera:
@@ -102,7 +108,8 @@ namespace indiemotion::session
                 auto camera = _m_sessionPtr->getActiveCamera();
                 auto payload = std::make_unique<net::CameraInfo>(camera.value());
                 auto response = net::createMessage(messagePtr->id(), std::move(payload));
-                return response;
+                _m_queuePtr->push(std::move(response));
+                return;
             }
 
             // ---------------------------------------------------------------------------------------------------
@@ -112,7 +119,7 @@ namespace indiemotion::session
                 _logger->trace("PayloadType=MotionSetMode");
                 auto msgPayload = messagePtr->payloadPtrAs<net::MotionSetMode>();
                 _m_sessionPtr->setMotionMode(msgPayload->mode);
-                return {};
+                return;
             }
 
             // ---------------------------------------------------------------------------------------------------
@@ -122,7 +129,7 @@ namespace indiemotion::session
                 _logger->trace("PayloadType=MotionUpdateXForm");
                 auto msgPayload = messagePtr->payloadPtrAs<net::MotionUpdateXForm>();
                 _m_sessionPtr->updateMotionXForm(msgPayload->xform);
-                return {};
+                return;
             }
 
             // ---------------------------------------------------------------------------------------------------
@@ -130,7 +137,7 @@ namespace indiemotion::session
             case net::PayloadType::Error:
                 _logger->trace("PayloadType=Error");
                 // TODO Process Errors
-                return {};
+                return;
 
             case net::PayloadType::Unknown:
             {
@@ -138,7 +145,8 @@ namespace indiemotion::session
                 auto error = std::make_unique<net::Error>(net::ErrorType::CannotProcessMessage,
                                                           "could not process message, unknown payload type.");
                 auto response = net::createMessage(messagePtr->id(), std::move(error));
-                return response;
+                _m_queuePtr->push(std::move(response));
+                return;
             }
 
             default:
@@ -147,7 +155,8 @@ namespace indiemotion::session
                                                           "could not process message, handler is not implemented to process contents.");
                 auto response = net::createMessage(messagePtr->id(), std::move(error));
                 _logger->error("could not process message '{}', payload type handler not implemented: {}", messagePtr->id(), messagePtr->payloadType());
-                return response;
+                _m_queuePtr->push(std::move(response));
+                return;
             }
         }
     };

@@ -74,6 +74,10 @@ namespace indiemotion::net
                 return std::move(m);
             }
 
+            case PayloadType::MotionUpdateXForm:
+            {
+                        }
+
             case PayloadType::MotionSetMode:
             {
                 throw std::runtime_error("cannot translate PayloadType::MotionSetMode");

@@ -6,12 +6,12 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <indiemotion/common.hpp>
-#include <indiemotion/errors.hpp>
 #include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
+#include <indiemotion/net/queue.hpp>
 #include <indiemotion/session.hpp>
 
 using namespace indiemotion;
@@ -20,27 +20,30 @@ SCENARIO("Initializing the Session")
 {
     GIVEN("a new manager object")
     {
-        auto name = "SessionName";
+        auto id = "SessionName";
         auto session = std::make_shared<session::Session>();
-        auto bridge = session::SessionBridge(name, session);
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
+        auto bridge = session::SessionBridge(id, queue, session);
 
         WHEN("manager.initalize() is called")
         {
-            auto response = bridge.initialize();
+            bridge.initialize();
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
 
             THEN("initialize() should have returned a response")
             {
-                REQUIRE(response);
+                REQUIRE(didGetItem);
 
                 AND_THEN("the response should be a properly init message")
                 {
                     REQUIRE(response->payloadType() == indiemotion::net::PayloadType::SessionInitilization);
                 }
 
-                AND_THEN("the repsonse should be the session properties we expect")
+                AND_THEN("the response should be the session properties we expect")
                 {
                     auto properties = response->payloadPtrAs<session::SessionProperties>();
-                    REQUIRE(properties->name == name);
+                    REQUIRE(properties->id == id);
                     REQUIRE(properties->apiVersion == session::SessionBridge::APIVersion);
                     REQUIRE(properties->features == 0);
                 }
@@ -51,9 +54,14 @@ SCENARIO("Initializing the Session")
     GIVEN("an initialized session manager")
     {
         auto session = std::make_shared<session::Session>();
-        auto bridge = indiemotion::session::SessionBridge(session);
-        auto response = bridge.initialize();
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        bridge.initialize();
 
+        std::shared_ptr<indiemotion::net::Message> response;
+        auto didGetItem = queue->pop(response);
+
+        REQUIRE(didGetItem);
         REQUIRE(response->doesRequireAcknowledgement());
         REQUIRE(session->status() == session::Status::Initialized);
 
@@ -61,10 +69,13 @@ SCENARIO("Initializing the Session")
         {
             auto ackPtr = std::make_unique<indiemotion::net::Acknowledge>();
             auto message = indiemotion::net::createMessage(response->id(), std::move(ackPtr));
-            auto expected = bridge.processMessage(std::move(message));
+
+            bridge.processMessage(std::move(message));
+            std::shared_ptr<indiemotion::net::Message> expected;
+            didGetItem = queue->pop(expected);
             THEN("no message should be returned")
             {
-                REQUIRE_FALSE(expected.has_value());
+                REQUIRE_FALSE(didGetItem);
             }
 
             AND_THEN("the sesison should be active")
@@ -80,20 +91,24 @@ SCENARIO("acknowledge message with no ID should return an error")
     GIVEN("an active session bridge")
     {
         auto session = std::make_shared<session::Session>();
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
         session->setStatus(session::Status::Activated);
 
         WHEN("an acknowledge message is processed without an inResponseToId")
         {
             auto ackPtr = std::make_unique<indiemotion::net::Acknowledge>();
             auto message = indiemotion::net::createMessage(std::move(ackPtr));
-            auto expected = bridge.processMessage(std::move(message));
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> expected;
+            auto didGetItem = queue->pop(expected);
 
             THEN("an invalid message error should be returned")
             {
-                REQUIRE(expected);
-                REQUIRE(expected.value()->payloadType() == indiemotion::net::PayloadType::Error);
-                auto payload = expected.value()->payloadPtrAs<indiemotion::net::Error>();
+                REQUIRE(didGetItem);
+                REQUIRE(expected->payloadType() == indiemotion::net::PayloadType::Error);
+                auto payload = expected->payloadPtrAs<indiemotion::net::Error>();
                 REQUIRE(payload->errorType == indiemotion::net::ErrorType::InvalidMessage);
             }
         }
@@ -111,7 +126,7 @@ SCENARIO("List the Cameras")
             cameras::Camera("cam3"),
         };
 
-        std::vector<cameras::Camera> getAvailableCameras()
+        std::vector<cameras::Camera> getAvailableCameras() override
         {
             return cameraList;
         }
@@ -120,19 +135,25 @@ SCENARIO("List the Cameras")
     GIVEN("a session bridge")
     {
         auto delegate = std::make_shared<DummyDelegate>();
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         auto session = std::make_shared<session::Session>(delegate);
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
+
 
         WHEN("bridge processes list camera messages")
         {
             auto msg = std::make_unique<indiemotion::net::GetCameraList>();
             auto message = indiemotion::net::createMessage(std::move(msg));
-            auto response = bridge.processMessage(std::move(message));
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> expected;
+            auto didGetItem = queue->pop(expected);
+
             THEN("the delegates camera list should be returned")
             {
-                REQUIRE(response);
-                auto camList = response.value()->payloadPtrAs<indiemotion::net::CameraList>();
+                REQUIRE(didGetItem);
+                auto camList = expected->payloadPtrAs<indiemotion::net::CameraList>();
                 REQUIRE(camList->cameras == delegate->cameraList);
             }
         }
@@ -152,18 +173,18 @@ SCENARIO("Set the Camera Successfully")
 
         std::optional<cameras::Camera> camera;
 
-        std::vector<cameras::Camera> getAvailableCameras()
+        std::vector<cameras::Camera> getAvailableCameras() override
         {
             return cameraList;
         }
 
-        std::optional<cameras::Camera> getCameraById(std::string id)
+        std::optional<cameras::Camera> getCameraById(std::string id) override
         {
             assert(id == "cam2" && "should not be possible in this test case.");
             return cameraList[1];
         }
 
-        void didSetActiveCamera(cameras::Camera cam)
+        void didSetActiveCamera(cameras::Camera cam) override
         {
             camera = cam;
         }
@@ -173,18 +194,23 @@ SCENARIO("Set the Camera Successfully")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<session::Session>(delegate);
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
 
         WHEN("bridge processes setcamera messages")
         {
             auto payload = std::make_unique<indiemotion::net::SetCamera>("cam2");
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
+
             THEN("the delegates camera should be set")
             {
-                REQUIRE(response);
-                auto info = response.value()->payloadPtrAs<indiemotion::net::CameraInfo>();
+                REQUIRE(didGetItem);
+                auto info = response->payloadPtrAs<indiemotion::net::CameraInfo>();
                 REQUIRE(info->camera->name == "cam2");
                 REQUIRE(info->camera == delegate->camera);
                 REQUIRE(info->camera->name == session->getActiveCamera().value().name);
@@ -200,7 +226,7 @@ SCENARIO("updating the motion mode")
         bool wasMotionModeDidUpdateCalled = false;
         motion::MotionMode mode = motion::MotionMode::Off;
 
-        void didMotionSetMode(motion::MotionMode m)
+        void didMotionSetMode(motion::MotionMode m) override
         {
             wasMotionModeDidUpdateCalled = true;
             mode = m;
@@ -211,15 +237,21 @@ SCENARIO("updating the motion mode")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<session::Session>(delegate);
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
 
         WHEN("bridge processes setmotionmode=live message")
         {
             auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Live);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
-            REQUIRE_FALSE(response);
+
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
+
+            REQUIRE_FALSE(didGetItem);
 
             THEN("the motion mode should be updated")
             {
@@ -237,8 +269,12 @@ SCENARIO("updating the motion mode")
         {
             auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Recording);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
-            REQUIRE(!response);
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
+
+            REQUIRE(!didGetItem);
 
             THEN("the motion mode should be updated")
             {
@@ -256,8 +292,11 @@ SCENARIO("updating the motion mode")
         {
             auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Off);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
-            REQUIRE(!response);
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
+            REQUIRE(!didGetItem);
 
             THEN("the motion mode should be updated")
             {
@@ -280,7 +319,7 @@ SCENARIO("updating the motion xform")
         bool wasReceivedMotionUpdateCalled = false;
         motion::MotionXForm xform;
 
-        void recievedMotionUpdate(motion::MotionXForm m)
+        void receivedMotionUpdate(motion::MotionXForm m) override
         {
             wasReceivedMotionUpdateCalled = true;
             xform = m;
@@ -291,9 +330,10 @@ SCENARIO("updating the motion xform")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<session::Session>(delegate);
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
         session->setMotionMode(motion::MotionMode::Live);
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
 
         WHEN("a motion message is processed")
         {
@@ -301,11 +341,14 @@ SCENARIO("updating the motion xform")
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
 
             THEN("no response should be returned")
             {
-                REQUIRE_FALSE(response);
+                REQUIRE_FALSE(didGetItem);
             }
 
             THEN("delegate's recieved motion routine should be invoked")
@@ -324,7 +367,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         bool wasReceivedMotionUpdateCalled = false;
         motion::MotionXForm xform;
 
-        void recievedMotionUpdate(motion::MotionXForm m)
+        void receivedMotionUpdate(motion::MotionXForm m) override
         {
             wasReceivedMotionUpdateCalled = true;
             xform = m;
@@ -335,8 +378,9 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<session::Session>(delegate);
+        auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(session);
+        auto bridge = indiemotion::session::SessionBridge(queue, session);
 
         WHEN("the session's motion mode is off and motion update is processed")
         {
@@ -345,11 +389,14 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
+
+            bridge.processMessage(std::move(message));
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
 
             THEN("no response should be returned")
             {
-                REQUIRE_FALSE(response);
+                REQUIRE_FALSE(didGetItem);
             }
 
             THEN("delegate's recieved motion routine should NOT be invoked")
@@ -366,11 +413,14 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
 
             THEN("no response should be returned")
             {
-                REQUIRE_FALSE(response);
+                REQUIRE_FALSE(didGetItem);
             }
 
             THEN("delegate's recieved motion routine should be invoked")
@@ -390,11 +440,14 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
                 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
-            auto response = bridge.processMessage(std::move(message));
+            bridge.processMessage(std::move(message));
+
+            std::shared_ptr<indiemotion::net::Message> response;
+            auto didGetItem = queue->pop(response);
 
             THEN("no response should be returned")
             {
-                REQUIRE_FALSE(response);
+                REQUIRE_FALSE(didGetItem);
             }
 
             THEN("delegate's recieved motion routine should be invoked")

@@ -59,6 +59,6 @@ namespace indiemotion::session
 
         // ----------------------------------------------------------------
         // Motion XForm Operations
-        virtual void recievedMotionUpdate(motion::MotionXForm m) {}
+        virtual void receivedMotionUpdate(motion::MotionXForm m) {}
     };
 }

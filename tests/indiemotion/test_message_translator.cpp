@@ -2,6 +2,7 @@
 #include <doctest.h>
 #include <indiemotion/common.hpp>
 #include <indiemotion/motion/mode.hpp>
+#include <indiemotion/motion/xform.hpp>
 #include <indiemotion/net/acknowledge.hpp>
 #include <indiemotion/net/camera.hpp>
 #include <indiemotion/net/message.hpp>
@@ -31,7 +32,7 @@ TEST_CASE("Translate Acknowledge Messages")
     }
 }
 
-TEST_CASE("Translate GetCameraList Messages (Not Supported)")
+TEST_CASE("Translate GetCameraList Messages Throws Exceptions")
 {
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::GetCameraList>();
@@ -93,7 +94,7 @@ TEST_CASE("Translate Motion Active Mode Messages")
     }
 }
 
-TEST_CASE("Translate Motion Set Mode Messages (Not Supported)")
+TEST_CASE("Translate Motion Set Mode Messages Throws Exceptions")
 {
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::MotionSetMode>(
@@ -106,10 +107,23 @@ TEST_CASE("Translate Motion Set Mode Messages (Not Supported)")
     }
 }
 
-TEST_CASE("Translate Motion Get Mode Messages (Not Supported)")
+TEST_CASE("Translate Motion Get Mode Messages Throws Exceptions")
 {
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::MotionGetMode>();
+    auto message = indiemotion::net::createMessage(std::move(payload));
+
+    SUBCASE("translator should throw runtime error")
+    {
+        REQUIRE_THROWS_AS(translator.translateMessage(std::move(message)), std::runtime_error);
+    }
+}
+
+TEST_CASE("Translate MotionUpdatXForm Throws Exception")
+{
+    auto translator = indiemotion::net::MessageTranslator();
+    auto xform = indiemotion::motion::MotionXForm::create(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+    auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
     auto message = indiemotion::net::createMessage(std::move(payload));
 
     SUBCASE("translator should throw runtime error")

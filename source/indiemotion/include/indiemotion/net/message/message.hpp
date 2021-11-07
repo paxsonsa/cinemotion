@@ -7,7 +7,8 @@
 namespace indiemotion::net
 {
     /**
-     * @brief A template for creating tranport containers.
+     * @brief A message is a the main transportable type through
+     *  the network API.
      *
      */
     class Message
@@ -19,6 +20,11 @@ namespace indiemotion::net
         std::shared_ptr<spdlog::logger> _logger;
 
     public:
+       Message()
+       {
+            _logger = logging::getLogger("com.indiemotion.net.message");
+       }
+
         Message(std::unique_ptr<Header> headerPtr,
                 std::unique_ptr<Payload_T> payloadPtr)
             : _m_headerPtr(std::move(headerPtr)), _m_payloadPtr(std::move(payloadPtr))
@@ -28,12 +34,12 @@ namespace indiemotion::net
             assert(_m_payloadPtr != nullptr && "message payload cannot be nullptr");
         }
 
-        std::shared_ptr<Header> header() const
+        [[nodiscard]] std::shared_ptr<Header> header() const
         {
             return _m_headerPtr;
         }
 
-        std::shared_ptr<Payload_T> payload() const
+        [[nodiscard]] std::shared_ptr<Payload_T> payload() const
         {
             return _m_payloadPtr;
         }
@@ -43,17 +49,17 @@ namespace indiemotion::net
             _m_requiresAck = s;
         }
 
-        bool doesRequireAcknowledgement() const
+        [[nodiscard]] bool doesRequireAcknowledgement() const
         {
             return _m_requiresAck;
         }
 
-        std::optional<Identifier> inResponseToId() const
+        [[nodiscard]] std::optional<Identifier> inResponseToId() const
         {
             return _m_headerPtr->responseToId();
         }
 
-        bool isInReponseTo(Identifier id) const
+        [[nodiscard]] bool isInResponseTo(Identifier id) const
         {
             if (_m_headerPtr->responseToId().has_value())
             {
@@ -62,12 +68,12 @@ namespace indiemotion::net
             return false;
         }
 
-        Identifier id() const
+        [[nodiscard]] Identifier id() const
         {
             return _m_headerPtr->id();
         }
 
-        PayloadType payloadType() const
+        [[nodiscard]] PayloadType payloadType() const
         {
             return _m_payloadPtr->type();
         }
@@ -81,12 +87,12 @@ namespace indiemotion::net
         template <typename T>
         std::shared_ptr<T> payloadPtrAs() const
         {
-            _logger->trace("casting message paylaod as {}", typeid(T).name());
+            _logger->trace("casting message payload as {}", typeid(T).name());
             return std::dynamic_pointer_cast<T>(_m_payloadPtr);
         }
     };
 
-    std::unique_ptr<Message> createMessage(Identifier inResponseToId,
+    std::unique_ptr<Message> createMessage(const Identifier &inResponseToId,
                                            std::unique_ptr<Payload_T> payloadPtr)
     {
         auto id = generateNewIdentifier();

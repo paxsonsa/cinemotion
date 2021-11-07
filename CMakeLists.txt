@@ -10,7 +10,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
       "\n "
       "\n rm CMakeCache.txt"
       "\n mkdir build"
-      "\n cd buid"
+      "\n cd build"
       "\n cmake .."
       "\n "
     )
@@ -31,10 +31,10 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 set(CMAKE_CXX_STANDARD 17)
 # If C++17 is not available, downgrading to an earlier standard is NOT OK.
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# Do not enable compiler specific language extentions.
+# Do not enable compiler specific language extensions.
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Share Ouput Locations
+# Share Output Locations
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin CACHE INTERNAL "" FORCE)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib CACHE INTERNAL "" FORCE)
 
@@ -42,7 +42,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib CACHE INTERNAL "" FOR
 #  Modules and scripts
 # -----------------------------------------------------------------------------
 # Standard CMake modules
-#nclude(CTest)                          # Must be called before adding tests but after calling project(). This automatically calls enable_testing() and configures ctest targets when using Make/Ninja
+#include(CTest)                          # Must be called before adding tests but after calling project(). This automatically calls enable_testing() and configures ctest targets when using Make/Ninja
 include(CMakeDependentOption)           # This is a really useful scripts that creates options that depends on other options. It can even be used with generator expressions !
 include(GNUInstallDirs)                 # This will define the default values for installation directories (all platforms even if named GNU)
 include(InstallRequiredSystemLibraries) # Tell CMake that the `install` target needs to install required system libraries (eg: Windows SDK)
@@ -71,9 +71,7 @@ option(${PROJECT_NAME}_BUILD_CLI "Enable/Disable the debugging CLI tools" ON)
 # -----------------------------------------------------------------------------
 find_package(Boost 1.75.0 REQUIRED program_options)
 if(Boost_FOUND)
-    message("Found Boost: ${Boost_INCLUDE_DIRS}")
     include_directories(${Boost_INCLUDE_DIRS})
-    message("Found Boost: ${Boost_LIBRARY_DIRS}")
 endif()
 
 include(FindProtobuf)

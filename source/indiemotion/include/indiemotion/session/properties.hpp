@@ -28,13 +28,13 @@ namespace indiemotion::session
 
     struct SessionProperties : public net::Payload_T
     {
-        std::string name;
+        std::string id;
         std::string apiVersion;
         FeatureSet features;
 
-        SessionProperties(std::string name,
+        SessionProperties(std::string id,
                           std::string apiVersion,
-                          session::FeatureSet features) : name(name), apiVersion(apiVersion), features(features) {}
+                          session::FeatureSet features) : id(id), apiVersion(apiVersion), features(features) {}
 
         net::PayloadType type() const
         {

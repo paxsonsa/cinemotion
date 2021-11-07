@@ -1,16 +1,15 @@
-get_filename_component(TARGET_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 # Always list the source files explicitly, including headers so that they are listed in the IDE
 # If you need to use files based on a variable value, use target_sources
-add_library(${TARGET_NAME} INTERFACE)
-target_include_directories(${TARGET_NAME} INTERFACE include ${Boost_INCLUDE_DIRS} ${INDIEMOTION_PROTOBUF_INCLUDE})
-set_target_properties(${TARGET_NAME} PROPERTIES
+add_library(indiemotion INTERFACE include/indiemotion/net/queue.hpp)
+target_include_directories(indiemotion INTERFACE include ${Boost_INCLUDE_DIRS} ${INDIEMOTION_PROTOBUF_INCLUDE})
+set_target_properties(indiemotion PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION A # Version "A" is macOS convention
   MACOSX_FRAMEWORK_IDENTIFIER com.andrewpaxson.IndieMotion
 )
 
 
-target_link_libraries(${TARGET_NAME}
+target_link_libraries(indiemotion
     #PUBLIC # Useful for libraries, see https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html for more details about transitive usage requirements.
         #libraries/targets to link when linking this library
         #this will automatically setup the needed flags and dependencies when linking against this target
