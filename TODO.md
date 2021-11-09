@@ -1,14 +1,15 @@
+- Migrate SendQueue to be a special asio context work item 
 - Translator (message to protobuf)
-    - translateProtobuf
-      - acknowledge
-      - get camera list
-      - set motion mode
-      - get motion mode
-      - get session properties (new)
-      - Unknown (send error)
-
-SessionBridge
-- MotionGetMode
+  - PayloadType::SessionInitialization 
+  - PayloadType::SessionShutdown
+  - PayloadType::CameraInfo?
+  
+- Server Start Up
+- Connection Accepting
+- Process Thread
+- Connection Loop 
+  - Read
+  - Write Message from Send Loop
 
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
@@ -19,13 +20,13 @@ SessionBridge
         and the SessionManager are created.
         Do we need a queue for the converted messages?
 
+- SessionProxy
+  - Given to Delegate to Control Session and Pass Messages to user.
+
 - Reset Call
 - [MAYBE] Use HTTP for all information requests and streamed data via http?
 - Generate Track Manager
 - Add CMake CI (macOS/Linux)
-- Add Message Queue?
-- Messages: add an needs acknowledgement flag so client/server can flag when an ack/error is expected
-    - Not sure if its totally nessecary because we can use the ack tracker to emit an error after an ack is not returned
 
 [Logging Sudo]
 ``` c++

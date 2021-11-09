@@ -132,15 +132,16 @@ namespace indiemotion::net
                 return std::move(m);
             }
 
-            case PayloadType::Unknown:
-                break;
             case PayloadType::SessionInitilization:
                 break;
             case PayloadType::SessionShutdown:
                 break;
-            case PayloadType::SetCamera:
-                break;
             case PayloadType::CameraInfo:
+                break;
+
+            case PayloadType::Unknown:
+            case PayloadType::SetCamera:
+                // Not Supported
                 break;
             }
             throw std::runtime_error("unsupported message payload type.");
