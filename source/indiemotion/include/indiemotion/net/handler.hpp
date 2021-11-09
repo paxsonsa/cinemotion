@@ -1,6 +1,6 @@
 #pragma once
 #include <indiemotion/common.hpp>
-#include <indiemotion/net/message/message.hpp>
+#include <indiemotion/net/message.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion::net

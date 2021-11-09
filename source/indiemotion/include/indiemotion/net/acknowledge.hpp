@@ -1,8 +1,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/logging.hpp>
-#include <indiemotion/net/message/header.hpp>
-#include <indiemotion/net/message/payload.hpp>
+#include <indiemotion/net/message.hpp>
 
 namespace indiemotion::net
 {
