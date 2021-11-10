@@ -130,6 +130,17 @@ struct SessionActivateDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SessionActivateDefaultTypeInternal _SessionActivate_default_instance_;
+constexpr SessionShutdown::SessionShutdown(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct SessionShutdownDefaultTypeInternal {
+  constexpr SessionShutdownDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~SessionShutdownDefaultTypeInternal() {}
+  union {
+    SessionShutdown _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SessionShutdownDefaultTypeInternal _SessionShutdown_default_instance_;
 constexpr MotionActiveMode::MotionActiveMode(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : mode_(0)
@@ -200,7 +211,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MotionXFormDefaultTypeInternal 
 }  // namespace payloads
 }  // namespace protobuf
 }  // namespace indiemotion
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payload_2ev1_2eproto[14];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payload_2ev1_2eproto[15];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payload_2ev1_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_payload_2ev1_2eproto = nullptr;
 
@@ -262,6 +273,11 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payload_2ev1_2eproto::offsets[
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::SessionActivate, sessionproperties_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::SessionShutdown, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::payloads::v1::MotionActiveMode, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -305,11 +321,12 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 39, -1, sizeof(::indiemotion::protobuf::payloads::v1::SessionProperties)},
   { 44, -1, sizeof(::indiemotion::protobuf::payloads::v1::SessionStart)},
   { 50, -1, sizeof(::indiemotion::protobuf::payloads::v1::SessionActivate)},
-  { 56, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionActiveMode)},
-  { 62, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionSetMode)},
-  { 68, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionGetMode)},
-  { 74, -1, sizeof(::indiemotion::protobuf::payloads::v1::XFormData)},
-  { 82, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionXForm)},
+  { 56, -1, sizeof(::indiemotion::protobuf::payloads::v1::SessionShutdown)},
+  { 61, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionActiveMode)},
+  { 67, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionSetMode)},
+  { 73, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionGetMode)},
+  { 79, -1, sizeof(::indiemotion::protobuf::payloads::v1::XFormData)},
+  { 87, -1, sizeof(::indiemotion::protobuf::payloads::v1::MotionXForm)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -322,6 +339,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_SessionProperties_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_SessionStart_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_SessionActivate_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_SessionShutdown_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_MotionActiveMode_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_MotionSetMode_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotion::protobuf::payloads::v1::_MotionGetMode_default_instance_),
@@ -343,24 +361,24 @@ const char descriptor_table_protodef_payload_2ev1_2eproto[] PROTOBUF_SECTION_VAR
   "ayloads.v1.SessionServerInfo\"a\n\017SessionA"
   "ctivate\022N\n\021sessionProperties\030\n \001(\01323.ind"
   "iemotion.protobuf.payloads.v1.SessionPro"
-  "perties\"N\n\020MotionActiveMode\022:\n\004mode\030\001 \001("
-  "\0162,.indiemotion.protobuf.payloads.v1.Mot"
-  "ionMode\"K\n\rMotionSetMode\022:\n\004mode\030\001 \001(\0162,"
-  ".indiemotion.protobuf.payloads.v1.Motion"
-  "Mode\"K\n\rMotionGetMode\022:\n\004mode\030\001 \001(\0162,.in"
-  "diemotion.protobuf.payloads.v1.MotionMod"
-  "e\",\n\tXFormData\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001"
-  "z\030\003 \001(\001\"\221\001\n\013MotionXForm\022@\n\013translation\030\001"
-  " \001(\0132+.indiemotion.protobuf.payloads.v1."
-  "XFormData\022@\n\013orientation\030\002 \001(\0132+.indiemo"
-  "tion.protobuf.payloads.v1.XFormData*.\n\nM"
-  "otionMode\022\007\n\003Off\020\000\022\010\n\004Live\020\001\022\r\n\tRecordin"
-  "g\020\002b\006proto3"
+  "perties\"\021\n\017SessionShutdown\"N\n\020MotionActi"
+  "veMode\022:\n\004mode\030\001 \001(\0162,.indiemotion.proto"
+  "buf.payloads.v1.MotionMode\"K\n\rMotionSetM"
+  "ode\022:\n\004mode\030\001 \001(\0162,.indiemotion.protobuf"
+  ".payloads.v1.MotionMode\"K\n\rMotionGetMode"
+  "\022:\n\004mode\030\001 \001(\0162,.indiemotion.protobuf.pa"
+  "yloads.v1.MotionMode\",\n\tXFormData\022\t\n\001x\030\001"
+  " \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001\"\221\001\n\013MotionXFo"
+  "rm\022@\n\013translation\030\001 \001(\0132+.indiemotion.pr"
+  "otobuf.payloads.v1.XFormData\022@\n\013orientat"
+  "ion\030\002 \001(\0132+.indiemotion.protobuf.payload"
+  "s.v1.XFormData*.\n\nMotionMode\022\007\n\003Off\020\000\022\010\n"
+  "\004Live\020\001\022\r\n\tRecording\020\002b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_payload_2ev1_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_payload_2ev1_2eproto = {
-  false, false, 1011, descriptor_table_protodef_payload_2ev1_2eproto, "payload.v1.proto", 
-  &descriptor_table_payload_2ev1_2eproto_once, nullptr, 0, 14,
+  false, false, 1030, descriptor_table_protodef_payload_2ev1_2eproto, "payload.v1.proto", 
+  &descriptor_table_payload_2ev1_2eproto_once, nullptr, 0, 15,
   schemas, file_default_instances, TableStruct_payload_2ev1_2eproto::offsets,
   file_level_metadata_payload_2ev1_2eproto, file_level_enum_descriptors_payload_2ev1_2eproto, file_level_service_descriptors_payload_2ev1_2eproto,
 };
@@ -2224,6 +2242,159 @@ void SessionActivate::InternalSwap(SessionActivate* other) {
 
 // ===================================================================
 
+class SessionShutdown::_Internal {
+ public:
+};
+
+SessionShutdown::SessionShutdown(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:indiemotion.protobuf.payloads.v1.SessionShutdown)
+}
+SessionShutdown::SessionShutdown(const SessionShutdown& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:indiemotion.protobuf.payloads.v1.SessionShutdown)
+}
+
+inline void SessionShutdown::SharedCtor() {
+}
+
+SessionShutdown::~SessionShutdown() {
+  // @@protoc_insertion_point(destructor:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void SessionShutdown::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void SessionShutdown::ArenaDtor(void* object) {
+  SessionShutdown* _this = reinterpret_cast< SessionShutdown* >(object);
+  (void)_this;
+}
+void SessionShutdown::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void SessionShutdown::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void SessionShutdown::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* SessionShutdown::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SessionShutdown::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  return target;
+}
+
+size_t SessionShutdown::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SessionShutdown::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    SessionShutdown::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SessionShutdown::GetClassData() const { return &_class_data_; }
+
+void SessionShutdown::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<SessionShutdown *>(to)->MergeFrom(
+      static_cast<const SessionShutdown &>(from));
+}
+
+
+void SessionShutdown::MergeFrom(const SessionShutdown& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void SessionShutdown::CopyFrom(const SessionShutdown& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotion.protobuf.payloads.v1.SessionShutdown)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SessionShutdown::IsInitialized() const {
+  return true;
+}
+
+void SessionShutdown::InternalSwap(SessionShutdown* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SessionShutdown::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_payload_2ev1_2eproto_getter, &descriptor_table_payload_2ev1_2eproto_once,
+      file_level_metadata_payload_2ev1_2eproto[9]);
+}
+
+// ===================================================================
+
 class MotionActiveMode::_Internal {
  public:
 };
@@ -2405,7 +2576,7 @@ void MotionActiveMode::InternalSwap(MotionActiveMode* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MotionActiveMode::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payload_2ev1_2eproto_getter, &descriptor_table_payload_2ev1_2eproto_once,
-      file_level_metadata_payload_2ev1_2eproto[9]);
+      file_level_metadata_payload_2ev1_2eproto[10]);
 }
 
 // ===================================================================
@@ -2591,7 +2762,7 @@ void MotionSetMode::InternalSwap(MotionSetMode* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MotionSetMode::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payload_2ev1_2eproto_getter, &descriptor_table_payload_2ev1_2eproto_once,
-      file_level_metadata_payload_2ev1_2eproto[10]);
+      file_level_metadata_payload_2ev1_2eproto[11]);
 }
 
 // ===================================================================
@@ -2777,7 +2948,7 @@ void MotionGetMode::InternalSwap(MotionGetMode* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MotionGetMode::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payload_2ev1_2eproto_getter, &descriptor_table_payload_2ev1_2eproto_once,
-      file_level_metadata_payload_2ev1_2eproto[11]);
+      file_level_metadata_payload_2ev1_2eproto[12]);
 }
 
 // ===================================================================
@@ -3014,7 +3185,7 @@ void XFormData::InternalSwap(XFormData* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XFormData::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payload_2ev1_2eproto_getter, &descriptor_table_payload_2ev1_2eproto_once,
-      file_level_metadata_payload_2ev1_2eproto[12]);
+      file_level_metadata_payload_2ev1_2eproto[13]);
 }
 
 // ===================================================================
@@ -3262,7 +3433,7 @@ void MotionXForm::InternalSwap(MotionXForm* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MotionXForm::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payload_2ev1_2eproto_getter, &descriptor_table_payload_2ev1_2eproto_once,
-      file_level_metadata_payload_2ev1_2eproto[13]);
+      file_level_metadata_payload_2ev1_2eproto[14]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -3297,6 +3468,9 @@ template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::payloads::v1::SessionStart
 }
 template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::payloads::v1::SessionActivate* Arena::CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::SessionActivate >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotion::protobuf::payloads::v1::SessionActivate >(arena);
+}
+template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::payloads::v1::SessionShutdown* Arena::CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::SessionShutdown >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotion::protobuf::payloads::v1::SessionShutdown >(arena);
 }
 template<> PROTOBUF_NOINLINE ::indiemotion::protobuf::payloads::v1::MotionActiveMode* Arena::CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::MotionActiveMode >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotion::protobuf::payloads::v1::MotionActiveMode >(arena);

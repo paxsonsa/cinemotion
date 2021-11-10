@@ -35,6 +35,8 @@ message SessionActivate
   SessionProperties sessionProperties = 10;
 }
 
+message SessionShutdown {}
+
 enum MotionMode {
   Off = 0;
   Live = 1;

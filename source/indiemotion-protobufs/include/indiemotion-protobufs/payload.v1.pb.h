@@ -47,7 +47,7 @@ struct TableStruct_payload_2ev1_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[14]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -94,6 +94,9 @@ extern SessionPropertiesDefaultTypeInternal _SessionProperties_default_instance_
 class SessionServerInfo;
 struct SessionServerInfoDefaultTypeInternal;
 extern SessionServerInfoDefaultTypeInternal _SessionServerInfo_default_instance_;
+class SessionShutdown;
+struct SessionShutdownDefaultTypeInternal;
+extern SessionShutdownDefaultTypeInternal _SessionShutdown_default_instance_;
 class SessionStart;
 struct SessionStartDefaultTypeInternal;
 extern SessionStartDefaultTypeInternal _SessionStart_default_instance_;
@@ -117,6 +120,7 @@ template<> ::indiemotion::protobuf::payloads::v1::MotionXForm* Arena::CreateMayb
 template<> ::indiemotion::protobuf::payloads::v1::SessionActivate* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::SessionActivate>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::SessionProperties* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::SessionProperties>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::SessionServerInfo* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::SessionServerInfo>(Arena*);
+template<> ::indiemotion::protobuf::payloads::v1::SessionShutdown* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::SessionShutdown>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::SessionStart* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::SessionStart>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::XFormData* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::XFormData>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -1479,6 +1483,132 @@ class SessionActivate final :
 };
 // -------------------------------------------------------------------
 
+class SessionShutdown final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.SessionShutdown) */ {
+ public:
+  inline SessionShutdown() : SessionShutdown(nullptr) {}
+  ~SessionShutdown() override;
+  explicit constexpr SessionShutdown(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SessionShutdown(const SessionShutdown& from);
+  SessionShutdown(SessionShutdown&& from) noexcept
+    : SessionShutdown() {
+    *this = ::std::move(from);
+  }
+
+  inline SessionShutdown& operator=(const SessionShutdown& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SessionShutdown& operator=(SessionShutdown&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SessionShutdown& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SessionShutdown* internal_default_instance() {
+    return reinterpret_cast<const SessionShutdown*>(
+               &_SessionShutdown_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(SessionShutdown& a, SessionShutdown& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SessionShutdown* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SessionShutdown* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SessionShutdown* New() const final {
+    return new SessionShutdown();
+  }
+
+  SessionShutdown* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SessionShutdown>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SessionShutdown& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const SessionShutdown& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SessionShutdown* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.payloads.v1.SessionShutdown";
+  }
+  protected:
+  explicit SessionShutdown(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.SessionShutdown)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_payload_2ev1_2eproto;
+};
+// -------------------------------------------------------------------
+
 class MotionActiveMode final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.MotionActiveMode) */ {
  public:
@@ -1523,7 +1653,7 @@ class MotionActiveMode final :
                &_MotionActiveMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(MotionActiveMode& a, MotionActiveMode& b) {
     a.Swap(&b);
@@ -1662,7 +1792,7 @@ class MotionSetMode final :
                &_MotionSetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(MotionSetMode& a, MotionSetMode& b) {
     a.Swap(&b);
@@ -1801,7 +1931,7 @@ class MotionGetMode final :
                &_MotionGetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(MotionGetMode& a, MotionGetMode& b) {
     a.Swap(&b);
@@ -1940,7 +2070,7 @@ class XFormData final :
                &_XFormData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(XFormData& a, XFormData& b) {
     a.Swap(&b);
@@ -2101,7 +2231,7 @@ class MotionXForm final :
                &_MotionXForm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(MotionXForm& a, MotionXForm& b) {
     a.Swap(&b);
@@ -2804,6 +2934,10 @@ inline void SessionActivate::set_allocated_sessionproperties(::indiemotion::prot
 
 // -------------------------------------------------------------------
 
+// SessionShutdown
+
+// -------------------------------------------------------------------
+
 // MotionActiveMode
 
 // .indiemotion.protobuf.payloads.v1.MotionMode mode = 1;
@@ -3125,6 +3259,8 @@ inline void MotionXForm::set_allocated_orientation(::indiemotion::protobuf::payl
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

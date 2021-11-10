@@ -81,6 +81,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_messages_2eproto::offsets[] PR
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::messages::Message, payload_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -99,7 +100,7 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   "\032\020payload.v1.proto\"k\n\006Header\022-\n\ttimestam"
   "p\030\001 \001(\0132\032.google.protobuf.Timestamp\022\n\n\002i"
   "d\030\002 \001(\t\022\027\n\nresponseId\030\003 \001(\tH\000\210\001\001B\r\n\013_res"
-  "ponseId\"\245\006\n\007Message\0225\n\006header\030\001 \001(\0132%.in"
+  "ponseId\"\364\006\n\007Message\0225\n\006header\030\001 \001(\0132%.in"
   "diemotion.protobuf.messages.Header\022D\n\013ac"
   "knowledge\030\024 \001(\0132-.indiemotion.protobuf.p"
   "ayloads.v1.AcknowledgeH\000\0228\n\005error\030\031 \001(\0132"
@@ -119,7 +120,9 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   "diemotion.protobuf.payloads.v1.SessionSt"
   "artH\000\022M\n\020session_activate\0303 \001(\01321.indiem"
   "otion.protobuf.payloads.v1.SessionActiva"
-  "teH\000B\t\n\007payloadb\006proto3"
+  "teH\000\022M\n\020session_shutdown\0304 \001(\01321.indiemo"
+  "tion.protobuf.payloads.v1.SessionActivat"
+  "eH\000B\t\n\007payloadb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_messages_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
@@ -127,7 +130,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_messages_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_messages_2eproto = {
-  false, false, 1023, descriptor_table_protodef_messages_2eproto, "messages.proto", 
+  false, false, 1102, descriptor_table_protodef_messages_2eproto, "messages.proto", 
   &descriptor_table_messages_2eproto_once, descriptor_table_messages_2eproto_deps, 2, 2,
   schemas, file_default_instances, TableStruct_messages_2eproto::offsets,
   file_level_metadata_messages_2eproto, file_level_enum_descriptors_messages_2eproto, file_level_service_descriptors_messages_2eproto,
@@ -460,6 +463,7 @@ class Message::_Internal {
   static const ::indiemotion::protobuf::payloads::v1::MotionXForm& motion_xform(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::SessionStart& session_start(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::SessionActivate& session_activate(const Message* msg);
+  static const ::indiemotion::protobuf::payloads::v1::SessionActivate& session_shutdown(const Message* msg);
 };
 
 const ::indiemotion::protobuf::messages::Header&
@@ -505,6 +509,10 @@ Message::_Internal::session_start(const Message* msg) {
 const ::indiemotion::protobuf::payloads::v1::SessionActivate&
 Message::_Internal::session_activate(const Message* msg) {
   return *msg->payload_.session_activate_;
+}
+const ::indiemotion::protobuf::payloads::v1::SessionActivate&
+Message::_Internal::session_shutdown(const Message* msg) {
+  return *msg->payload_.session_shutdown_;
 }
 void Message::set_allocated_acknowledge(::indiemotion::protobuf::payloads::v1::Acknowledge* acknowledge) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -756,6 +764,31 @@ void Message::clear_session_activate() {
     clear_has_payload();
   }
 }
+void Message::set_allocated_session_shutdown(::indiemotion::protobuf::payloads::v1::SessionActivate* session_shutdown) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_payload();
+  if (session_shutdown) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(session_shutdown));
+    if (message_arena != submessage_arena) {
+      session_shutdown = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, session_shutdown, submessage_arena);
+    }
+    set_has_session_shutdown();
+    payload_.session_shutdown_ = session_shutdown;
+  }
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.messages.Message.session_shutdown)
+}
+void Message::clear_session_shutdown() {
+  if (_internal_has_session_shutdown()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.session_shutdown_;
+    }
+    clear_has_payload();
+  }
+}
 Message::Message(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -813,6 +846,10 @@ Message::Message(const Message& from)
     }
     case kSessionActivate: {
       _internal_mutable_session_activate()->::indiemotion::protobuf::payloads::v1::SessionActivate::MergeFrom(from._internal_session_activate());
+      break;
+    }
+    case kSessionShutdown: {
+      _internal_mutable_session_shutdown()->::indiemotion::protobuf::payloads::v1::SessionActivate::MergeFrom(from._internal_session_shutdown());
       break;
     }
     case PAYLOAD_NOT_SET: {
@@ -912,6 +949,12 @@ void Message::clear_payload() {
     case kSessionActivate: {
       if (GetArenaForAllocation() == nullptr) {
         delete payload_.session_activate_;
+      }
+      break;
+    }
+    case kSessionShutdown: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete payload_.session_shutdown_;
       }
       break;
     }
@@ -1017,6 +1060,13 @@ const char* Message::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
       case 51:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 154)) {
           ptr = ctx->ParseMessage(_internal_mutable_session_activate(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .indiemotion.protobuf.payloads.v1.SessionActivate session_shutdown = 52;
+      case 52:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 162)) {
+          ptr = ctx->ParseMessage(_internal_mutable_session_shutdown(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1137,6 +1187,14 @@ failure:
         51, _Internal::session_activate(this), target, stream);
   }
 
+  // .indiemotion.protobuf.payloads.v1.SessionActivate session_shutdown = 52;
+  if (_internal_has_session_shutdown()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        52, _Internal::session_shutdown(this), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1231,6 +1289,13 @@ size_t Message::ByteSizeLong() const {
           *payload_.session_activate_);
       break;
     }
+    // .indiemotion.protobuf.payloads.v1.SessionActivate session_shutdown = 52;
+    case kSessionShutdown: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *payload_.session_shutdown_);
+      break;
+    }
     case PAYLOAD_NOT_SET: {
       break;
     }
@@ -1305,6 +1370,10 @@ void Message::MergeFrom(const Message& from) {
     }
     case kSessionActivate: {
       _internal_mutable_session_activate()->::indiemotion::protobuf::payloads::v1::SessionActivate::MergeFrom(from._internal_session_activate());
+      break;
+    }
+    case kSessionShutdown: {
+      _internal_mutable_session_shutdown()->::indiemotion::protobuf::payloads::v1::SessionActivate::MergeFrom(from._internal_session_shutdown());
       break;
     }
     case PAYLOAD_NOT_SET: {

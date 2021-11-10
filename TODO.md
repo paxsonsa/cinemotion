@@ -1,7 +1,3 @@
- 
-- Translator (message to protobuf)
-  - NetPayloadType::SessionShutdown
-  
 - Server Start Up
 - Connection Accepting
 - Process Thread

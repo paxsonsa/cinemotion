@@ -26,6 +26,7 @@ message Message {
 
     indiemotion.protobuf.payloads.v1.SessionStart session_start = 50;
     indiemotion.protobuf.payloads.v1.SessionActivate session_activate = 51;
+    indiemotion.protobuf.payloads.v1.SessionActivate session_shutdown = 52;
 
   }
 }

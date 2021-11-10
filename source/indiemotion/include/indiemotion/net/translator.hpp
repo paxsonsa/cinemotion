@@ -124,11 +124,16 @@ namespace indiemotion::net {
 
                 return std::move(m);
             }
+            case NetPayloadType::SessionShutdown:
+            {
+                auto m = _makeBaseMessage(message);
+                m.mutable_session_shutdown();
+                return std::move(m);
+            }
 
-            case NetPayloadType::ActiveCameraInfo:break;
+            case NetPayloadType::ActiveCameraInfo:
             case NetPayloadType::Unknown:
-            case NetPayloadType::SessionActivate:break;
-            case NetPayloadType::SessionShutdown:break;
+            case NetPayloadType::SessionActivate:
             case NetPayloadType::SetActiveCamera:
                 // Not Supported
                 break;
@@ -219,6 +224,12 @@ namespace indiemotion::net {
 
                 auto outProperties = SessionProperties();
                 auto outPayload = std::make_unique<NetSessionActivate>(outProperties);
+                auto message = netMakeMessageWithId(NetIdentifier(header.id()),
+                                                    std::move(outPayload));
+                return std::move(message);
+            }
+            case protobuf::messages::Message::kSessionShutdown: {
+                auto outPayload = std::make_unique<NetSessionShutdown>();
                 auto message = netMakeMessageWithId(NetIdentifier(header.id()),
                                                     std::move(outPayload));
                 return std::move(message);
