@@ -7,7 +7,6 @@
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/queue.hpp>
 #include <indiemotion/net/motion.hpp>
-#include <indiemotion/session/handler.hpp>
 #include <indiemotion/session/properties.hpp>
 #include <indiemotion/session/session.hpp>
 
