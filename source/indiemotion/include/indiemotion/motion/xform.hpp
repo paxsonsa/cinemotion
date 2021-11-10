@@ -4,10 +4,8 @@
 #pragma once
 #include <indiemotion/common.hpp>
 
-namespace indiemotion::motion
-{
-    struct _XYZContainer
-    {
+namespace indiemotion::motion {
+    struct _XYZContainer {
         double x = 0.0f;
         double y = 0.0f;
         double z = 0.0f;
@@ -16,8 +14,7 @@ namespace indiemotion::motion
         _XYZContainer(const _XYZContainer &other) : x(other.x), y(other.y), z(other.z) {}
         _XYZContainer(_XYZContainer &&other) : x(std::move(other.x)), y(std::move(other.y)), z(std::move(other.z)) {}
 
-        _XYZContainer &operator=(_XYZContainer &&rhs)
-        {
+        _XYZContainer &operator=(_XYZContainer &&rhs) {
             x = std::move(rhs.x);
             y = std::move(rhs.y);
             z = std::move(rhs.z);
@@ -25,8 +22,7 @@ namespace indiemotion::motion
             return *this;
         }
 
-        _XYZContainer &operator=(const _XYZContainer &rhs)
-        {
+        _XYZContainer &operator=(const _XYZContainer &rhs) {
             x = rhs.x;
             y = rhs.y;
             z = rhs.z;
@@ -34,19 +30,16 @@ namespace indiemotion::motion
             return *this;
         }
 
-        bool operator==(const _XYZContainer &rhs) const
-        {
+        bool operator==(const _XYZContainer &rhs) const {
             return x == rhs.x && y == rhs.y && z == rhs.z;
         }
 
-        static _XYZContainer zero()
-        {
+        static _XYZContainer zero() {
             auto ctn = _XYZContainer::create(0, 0, 0);
             return ctn;
         }
 
-        static _XYZContainer create(double x, double y, double z)
-        {
+        static _XYZContainer create(double x, double y, double z) {
             auto ctn = _XYZContainer();
             ctn.x = x;
             ctn.y = y;
@@ -62,54 +55,45 @@ namespace indiemotion::motion
      * @brief Transformation Data
      * 
      */
-    struct MotionXForm
-    {
+    struct MotionXForm {
         MotionTranslation translation;
         MotionOrientation orientation;
 
-        MotionXForm()
-        {
+        MotionXForm() {
             translation = MotionTranslation::zero();
             orientation = MotionOrientation::zero();
         }
 
-        MotionXForm(const MotionXForm &other)
-        {
+        MotionXForm(const MotionXForm &other) {
             translation = other.translation;
             orientation = other.orientation;
         }
 
-        MotionXForm &operator=(const MotionXForm &rhs)
-        {
+        MotionXForm &operator=(const MotionXForm &rhs) {
             translation = rhs.translation;
             orientation = rhs.orientation;
             return *this;
         }
 
-        MotionXForm(MotionXForm &&other)
-        {
+        MotionXForm(MotionXForm &&other) {
             swap(std::move(other));
         }
 
-        MotionXForm &operator=(MotionXForm &&rhs)
-        {
+        MotionXForm &operator=(MotionXForm &&rhs) {
             swap(std::move(rhs));
             return *this;
         }
 
-        bool operator==(const MotionXForm &rhs) const
-        {
+        bool operator==(const MotionXForm &rhs) const {
             return translation == rhs.translation && orientation == rhs.orientation;
         }
 
-        void swap(MotionXForm &&rhs)
-        {
+        void swap(MotionXForm &&rhs) {
             std::swap(translation, rhs.translation);
             std::swap(orientation, rhs.orientation);
         }
 
-        static MotionXForm zero()
-        {
+        static MotionXForm zero() {
             auto xform = MotionXForm();
             xform.translation = MotionTranslation::zero();
             xform.orientation = MotionOrientation::zero();
@@ -117,8 +101,7 @@ namespace indiemotion::motion
         }
 
         static MotionXForm create(double tx, double ty, double tz,
-                                  double ox, double oy, double oz)
-        {
+                                  double ox, double oy, double oz) {
             auto xform = MotionXForm();
             xform.translation = MotionTranslation::create(tx, ty, tz);
             xform.orientation = MotionOrientation::create(ox, oy, oz);

@@ -5,16 +5,26 @@
 
 #include <indiemotion/common.hpp>
 
-namespace indiemotion::motion
-{
+namespace indiemotion::motion {
     /**
      * @brief A simple value for comparing mode values
      * 
      */
-    enum class MotionMode
-    {
+    enum class MotionMode {
+
+        /**
+         * Off mode symbolizes when no motion is being transmitted to server
+         */
         Off,
+
+        /**
+         * Live mode symbolizes when motion data is being transmitted but not recorded permanently
+         */
         Live,
+
+        /**
+         * Recording mode symbolizes when motion data is being transmitted and recorded.
+         */
         Recording
     };
 }
