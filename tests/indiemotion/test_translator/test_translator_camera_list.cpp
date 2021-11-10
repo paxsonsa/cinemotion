@@ -16,7 +16,7 @@ TEST_CASE("Translate CameraList Messages")
         indiemotion::cameras::Camera("cam2"),
         indiemotion::cameras::Camera("cam3"),
     };
-    auto payload = std::make_unique<indiemotion::net::CameraList>(expectedCams);
+    auto payload = std::make_unique<indiemotion::NetCameraList>(expectedCams);
     auto message = indiemotion::netMakeMessageWithResponseID("inResponseToID", std::move(payload));
     auto p = translator.translateMessage(std::move(message));
 

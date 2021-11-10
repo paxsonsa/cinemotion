@@ -7,7 +7,9 @@
 #include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
+#include <indiemotion/net/session.hpp>
 #include <indiemotion/net/protobuf.hpp>
+#include <indiemotion/session/properties.hpp>
 
 namespace indiemotion::net {
     class MessageTranslator {
@@ -71,7 +73,7 @@ namespace indiemotion::net {
             case NetPayloadType::CameraList: {
                 auto m = _makeBaseMessage(message);
                 auto payload = m.mutable_camera_list();
-                auto cameraList = message->payloadPtrAs<CameraList>();
+                auto cameraList = message->payloadPtrAs<NetCameraList>();
                 for (auto srcCam: cameraList->cameras) {
                     auto cam = payload->add_camera();
                     cam->set_id(srcCam.name);
@@ -110,11 +112,24 @@ namespace indiemotion::net {
                 }
                 return std::move(m);
             }
-            case NetPayloadType::SessionShutdown:break;
-            case NetPayloadType::CameraInfo:break;
+            case NetPayloadType::SessionStart: {
+                auto p = message->payloadPtrAs<NetSessionStart>();
 
+                auto m = _makeBaseMessage(message);
+
+                auto payload = m.mutable_session_start();
+                auto info = payload->mutable_serverinfo();
+                info->set_apiversion(p->serverInfo.apiVersion);
+                info->set_features(p->serverInfo.features);
+
+                return std::move(m);
+            }
+
+            case NetPayloadType::ActiveCameraInfo:break;
             case NetPayloadType::Unknown:
-            case NetPayloadType::SetCamera:
+            case NetPayloadType::SessionActivate:break;
+            case NetPayloadType::SessionShutdown:break;
+            case NetPayloadType::SetActiveCamera:
                 // Not Supported
                 break;
             }
@@ -141,7 +156,7 @@ namespace indiemotion::net {
             }
             case protobuf::messages::Message::kGetCameraList: {
                 auto payload =
-                    std::make_unique<GetCameraList>();
+                    std::make_unique<NetGetCameraList>();
                 auto message = netMakeMessageWithId(NetIdentifier(header.id()),
                                                     std::move(payload));
                 return std::move(message);
@@ -197,9 +212,23 @@ namespace indiemotion::net {
                                                     std::move(outPayload));
                 return std::move(message);
             }
+
+            case protobuf::messages::Message::kSessionActivate: {
+                auto inPayload = protobuf.session_activate();
+                auto inProperties = inPayload.sessionproperties();
+
+                auto outProperties = SessionProperties();
+                auto outPayload = std::make_unique<NetSessionActivate>(outProperties);
+                auto message = netMakeMessageWithId(NetIdentifier(header.id()),
+                                                    std::move(outPayload));
+                return std::move(message);
+            }
+
+            case protobuf::messages::Message::kSessionStart:
             case protobuf::messages::Message::kMotionActiveMode:
             case protobuf::messages::Message::kCameraList:
                 throw std::runtime_error("message type is not supported as a client message.");
+
             case protobuf::messages::Message::PAYLOAD_NOT_SET:
                 throw std::runtime_error("malformed message, protobuf payload is not set..");
             }

@@ -4,7 +4,6 @@
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/net/translator.hpp>
-#include <indiemotion/motion/xform.hpp>
 
 TEST_CASE("Translate MotionUpdateXForm Throws Exception")
 {

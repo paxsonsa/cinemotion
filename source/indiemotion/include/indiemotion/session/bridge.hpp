@@ -76,18 +76,18 @@ namespace indiemotion {
             case NetPayloadType::GetCameraList: {
                 _logger->trace("NetPayloadType=GetCameraList");
                 auto cameras = _m_sessionPtr->getCameras();
-                auto payload = std::make_unique<net::CameraList>(std::move(cameras));
+                auto payload = std::make_unique<NetCameraList>(std::move(cameras));
                 auto response = netMakeMessageWithResponseID(messagePtr->id(), std::move(payload));
                 _m_dispatcher->dispatch(std::move(response));
                 return;
             }
 
-            case NetPayloadType::SetCamera: {
+            case NetPayloadType::SetActiveCamera: {
                 _logger->trace("NetPayloadType=SetCamera");
-                auto msgPayload = messagePtr->payloadPtrAs<net::SetCamera>();
+                auto msgPayload = messagePtr->payloadPtrAs<NetSetActiveCamera>();
                 _m_sessionPtr->setActiveCamera(msgPayload->cameraId);
                 auto camera = _m_sessionPtr->getActiveCamera();
-                auto payload = std::make_unique<net::CameraInfo>(camera.value());
+                auto payload = std::make_unique<NetActiveCameraInfo>(camera.value());
                 auto response = netMakeMessageWithResponseID(messagePtr->id(), std::move(payload));
                 _m_dispatcher->dispatch(std::move(response));
                 return;

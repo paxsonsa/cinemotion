@@ -24,8 +24,8 @@ namespace indiemotion {
         // Camera Payload Types
         GetCameraList,
         CameraList,
-        SetCamera,
-        CameraInfo,
+        SetActiveCamera,
+        ActiveCameraInfo,
 
         // ---------------------------------------------------------
         // Motion Payload Types

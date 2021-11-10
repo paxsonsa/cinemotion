@@ -15,11 +15,17 @@ message Message {
   oneof payload {
     indiemotion.protobuf.payloads.v1.Acknowledge acknowledge = 20;
     indiemotion.protobuf.payloads.v1.Error error = 25;
+
     indiemotion.protobuf.payloads.v1.GetCameraList get_camera_list = 30;
     indiemotion.protobuf.payloads.v1.CameraList camera_list = 31;
+
     indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;
     indiemotion.protobuf.payloads.v1.MotionGetMode motion_get_mode = 41;
     indiemotion.protobuf.payloads.v1.MotionActiveMode motion_active_mode = 42;
-    indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 50;
+    indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 43;
+
+    indiemotion.protobuf.payloads.v1.SessionStart session_start = 50;
+    indiemotion.protobuf.payloads.v1.SessionActivate session_activate = 51;
+
   }
 }

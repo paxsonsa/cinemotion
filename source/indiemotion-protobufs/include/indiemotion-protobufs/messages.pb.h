@@ -309,7 +309,9 @@ class Message final :
     kMotionSetMode = 40,
     kMotionGetMode = 41,
     kMotionActiveMode = 42,
-    kMotionXform = 50,
+    kMotionXform = 43,
+    kSessionStart = 50,
+    kSessionActivate = 51,
     PAYLOAD_NOT_SET = 0,
   };
 
@@ -397,7 +399,9 @@ class Message final :
     kMotionSetModeFieldNumber = 40,
     kMotionGetModeFieldNumber = 41,
     kMotionActiveModeFieldNumber = 42,
-    kMotionXformFieldNumber = 50,
+    kMotionXformFieldNumber = 43,
+    kSessionStartFieldNumber = 50,
+    kSessionActivateFieldNumber = 51,
   };
   // .indiemotion.protobuf.messages.Header header = 1;
   bool has_header() const;
@@ -543,7 +547,7 @@ class Message final :
       ::indiemotion::protobuf::payloads::v1::MotionActiveMode* motion_active_mode);
   ::indiemotion::protobuf::payloads::v1::MotionActiveMode* unsafe_arena_release_motion_active_mode();
 
-  // .indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 50;
+  // .indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 43;
   bool has_motion_xform() const;
   private:
   bool _internal_has_motion_xform() const;
@@ -561,6 +565,42 @@ class Message final :
       ::indiemotion::protobuf::payloads::v1::MotionXForm* motion_xform);
   ::indiemotion::protobuf::payloads::v1::MotionXForm* unsafe_arena_release_motion_xform();
 
+  // .indiemotion.protobuf.payloads.v1.SessionStart session_start = 50;
+  bool has_session_start() const;
+  private:
+  bool _internal_has_session_start() const;
+  public:
+  void clear_session_start();
+  const ::indiemotion::protobuf::payloads::v1::SessionStart& session_start() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotion::protobuf::payloads::v1::SessionStart* release_session_start();
+  ::indiemotion::protobuf::payloads::v1::SessionStart* mutable_session_start();
+  void set_allocated_session_start(::indiemotion::protobuf::payloads::v1::SessionStart* session_start);
+  private:
+  const ::indiemotion::protobuf::payloads::v1::SessionStart& _internal_session_start() const;
+  ::indiemotion::protobuf::payloads::v1::SessionStart* _internal_mutable_session_start();
+  public:
+  void unsafe_arena_set_allocated_session_start(
+      ::indiemotion::protobuf::payloads::v1::SessionStart* session_start);
+  ::indiemotion::protobuf::payloads::v1::SessionStart* unsafe_arena_release_session_start();
+
+  // .indiemotion.protobuf.payloads.v1.SessionActivate session_activate = 51;
+  bool has_session_activate() const;
+  private:
+  bool _internal_has_session_activate() const;
+  public:
+  void clear_session_activate();
+  const ::indiemotion::protobuf::payloads::v1::SessionActivate& session_activate() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotion::protobuf::payloads::v1::SessionActivate* release_session_activate();
+  ::indiemotion::protobuf::payloads::v1::SessionActivate* mutable_session_activate();
+  void set_allocated_session_activate(::indiemotion::protobuf::payloads::v1::SessionActivate* session_activate);
+  private:
+  const ::indiemotion::protobuf::payloads::v1::SessionActivate& _internal_session_activate() const;
+  ::indiemotion::protobuf::payloads::v1::SessionActivate* _internal_mutable_session_activate();
+  public:
+  void unsafe_arena_set_allocated_session_activate(
+      ::indiemotion::protobuf::payloads::v1::SessionActivate* session_activate);
+  ::indiemotion::protobuf::payloads::v1::SessionActivate* unsafe_arena_release_session_activate();
+
   void clear_payload();
   PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:indiemotion.protobuf.messages.Message)
@@ -574,6 +614,8 @@ class Message final :
   void set_has_motion_get_mode();
   void set_has_motion_active_mode();
   void set_has_motion_xform();
+  void set_has_session_start();
+  void set_has_session_activate();
 
   inline bool has_payload() const;
   inline void clear_has_payload();
@@ -593,6 +635,8 @@ class Message final :
     ::indiemotion::protobuf::payloads::v1::MotionGetMode* motion_get_mode_;
     ::indiemotion::protobuf::payloads::v1::MotionActiveMode* motion_active_mode_;
     ::indiemotion::protobuf::payloads::v1::MotionXForm* motion_xform_;
+    ::indiemotion::protobuf::payloads::v1::SessionStart* session_start_;
+    ::indiemotion::protobuf::payloads::v1::SessionActivate* session_activate_;
   } payload_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
@@ -1356,7 +1400,7 @@ inline ::indiemotion::protobuf::payloads::v1::MotionActiveMode* Message::mutable
   return _msg;
 }
 
-// .indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 50;
+// .indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 43;
 inline bool Message::_internal_has_motion_xform() const {
   return payload_case() == kMotionXform;
 }
@@ -1419,6 +1463,138 @@ inline ::indiemotion::protobuf::payloads::v1::MotionXForm* Message::_internal_mu
 inline ::indiemotion::protobuf::payloads::v1::MotionXForm* Message::mutable_motion_xform() {
   ::indiemotion::protobuf::payloads::v1::MotionXForm* _msg = _internal_mutable_motion_xform();
   // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Message.motion_xform)
+  return _msg;
+}
+
+// .indiemotion.protobuf.payloads.v1.SessionStart session_start = 50;
+inline bool Message::_internal_has_session_start() const {
+  return payload_case() == kSessionStart;
+}
+inline bool Message::has_session_start() const {
+  return _internal_has_session_start();
+}
+inline void Message::set_has_session_start() {
+  _oneof_case_[0] = kSessionStart;
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionStart* Message::release_session_start() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Message.session_start)
+  if (_internal_has_session_start()) {
+    clear_has_payload();
+      ::indiemotion::protobuf::payloads::v1::SessionStart* temp = payload_.session_start_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.session_start_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotion::protobuf::payloads::v1::SessionStart& Message::_internal_session_start() const {
+  return _internal_has_session_start()
+      ? *payload_.session_start_
+      : reinterpret_cast< ::indiemotion::protobuf::payloads::v1::SessionStart&>(::indiemotion::protobuf::payloads::v1::_SessionStart_default_instance_);
+}
+inline const ::indiemotion::protobuf::payloads::v1::SessionStart& Message::session_start() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Message.session_start)
+  return _internal_session_start();
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionStart* Message::unsafe_arena_release_session_start() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotion.protobuf.messages.Message.session_start)
+  if (_internal_has_session_start()) {
+    clear_has_payload();
+    ::indiemotion::protobuf::payloads::v1::SessionStart* temp = payload_.session_start_;
+    payload_.session_start_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Message::unsafe_arena_set_allocated_session_start(::indiemotion::protobuf::payloads::v1::SessionStart* session_start) {
+  clear_payload();
+  if (session_start) {
+    set_has_session_start();
+    payload_.session_start_ = session_start;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.Message.session_start)
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionStart* Message::_internal_mutable_session_start() {
+  if (!_internal_has_session_start()) {
+    clear_payload();
+    set_has_session_start();
+    payload_.session_start_ = CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::SessionStart >(GetArenaForAllocation());
+  }
+  return payload_.session_start_;
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionStart* Message::mutable_session_start() {
+  ::indiemotion::protobuf::payloads::v1::SessionStart* _msg = _internal_mutable_session_start();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Message.session_start)
+  return _msg;
+}
+
+// .indiemotion.protobuf.payloads.v1.SessionActivate session_activate = 51;
+inline bool Message::_internal_has_session_activate() const {
+  return payload_case() == kSessionActivate;
+}
+inline bool Message::has_session_activate() const {
+  return _internal_has_session_activate();
+}
+inline void Message::set_has_session_activate() {
+  _oneof_case_[0] = kSessionActivate;
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionActivate* Message::release_session_activate() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.messages.Message.session_activate)
+  if (_internal_has_session_activate()) {
+    clear_has_payload();
+      ::indiemotion::protobuf::payloads::v1::SessionActivate* temp = payload_.session_activate_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.session_activate_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotion::protobuf::payloads::v1::SessionActivate& Message::_internal_session_activate() const {
+  return _internal_has_session_activate()
+      ? *payload_.session_activate_
+      : reinterpret_cast< ::indiemotion::protobuf::payloads::v1::SessionActivate&>(::indiemotion::protobuf::payloads::v1::_SessionActivate_default_instance_);
+}
+inline const ::indiemotion::protobuf::payloads::v1::SessionActivate& Message::session_activate() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.messages.Message.session_activate)
+  return _internal_session_activate();
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionActivate* Message::unsafe_arena_release_session_activate() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotion.protobuf.messages.Message.session_activate)
+  if (_internal_has_session_activate()) {
+    clear_has_payload();
+    ::indiemotion::protobuf::payloads::v1::SessionActivate* temp = payload_.session_activate_;
+    payload_.session_activate_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Message::unsafe_arena_set_allocated_session_activate(::indiemotion::protobuf::payloads::v1::SessionActivate* session_activate) {
+  clear_payload();
+  if (session_activate) {
+    set_has_session_activate();
+    payload_.session_activate_ = session_activate;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.messages.Message.session_activate)
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionActivate* Message::_internal_mutable_session_activate() {
+  if (!_internal_has_session_activate()) {
+    clear_payload();
+    set_has_session_activate();
+    payload_.session_activate_ = CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::SessionActivate >(GetArenaForAllocation());
+  }
+  return payload_.session_activate_;
+}
+inline ::indiemotion::protobuf::payloads::v1::SessionActivate* Message::mutable_session_activate() {
+  ::indiemotion::protobuf::payloads::v1::SessionActivate* _msg = _internal_mutable_session_activate();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.messages.Message.session_activate)
   return _msg;
 }
 

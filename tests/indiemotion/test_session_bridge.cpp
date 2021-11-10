@@ -149,7 +149,7 @@ SCENARIO("List the Cameras")
 
         WHEN("bridge processes list camera messages")
         {
-            auto msg = std::make_unique<indiemotion::net::GetCameraList>();
+            auto msg = std::make_unique<indiemotion::NetGetCameraList>();
             auto message = indiemotion::netMakeMessage(std::move(msg));
             bridge.processMessage(std::move(message));
 
@@ -158,7 +158,7 @@ SCENARIO("List the Cameras")
 
             THEN("the delegates camera list should be returned")
             {
-                auto camList = expected->payloadPtrAs<indiemotion::net::CameraList>();
+                auto camList = expected->payloadPtrAs<indiemotion::NetCameraList>();
                 REQUIRE(camList->cameras == delegate->cameraList);
             }
         }
@@ -206,7 +206,7 @@ SCENARIO("Set the Camera Successfully")
 
         WHEN("bridge processes setcamera messages")
         {
-            auto payload = std::make_unique<indiemotion::net::SetCamera>("cam2");
+            auto payload = std::make_unique<indiemotion::NetSetActiveCamera>("cam2");
             auto message = indiemotion::netMakeMessage(std::move(payload));
             bridge.processMessage(std::move(message));
 
@@ -216,7 +216,7 @@ SCENARIO("Set the Camera Successfully")
 
             THEN("the delegates camera should be set")
             {
-                auto info = response->payloadPtrAs<indiemotion::net::CameraInfo>();
+                auto info = response->payloadPtrAs<indiemotion::NetActiveCameraInfo>();
                 REQUIRE(info->camera->name == "cam2");
                 REQUIRE(info->camera == delegate->camera);
                 REQUIRE(info->camera->name == session->getActiveCamera().value().name);

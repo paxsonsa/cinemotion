@@ -17,10 +17,22 @@ message Camera { string id = 10; }
 
 message CameraList { repeated Camera camera = 1; }
 
-message InitializeSession {
+message SessionServerInfo {
   string id = 10;
   string apiVersion = 20;
   uint32 features = 30;
+}
+
+message SessionProperties {}
+
+message SessionStart
+{
+  SessionServerInfo serverInfo = 10;
+}
+
+message SessionActivate
+{
+  SessionProperties sessionProperties = 10;
 }
 
 enum MotionMode {

@@ -1,12 +1,7 @@
-- SessionInitialization should come from client.
-  - FPS
-  - ID
-  - Device Information
-  - 
+ 
 - Translator (message to protobuf)
   - NetPayloadType::SessionInitialization 
   - NetPayloadType::SessionShutdown
-  - NetPayloadType::CameraInfo?
   
 - Server Start Up
 - Connection Accepting
