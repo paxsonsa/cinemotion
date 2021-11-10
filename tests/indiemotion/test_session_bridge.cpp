@@ -23,7 +23,7 @@ SCENARIO("Initializing the Session")
         auto id = "SessionName";
         auto session = std::make_shared<session::Session>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        auto bridge = session::SessionBridge(id, queue, session);
+        auto bridge = SessionBridge(id, queue, session);
 
         WHEN("manager.initalize() is called")
         {
@@ -44,7 +44,7 @@ SCENARIO("Initializing the Session")
                 {
                     auto properties = response->payloadPtrAs<session::SessionProperties>();
                     REQUIRE(properties->id == id);
-                    REQUIRE(properties->apiVersion == session::SessionBridge::APIVersion);
+                    REQUIRE(properties->apiVersion == SessionBridge::APIVersion);
                     REQUIRE(properties->features == 0);
                 }
             }
@@ -55,7 +55,7 @@ SCENARIO("Initializing the Session")
     {
         auto session = std::make_shared<session::Session>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
         bridge.initialize();
 
         std::shared_ptr<indiemotion::net::Message> response;
@@ -92,7 +92,7 @@ SCENARIO("acknowledge message with no ID should return an error")
     {
         auto session = std::make_shared<session::Session>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
         session->setStatus(session::Status::Activated);
 
         WHEN("an acknowledge message is processed without an inResponseToId")
@@ -138,7 +138,7 @@ SCENARIO("List the Cameras")
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         auto session = std::make_shared<session::Session>(delegate);
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
 
 
         WHEN("bridge processes list camera messages")
@@ -196,7 +196,7 @@ SCENARIO("Set the Camera Successfully")
         auto session = std::make_shared<session::Session>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("bridge processes setcamera messages")
         {
@@ -239,7 +239,7 @@ SCENARIO("updating the motion mode")
         auto session = std::make_shared<session::Session>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("bridge processes setmotionmode=live message")
         {
@@ -333,7 +333,7 @@ SCENARIO("updating the motion xform")
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
         session->setMotionMode(MotionMode::Live);
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("a motion message is processed")
         {
@@ -380,7 +380,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         auto session = std::make_shared<session::Session>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        auto bridge = indiemotion::session::SessionBridge(queue, session);
+        auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("the session's motion mode is off and motion update is processed")
         {

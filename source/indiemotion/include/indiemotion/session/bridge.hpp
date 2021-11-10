@@ -12,7 +12,7 @@
 #include <indiemotion/session/session.hpp>
 
 
-namespace indiemotion::session
+namespace indiemotion
 {
     const std::string LOGGER_NAME = "com.indiemotion.session.bridge";
     class SessionBridge
