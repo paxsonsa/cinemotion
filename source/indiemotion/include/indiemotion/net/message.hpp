@@ -55,34 +55,6 @@ namespace indiemotion::net
     }
 
     /**
-     * @brief A header for a transport object that.
-     */
-    class Header
-    {
-      private:
-        std::optional<Identifier> _m_responseToId;
-        Identifier _m_id;
-
-      public:
-        Header(Identifier id) : _m_id(id){};
-        Header(Identifier id, Identifier responseId)
-            : _m_id(id), _m_responseToId(responseId)
-        {
-        }
-
-        Identifier
-        id() const
-        {
-            return _m_id;
-        }
-        std::optional<Identifier>
-        responseToId() const
-        {
-            return _m_responseToId;
-        }
-    };
-
-    /**
      * @brief The body of a message transport, this should be subclassed
      *
      */
@@ -121,6 +93,12 @@ namespace indiemotion::net
         }
 
       public:
+
+        /**
+         * Construct the message with a known id and payload.
+         * @param id Identifier for the message.
+         * @param payloadPtr A std::unique_ptr to the payload type.
+         */
         Message(Idenitfier id,
                 std::unique_ptr<Payload_T> payloadPtr)
             : _m_id(id), _m_payloadPtr(std::move(payloadPtr))
@@ -128,6 +106,12 @@ namespace indiemotion::net
             init();
         }
 
+        /**
+         * Construct the message with a know id, responseId, and payload.
+         * @param id An identifier for the message.
+         * @param responseId A response Id the message is in response too.
+         * @param payloadPtr A unique_ptr to the payload of the message.
+         */
         Message(Identifier id,
                 Identifier responseId,
                 std::unique_ptr<Payload_T> payloadPtr)
@@ -136,50 +120,65 @@ namespace indiemotion::net
             init();
         }
 
+        /**
+         * Return a shared ptr to the payload.
+         * @return the message payload uncast
+         */
         [[nodiscard]] std::shared_ptr<Payload_T> payload() const
         {
             return _m_payloadPtr;
         }
 
+        /**
+         * Set whether the message requires an acknowledgement
+         * @param s
+         */
         void requiresAcknowledgement(bool s)
         {
             _m_requiresAck = s;
         }
 
+        /**
+         * Does this message require and acknowledgement that it has been processed?
+         * @return whether the message requires an ACK.
+         */
         [[nodiscard]] bool doesRequireAcknowledgement() const
         {
             return _m_requiresAck;
         }
 
+        /**
+         * Return a potential id that the message is in response to.
+         * @return An identifier for the response.
+         */
         [[nodiscard]] std::optional<Identifier> inResponseToId() const
         {
             return _m_responseToId;
         }
 
-        [[nodiscard]] bool isInResponseTo(Identifier id) const
-        {
-            if (_m_responseToId)
-            {
-                return _m_responseToId == id;
-            }
-            return false;
-        }
-
+        /**
+         * The message unique identifier.
+         * @return An Identifier for the message
+         */
         [[nodiscard]] Identifier id() const
         {
             return _m_id;
         }
 
+        /**
+         * Get the payload type this message contains (forwards request to Payload object)
+         * @return The PayloadType this message is containing
+         */
         [[nodiscard]] PayloadType payloadType() const
         {
             return _m_payloadPtr->type();
         }
 
         /**
-             * @brief Return the payload at a cast to a particular type
-             *
-             * @tparam T the object type to try and cast the payload too
-             * @return std::shared_ptr<T>
+         * @brief Return the payload at a cast to a particular type
+         *
+         * @tparam T the object type to try and cast the payload too
+         * @return std::shared_ptr<T>
          */
         template <typename T>
         std::shared_ptr<T> payloadPtrAs() const
