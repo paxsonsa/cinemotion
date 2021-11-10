@@ -1,6 +1,5 @@
  
 - Translator (message to protobuf)
-  - NetPayloadType::SessionInitialization 
   - NetPayloadType::SessionShutdown
   
 - Server Start Up

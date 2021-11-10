@@ -439,3 +439,44 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         }
     }
 }
+
+SCENARIO("signalling session shutdown successfully")
+{
+    struct DummyDelegate : SessionControllerDelegate{
+        bool sessionWillShutdownCalled = false;
+
+        void sessionWillShutdown() //override
+        {
+            sessionWillShutdownCalled = true;
+        }
+    };
+
+    GIVEN("an activated session controller")
+    {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto session = std::make_shared<SessionController>(delegate);
+        auto dispatcher = std::make_shared<DummyDispatcher>();
+        auto bridge = SessionBridge(dispatcher, session);
+        session->setStatus(SessionStatus::Activated);
+
+        WHEN("the client signals a session shutdown")
+        {
+            auto payload = std::make_unique<NetSessionShutdown>();
+            auto message = netMakeMessage(std::move(payload));
+
+            bridge.processMessage(std::move(message));
+
+            THEN("then session status should be moved to off")
+            {
+                REQUIRE(session->status() == SessionStatus::Offline);
+            }
+
+            THEN("the session delegate is called")
+            {
+                REQUIRE(delegate->sessionWillShutdownCalled);
+            }
+        }
+    }
+
+
+}

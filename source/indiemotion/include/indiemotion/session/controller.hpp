@@ -37,9 +37,21 @@ namespace indiemotion
         }
 
         // ----------------------------------------------------------------
-        // SessionController SessionStatus
+        // Session Status
         SessionStatus status() const { return _m_status; }
         void setStatus(SessionStatus status) { _m_status = status; }
+
+        // ----------------------------------------------------------------
+        // Session LifeCycle Calls
+        void shutdown()
+        {
+            // TODO Close down mangers
+            if (_m_delegate)
+            {
+                _m_delegate->sessionWillShutdown();
+            }
+            setStatus(SessionStatus::Offline);
+        }
 
         // ----------------------------------------------------------------
         // Cameras List

@@ -9,7 +9,7 @@
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/net/session.hpp>
 #include <indiemotion/session/server_info.hpp>
-#include <indiemotion/session/session.hpp>
+#include <indiemotion/session/controller.hpp>
 
 namespace indiemotion {
     const std::string LOGGER_NAME = "com.indiemotion.session.bridge";
@@ -68,6 +68,12 @@ namespace indiemotion {
             case NetPayloadType::SessionActivate: {
                 _logger->trace("NetPayloadType=SessionActivate");
                 _m_sessionPtr->setStatus(SessionStatus::Activated);
+                return;
+            }
+
+            case NetPayloadType::SessionShutdown: {
+                _logger->trace("NetPayloadType=SessionShutdown");
+                _m_sessionPtr->shutdown();
                 return;
             }
 

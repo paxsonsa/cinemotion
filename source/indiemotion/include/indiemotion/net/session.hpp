@@ -32,4 +32,12 @@ namespace indiemotion
             return NetPayloadType::SessionActivate;
         }
     };
+
+    struct NetSessionShutdown: public NetPayload_T
+    {
+        NetPayloadType type() const
+        {
+            return NetPayloadType::SessionShutdown;
+        }
+    };
 }

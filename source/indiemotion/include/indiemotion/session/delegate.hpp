@@ -1,6 +1,6 @@
 #pragma once
 #include <indiemotion/cameras/camera.hpp>
-#include <indiemotion/session/session.hpp>
+#include <indiemotion/session/controller.hpp>
 
 namespace indiemotion
 {
@@ -60,5 +60,9 @@ namespace indiemotion
         // ----------------------------------------------------------------
         // Motion XForm Operations
         virtual void receivedMotionUpdate(MotionXForm m) {}
+
+        // ----------------------------------------------------------------
+        // Session Operations
+        virtual void sessionWillShutdown() {}
     };
 }
