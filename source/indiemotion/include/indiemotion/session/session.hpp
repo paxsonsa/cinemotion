@@ -22,13 +22,13 @@ namespace indiemotion::session
         std::shared_ptr<Delegate> _m_delegate = nullptr;
 
         std::unique_ptr<cameras::CameraManager> _m_camManager = nullptr;
-        std::unique_ptr<motion::MotionManager> _m_motionManager = nullptr;
+        std::unique_ptr<MotionManager> _m_motionManager = nullptr;
 
     public:
         Session()
         {
             _m_camManager = std::make_unique<cameras::CameraManager>();
-            _m_motionManager = std::make_unique<motion::MotionManager>();
+            _m_motionManager = std::make_unique<MotionManager>();
         }
 
         Session(std::shared_ptr<Delegate> delegate) : Session()

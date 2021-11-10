@@ -1,7 +1,7 @@
 #pragma once
 #include <indiemotion/motion/mode.hpp>
 
-namespace indiemotion::motion {
+namespace indiemotion {
     class MotionManager {
     private:
         MotionMode _m_mode = MotionMode::Off;
