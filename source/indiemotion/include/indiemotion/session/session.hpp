@@ -74,7 +74,7 @@ namespace indiemotion::session
 
         // ----------------------------------------------------------------
         // Motion Mode
-        void setMotionMode(motion::MotionMode m)
+        void setMotionMode(MotionMode m)
         {
             _m_motionManager->seCurrentMotionMode(m);
             if (_m_delegate)
@@ -83,7 +83,7 @@ namespace indiemotion::session
             }
         }
 
-        motion::MotionMode currentMotionMode() const
+        MotionMode currentMotionMode() const
         {
             return _m_motionManager->currentMotionMode();
         }

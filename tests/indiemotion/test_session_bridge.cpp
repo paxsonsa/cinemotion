@@ -224,9 +224,9 @@ SCENARIO("updating the motion mode")
     struct DummyDelegate : session::Delegate
     {
         bool wasMotionModeDidUpdateCalled = false;
-        motion::MotionMode mode = motion::MotionMode::Off;
+        MotionMode mode = MotionMode::Off;
 
-        void didMotionSetMode(motion::MotionMode m) override
+        void didMotionSetMode(MotionMode m) override
         {
             wasMotionModeDidUpdateCalled = true;
             mode = m;
@@ -243,7 +243,7 @@ SCENARIO("updating the motion mode")
 
         WHEN("bridge processes setmotionmode=live message")
         {
-            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Live);
+            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(MotionMode::Live);
             auto message = indiemotion::net::createMessage(std::move(payload));
 
             bridge.processMessage(std::move(message));
@@ -255,19 +255,19 @@ SCENARIO("updating the motion mode")
 
             THEN("the motion mode should be updated")
             {
-                REQUIRE(session->currentMotionMode() == motion::MotionMode::Live);
+                REQUIRE(session->currentMotionMode() == MotionMode::Live);
             }
 
             THEN("the delegates motion mode did update")
             {
                 REQUIRE(delegate->wasMotionModeDidUpdateCalled);
-                REQUIRE(delegate->mode == motion::MotionMode::Live);
+                REQUIRE(delegate->mode == MotionMode::Live);
             }
         }
 
         WHEN("bridge processes setmotionmode=record message")
         {
-            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Recording);
+            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(MotionMode::Recording);
             auto message = indiemotion::net::createMessage(std::move(payload));
             bridge.processMessage(std::move(message));
 
@@ -278,19 +278,19 @@ SCENARIO("updating the motion mode")
 
             THEN("the motion mode should be updated")
             {
-                REQUIRE(session->currentMotionMode() == motion::MotionMode::Recording);
+                REQUIRE(session->currentMotionMode() == MotionMode::Recording);
             }
 
             THEN("the delegates motion mode did update")
             {
                 REQUIRE(delegate->wasMotionModeDidUpdateCalled);
-                REQUIRE(delegate->mode == motion::MotionMode::Recording);
+                REQUIRE(delegate->mode == MotionMode::Recording);
             }
         }
 
         WHEN("bridge processes setmotionmode=off message")
         {
-            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(motion::MotionMode::Off);
+            auto payload = std::make_unique<indiemotion::net::MotionSetMode>(MotionMode::Off);
             auto message = indiemotion::net::createMessage(std::move(payload));
             bridge.processMessage(std::move(message));
 
@@ -300,13 +300,13 @@ SCENARIO("updating the motion mode")
 
             THEN("the motion mode should be updated")
             {
-                REQUIRE(session->currentMotionMode() == motion::MotionMode::Off);
+                REQUIRE(session->currentMotionMode() == MotionMode::Off);
             }
 
             THEN("the delegates motion mode did update")
             {
                 REQUIRE(delegate->wasMotionModeDidUpdateCalled);
-                REQUIRE(delegate->mode == motion::MotionMode::Off);
+                REQUIRE(delegate->mode == MotionMode::Off);
             }
         }
     }
@@ -332,7 +332,7 @@ SCENARIO("updating the motion xform")
         auto session = std::make_shared<session::Session>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         session->setStatus(session::Status::Activated);
-        session->setMotionMode(motion::MotionMode::Live);
+        session->setMotionMode(MotionMode::Live);
         auto bridge = indiemotion::session::SessionBridge(queue, session);
 
         WHEN("a motion message is processed")
@@ -384,7 +384,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
 
         WHEN("the session's motion mode is off and motion update is processed")
         {
-            session->setMotionMode(motion::MotionMode::Off);
+            session->setMotionMode(MotionMode::Off);
             auto xform = motion::MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
@@ -408,7 +408,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
 
         WHEN("the session's motion mode is live and motion update is processed")
         {
-            session->setMotionMode(motion::MotionMode::Live);
+            session->setMotionMode(MotionMode::Live);
             auto xform = motion::MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
@@ -435,7 +435,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
 
         WHEN("the session's motion mode is live and motion update is processed")
         {
-            session->setMotionMode(motion::MotionMode::Live);
+            session->setMotionMode(MotionMode::Live);
             auto xform = motion::MotionXForm::create(
                 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
