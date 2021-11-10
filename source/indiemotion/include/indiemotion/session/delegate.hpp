@@ -2,12 +2,12 @@
 #include <indiemotion/cameras/camera.hpp>
 #include <indiemotion/session/session.hpp>
 
-namespace indiemotion::session
+namespace indiemotion
 {
-    class Delegate
+    class SessionControllerDelegate
     {
     public:
-        virtual ~Delegate() {}
+        virtual ~SessionControllerDelegate() {}
 
         // ---------------------------------------------------------------------
         // Camera Operations

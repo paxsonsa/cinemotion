@@ -19,7 +19,7 @@ namespace indiemotion::session
     {
     private:
         Status _m_status = Status::Offline;
-        std::shared_ptr<Delegate> _m_delegate = nullptr;
+        std::shared_ptr<SessionControllerDelegate> _m_delegate = nullptr;
 
         std::unique_ptr<cameras::CameraManager> _m_camManager = nullptr;
         std::unique_ptr<MotionManager> _m_motionManager = nullptr;
@@ -31,7 +31,7 @@ namespace indiemotion::session
             _m_motionManager = std::make_unique<MotionManager>();
         }
 
-        Session(std::shared_ptr<Delegate> delegate) : Session()
+        Session(std::shared_ptr<SessionControllerDelegate> delegate) : Session()
         {
             _m_delegate = delegate;
         }

@@ -117,7 +117,7 @@ SCENARIO("acknowledge message with no ID should return an error")
 
 SCENARIO("List the Cameras")
 {
-    struct DummyDelegate : session::Delegate
+    struct DummyDelegate : SessionControllerDelegate
     {
 
         std::vector<cameras::Camera> cameraList{
@@ -162,7 +162,7 @@ SCENARIO("List the Cameras")
 
 SCENARIO("Set the Camera Successfully")
 {
-    struct DummyDelegate : session::Delegate
+    struct DummyDelegate : SessionControllerDelegate
     {
 
         std::vector<cameras::Camera> cameraList{
@@ -221,7 +221,7 @@ SCENARIO("Set the Camera Successfully")
 
 SCENARIO("updating the motion mode")
 {
-    struct DummyDelegate : session::Delegate
+    struct DummyDelegate : SessionControllerDelegate
     {
         bool wasMotionModeDidUpdateCalled = false;
         MotionMode mode = MotionMode::Off;
@@ -314,7 +314,7 @@ SCENARIO("updating the motion mode")
 
 SCENARIO("updating the motion xform")
 {
-    struct DummyDelegate : session::Delegate
+    struct DummyDelegate : SessionControllerDelegate
     {
         bool wasReceivedMotionUpdateCalled = false;
         MotionXForm xform;
@@ -362,7 +362,7 @@ SCENARIO("updating the motion xform")
 
 SCENARIO("updating the motion xform when motion mode is not live or recording")
 {
-    struct DummyDelegate : session::Delegate
+    struct DummyDelegate : SessionControllerDelegate
     {
         bool wasReceivedMotionUpdateCalled = false;
         MotionXForm xform;
