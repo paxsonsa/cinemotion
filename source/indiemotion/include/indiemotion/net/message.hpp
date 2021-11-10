@@ -16,7 +16,8 @@ namespace indiemotion {
 
         // ---------------------------------------------------------
         // Session Payload Types
-        SessionInitilization,
+        SessionStart,
+        SessionActivate,
         SessionShutdown,
 
         // ---------------------------------------------------------

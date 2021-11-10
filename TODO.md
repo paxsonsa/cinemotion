@@ -1,4 +1,3 @@
-- Migrate SendQueue to be a special asio context work item
 - SessionInitialization should come from client.
   - FPS
   - ID

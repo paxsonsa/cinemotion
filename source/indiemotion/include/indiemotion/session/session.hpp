@@ -11,7 +11,7 @@ namespace indiemotion
     enum class SessionStatus
     {
         Offline,
-        Initialized,
+        Starting,
         Activated,
     };
 

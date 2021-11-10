@@ -9,30 +9,25 @@
 #include <indiemotion/net/motion.hpp>
 #include <indiemotion/net/protobuf.hpp>
 
-namespace indiemotion::net
-{
-    class MessageTranslator
-    {
+namespace indiemotion::net {
+    class MessageTranslator {
     private:
 
-      std::shared_ptr<spdlog::logger> _logger;
+        std::shared_ptr<spdlog::logger> _logger;
 
         void populateHeader(protobuf::messages::Header *headerPtr,
                             NetIdentifier msgId,
-                            NetIdentifier responseId) const
-        {
-            headerPtr->set_id((std::string)msgId);
-            headerPtr->set_responseid((std::string)responseId);
+                            NetIdentifier responseId) const {
+            headerPtr->set_id((std::string) msgId);
+            headerPtr->set_responseid((std::string) responseId);
         }
 
         void populateHeader(protobuf::messages::Header *headerPtr,
-                            NetIdentifier msgId) const
-        {
-            headerPtr->set_id((std::string)msgId);
+                            NetIdentifier msgId) const {
+            headerPtr->set_id((std::string) msgId);
         }
 
-        protobuf::messages::Message _makeBaseMessage(const std::unique_ptr<NetMessage> &msg) const
-        {
+        protobuf::messages::Message _makeBaseMessage(const std::unique_ptr<NetMessage> &msg) const {
             protobuf::messages::Message m;
             auto headerPtr = m.mutable_header();
             if (msg->inResponseToId()) {
@@ -45,25 +40,20 @@ namespace indiemotion::net
         }
 
     public:
-        MessageTranslator()
-        {
+        MessageTranslator() {
             _logger = logging::getLogger("com.indiemotion.net.translator");
         }
 
-        indiemotion::protobuf::messages::Message translateMessage(const std::unique_ptr<NetMessage> message) const
-        {
+        indiemotion::protobuf::messages::Message translateMessage(const std::unique_ptr<NetMessage> message) const {
             _logger->trace("Translating NetMessage to Protobug: {}", message->id());
-            switch (message->payloadType())
-            {
-            case NetPayloadType::Acknowledge:
-            {
+            switch (message->payloadType()) {
+            case NetPayloadType::Acknowledge: {
                 auto m = _makeBaseMessage(message);
                 m.mutable_acknowledge();
                 return std::move(m);
             }
 
-            case NetPayloadType::Error:
-            {
+            case NetPayloadType::Error: {
                 auto payload = message->payloadPtrAs<Error>();
 
                 auto m = _makeBaseMessage(message);
@@ -74,70 +64,54 @@ namespace indiemotion::net
                 return std::move(m);
             }
 
-            case NetPayloadType::GetCameraList:
-            {
+            case NetPayloadType::GetCameraList: {
                 throw std::runtime_error("cannot translate NetPayloadType::GetCameraList");
             }
 
-            case NetPayloadType::CameraList:
-            {
+            case NetPayloadType::CameraList: {
                 auto m = _makeBaseMessage(message);
                 auto payload = m.mutable_camera_list();
                 auto cameraList = message->payloadPtrAs<CameraList>();
-                for (auto srcCam : cameraList->cameras)
-                {
+                for (auto srcCam: cameraList->cameras) {
                     auto cam = payload->add_camera();
                     cam->set_id(srcCam.name);
                 }
                 return std::move(m);
             }
 
-            case NetPayloadType::MotionUpdateXForm:
-            {
-                        }
+            case NetPayloadType::MotionUpdateXForm: {
+            }
 
-            case NetPayloadType::MotionSetMode:
-            {
+            case NetPayloadType::MotionSetMode: {
                 throw std::runtime_error("cannot translate NetPayloadType::MotionSetMode");
             }
 
-            case NetPayloadType::MotionGetMode:
-            {
+            case NetPayloadType::MotionGetMode: {
                 throw std::runtime_error("cannot translate NetPayloadType::MotionSetMode");
             }
 
-            case NetPayloadType::MotionActiveMode:
-            {
+            case NetPayloadType::MotionActiveMode: {
                 auto m = _makeBaseMessage(message);
                 auto p = message->payloadPtrAs<MotionActiveMode>();
                 auto payload = m.mutable_motion_active_mode();
-                switch (p->mode)
-                {
-                case MotionMode::Off:
-                {
+                switch (p->mode) {
+                case MotionMode::Off: {
                     payload->set_mode(protobuf::payloads::v1::MotionMode::Off);
                     break;
                 }
-                case MotionMode::Live:
-                {
+                case MotionMode::Live: {
                     payload->set_mode(protobuf::payloads::v1::MotionMode::Live);
                     break;
                 }
-                case MotionMode::Recording:
-                {
+                case MotionMode::Recording: {
                     payload->set_mode(protobuf::payloads::v1::MotionMode::Recording);
                     break;
                 }
                 }
                 return std::move(m);
             }
-
-            case NetPayloadType::SessionInitilization:
-                break;
-            case NetPayloadType::SessionShutdown:
-                break;
-            case NetPayloadType::CameraInfo:
-                break;
+            case NetPayloadType::SessionShutdown:break;
+            case NetPayloadType::CameraInfo:break;
 
             case NetPayloadType::Unknown:
             case NetPayloadType::SetCamera:
@@ -147,11 +121,9 @@ namespace indiemotion::net
             throw std::runtime_error("unsupported message payload type.");
         }
 
-        std::unique_ptr<NetMessage> translateProtobuf(const protobuf::messages::Message protobuf) const
-        {
+        std::unique_ptr<NetMessage> translateProtobuf(const protobuf::messages::Message protobuf) const {
             auto header = protobuf.header();
-            switch(protobuf.payload_case())
-            {
+            switch (protobuf.payload_case()) {
             case protobuf::messages::Message::kAcknowledge: {
                 auto payload =
                     std::make_unique<indiemotion::net::Acknowledge>();
@@ -160,8 +132,7 @@ namespace indiemotion::net
                     std::move(payload));
                 return std::move(message);
             }
-            case protobuf::messages::Message::kError:
-            {
+            case protobuf::messages::Message::kError: {
                 auto inError = protobuf.error();
                 auto payload = std::make_unique<Error>(
                     inError.type(),
@@ -172,29 +143,24 @@ namespace indiemotion::net
                 auto payload =
                     std::make_unique<GetCameraList>();
                 auto message = netMakeMessageWithId(NetIdentifier(header.id()),
-                                                 std::move(payload));
+                                                    std::move(payload));
                 return std::move(message);
             }
-            case protobuf::messages::Message::kMotionSetMode:
-            {
+            case protobuf::messages::Message::kMotionSetMode: {
 
                 auto inPayload = protobuf.motion_set_mode();
                 auto outPayload =
                     std::make_unique<MotionSetMode>();
-                switch(inPayload.mode())
-                {
-                case protobuf::payloads::v1::MotionMode::Off:
-                {
+                switch (inPayload.mode()) {
+                case protobuf::payloads::v1::MotionMode::Off: {
                     outPayload->mode = MotionMode::Off;
                     break;
                 }
-                case protobuf::payloads::v1::MotionMode::Live:
-                {
+                case protobuf::payloads::v1::MotionMode::Live: {
                     outPayload->mode = MotionMode::Live;
                     break;
                 }
-                case protobuf::payloads::v1::MotionMode::Recording:
-                {
+                case protobuf::payloads::v1::MotionMode::Recording: {
                     outPayload->mode = MotionMode::Recording;
                     break;
                 }
@@ -205,19 +171,17 @@ namespace indiemotion::net
                 }
 
                 auto message = netMakeMessageWithId(NetIdentifier(header.id()),
-                                                 std::move(outPayload));
+                                                    std::move(outPayload));
                 return std::move(message);
             }
-            case protobuf::messages::Message::kMotionGetMode:
-            {
+            case protobuf::messages::Message::kMotionGetMode: {
                 auto payload =
                     std::make_unique<MotionGetMode>();
                 auto message = netMakeMessageWithId(NetIdentifier(header.id()),
-                                                 std::move(payload));
+                                                    std::move(payload));
                 return std::move(message);
             }
-            case protobuf::messages::Message::kMotionXform:
-            {
+            case protobuf::messages::Message::kMotionXform: {
                 auto inXForm = protobuf.motion_xform();
                 auto xform = MotionXForm();
                 xform.translation.x = inXForm.translation().x();
@@ -230,7 +194,7 @@ namespace indiemotion::net
                 auto outPayload =
                     std::make_unique<MotionUpdateXForm>(std::move(xform));
                 auto message = netMakeMessageWithId(NetIdentifier(header.id()),
-                                                 std::move(outPayload));
+                                                    std::move(outPayload));
                 return std::move(message);
             }
             case protobuf::messages::Message::kMotionActiveMode:

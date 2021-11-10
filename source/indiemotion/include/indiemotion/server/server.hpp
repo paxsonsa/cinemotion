@@ -37,7 +37,7 @@ namespace indiemotion::server
             // SessionDelegate::on_event_emit()
             // auto session = std::make_shared<SessionController>();
             // _m_delegate->on_new_session(session);
-            // session->initialize();
+            // session->start();
             auto const threads = 1;
             net::io_context ioContext{threads};
 

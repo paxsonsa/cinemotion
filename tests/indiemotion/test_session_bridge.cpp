@@ -12,6 +12,7 @@
 #include <indiemotion/net/error.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/motion.hpp>
+#include <indiemotion/net/session.hpp>
 #include <indiemotion/session.hpp>
 
 using namespace indiemotion;
@@ -25,58 +26,56 @@ struct DummyDispatcher: NetMessageDispatcher {
     }
 };
 
-SCENARIO("Initializing the Session")
+SCENARIO("Starting the Session")
 {
-    GIVEN("a new manager object")
-    {
-        auto id = "SessionName";
-        auto session = std::make_shared<SessionController>();
-        auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(id, dispatcher, session);
-
-        WHEN("manager.initialize() is called")
-        {
-            bridge.initialize();
-            auto response = std::move(dispatcher->messages[0]);
-
-            THEN("initialize() should have returned a response")
-            {
-                REQUIRE(dispatcher->messages.size() == 1);
-
-                AND_THEN("the response should be a properly init message")
-                {
-                    REQUIRE(response->payloadType() == indiemotion::NetPayloadType::SessionInitilization);
-                }
-
-                AND_THEN("the response should be the session properties we expect")
-                {
-                    auto properties = response->payloadPtrAs<SessionProperties>();
-                    REQUIRE(properties->id == id);
-                    REQUIRE(properties->apiVersion == SessionBridge::APIVersion);
-                    REQUIRE(properties->features == 0);
-                }
-            }
-        }
-    }
-
-    GIVEN("an initialized session manager")
+    GIVEN("a new controller object")
     {
         auto session = std::make_shared<SessionController>();
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
-        bridge.initialize();
 
-        REQUIRE(dispatcher->messages.size() == 1);
-        auto response = std::move(dispatcher->messages[0]);
-        dispatcher->messages.pop_back();
-
-        REQUIRE(response->doesRequireAcknowledgement());
-        REQUIRE(session->status() == SessionStatus::Initialized);
-
-        WHEN("the client sends an acknowledge message")
+        WHEN("manager.start() is called")
         {
-            auto ackPtr = std::make_unique<indiemotion::net::Acknowledge>();
-            auto message = indiemotion::netMakeMessageWithResponseID(response->id(), std::move(ackPtr));
+            bridge.start();
+            auto response = std::move(dispatcher->messages[0]);
+
+            THEN("start() should have returned a response")
+            {
+                REQUIRE(dispatcher->messages.size() == 1);
+            }
+            AND_THEN("the response should be a session start message")
+            {
+                REQUIRE(response->payloadType() == indiemotion::NetPayloadType::SessionStart);
+            }
+            AND_THEN("the response should be the session server info we expect")
+            {
+                auto payload = response->payloadPtrAs<NetSessionStart>();
+                REQUIRE(payload->serverInfo.apiVersion == SessionBridge::APIVersion);
+                REQUIRE(payload->serverInfo.features == 0);
+                REQUIRE_FALSE(response->doesRequireAcknowledgement());
+            }
+            AND_THEN("session controller status should be starting")
+            {
+                REQUIRE(session->status() == SessionStatus::Starting);
+            }
+        }
+    }
+
+    GIVEN("an started session controller")
+    {
+        auto session = std::make_shared<SessionController>();
+        auto dispatcher = std::make_shared<DummyDispatcher>();
+        auto bridge = SessionBridge(dispatcher, session);
+        bridge.start();
+
+        // Clear the messages so fair
+        dispatcher->messages.clear();
+
+        WHEN("the client sends a session activate message")
+        {
+            auto properties = SessionProperties();
+            auto payloadPtr = std::make_unique<indiemotion::NetSessionActivate>(properties);
+            auto message = indiemotion::netMakeMessage(std::move(payloadPtr));
 
             bridge.processMessage(std::move(message));
 
@@ -85,7 +84,7 @@ SCENARIO("Initializing the Session")
                 REQUIRE_FALSE(dispatcher->messages.size() == 1);
             }
 
-            AND_THEN("the sesison should be active")
+            AND_THEN("the session should be active")
             {
                 REQUIRE(session->status() == SessionStatus::Activated);
             }

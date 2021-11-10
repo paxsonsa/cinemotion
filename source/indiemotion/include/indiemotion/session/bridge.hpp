@@ -7,7 +7,8 @@
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/dispatcher.hpp>
 #include <indiemotion/net/motion.hpp>
-#include <indiemotion/session/properties.hpp>
+#include <indiemotion/net/session.hpp>
+#include <indiemotion/session/server_info.hpp>
 #include <indiemotion/session/session.hpp>
 
 namespace indiemotion {
@@ -15,7 +16,6 @@ namespace indiemotion {
     class SessionBridge {
     private:
         std::shared_ptr<spdlog::logger> _logger;
-        std::string _m_id = "default";
         std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
         std::shared_ptr<SessionController> _m_sessionPtr;
         std::unique_ptr<net::AcknowledgeCoordinator> _m_ackCoordinator;
@@ -31,27 +31,14 @@ namespace indiemotion {
             _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
         }
 
-        SessionBridge(std::string name,
-                      std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
-                      std::shared_ptr<SessionController> sessionPtr) {
-            _m_dispatcher = std::move(dispatcherPtr);
-            _logger = logging::getLogger(LOGGER_NAME);
-            _m_id = std::move(name);
-            _m_sessionPtr = std::move(sessionPtr);
-            _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
-        }
-
         [[nodiscard]] static std::string apiVersion() { return SessionBridge::APIVersion; }
 
-        void initialize() {
-            auto payload = std::make_unique<SessionProperties>(
-                _m_id,
-                apiVersion(),
-                newFeatureSet(0));
-
-            _m_sessionPtr->setStatus(SessionStatus::Initialized);
+        void start() {
+            auto info = SessionServerInfo(apiVersion(),
+                                          newFeatureSet(0));
+            auto payload = std::make_unique<NetSessionStart>(info);
+            _m_sessionPtr->setStatus(SessionStatus::Starting);
             auto message = netMakeMessage(std::move(payload));
-            message->requiresAcknowledgement(true);
 
             _m_ackCoordinator->queue(message->id(),
                                      [&]() { _m_sessionPtr->setStatus(SessionStatus::Activated); });
@@ -63,6 +50,7 @@ namespace indiemotion {
             _logger->trace("Processing message: {}", messagePtr->id());
 
             switch (messagePtr->payloadType()) {
+
             case NetPayloadType::Acknowledge: {
                 _logger->trace("NetPayloadType=Acknowledge");
                 if (messagePtr->inResponseToId()) {
@@ -74,6 +62,12 @@ namespace indiemotion {
                     auto response = netMakeMessageWithResponseID(messagePtr->id(), std::move(error));
                     _m_dispatcher->dispatch(std::move(response));
                 }
+                return;
+            }
+
+            case NetPayloadType::SessionActivate: {
+                _logger->trace("NetPayloadType=SessionActivate");
+                _m_sessionPtr->setStatus(SessionStatus::Activated);
                 return;
             }
 
@@ -108,8 +102,8 @@ namespace indiemotion {
                 return;
             }
 
-                // ---------------------------------------------------------------------------------------------------
-                // Motion XForm Operations
+            // ---------------------------------------------------------------------------------------------------
+            // Motion XForm Operations
             case NetPayloadType::MotionUpdateXForm: {
                 _logger->trace("NetPayloadType=MotionUpdateXForm");
                 auto msgPayload = messagePtr->payloadPtrAs<net::MotionUpdateXForm>();
@@ -117,11 +111,13 @@ namespace indiemotion {
                 return;
             }
 
-                // ---------------------------------------------------------------------------------------------------
-                // Generic Operations
-            case NetPayloadType::Error:_logger->trace("NetPayloadType=Error");
+            // ---------------------------------------------------------------------------------------------------
+            // Generic Operations
+            case NetPayloadType::Error: {
                 // TODO Process Errors
+                _logger->trace("NetPayloadType=Error");
                 return;
+            }
 
             case NetPayloadType::Unknown: {
                 _logger->trace("NetPayloadType=Unknown");
@@ -132,7 +128,8 @@ namespace indiemotion {
                 return;
             }
 
-            default:_logger->trace("NetPayloadType=default");
+            default: {
+                _logger->trace("NetPayloadType=default");
                 auto error = std::make_unique<net::Error>(net::Error::Type::CannotProcessMessage,
                                                           "could not process message, handler is not implemented to process contents.");
                 auto response = netMakeMessageWithResponseID(messagePtr->id(), std::move(error));
@@ -141,6 +138,7 @@ namespace indiemotion {
                                messagePtr->payloadType());
                 _m_dispatcher->dispatch(std::move(response));
                 return;
+            }
             }
         }
     };
