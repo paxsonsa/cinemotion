@@ -17,10 +17,10 @@ namespace indiemotion::net
 
     struct MotionSetMode : public net::Payload_T
     {
-        motion::MotionMode mode;
+        MotionMode mode;
 
-        MotionSetMode(): mode(motion::MotionMode::Off) {}
-        MotionSetMode(motion::MotionMode mode) : mode(mode) {}
+        MotionSetMode(): mode(MotionMode::Off) {}
+        MotionSetMode(MotionMode mode) : mode(mode) {}
 
         PayloadType type() const
         {
@@ -30,9 +30,9 @@ namespace indiemotion::net
 
     struct MotionActiveMode : public net::Payload_T
     {
-        motion::MotionMode mode;
+        MotionMode mode;
 
-        MotionActiveMode(motion::MotionMode mode) : mode(mode) {}
+        MotionActiveMode(MotionMode mode) : mode(mode) {}
 
         PayloadType type() const
         {

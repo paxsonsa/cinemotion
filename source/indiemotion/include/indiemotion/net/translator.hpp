@@ -113,17 +113,17 @@ namespace indiemotion::net
                 auto payload = m.mutable_motion_active_mode();
                 switch (p->mode)
                 {
-                case motion::MotionMode::Off:
+                case MotionMode::Off:
                 {
                     payload->set_mode(protobuf::payloads::v1::MotionMode::Off);
                     break;
                 }
-                case motion::MotionMode::Live:
+                case MotionMode::Live:
                 {
                     payload->set_mode(protobuf::payloads::v1::MotionMode::Live);
                     break;
                 }
-                case motion::MotionMode::Recording:
+                case MotionMode::Recording:
                 {
                     payload->set_mode(protobuf::payloads::v1::MotionMode::Recording);
                     break;
@@ -185,17 +185,17 @@ namespace indiemotion::net
                 {
                 case protobuf::payloads::v1::MotionMode::Off:
                 {
-                    outPayload->mode = motion::MotionMode::Off;
+                    outPayload->mode = MotionMode::Off;
                     break;
                 }
                 case protobuf::payloads::v1::MotionMode::Live:
                 {
-                    outPayload->mode = motion::MotionMode::Live;
+                    outPayload->mode = MotionMode::Live;
                     break;
                 }
                 case protobuf::payloads::v1::MotionMode::Recording:
                 {
-                    outPayload->mode = motion::MotionMode::Recording;
+                    outPayload->mode = MotionMode::Recording;
                     break;
                 }
                 case protobuf::payloads::v1::MotionMode_INT_MIN_SENTINEL_DO_NOT_USE_:

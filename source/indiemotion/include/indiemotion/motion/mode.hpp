@@ -5,10 +5,10 @@
 
 #include <indiemotion/common.hpp>
 
-namespace indiemotion::motion {
+namespace indiemotion {
     /**
      * @brief A simple value for comparing mode values
-     * 
+     *
      */
     enum class MotionMode {
 
