@@ -5,16 +5,16 @@
   - Device Information
   - 
 - Translator (message to protobuf)
-  - PayloadType::SessionInitialization 
-  - PayloadType::SessionShutdown
-  - PayloadType::CameraInfo?
+  - NetPayloadType::SessionInitialization 
+  - NetPayloadType::SessionShutdown
+  - NetPayloadType::CameraInfo?
   
 - Server Start Up
 - Connection Accepting
 - Process Thread
 - Connection Loop 
   - Read
-  - Write Message from Send Loop
+  - Write NetMessage from Send Loop
 
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]

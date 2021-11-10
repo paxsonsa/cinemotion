@@ -4,7 +4,7 @@
 
 namespace indiemotion::net
 {
-    struct Error : public Payload_T
+    struct Error : public NetPayload_T
     {
         struct Type
         {
@@ -17,9 +17,9 @@ namespace indiemotion::net
 
         Error(std::string errorType, std::string msg) : errorType(errorType), message(msg) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::Error;
+            return NetPayloadType::Error;
         }
     };
 

@@ -10,8 +10,8 @@ TEST_CASE("Translate Acknowledge Messages")
     auto translator = indiemotion::net::MessageTranslator();
 
     auto payload = std::make_unique<indiemotion::net::Acknowledge>();
-    auto message = indiemotion::net::makeMessageWithResponseID(
-        indiemotion::net::Identifier("somemessageID"),
+    auto message = indiemotion::netMakeMessageWithResponseID(
+        indiemotion::NetIdentifier("somemessageID"),
         std::move(payload));
     auto protobuf = translator.translateMessage(std::move(message));
 
@@ -37,12 +37,12 @@ TEST_CASE("Translate Acknowledge Protobuf")
     header->set_responseid("someresponseid");
     protobuf.mutable_acknowledge();
 
-    std::shared_ptr<indiemotion::net::Message> message = translator.translateProtobuf(std::move(protobuf));
+    std::shared_ptr<indiemotion::NetMessage> message = translator.translateProtobuf(std::move(protobuf));
 
     SUBCASE("protobuf message has responseId set")
     {
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::Acknowledge);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
-        REQUIRE(message->inResponseToId().value() == indiemotion::net::Identifier("someresponseid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::Acknowledge);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
+        REQUIRE(message->inResponseToId().value() == indiemotion::NetIdentifier("someresponseid"));
     }
 }

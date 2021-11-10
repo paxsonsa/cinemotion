@@ -5,51 +5,51 @@
 
 namespace indiemotion::net
 {
-    struct MotionGetMode : public net::Payload_T
+    struct MotionGetMode : public NetPayload_T
     {
         MotionGetMode() {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::MotionGetMode;
+            return NetPayloadType::MotionGetMode;
         }
     };
 
-    struct MotionSetMode : public net::Payload_T
+    struct MotionSetMode : public NetPayload_T
     {
         MotionMode mode;
 
         MotionSetMode(): mode(MotionMode::Off) {}
         MotionSetMode(MotionMode mode) : mode(mode) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::MotionSetMode;
+            return NetPayloadType::MotionSetMode;
         }
     };
 
-    struct MotionActiveMode : public net::Payload_T
+    struct MotionActiveMode : public NetPayload_T
     {
         MotionMode mode;
 
         MotionActiveMode(MotionMode mode) : mode(mode) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::MotionActiveMode;
+            return NetPayloadType::MotionActiveMode;
         }
     };
 
-    struct MotionUpdateXForm : public net::Payload_T
+    struct MotionUpdateXForm : public NetPayload_T
     {
         MotionXForm xform;
 
         MotionUpdateXForm(const MotionXForm &xform) : xform(xform) {}
         MotionUpdateXForm(MotionXForm &&xform) : xform(std::move(xform)) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::MotionUpdateXForm;
+            return NetPayloadType::MotionUpdateXForm;
         }
     };
 }

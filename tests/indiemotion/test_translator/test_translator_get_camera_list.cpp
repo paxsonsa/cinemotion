@@ -13,7 +13,7 @@ TEST_CASE("Translate GetCameraList Messages Throws Exceptions")
 {
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::GetCameraList>();
-    auto message = indiemotion::net::createMessage(std::move(payload));
+    auto message = indiemotion::netMakeMessage(std::move(payload));
 
     SUBCASE("throws when trying to translate")
     {
@@ -33,7 +33,7 @@ TEST_CASE("Translate GetCameraList Messages Throws Exceptions")
     SUBCASE("returns GetCameraList message")
     {
         auto message = translator.translateProtobuf(std::move(protobuf));
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::GetCameraList);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::GetCameraList);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
     }
 }

@@ -1,13 +1,13 @@
 #pragma once
 #include <indiemotion/logging.hpp>
 
-namespace indiemotion::net {
+namespace indiemotion {
     /**
-     * @brief PayloadType stores the type of payload that a message contains so
+     * @brief NetPayloadType stores the type of payload that a message contains so
      *        we can perform operations based on that content.
      *
      */
-    enum class PayloadType : std::int32_t {
+    enum class NetPayloadType : std::int32_t {
         // ---------------------------------------------------------
         // General Payload Types
         Unknown,
@@ -35,17 +35,17 @@ namespace indiemotion::net {
     };
 
     /**
-     * @brief Identifier for transport bodies
+     * @brief NetIdentifier for transport bodies
      *
      */
-    using Identifier = std::string;
+    using NetIdentifier = std::string;
 
     /**
-     * @brief Generate is new Identifier
+     * @brief Generate is new NetIdentifier
      *
      * @return std::string
      */
-    Identifier generateNewIdentifier() {
+    NetIdentifier generateNewIdentifier() {
         boost::uuids::random_generator generator;
         boost::uuids::uuid uuid = generator();
         return boost::uuids::to_string(uuid);
@@ -55,17 +55,17 @@ namespace indiemotion::net {
      * @brief The body of a message transport, this should be subclassed
      *
      */
-    class Payload_T {
+    class NetPayload_T {
     public:
-        Payload_T() = default;
-        virtual ~Payload_T() {}
+        NetPayload_T() = default;
+        virtual ~NetPayload_T() {}
 
         /**
          * @brief Return the kind of body
          *
          * @return Kind
          */
-        virtual PayloadType type() const = 0;
+        virtual NetPayloadType type() const = 0;
     };
 
     /**
@@ -73,12 +73,12 @@ namespace indiemotion::net {
      *        the network API.
      *
      */
-    class Message {
+    class NetMessage {
     private:
         bool _m_requiresAck = false;
-        Identifier _m_id;
-        std::optional<Identifier> _m_responseToId;
-        std::shared_ptr<Payload_T> _m_payloadPtr;
+        NetIdentifier _m_id;
+        std::optional<NetIdentifier> _m_responseToId;
+        std::shared_ptr<NetPayload_T> _m_payloadPtr;
         std::shared_ptr<spdlog::logger> _logger;
 
         void init() {
@@ -89,10 +89,10 @@ namespace indiemotion::net {
     public:
         /**
          * Construct the message with a known id and payload.
-         * @param id Identifier for the message.
+         * @param id NetIdentifier for the message.
          * @param payloadPtr A std::unique_ptr to the payload type.
          */
-        Message(Identifier id, std::unique_ptr<Payload_T> payloadPtr)
+        NetMessage(NetIdentifier id, std::unique_ptr<NetPayload_T> payloadPtr)
             : _m_id(id), _m_payloadPtr(std::move(payloadPtr)) {
             init();
         }
@@ -103,8 +103,8 @@ namespace indiemotion::net {
          * @param responseId A response Id the message is in response too.
          * @param payloadPtr A unique_ptr to the payload of the message.
          */
-        Message(Identifier id, Identifier responseId,
-                std::unique_ptr<Payload_T> payloadPtr)
+        NetMessage(NetIdentifier id, NetIdentifier responseId,
+                std::unique_ptr<NetPayload_T> payloadPtr)
             : _m_id(id), _m_responseToId(responseId),
               _m_payloadPtr(std::move(payloadPtr)) {
             init();
@@ -114,7 +114,7 @@ namespace indiemotion::net {
          * Return a shared ptr to the payload.
          * @return the message payload uncast
          */
-        [[nodiscard]] std::shared_ptr<Payload_T> payload() const {
+        [[nodiscard]] std::shared_ptr<NetPayload_T> payload() const {
             return _m_payloadPtr;
         }
 
@@ -136,22 +136,22 @@ namespace indiemotion::net {
          * Return a potential id that the message is in response to.
          * @return An identifier for the response.
          */
-        [[nodiscard]] std::optional<Identifier> inResponseToId() const {
+        [[nodiscard]] std::optional<NetIdentifier> inResponseToId() const {
             return _m_responseToId;
         }
 
         /**
          * The message unique identifier.
-         * @return An Identifier for the message
+         * @return An NetIdentifier for the message
          */
-        [[nodiscard]] Identifier id() const { return _m_id; }
+        [[nodiscard]] NetIdentifier id() const { return _m_id; }
 
         /**
          * Get the payload type this message contains (forwards request to Payload
          * object)
-         * @return The PayloadType this message is containing
+         * @return The NetPayloadType this message is containing
          */
-        [[nodiscard]] PayloadType payloadType() const {
+        [[nodiscard]] NetPayloadType payloadType() const {
             return _m_payloadPtr->type();
         }
 
@@ -172,24 +172,24 @@ namespace indiemotion::net {
      * @param payloadPtr A unique ptr to the payload the message contains.
      * @return unique pointer to a new message
      */
-    std::unique_ptr<Message> createMessage(std::unique_ptr<Payload_T> payloadPtr) {
+    std::unique_ptr<NetMessage> netMakeMessage(std::unique_ptr<NetPayload_T> payloadPtr) {
         auto id = generateNewIdentifier();
         auto containerPtr =
-            std::make_unique<Message>(std::move(id), std::move(payloadPtr));
+            std::make_unique<NetMessage>(std::move(id), std::move(payloadPtr));
         return std::move(containerPtr);
     }
 
     /**
      * Make a new message with a given ID and Response ID
-     * @param id An Identifier to use for the message ID.
-     * @param inResponseToId An Identifier for the response ID.
+     * @param id An NetIdentifier to use for the message ID.
+     * @param inResponseToId An NetIdentifier for the response ID.
      * @param payloadPtr A unique ptr to the payload the message contains.
      * @return unique pointer to a new message
      */
-    std::unique_ptr<Message> makeMessageWithIdAndResponseId(const Identifier id,
-                                                            const Identifier inResponseToId,
-                                                            std::unique_ptr<Payload_T> payloadPtr) {
-        auto containerPtr = std::make_unique<Message>(std::move(id),
+    std::unique_ptr<NetMessage> netMakeMessageWithIdAndResponseId(const NetIdentifier id,
+                                                            const NetIdentifier inResponseToId,
+                                                            std::unique_ptr<NetPayload_T> payloadPtr) {
+        auto containerPtr = std::make_unique<NetMessage>(std::move(id),
                                                       std::move(inResponseToId),
                                                       std::move(payloadPtr));
         return std::move(containerPtr);
@@ -197,27 +197,27 @@ namespace indiemotion::net {
 
     /**
      * Make a new message with a given ID
-     * @param id An Identifier to use for the message id
+     * @param id An NetIdentifier to use for the message id
      * @param payloadPtr A unique ptr to the payload the message contains
      * @return unique pointer to a new message
      */
-    std::unique_ptr<Message> makeMessageWithId(const Identifier id,
-                                               std::unique_ptr<Payload_T> payloadPtr) {
+    std::unique_ptr<NetMessage> netMakeMessageWithId(const NetIdentifier id,
+                                               std::unique_ptr<NetPayload_T> payloadPtr) {
         auto containerPtr =
-            std::make_unique<Message>(std::move(id), std::move(payloadPtr));
+            std::make_unique<NetMessage>(std::move(id), std::move(payloadPtr));
         return std::move(containerPtr);
     }
 
     /**
      * Make a new message with a given Response ID ( and generate ID)
-     * @param inResponseToId An Identifier for the response ID.
+     * @param inResponseToId An NetIdentifier for the response ID.
      * @param payloadPtr A unique ptr to the payload the message contains.
      * @return unique pointer to a new message
      */
-    std::unique_ptr<Message> makeMessageWithResponseID(const Identifier &inResponseToId,
-                                                       std::unique_ptr<Payload_T> payloadPtr) {
+    std::unique_ptr<NetMessage> netMakeMessageWithResponseID(const NetIdentifier &inResponseToId,
+                                                       std::unique_ptr<NetPayload_T> payloadPtr) {
         auto id = generateNewIdentifier();
-        auto containerPtr = std::make_unique<Message>(std::move(id),
+        auto containerPtr = std::make_unique<NetMessage>(std::move(id),
                                                       std::move(inResponseToId),
                                                       std::move(payloadPtr));
         return std::move(containerPtr);

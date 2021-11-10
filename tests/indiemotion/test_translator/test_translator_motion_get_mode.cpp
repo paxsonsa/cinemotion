@@ -9,7 +9,7 @@ TEST_CASE("Translate Motion Get Mode Messages Throws Exceptions")
 {
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::MotionGetMode>();
-    auto message = indiemotion::net::createMessage(std::move(payload));
+    auto message = indiemotion::netMakeMessage(std::move(payload));
 
     SUBCASE("translator should throw runtime error")
     {
@@ -29,7 +29,7 @@ TEST_CASE("Translate Motion Get Mode to Protobuf")
     SUBCASE("returns message")
     {
         auto message = translator.translateProtobuf(std::move(protobuf));
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::MotionGetMode);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::MotionGetMode);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
     }
 }

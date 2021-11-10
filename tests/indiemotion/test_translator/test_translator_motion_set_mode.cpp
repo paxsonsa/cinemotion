@@ -11,7 +11,7 @@ TEST_CASE("Translate Motion Set Mode Messages Throws Exceptions")
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::MotionSetMode>(
         indiemotion::MotionMode::Live);
-    auto message = indiemotion::net::createMessage(std::move(payload));
+    auto message = indiemotion::netMakeMessage(std::move(payload));
 
     SUBCASE("translator should throw runtime error")
     {
@@ -33,8 +33,8 @@ TEST_CASE("Translate Motion Set Mode [Live] to Protobuf")
         payload->set_mode(indiemotion::protobuf::payloads::v1::MotionMode::Live);
 
         auto message = translator.translateProtobuf(std::move(protobuf));
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::MotionSetMode);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::MotionSetMode);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
 
         auto outPayload = message->payloadPtrAs<indiemotion::net::MotionSetMode>();
         REQUIRE(outPayload->mode == indiemotion::MotionMode::Live);
@@ -46,8 +46,8 @@ TEST_CASE("Translate Motion Set Mode [Live] to Protobuf")
         payload->set_mode(indiemotion::protobuf::payloads::v1::MotionMode::Recording);
 
         auto message = translator.translateProtobuf(std::move(protobuf));
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::MotionSetMode);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::MotionSetMode);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
 
         auto outPayload = message->payloadPtrAs<indiemotion::net::MotionSetMode>();
         REQUIRE(outPayload->mode == indiemotion::MotionMode::Recording);
@@ -59,8 +59,8 @@ TEST_CASE("Translate Motion Set Mode [Live] to Protobuf")
         payload->set_mode(indiemotion::protobuf::payloads::v1::MotionMode::Off);
 
         auto message = translator.translateProtobuf(std::move(protobuf));
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::MotionSetMode);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::MotionSetMode);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
 
         auto outPayload = message->payloadPtrAs<indiemotion::net::MotionSetMode>();
         REQUIRE(outPayload->mode == indiemotion::MotionMode::Off);

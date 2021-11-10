@@ -26,7 +26,7 @@ namespace indiemotion
             static_cast<std::underlying_type<SessionFeature>::type>(rhs));
     }
 
-    struct SessionProperties : public net::Payload_T
+    struct SessionProperties : public NetPayload_T
     {
         std::string id;
         std::string apiVersion;
@@ -36,9 +36,9 @@ namespace indiemotion
                           std::string apiVersion,
                           SessionFeatureSet features) : id(id), apiVersion(apiVersion), features(features) {}
 
-        net::PayloadType type() const
+        NetPayloadType type() const
         {
-            return net::PayloadType::SessionInitilization;
+            return NetPayloadType::SessionInitilization;
         }
     };
 }

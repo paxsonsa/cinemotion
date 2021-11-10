@@ -10,8 +10,8 @@ namespace indiemotion::net
     {
     public:
         virtual ~MessageHandler_T() {}
-        virtual std::optional<std::unique_ptr<Message>>
+        virtual std::optional<std::unique_ptr<NetMessage>>
         handleMessage(std::weak_ptr<SessionController> sessionPtr,
-                      std::unique_ptr<Message> messagePtr) = 0;
+                      std::unique_ptr<NetMessage> messagePtr) = 0;
     };
 }

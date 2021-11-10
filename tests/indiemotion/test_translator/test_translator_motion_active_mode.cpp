@@ -12,7 +12,7 @@ TEST_CASE("Translate Motion Active Mode Messages")
     auto translator = indiemotion::net::MessageTranslator();
     auto payload = std::make_unique<indiemotion::net::MotionActiveMode>(
         indiemotion::MotionMode::Live);
-    auto message = indiemotion::net::makeMessageWithResponseID("inResponseToID", std::move(payload));
+    auto message = indiemotion::netMakeMessageWithResponseID("inResponseToID", std::move(payload));
     auto p = translator.translateMessage(std::move(message));
 
     SUBCASE("protobuf message has message header")

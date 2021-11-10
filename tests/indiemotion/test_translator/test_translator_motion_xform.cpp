@@ -11,7 +11,7 @@ TEST_CASE("Translate MotionUpdateXForm Throws Exception")
     auto translator = indiemotion::net::MessageTranslator();
     auto xform = indiemotion::MotionXForm::create(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
     auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
-    auto message = indiemotion::net::createMessage(std::move(payload));
+    auto message = indiemotion::netMakeMessage(std::move(payload));
 
     SUBCASE("translator should throw runtime error")
     {
@@ -39,8 +39,8 @@ TEST_CASE("Translate Motion Xform Update to Protobuf")
     SUBCASE("returns message")
     {
         auto message = translator.translateProtobuf(std::move(protobuf));
-        REQUIRE(message->payloadType() == indiemotion::net::PayloadType::MotionUpdateXForm);
-        REQUIRE(message->id() == indiemotion::net::Identifier("someid"));
+        REQUIRE(message->payloadType() == indiemotion::NetPayloadType::MotionUpdateXForm);
+        REQUIRE(message->id() == indiemotion::NetIdentifier("someid"));
 
         auto inPayload = message->payloadPtrAs<indiemotion::net::MotionUpdateXForm>();
         REQUIRE(inPayload->xform.translation.x == 1.0);

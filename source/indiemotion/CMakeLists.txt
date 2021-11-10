@@ -1,6 +1,6 @@
 # Always list the source files explicitly, including headers so that they are listed in the IDE
 # If you need to use files based on a variable value, use target_sources
-add_library(indiemotion INTERFACE include/indiemotion/net/queue.hpp)
+add_library(indiemotion INTERFACE)
 target_include_directories(indiemotion INTERFACE include ${Boost_INCLUDE_DIRS} ${INDIEMOTION_PROTOBUF_INCLUDE})
 set_target_properties(indiemotion PROPERTIES
   FRAMEWORK TRUE

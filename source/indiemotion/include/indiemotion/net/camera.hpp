@@ -5,47 +5,47 @@
 
 namespace indiemotion::net
 {
-    struct GetCameraList : public net::Payload_T
+    struct GetCameraList : public NetPayload_T
     {
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::GetCameraList;
+            return NetPayloadType::GetCameraList;
         }
     };
 
-    struct CameraList : public net::Payload_T
+    struct CameraList : public NetPayload_T
     {
         std::vector<cameras::Camera> cameras;
 
         CameraList(std::vector<cameras::Camera> cameras) : cameras(cameras) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::CameraList;
+            return NetPayloadType::CameraList;
         }
     };
 
-    struct SetCamera : public net::Payload_T
+    struct SetCamera : public NetPayload_T
     {
         std::string cameraId;
 
         SetCamera(std::string id) : cameraId(id) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::SetCamera;
+            return NetPayloadType::SetCamera;
         }
     };
 
-    struct CameraInfo : public net::Payload_T
+    struct CameraInfo : public NetPayload_T
     {
         std::optional<cameras::Camera> camera;
 
         CameraInfo(cameras::Camera camera) : camera(camera) {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::CameraInfo;
+            return NetPayloadType::CameraInfo;
         }
     };
 } // namespace indiemotion::cameras

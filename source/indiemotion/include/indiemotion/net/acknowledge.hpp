@@ -5,13 +5,13 @@
 
 namespace indiemotion::net
 {
-    struct Acknowledge : public Payload_T
+    struct Acknowledge : public NetPayload_T
     {
         Acknowledge() {}
 
-        PayloadType type() const
+        NetPayloadType type() const
         {
-            return PayloadType::Acknowledge;
+            return NetPayloadType::Acknowledge;
         }
     };
 
@@ -34,7 +34,7 @@ namespace indiemotion::net
             std::optional<std::function<void()>> callback;
         };
 
-        std::map<Identifier, record> _m_message_table{};
+        std::map<NetIdentifier, record> _m_message_table{};
 
         std::shared_ptr<spdlog::logger> _logger;
 
@@ -49,7 +49,7 @@ namespace indiemotion::net
          *
          * @param uid The unique identifier for the message to track
          */
-        void acknowledge(Identifier uid)
+        void acknowledge(NetIdentifier uid)
         {
             if (_m_message_table.count(uid) > 0)
             {
@@ -69,7 +69,7 @@ namespace indiemotion::net
             }
         }
 
-        void queue(Identifier uid, std::function<void()> callback)
+        void queue(NetIdentifier uid, std::function<void()> callback)
         {
             _logger->trace("queued '{}' for acknowledgement", uid);
             _m_message_table[uid] = record{callback};
