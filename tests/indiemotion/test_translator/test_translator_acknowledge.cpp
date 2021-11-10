@@ -10,7 +10,7 @@ TEST_CASE("Translate Acknowledge Messages")
     auto translator = indiemotion::net::MessageTranslator();
 
     auto payload = std::make_unique<indiemotion::net::Acknowledge>();
-    auto message = indiemotion::net::createMessage(
+    auto message = indiemotion::net::makeMessageWithResponseID(
         indiemotion::net::Identifier("somemessageID"),
         std::move(payload));
     auto protobuf = translator.translateMessage(std::move(message));

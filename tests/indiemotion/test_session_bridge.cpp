@@ -68,7 +68,7 @@ SCENARIO("Initializing the Session")
         WHEN("the client sends an acknowledge message")
         {
             auto ackPtr = std::make_unique<indiemotion::net::Acknowledge>();
-            auto message = indiemotion::net::createMessage(response->id(), std::move(ackPtr));
+            auto message = indiemotion::net::makeMessageWithResponseID(response->id(), std::move(ackPtr));
 
             bridge.processMessage(std::move(message));
             std::shared_ptr<indiemotion::net::Message> expected;

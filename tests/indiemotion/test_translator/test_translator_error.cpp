@@ -14,10 +14,9 @@ TEST_CASE("Translate Error Messages to Protobuf")
         indiemotion::net::Error::Type::InvalidMessage,
         "some kind of invalid message error"
         );
-    auto message = indiemotion::net::createMessage(
+    auto message = indiemotion::net::makeMessageWithIdAndResponseId(
         indiemotion::net::Identifier("somemessageID"),
-        indiemotion::net::Identifier("responseID"),
-        std::move(payload));
+        indiemotion::net::Identifier("responseID"), std::move(payload));
 
     auto protobuf = translator.translateMessage(std::move(message));
 

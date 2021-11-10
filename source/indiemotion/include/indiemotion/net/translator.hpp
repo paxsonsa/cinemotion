@@ -155,9 +155,8 @@ namespace indiemotion::net
             case protobuf::messages::Message::kAcknowledge: {
                 auto payload =
                     std::make_unique<indiemotion::net::Acknowledge>();
-                auto message = createMessage(
-                    Identifier(header.id()),
-                    Identifier(header.responseid()),
+                auto message = makeMessageWithIdAndResponseId(
+                    Identifier(header.id()), Identifier(header.responseid()),
                     std::move(payload));
                 return std::move(message);
             }
@@ -172,9 +171,8 @@ namespace indiemotion::net
             case protobuf::messages::Message::kGetCameraList: {
                 auto payload =
                     std::make_unique<GetCameraList>();
-                auto message = createMessageWithId(
-                    Identifier(header.id()),
-                    std::move(payload));
+                auto message = makeMessageWithId(Identifier(header.id()),
+                                                 std::move(payload));
                 return std::move(message);
             }
             case protobuf::messages::Message::kMotionSetMode:
@@ -206,18 +204,16 @@ namespace indiemotion::net
                     break;
                 }
 
-                auto message = createMessageWithId(
-                    Identifier(header.id()),
-                    std::move(outPayload));
+                auto message = makeMessageWithId(Identifier(header.id()),
+                                                 std::move(outPayload));
                 return std::move(message);
             }
             case protobuf::messages::Message::kMotionGetMode:
             {
                 auto payload =
                     std::make_unique<MotionGetMode>();
-                auto message = createMessageWithId(
-                    Identifier(header.id()),
-                    std::move(payload));
+                auto message = makeMessageWithId(Identifier(header.id()),
+                                                 std::move(payload));
                 return std::move(message);
             }
             case protobuf::messages::Message::kMotionXform:
@@ -233,9 +229,8 @@ namespace indiemotion::net
 
                 auto outPayload =
                     std::make_unique<MotionUpdateXForm>(std::move(xform));
-                auto message = createMessageWithId(
-                    Identifier(header.id()),
-                    std::move(outPayload));
+                auto message = makeMessageWithId(Identifier(header.id()),
+                                                 std::move(outPayload));
                 return std::move(message);
             }
             case protobuf::messages::Message::kMotionActiveMode:
