@@ -52,13 +52,13 @@ namespace indiemotion
                 apiVersion(),
                 newFeatureSet(0));
 
-            _m_sessionPtr->setStatus(Status::Initialized);
+            _m_sessionPtr->setStatus(SessionStatus::Initialized);
             auto message = net::createMessage(std::move(payload));
             message->requiresAcknowledgement(true);
 
             _m_ackCoordinator->queue(message->id(),
                                      [&]()
-                                     { _m_sessionPtr->setStatus(Status::Activated); });
+                                     { _m_sessionPtr->setStatus(SessionStatus::Activated); });
 
             _m_queuePtr->push(std::move(message));
         }

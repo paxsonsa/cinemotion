@@ -8,7 +8,7 @@
 namespace indiemotion
 {
 
-    enum class Status
+    enum class SessionStatus
     {
         Offline,
         Initialized,
@@ -18,7 +18,7 @@ namespace indiemotion
     class SessionController
     {
     private:
-        Status _m_status = Status::Offline;
+        SessionStatus _m_status = SessionStatus::Offline;
         std::shared_ptr<SessionControllerDelegate> _m_delegate = nullptr;
 
         std::unique_ptr<cameras::CameraManager> _m_camManager = nullptr;
@@ -37,9 +37,9 @@ namespace indiemotion
         }
 
         // ----------------------------------------------------------------
-        // SessionController Status
-        Status status() const { return _m_status; }
-        void setStatus(Status status) { _m_status = status; }
+        // SessionController SessionStatus
+        SessionStatus status() const { return _m_status; }
+        void setStatus(SessionStatus status) { _m_status = status; }
 
         // ----------------------------------------------------------------
         // Cameras List

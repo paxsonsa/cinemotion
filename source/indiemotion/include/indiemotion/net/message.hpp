@@ -1,4 +1,5 @@
 #pragma once
+#include <indiemotion/logging.hpp>
 
 namespace indiemotion::net {
     /**
@@ -91,7 +92,7 @@ namespace indiemotion::net {
          * @param id Identifier for the message.
          * @param payloadPtr A std::unique_ptr to the payload type.
          */
-        Message(Idenitfier id, std::unique_ptr<Payload_T> payloadPtr)
+        Message(Identifier id, std::unique_ptr<Payload_T> payloadPtr)
             : _m_id(id), _m_payloadPtr(std::move(payloadPtr)) {
             init();
         }
