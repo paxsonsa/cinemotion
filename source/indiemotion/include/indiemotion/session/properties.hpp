@@ -2,39 +2,39 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/net/message.hpp>
 
-namespace indiemotion::session
+namespace indiemotion
 {
 
-    typedef std::uint32_t FeatureSet;
+    typedef std::uint32_t SessionFeatureSet;
 
-    FeatureSet newFeatureSet(std::uint32_t features)
+    SessionFeatureSet newFeatureSet(std::uint32_t features)
     {
-        return FeatureSet(features);
+        return SessionFeatureSet(features);
     }
 
-    enum class Feature : std::uint32_t
+    enum class SessionFeature : std::uint32_t
     {
         VideoStreaming = 0x01,
         TrackHistory = 0x02,
         CustomControls = 0x04,
     };
 
-    Feature operator|(Feature lhs, Feature rhs)
+    SessionFeature operator|(SessionFeature lhs, SessionFeature rhs)
     {
-        return static_cast<Feature>(
-            static_cast<std::underlying_type<Feature>::type>(lhs) |
-            static_cast<std::underlying_type<Feature>::type>(rhs));
+        return static_cast<SessionFeature>(
+            static_cast<std::underlying_type<SessionFeature>::type>(lhs) |
+            static_cast<std::underlying_type<SessionFeature>::type>(rhs));
     }
 
     struct SessionProperties : public net::Payload_T
     {
         std::string id;
         std::string apiVersion;
-        FeatureSet features;
+        SessionFeatureSet features;
 
         SessionProperties(std::string id,
                           std::string apiVersion,
-                          session::FeatureSet features) : id(id), apiVersion(apiVersion), features(features) {}
+                          SessionFeatureSet features) : id(id), apiVersion(apiVersion), features(features) {}
 
         net::PayloadType type() const
         {

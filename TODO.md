@@ -1,4 +1,9 @@
-- Migrate SendQueue to be a special asio context work item 
+- Migrate SendQueue to be a special asio context work item
+- SessionInitialization should come from client.
+  - FPS
+  - ID
+  - Device Information
+  - 
 - Translator (message to protobuf)
   - PayloadType::SessionInitialization 
   - PayloadType::SessionShutdown
@@ -21,7 +26,7 @@
         Do we need a queue for the converted messages?
 
 - SessionProxy
-  - Given to Delegate to Control Session and Pass Messages to user.
+  - Given to SessionControllerDelegate to Control Session and Pass Messages to user.
 
 - Reset Call
 - [MAYBE] Use HTTP for all information requests and streamed data via http?

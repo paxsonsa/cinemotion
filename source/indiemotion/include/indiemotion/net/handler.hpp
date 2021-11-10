@@ -11,7 +11,7 @@ namespace indiemotion::net
     public:
         virtual ~MessageHandler_T() {}
         virtual std::optional<std::unique_ptr<Message>>
-        handleMessage(std::weak_ptr<session::Session> sessionPtr,
+        handleMessage(std::weak_ptr<SessionController> sessionPtr,
                       std::unique_ptr<Message> messagePtr) = 0;
     };
 }

@@ -20,13 +20,13 @@ namespace indiemotion
         std::shared_ptr<spdlog::logger> _logger;
         std::string _m_id = "default";
         std::shared_ptr<net::MessageQueue> _m_queuePtr;
-        std::shared_ptr<Session> _m_sessionPtr;
+        std::shared_ptr<SessionController> _m_sessionPtr;
         std::unique_ptr<net::AcknowledgeCoordinator> _m_ackCoordinator;
 
     public:
         static const std::string APIVersion;
 
-        SessionBridge(std::shared_ptr<net::MessageQueue> queuePtr, std::shared_ptr<Session> sessionPtr)
+        SessionBridge(std::shared_ptr<net::MessageQueue> queuePtr, std::shared_ptr<SessionController> sessionPtr)
         {
             _m_queuePtr = std::move(queuePtr);
             _logger = logging::getLogger(LOGGER_NAME);
@@ -34,7 +34,7 @@ namespace indiemotion
             _m_ackCoordinator = std::make_unique<net::AcknowledgeCoordinator>();
         }
 
-        SessionBridge(std::string name, std::shared_ptr<net::MessageQueue> queuePtr, std::shared_ptr<Session> sessionPtr)
+        SessionBridge(std::string name, std::shared_ptr<net::MessageQueue> queuePtr, std::shared_ptr<SessionController> sessionPtr)
         {
             _m_queuePtr = std::move(queuePtr);
             _logger = logging::getLogger(LOGGER_NAME);

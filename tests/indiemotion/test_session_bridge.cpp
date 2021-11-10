@@ -21,7 +21,7 @@ SCENARIO("Initializing the Session")
     GIVEN("a new manager object")
     {
         auto id = "SessionName";
-        auto session = std::make_shared<session::Session>();
+        auto session = std::make_shared<SessionController>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         auto bridge = SessionBridge(id, queue, session);
 
@@ -42,7 +42,7 @@ SCENARIO("Initializing the Session")
 
                 AND_THEN("the response should be the session properties we expect")
                 {
-                    auto properties = response->payloadPtrAs<session::SessionProperties>();
+                    auto properties = response->payloadPtrAs<SessionProperties>();
                     REQUIRE(properties->id == id);
                     REQUIRE(properties->apiVersion == SessionBridge::APIVersion);
                     REQUIRE(properties->features == 0);
@@ -53,7 +53,7 @@ SCENARIO("Initializing the Session")
 
     GIVEN("an initialized session manager")
     {
-        auto session = std::make_shared<session::Session>();
+        auto session = std::make_shared<SessionController>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         auto bridge = indiemotion::SessionBridge(queue, session);
         bridge.initialize();
@@ -63,7 +63,7 @@ SCENARIO("Initializing the Session")
 
         REQUIRE(didGetItem);
         REQUIRE(response->doesRequireAcknowledgement());
-        REQUIRE(session->status() == session::Status::Initialized);
+        REQUIRE(session->status() == SessionStatus::Initialized);
 
         WHEN("the client sends an acknowledge message")
         {
@@ -80,7 +80,7 @@ SCENARIO("Initializing the Session")
 
             AND_THEN("the sesison should be active")
             {
-                REQUIRE(session->status() == session::Status::Activated);
+                REQUIRE(session->status() == SessionStatus::Activated);
             }
         }
     }
@@ -90,10 +90,10 @@ SCENARIO("acknowledge message with no ID should return an error")
 {
     GIVEN("an active session bridge")
     {
-        auto session = std::make_shared<session::Session>();
+        auto session = std::make_shared<SessionController>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
         auto bridge = indiemotion::SessionBridge(queue, session);
-        session->setStatus(session::Status::Activated);
+        session->setStatus(SessionStatus::Activated);
 
         WHEN("an acknowledge message is processed without an inResponseToId")
         {
@@ -136,8 +136,8 @@ SCENARIO("List the Cameras")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        auto session = std::make_shared<session::Session>(delegate);
-        session->setStatus(session::Status::Activated);
+        auto session = std::make_shared<SessionController>(delegate);
+        session->setStatus(SessionStatus::Activated);
         auto bridge = indiemotion::SessionBridge(queue, session);
 
 
@@ -193,9 +193,9 @@ SCENARIO("Set the Camera Successfully")
     GIVEN("a session bridge")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<session::Session>(delegate);
+        auto session = std::make_shared<SessionController>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        session->setStatus(session::Status::Activated);
+        session->setStatus(SessionStatus::Activated);
         auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("bridge processes setcamera messages")
@@ -236,9 +236,9 @@ SCENARIO("updating the motion mode")
     GIVEN("a session bridge")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<session::Session>(delegate);
+        auto session = std::make_shared<SessionController>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        session->setStatus(session::Status::Activated);
+        session->setStatus(SessionStatus::Activated);
         auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("bridge processes setmotionmode=live message")
@@ -329,9 +329,9 @@ SCENARIO("updating the motion xform")
     GIVEN("a fresh active session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<session::Session>(delegate);
+        auto session = std::make_shared<SessionController>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        session->setStatus(session::Status::Activated);
+        session->setStatus(SessionStatus::Activated);
         session->setMotionMode(MotionMode::Live);
         auto bridge = indiemotion::SessionBridge(queue, session);
 
@@ -377,9 +377,9 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
     GIVEN("a fresh active session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<session::Session>(delegate);
+        auto session = std::make_shared<SessionController>(delegate);
         auto queue = std::make_shared<indiemotion::net::MessageQueue>();
-        session->setStatus(session::Status::Activated);
+        session->setStatus(SessionStatus::Activated);
         auto bridge = indiemotion::SessionBridge(queue, session);
 
         WHEN("the session's motion mode is off and motion update is processed")

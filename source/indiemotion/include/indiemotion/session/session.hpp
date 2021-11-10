@@ -5,7 +5,7 @@
 #include <indiemotion/motion/manager.hpp>
 #include <indiemotion/session/delegate.hpp>
 
-namespace indiemotion::session
+namespace indiemotion
 {
 
     enum class Status
@@ -15,7 +15,7 @@ namespace indiemotion::session
         Activated,
     };
 
-    class Session
+    class SessionController
     {
     private:
         Status _m_status = Status::Offline;
@@ -25,19 +25,19 @@ namespace indiemotion::session
         std::unique_ptr<MotionManager> _m_motionManager = nullptr;
 
     public:
-        Session()
+        SessionController()
         {
             _m_camManager = std::make_unique<cameras::CameraManager>();
             _m_motionManager = std::make_unique<MotionManager>();
         }
 
-        Session(std::shared_ptr<SessionControllerDelegate> delegate) : Session()
+        SessionController(std::shared_ptr<SessionControllerDelegate> delegate) : SessionController()
         {
             _m_delegate = delegate;
         }
 
         // ----------------------------------------------------------------
-        // Session Status
+        // SessionController Status
         Status status() const { return _m_status; }
         void setStatus(Status status) { _m_status = status; }
 

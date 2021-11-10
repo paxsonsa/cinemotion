@@ -76,7 +76,7 @@ public:
         swap(_m_writer, rhs._m_writer);
     }
 
-    void on_new_session(std::shared_ptr<indiemotion::motion::Session> new_session)
+    void on_new_session(std::shared_ptr<indiemotion::motion::SessionController> new_session)
     {
         // TODO Return Error Code (object) when the session setup works
         _m_session = new_session;

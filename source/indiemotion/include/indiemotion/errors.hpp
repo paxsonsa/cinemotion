@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 
-namespace indiemotion::errors
+namespace indiemotion
 {
     enum class ErrorType : std::uint32_t
     {

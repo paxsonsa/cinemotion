@@ -35,7 +35,7 @@ namespace indiemotion::server
             // TODO On return the session is initialized
             // Session initializes by send SESSION_INIT command
             // SessionDelegate::on_event_emit()
-            // auto session = std::make_shared<session::Session>();
+            // auto session = std::make_shared<SessionController>();
             // _m_delegate->on_new_session(session);
             // session->initialize();
             auto const threads = 1;
