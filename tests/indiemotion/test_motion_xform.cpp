@@ -9,7 +9,7 @@ SCENARIO("creating motion xform")
 {
     GIVEN("a xform")
     {
-        auto xform = motion::MotionXForm::create(
+        auto xform = MotionXForm::create(
             1.0f, 2.0f, 3.0f,
             4.0f, 5.0f, 6.0f);
 

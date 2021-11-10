@@ -9,7 +9,7 @@
 TEST_CASE("Translate MotionUpdateXForm Throws Exception")
 {
     auto translator = indiemotion::net::MessageTranslator();
-    auto xform = indiemotion::motion::MotionXForm::create(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+    auto xform = indiemotion::MotionXForm::create(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
     auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
     auto message = indiemotion::net::createMessage(std::move(payload));
 

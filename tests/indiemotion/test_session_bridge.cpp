@@ -317,9 +317,9 @@ SCENARIO("updating the motion xform")
     struct DummyDelegate : session::Delegate
     {
         bool wasReceivedMotionUpdateCalled = false;
-        motion::MotionXForm xform;
+        MotionXForm xform;
 
-        void receivedMotionUpdate(motion::MotionXForm m) override
+        void receivedMotionUpdate(MotionXForm m) override
         {
             wasReceivedMotionUpdateCalled = true;
             xform = m;
@@ -337,7 +337,7 @@ SCENARIO("updating the motion xform")
 
         WHEN("a motion message is processed")
         {
-            auto xform = motion::MotionXForm::create(
+            auto xform = MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
@@ -365,9 +365,9 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
     struct DummyDelegate : session::Delegate
     {
         bool wasReceivedMotionUpdateCalled = false;
-        motion::MotionXForm xform;
+        MotionXForm xform;
 
-        void receivedMotionUpdate(motion::MotionXForm m) override
+        void receivedMotionUpdate(MotionXForm m) override
         {
             wasReceivedMotionUpdateCalled = true;
             xform = m;
@@ -385,7 +385,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         WHEN("the session's motion mode is off and motion update is processed")
         {
             session->setMotionMode(MotionMode::Off);
-            auto xform = motion::MotionXForm::create(
+            auto xform = MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
@@ -409,7 +409,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         WHEN("the session's motion mode is live and motion update is processed")
         {
             session->setMotionMode(MotionMode::Live);
-            auto xform = motion::MotionXForm::create(
+            auto xform = MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));
@@ -436,7 +436,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         WHEN("the session's motion mode is live and motion update is processed")
         {
             session->setMotionMode(MotionMode::Live);
-            auto xform = motion::MotionXForm::create(
+            auto xform = MotionXForm::create(
                 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f);
             auto payload = std::make_unique<indiemotion::net::MotionUpdateXForm>(xform);
             auto message = indiemotion::net::createMessage(std::move(payload));

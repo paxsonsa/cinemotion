@@ -219,7 +219,7 @@ namespace indiemotion::net
             case protobuf::messages::Message::kMotionXform:
             {
                 auto inXForm = protobuf.motion_xform();
-                auto xform = motion::MotionXForm();
+                auto xform = MotionXForm();
                 xform.translation.x = inXForm.translation().x();
                 xform.translation.y = inXForm.translation().y();
                 xform.translation.z = inXForm.translation().z();

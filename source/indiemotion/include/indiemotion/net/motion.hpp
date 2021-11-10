@@ -42,10 +42,10 @@ namespace indiemotion::net
 
     struct MotionUpdateXForm : public net::Payload_T
     {
-        motion::MotionXForm xform;
+        MotionXForm xform;
 
-        MotionUpdateXForm(const motion::MotionXForm &xform) : xform(xform) {}
-        MotionUpdateXForm(motion::MotionXForm &&xform) : xform(std::move(xform)) {}
+        MotionUpdateXForm(const MotionXForm &xform) : xform(xform) {}
+        MotionUpdateXForm(MotionXForm &&xform) : xform(std::move(xform)) {}
 
         PayloadType type() const
         {

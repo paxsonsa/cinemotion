@@ -4,7 +4,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 
-namespace indiemotion::motion {
+namespace indiemotion {
     struct _XYZContainer {
         double x = 0.0f;
         double y = 0.0f;
@@ -53,7 +53,7 @@ namespace indiemotion::motion {
 
     /**
      * @brief Transformation Data
-     * 
+     *
      */
     struct MotionXForm {
         MotionTranslation translation;

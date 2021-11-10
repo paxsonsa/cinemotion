@@ -90,7 +90,7 @@ namespace indiemotion::session
 
         // ----------------------------------------------------------------
         // Motion Operation
-        void updateMotionXForm(motion::MotionXForm xform)
+        void updateMotionXForm(MotionXForm xform)
         {
             if (_m_motionManager->canAcceptMotionUpdate())
             {
