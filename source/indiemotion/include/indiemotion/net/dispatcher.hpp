@@ -7,6 +7,6 @@
 
 namespace indiemotion {
     struct NetMessageDispatcher {
-        virtual void dispatch(std::unique_ptr<NetMessage> message) = 0;
+        virtual void dispatch(NetMessage &&message) = 0;
     };
 }

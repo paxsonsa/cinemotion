@@ -13,13 +13,18 @@ message Error {
 
 message GetCameraList {}
 
+message SetActiveCamera
+{
+  string camera_id = 10;
+}
+
 message Camera { string id = 10; }
 
-message CameraList { repeated Camera camera = 1; }
+message CameraList { repeated Camera cameras = 1; }
 
 message SessionServerInfo {
   string id = 10;
-  string apiVersion = 20;
+  string api_version = 20;
   uint32 features = 30;
 }
 
@@ -27,12 +32,12 @@ message SessionProperties {}
 
 message SessionStart
 {
-  SessionServerInfo serverInfo = 10;
+  SessionServerInfo server_info = 10;
 }
 
 message SessionActivate
 {
-  SessionProperties sessionProperties = 10;
+  SessionProperties session_properties = 10;
 }
 
 message SessionShutdown {}

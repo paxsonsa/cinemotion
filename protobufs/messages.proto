@@ -1,13 +1,15 @@
 syntax = "proto3";
-package indiemotion.protobuf.messages;
+package indiemotion.protobuf;
 
 import "google/protobuf/timestamp.proto";
 import "payload.v1.proto";
 
 message Header {
-  google.protobuf.Timestamp timestamp = 1;
-  string id = 2;
-  optional string responseId = 3;
+  google.protobuf.Timestamp timestamp = 10;
+  string id = 20;
+  bool requires_response = 30;
+  optional string responseId = 40;
+
 }
 
 message Message {
@@ -18,6 +20,7 @@ message Message {
 
     indiemotion.protobuf.payloads.v1.GetCameraList get_camera_list = 30;
     indiemotion.protobuf.payloads.v1.CameraList camera_list = 31;
+    indiemotion.protobuf.payloads.v1.SetActiveCamera set_active_camera = 32;
 
     indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;
     indiemotion.protobuf.payloads.v1.MotionGetMode motion_get_mode = 41;

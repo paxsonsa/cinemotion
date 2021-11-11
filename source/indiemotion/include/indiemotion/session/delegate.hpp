@@ -1,4 +1,5 @@
 #pragma once
+#include <indiemotion/motion/xform.hpp>
 #include <indiemotion/cameras/camera.hpp>
 #include <indiemotion/session/controller.hpp>
 

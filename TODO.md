@@ -3,7 +3,7 @@
 - Process Thread
 - Connection Loop 
   - Read
-  - Write NetMessage from Send Loop
+  - Write NetOldMessage from Send Loop
 
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
