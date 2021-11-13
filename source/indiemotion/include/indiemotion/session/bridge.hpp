@@ -17,8 +17,8 @@ namespace indiemotion {
             _logger = logging::getLogger(LOGGER_NAME);
             _m_sessionPtr = std::move(sessionPtr);
 
-//            _m_callback_table[NetMessage::PayloadCase::kSessionActivate] =
-//                std::bind(&SessionBridge::_processSessionActivate, this, std::placeholders::_1);
+            _m_callback_table[NetMessage::PayloadCase::kSessionStart] =
+                std::bind(&SessionBridge::_processSessionStart, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kSessionShutdown] =
                 std::bind(&SessionBridge::_processSessionShutdown, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kGetCameraList] =
@@ -36,22 +36,13 @@ namespace indiemotion {
 
         [[nodiscard]] static std::string apiVersion() { return SessionBridge::APIVersion; }
 
-//        void start() {
-//            NetMessage message;
-//            message.mutable_header()->set_id(generateNewIdentifierString());
-//            auto payload = message.mutable_session_start();
-//            auto info = payload->mutable_server_info();
-//            info->set_api_version(apiVersion());
-//            info->set_features(0);
-//
-//            _m_sessionPtr->setStatus(SessionStatus::Starting);
-//            _m_dispatcher->dispatch(std::move(message));
-//        }
-
         void processMessage(NetMessage &&message) const {
             // TODO Handle Bad Access
             auto potential_callback = _m_callback_table[message.payload_case()];
             if (!potential_callback) {
+                auto name = netGetMessagePayloadName(message);
+                _logger->error("Could not process the message, no callback is registered for payload case: {}",
+                               name);
                 throw std::runtime_error("no callback specified in table for payload case.");
             }
             auto callback = potential_callback.value();
@@ -64,8 +55,9 @@ namespace indiemotion {
         std::shared_ptr<SessionController> _m_sessionPtr;
         std::array<std::optional<std::function<void(NetMessage &&)>>, 1024> _m_callback_table;
 
-        void _processSessionActivate(NetMessage &&message) {
+        void _processSessionStart(NetMessage &&message) {
             _logger->trace("PayloadCase=SessionActivate");
+            // TODO Check API Version and dispatch error if the API Version is not supported in this version
             _m_sessionPtr->setStatus(SessionStatus::Activated);
         }
 

@@ -13,7 +13,6 @@ Helper header to abstract the include of the indiemotion protocol bufs
 namespace indiemotion
 {
     using NetMessage = indiemotion::protobuf::Message;
-    using NetHeader = indiemotion::protobuf::Header;
     namespace netPayloadsV1 = indiemotion::protobuf::payloads::v1;
 
     /**
@@ -50,5 +49,12 @@ namespace indiemotion
         m.mutable_header()->set_id(id);
         m.mutable_header()->set_responseid(responseId);
         return std::move(m);
+    }
+
+    std::string netGetMessagePayloadName(const NetMessage &message)
+    {
+        auto desc = message.descriptor();
+        auto field = desc->FindFieldByNumber(message.payload_case());
+        return field->full_name();
     }
 }

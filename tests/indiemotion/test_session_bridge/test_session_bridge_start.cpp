@@ -27,51 +27,19 @@ SCENARIO("Starting the Session")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
-        WHEN("manager.start() is called") {
-            bridge.start();
-            auto response = std::move(dispatcher->messages[0]);
+        NetMessage message;
+        auto payload = message.mutable_session_start();
+        auto properties = payload->mutable_session_properties();
+        properties->set_api_version("1.0.0");
+        properties->set_session_id("some_id");
 
-            THEN("start() should have returned a response") {
-                REQUIRE(dispatcher->messages.size() == 1);
-            }
-            AND_THEN("the response should be a session start message") {
-                REQUIRE(response.payload_case() == NetMessage::PayloadCase::kSessionStart);
-            }
-            AND_THEN("the response should be the session server info we expect") {
-                auto payload = response.session_start();
-
-                REQUIRE(payload.server_info().api_version() == SessionBridge::APIVersion);
-                REQUIRE(payload.server_info().features() == 0);
-            }
-            AND_THEN("session controller status should be starting") {
-                REQUIRE(session->status() == SessionStatus::Starting);
-            }
-        }
-    }
-}
-SCENARIO("Activating the Session")
-{
-    GIVEN("an started session controller") {
-        auto session = std::make_shared<SessionController>();
-        auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(dispatcher, session);
-        bridge.start();
-
-        // Clear the messages so far
-        dispatcher->messages.clear();
-
-        WHEN("the client sends a session activate message") {
-            auto message = netMakeMessage();
-            auto payload = message.mutable_session_activate();
-            payload->mutable_session_properties();
-
+        WHEN("start message is processed") {
             bridge.processMessage(std::move(message));
 
-            THEN("no message should be returned") {
+            THEN("No response should be returned") {
                 REQUIRE(dispatcher->messages.size() == 0);
             }
-
-            AND_THEN("the session should be active") {
+            AND_THEN("session controller status should be activated") {
                 REQUIRE(session->status() == SessionStatus::Activated);
             }
         }
