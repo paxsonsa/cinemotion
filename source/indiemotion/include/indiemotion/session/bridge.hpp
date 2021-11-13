@@ -2,7 +2,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/logging.hpp>
 #include <indiemotion/net/message.hpp>
-#include <indiemotion/net/dispatcher.hpp>
+#include <indiemotion/net/dispatch.hpp>
 #include <indiemotion/session/server_info.hpp>
 #include <indiemotion/session/controller.hpp>
 
@@ -17,8 +17,8 @@ namespace indiemotion {
             _logger = logging::getLogger(LOGGER_NAME);
             _m_sessionPtr = std::move(sessionPtr);
 
-            _m_callback_table[NetMessage::PayloadCase::kSessionActivate] =
-                std::bind(&SessionBridge::_processSessionActivate, this, std::placeholders::_1);
+//            _m_callback_table[NetMessage::PayloadCase::kSessionActivate] =
+//                std::bind(&SessionBridge::_processSessionActivate, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kSessionShutdown] =
                 std::bind(&SessionBridge::_processSessionShutdown, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kGetCameraList] =
@@ -36,29 +36,33 @@ namespace indiemotion {
 
         [[nodiscard]] static std::string apiVersion() { return SessionBridge::APIVersion; }
 
-        void start() {
-            NetMessage message;
-            message.mutable_header()->set_id(generateNewIdentifierString());
-            auto payload = message.mutable_session_start();
-            auto info = payload->mutable_server_info();
-            info->set_api_version(apiVersion());
-            info->set_features(0);
-
-            _m_sessionPtr->setStatus(SessionStatus::Starting);
-            _m_dispatcher->dispatch(std::move(message));
-        }
+//        void start() {
+//            NetMessage message;
+//            message.mutable_header()->set_id(generateNewIdentifierString());
+//            auto payload = message.mutable_session_start();
+//            auto info = payload->mutable_server_info();
+//            info->set_api_version(apiVersion());
+//            info->set_features(0);
+//
+//            _m_sessionPtr->setStatus(SessionStatus::Starting);
+//            _m_dispatcher->dispatch(std::move(message));
+//        }
 
         void processMessage(NetMessage &&message) const {
             // TODO Handle Bad Access
-            _m_callback_table[message.payload_case()](std::move(message));
+            auto potential_callback = _m_callback_table[message.payload_case()];
+            if (!potential_callback) {
+                throw std::runtime_error("no callback specified in table for payload case.");
+            }
+            auto callback = potential_callback.value();
+            callback(std::move(message));
         }
 
     private:
         std::shared_ptr<spdlog::logger> _logger;
         std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
         std::shared_ptr<SessionController> _m_sessionPtr;
-
-        std::array<std::function<void(NetMessage &&)>, 1024> _m_callback_table;
+        std::array<std::optional<std::function<void(NetMessage &&)>>, 1024> _m_callback_table;
 
         void _processSessionActivate(NetMessage &&message) {
             _logger->trace("PayloadCase=SessionActivate");
@@ -93,27 +97,21 @@ namespace indiemotion {
         void _processMotionSetMode(NetMessage &&message) {
             _logger->trace("PayloadCase=MotionSetMode");
             auto payload = message.motion_set_mode();
-            switch(payload.mode())
-            {
-            case netPayloadsV1::MotionMode::Off:
-                _m_sessionPtr->setMotionMode(MotionMode::Off);
+            switch (payload.mode()) {
+            case netPayloadsV1::MotionMode::Off:_m_sessionPtr->setMotionMode(MotionMode::Off);
                 break;
-            case netPayloadsV1::MotionMode::Live:
-                _m_sessionPtr->setMotionMode(MotionMode::Live);
+            case netPayloadsV1::MotionMode::Live:_m_sessionPtr->setMotionMode(MotionMode::Live);
                 break;
-            case netPayloadsV1::MotionMode::Recording:
-                _m_sessionPtr->setMotionMode(MotionMode::Recording);
+            case netPayloadsV1::MotionMode::Recording:_m_sessionPtr->setMotionMode(MotionMode::Recording);
                 break;
-            default:
-                break;
+            default:break;
             }
         }
 
         void _processMotionXForm(NetMessage &&message) {
             _logger->trace("PayloadCase=MotionXForm");
 
-            if (_m_sessionPtr->currentMotionMode() == MotionMode::Off)
-            {
+            if (_m_sessionPtr->currentMotionMode() == MotionMode::Off) {
                 return;
             }
 

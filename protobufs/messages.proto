@@ -28,8 +28,7 @@ message Message {
     indiemotion.protobuf.payloads.v1.MotionXForm motion_xform = 43;
 
     indiemotion.protobuf.payloads.v1.SessionStart session_start = 50;
-    indiemotion.protobuf.payloads.v1.SessionActivate session_activate = 51;
-    indiemotion.protobuf.payloads.v1.SessionActivate session_shutdown = 52;
+    indiemotion.protobuf.payloads.v1.SessionShutdown session_shutdown = 51;
 
   }
 }

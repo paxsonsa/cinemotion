@@ -1,3 +1,7 @@
+- Refactor Session startup
+  - Client Sends Start Message
+    - Remove Session Activate
+  - Server Responds with Nothing unless error
 - Server Start Up
 - Connection Accepting
 - Process Thread

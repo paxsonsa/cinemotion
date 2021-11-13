@@ -24,15 +24,19 @@ Header for providing common include across the library
 #include <indiemotion/common/info.hpp>
 #include <indiemotion/common/log.hpp>
 
-template <typename TO, typename FROM>
-std::unique_ptr<TO> static_unique_pointer_cast(std::unique_ptr<FROM> &&old)
+namespace indiemotion
 {
-    return std::unique_ptr<TO>{static_cast<TO *>(old.release())};
-    // conversion: unique_ptr<FROM>->FROM*->TO*->unique_ptr<TO>
+    template <typename TO, typename FROM>
+    std::unique_ptr<TO> static_unique_pointer_cast(std::unique_ptr<FROM> &&old)
+    {
+        return std::unique_ptr<TO>{static_cast<TO *>(old.release())};
+        // conversion: unique_ptr<FROM>->FROM*->TO*->unique_ptr<TO>
+    }
+
+    template <typename E>
+    constexpr auto to_underlying(E e) noexcept
+    {
+        return static_cast<std::underlying_type_t<E>>(e);
+    }
 }
 
-template <typename E>
-constexpr auto to_underlying(E e) noexcept
-{
-    return static_cast<std::underlying_type_t<E>>(e);
-}

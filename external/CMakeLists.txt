@@ -22,5 +22,9 @@ target_include_directories(
 add_library(doctest::doctest ALIAS doctest)
 target_compile_features(doctest INTERFACE cxx_std_17)
 
+# Use RapidJSON
+add_library(rapidjson INTERFACE)
+target_include_directories(indiemotion INTERFACE rapidjson/include)
+
 # Use replx for our indiemotion-cli
 #add_subdirectory(replxx)

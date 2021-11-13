@@ -5,7 +5,7 @@
 */
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/net/dispatcher.hpp>
+#include <indiemotion/net/dispatch.hpp>
 #include <indiemotion/session.hpp>
 #include <indiemotion/net/message.hpp>
 

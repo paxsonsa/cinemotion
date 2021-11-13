@@ -18,9 +18,9 @@ message SetActiveCamera
   string camera_id = 10;
 }
 
-message Camera { string id = 10; }
+message Camera {string id = 10;}
 
-message CameraList { repeated Camera cameras = 1; }
+message CameraList {repeated Camera cameras = 1;}
 
 message SessionServerInfo {
   string id = 10;
@@ -28,14 +28,13 @@ message SessionServerInfo {
   uint32 features = 30;
 }
 
-message SessionProperties {}
-
-message SessionStart
+message SessionProperties
 {
-  SessionServerInfo server_info = 10;
+  string session_id = 10;
+  string api_version = 20;
 }
 
-message SessionActivate
+message SessionStart
 {
   SessionProperties session_properties = 10;
 }
@@ -48,11 +47,11 @@ enum MotionMode {
   Recording = 2;
 }
 
-message MotionActiveMode { MotionMode mode = 1; }
+message MotionActiveMode {MotionMode mode = 1;}
 
-message MotionSetMode { MotionMode mode = 1; }
+message MotionSetMode {MotionMode mode = 1;}
 
-message MotionGetMode { MotionMode mode = 1; }
+message MotionGetMode {MotionMode mode = 1;}
 
 message XFormData {
   double x = 1;

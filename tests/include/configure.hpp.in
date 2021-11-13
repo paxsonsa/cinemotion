@@ -1,0 +1,15 @@
+#pragma once
+#include <string>
+// #include <string_view>
+
+namespace testing
+{
+static constexpr auto resources_root = "@TEST_RESOURCE_DIRECTORY@";
+
+std::string getResourcePathFor(std::string filename)
+{
+    auto path = std::string{resources_root};
+    return path + "/" + filename;
+}
+
+}

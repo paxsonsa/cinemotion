@@ -1,8 +1,14 @@
 
+# Generate the test configuration header.
+set(TEST_RESOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/resources)
+file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(include/configure.hpp.in include/configure.hpp)
+
 file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/indiemotion/*.cpp)
 foreach(item ${TEST_FILES})
     get_filename_component(name ${item} NAME_WE)
     add_executable(${name} ${item})
+    target_include_directories(${name} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
     target_link_libraries(${name}
     #PUBLIC # Useful for libraries, see https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html for more details about transitive usage requirements.
         #libraries/targets to link when linking this library
@@ -10,10 +16,11 @@ foreach(item ${TEST_FILES})
     PRIVATE # The following libraries are only linked for this target, and its flags/dependencies will not be used when linking against this target
         indiemotion
 
+        rapidjson
         doctest::doctest
         #debug DEBUGLIBS
         #optimized RELEASELIBS
-)
+    )
     message("adding ${name}")
     add_test(
         NAME IndieMotion.${name} 
@@ -28,6 +35,7 @@ file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/indiemotion/**/*.cpp)
 foreach(item ${TEST_FILES})
     get_filename_component(name ${item} NAME_WE)
     add_executable(${name} ${item})
+    target_include_directories(${name} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
     target_link_libraries(${name}
         #PUBLIC # Useful for libraries, see https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html for more details about transitive usage requirements.
             #libraries/targets to link when linking this library
@@ -35,6 +43,7 @@ foreach(item ${TEST_FILES})
         PRIVATE # The following libraries are only linked for this target, and its flags/dependencies will not be used when linking against this target
             indiemotion
 
+            rapidjson
             doctest::doctest
             #debug DEBUGLIBS
             #optimized RELEASELIBS

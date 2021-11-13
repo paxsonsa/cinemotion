@@ -7,6 +7,9 @@ Helper header to abstract the include of the indiemotion protocol bufs
 #include <indiemotion-protobufs/messages.pb.h>
 #include <indiemotion-protobufs/payload.v1.pb.h>
 
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 namespace indiemotion
 {
     using NetMessage = indiemotion::protobuf::Message;

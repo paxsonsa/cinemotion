@@ -1,0 +1,43 @@
+[
+  {
+    "message": {
+      "sessionStart": {
+        "sessionProperties": {
+          "sessionId": "some_session_ID",
+          "apiVersion": "1.0.0"
+        }
+      }
+    }
+  },
+  {
+    "message": {
+      "getCameraList": {}
+    },
+    "expected": {
+      "cameraList": {
+        "cameras": [
+          {"id": "cam1"},
+          {"id": "cam2"},
+          {"id": "cam3"}
+        ]
+      }
+    }
+  },
+  {
+    "message": {
+      "motionSetMode": {
+        "mode": "Live"
+      }
+    }
+  },
+  {
+    "message": {
+      "motionGetMode": {}
+    },
+    "expect": {
+      "motionActiveMode": {
+        "mode": "Live"
+      }
+    }
+  }
+]
