@@ -9,6 +9,7 @@ message Acknowledge {
 message Error {
   string type = 10;
   string message = 11;
+  bool is_fatal = 12;
 }
 
 message GetCameraList {}
@@ -51,7 +52,7 @@ message MotionActiveMode {MotionMode mode = 1;}
 
 message MotionSetMode {MotionMode mode = 1;}
 
-message MotionGetMode {MotionMode mode = 1;}
+message MotionGetMode {}
 
 message XFormData {
   double x = 1;

@@ -6,43 +6,69 @@
 
 namespace indiemotion
 {
-    enum class ErrorType : std::uint32_t
+    /**
+     * An Exception Type that contains information for transport to and from client.
+     */
+    struct Exception : public std::exception
     {
-        UnknownError = 0,
-        InvalidMessage,
-    };
-
-    std::string ErrorType_toString(ErrorType e)
-    {
-        switch (e)
-        {
-        case ErrorType::UnknownError:
-            return "UnknownError";
-        case ErrorType::InvalidMessage:
-            return "InvalidMessage";
-        }
-    }
-
-    class SessionError : public std::exception
-    {
-    public:
-        ErrorType etype;
+        /// The type of error that this exception represents
+        std::string type;
+        /// A user friendly message that describe the error.
         std::string message;
+        /// Mark this Exception as Fatal meaning that the session will shutdown immediately.
+        bool is_fatal = false;
 
-    private:
-        std::string _m_error;
-
-    public:
-        SessionError(ErrorType type, std::string message) noexcept : etype(type), message(message)
-        {
-            _m_error = ErrorType_toString(etype);
-            _m_error += ": " + message;
+        /**
+         * Construct an Exception from the type and message
+         * @param type A string representing the error type.
+         * @param message A user friendly message describing the message.
+         */
+        Exception(std::string type, std::string message, bool fatal=false) noexcept : type(type), message(message), is_fatal(fatal) {
+            _m_full_message = type;
+            _m_full_message += ": " + message;
         }
 
+        /**
+         * Returns exception string
+         * @return a string which is a combination of the type and message.
+         */
         const char *what() const noexcept
         {
-            return _m_error.c_str();
+            return _m_full_message.c_str();
         }
+
+    private:
+        std::string _m_full_message;
     };
 
+    /**
+     * An Exception that is used when an unknown exception was caught and thus the session
+     * is going to shut down.
+     */
+    struct UnknownFatalException: Exception
+    {
+        UnknownFatalException(): Exception("UnknownFatalError",
+                                           "Session encountered an unknown fatal error, shutting down.",
+                                           true) {};
+    };
+
+    /**
+     * An Exception that is thrown when an operation on a session cannot happen because the
+     * Session needs to be initialized.
+     */
+    struct SessionUninitializedException: Exception
+    {
+        SessionUninitializedException(): Exception("SessionUninitialized",
+                                                   "Session must be initialized.") {};
+    };
+
+    /**
+     * An Exception that is thrown when the requested API version is
+     * not supported by the server.
+     */
+    struct SessionAPIVersionNotSupportedException: Exception
+    {
+        SessionAPIVersionNotSupportedException(): Exception("SessionAPIVersionNotSupported",
+                                                            "request api version is not supported.") {}
+    };
 } // namespace indiemotion::errors

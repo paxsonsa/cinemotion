@@ -20,17 +20,33 @@ struct DummyDispatcher : NetMessageDispatcher {
     }
 };
 
+struct DummyDelegate: SessionControllerDelegate
+{
+    bool sessionWillStartCalled = false;
+    bool sessionDidStartCalled = false;
+
+    void sessionWillStart() override {
+        sessionWillStartCalled = true;
+    }
+
+    void sessionDidStart() override
+    {
+        sessionDidStartCalled = true;
+    }
+};
+
 SCENARIO("Starting the Session")
 {
     GIVEN("a new controller object") {
-        auto session = std::make_shared<SessionController>();
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto session = std::make_shared<SessionController>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
         NetMessage message;
         auto payload = message.mutable_session_start();
         auto properties = payload->mutable_session_properties();
-        properties->set_api_version("1.0.0");
+        properties->set_api_version(SessionBridge::APIVersion);
         properties->set_session_id("some_id");
 
         WHEN("start message is processed") {
@@ -40,7 +56,43 @@ SCENARIO("Starting the Session")
                 REQUIRE(dispatcher->messages.size() == 0);
             }
             AND_THEN("session controller status should be activated") {
-                REQUIRE(session->status() == SessionStatus::Activated);
+                REQUIRE(session->status() == SessionStatus::Initialized);
+            }
+
+            AND_THEN("session delegate's sessionWillStart() and sessionDidStart()")
+            {
+                REQUIRE(delegate->sessionWillStartCalled);
+                REQUIRE(delegate->sessionDidStartCalled);
+            }
+        }
+    }
+}
+
+SCENARIO("Starting the session with unsupported API version")
+{
+    GIVEN("a new controller")
+    {
+        auto session = std::make_shared<SessionController>();
+        auto dispatcher = std::make_shared<DummyDispatcher>();
+        auto bridge = SessionBridge(dispatcher, session);
+
+        WHEN("start message is processed with unsupported version")
+        {
+            NetMessage message;
+            auto payload = message.mutable_session_start();
+            auto properties = payload->mutable_session_properties();
+            properties->set_api_version("99.9.999");
+            properties->set_session_id("some_id");
+
+            bridge.processMessage(std::move(message));
+
+            THEN("A session error message should be sent.")
+            {
+                REQUIRE(dispatcher->messages.size() == 1);
+                auto response = dispatcher->messages[0];
+                REQUIRE(response.has_error());
+                auto error = response.error();
+                REQUIRE(error.type() == "SessionAPIVersionNotSupported");
             }
         }
     }

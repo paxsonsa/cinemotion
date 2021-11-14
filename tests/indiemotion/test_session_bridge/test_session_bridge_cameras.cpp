@@ -51,7 +51,7 @@ SCENARIO("Listing the Cameras")
         auto session = std::make_shared<SessionController>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
-        session->setStatus(SessionStatus::Activated);
+        session->initialize();
 
 
         WHEN("bridge processes list camera messages")
@@ -111,7 +111,7 @@ SCENARIO("Set the Camera Successfully")
     {
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<SessionController>(delegate);
-        session->setStatus(SessionStatus::Activated);
+        session->initialize();
 
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);

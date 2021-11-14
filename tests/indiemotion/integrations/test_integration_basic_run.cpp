@@ -31,7 +31,7 @@ TEST_CASE("Execute Basic Start Up Integration")
     std::thread thread([&] {ioContext->run();});
 
     auto session = std::make_shared<indiemotion::SessionController>();
-    session->setStatus(indiemotion::SessionStatus::Activated);
+    session->initialize();
 
     auto dispatcher = std::make_shared<ResponseDispatcher>();
     auto bridge = indiemotion::SessionBridge(dispatcher, session);

@@ -4,6 +4,7 @@
 Helper header to abstract the include of the indiemotion protocol bufs
 */
 #pragma once
+#include <indiemotion/errors.hpp>
 #include <indiemotion-protobufs/messages.pb.h>
 #include <indiemotion-protobufs/payload.v1.pb.h>
 
@@ -51,10 +52,29 @@ namespace indiemotion
         return std::move(m);
     }
 
+    /**
+     * Create an Error Response Message
+     * @param messageID The message ID that causes the exception
+     * @param exception The exception to generate an error message from
+     * @return An error message that is in response to some message id
+     */
+    NetMessage netMakeErrorResponseFromException(const std::string messageID, const Exception &exception)
+    {
+        auto message = netMakeMessageWithResponseId(messageID);
+        auto error = message.mutable_error();
+        error->set_type(exception.type);
+        error->set_message(exception.message);
+        error->set_is_fatal(exception.is_fatal);
+
+        return std::move(message);
+    }
+
     std::string netGetMessagePayloadName(const NetMessage &message)
     {
         auto desc = message.descriptor();
         auto field = desc->FindFieldByNumber(message.payload_case());
         return field->full_name();
     }
+
+
 }

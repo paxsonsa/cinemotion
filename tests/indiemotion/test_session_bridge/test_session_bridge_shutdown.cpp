@@ -37,7 +37,7 @@ SCENARIO("signalling session shutdown successfully")
         auto session = std::make_shared<SessionController>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
-        session->setStatus(SessionStatus::Activated);
+        session->initialize();
 
         WHEN("the client signals a session shutdown")
         {

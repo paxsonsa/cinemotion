@@ -65,5 +65,7 @@ namespace indiemotion
         // ----------------------------------------------------------------
         // Session Operations
         virtual void sessionWillShutdown() {}
+        virtual void sessionWillStart() {}
+        virtual void sessionDidStart() {}
     };
 }

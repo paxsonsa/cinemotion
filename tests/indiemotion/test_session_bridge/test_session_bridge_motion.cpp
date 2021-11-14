@@ -39,7 +39,7 @@ SCENARIO("Set Motion Mode Successfully")
         auto session = std::make_shared<SessionController>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
-        session->setStatus(SessionStatus::Activated);
+        session->initialize();
 
         WHEN("bridge processes set motion mode=live message")
         {
@@ -106,3 +106,30 @@ SCENARIO("Set Motion Mode Successfully")
     }
 }
 
+SCENARIO("Get Motion Mode Successfully")
+{
+    GIVEN("an activated session controller") {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto session = std::make_shared<SessionController>(delegate);
+        auto dispatcher = std::make_shared<DummyDispatcher>();
+        auto bridge = SessionBridge(dispatcher, session);
+        session->initialize();
+        session->setMotionMode(MotionMode::Live);
+
+        WHEN("get mode message is processed")
+        {
+            auto message = netMakeMessage();
+            message.mutable_motion_get_mode();
+            bridge.processMessage(std::move(message));
+
+            THEN("a active motion mode message should be dispatched")
+            {
+                REQUIRE(dispatcher->messages.size() == 1);
+                auto response = dispatcher->messages[0];
+                REQUIRE(response.has_motion_active_mode());
+                REQUIRE(response.motion_active_mode().mode() == netPayloadsV1::MotionMode::Live);
+            }
+
+        }
+    }
+}

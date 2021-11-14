@@ -429,6 +429,7 @@ class Error final :
   enum : int {
     kTypeFieldNumber = 10,
     kMessageFieldNumber = 11,
+    kIsFatalFieldNumber = 12,
   };
   // string type = 10;
   void clear_type();
@@ -458,6 +459,15 @@ class Error final :
   std::string* _internal_mutable_message();
   public:
 
+  // bool is_fatal = 12;
+  void clear_is_fatal();
+  bool is_fatal() const;
+  void set_is_fatal(bool value);
+  private:
+  bool _internal_is_fatal() const;
+  void _internal_set_is_fatal(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.Error)
  private:
   class _Internal;
@@ -467,6 +477,7 @@ class Error final :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr type_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+  bool is_fatal_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_payload_2ev1_2eproto;
 };
@@ -2554,6 +2565,26 @@ inline void Error::set_allocated_message(std::string* message) {
   message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.Error.message)
+}
+
+// bool is_fatal = 12;
+inline void Error::clear_is_fatal() {
+  is_fatal_ = false;
+}
+inline bool Error::_internal_is_fatal() const {
+  return is_fatal_;
+}
+inline bool Error::is_fatal() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.Error.is_fatal)
+  return _internal_is_fatal();
+}
+inline void Error::_internal_set_is_fatal(bool value) {
+  
+  is_fatal_ = value;
+}
+inline void Error::set_is_fatal(bool value) {
+  _internal_set_is_fatal(value);
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.Error.is_fatal)
 }
 
 // -------------------------------------------------------------------

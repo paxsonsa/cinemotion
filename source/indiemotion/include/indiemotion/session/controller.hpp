@@ -1,7 +1,7 @@
 #pragma once
-
-#include <indiemotion/cameras/manager.hpp>
 #include <indiemotion/common.hpp>
+#include <indiemotion/errors.hpp>
+#include <indiemotion/cameras/manager.hpp>
 #include <indiemotion/motion/manager.hpp>
 #include <indiemotion/session/delegate.hpp>
 
@@ -11,8 +11,7 @@ namespace indiemotion
     enum class SessionStatus
     {
         Offline,
-        Starting,
-        Activated,
+        Initialized,
     };
 
     class SessionController
@@ -24,39 +23,64 @@ namespace indiemotion
         std::unique_ptr<cameras::CameraManager> _m_camManager = nullptr;
         std::unique_ptr<MotionManager> _m_motionManager = nullptr;
 
-    public:
-        SessionController()
+        void _throwWhenUninitialized() const
         {
-            _m_camManager = std::make_unique<cameras::CameraManager>();
-            _m_motionManager = std::make_unique<MotionManager>();
+            if (_m_status != SessionStatus::Initialized)
+            {
+                throw SessionUninitializedException();
+            }
         }
+
+    public:
+        SessionController() {}
 
         SessionController(std::shared_ptr<SessionControllerDelegate> delegate) : SessionController()
         {
             _m_delegate = delegate;
         }
 
+        /**
+         * Initialize the Session
+         *
+         * This must be called before any operation can be performed on the session
+         * to sure the delegate and managers are ready for operations.
+         *
+         */
+        void initialize()
+        {
+            if (_m_delegate)
+                _m_delegate->sessionWillStart();
+
+            _m_camManager = std::make_unique<cameras::CameraManager>();
+            _m_motionManager = std::make_unique<MotionManager>();
+            _m_status = SessionStatus::Initialized;
+
+            if (_m_delegate)
+                _m_delegate->sessionDidStart();
+        }
+
         // ----------------------------------------------------------------
         // Session Status
         SessionStatus status() const { return _m_status; }
-        void setStatus(SessionStatus status) { _m_status = status; }
 
         // ----------------------------------------------------------------
         // Session LifeCycle Calls
         void shutdown()
         {
+            _throwWhenUninitialized();
             // TODO Close down mangers
             if (_m_delegate)
             {
                 _m_delegate->sessionWillShutdown();
             }
-            setStatus(SessionStatus::Offline);
+            _m_status = SessionStatus::Offline;
         }
 
         // ----------------------------------------------------------------
         // Cameras List
         std::vector<cameras::Camera> getCameras() const
         {
+            _throwWhenUninitialized();
             if (_m_delegate)
             {
                 return _m_delegate->getAvailableCameras();
@@ -66,11 +90,13 @@ namespace indiemotion
 
         std::optional<cameras::Camera> getActiveCamera() const
         {
+            _throwWhenUninitialized();
             return _m_camManager->getActiveCamera();
         }
 
         void setActiveCamera(std::string cameraId)
         {
+            _throwWhenUninitialized();
             auto cameraOpt = _m_delegate->getCameraById(cameraId);
             if (!cameraOpt)
             {
@@ -88,6 +114,7 @@ namespace indiemotion
         // Motion Mode
         void setMotionMode(MotionMode m)
         {
+            _throwWhenUninitialized();
             _m_motionManager->seCurrentMotionMode(m);
             if (_m_delegate)
             {
@@ -97,6 +124,7 @@ namespace indiemotion
 
         MotionMode currentMotionMode() const
         {
+            _throwWhenUninitialized();
             return _m_motionManager->currentMotionMode();
         }
 
@@ -104,6 +132,7 @@ namespace indiemotion
         // Motion Operation
         void updateMotionXForm(MotionXForm xform)
         {
+            _throwWhenUninitialized();
             if (_m_motionManager->canAcceptMotionUpdate())
             {
                 if (_m_delegate)
