@@ -12,7 +12,7 @@ namespace testing {
 
         std::vector<indiemotion::Camera> getAvailableCameras() override {
             if (document.HasMember("getAvailableCameras")) {
-                std::vector<indiemotion::Camera> cameras {};
+                std::vector<indiemotion::Camera> cameras{};
                 for (auto &item: document["getAvailableCameras"].GetArray()) {
                     auto camera = indiemotion::Camera(
                         item["id"].GetString()
@@ -22,6 +22,18 @@ namespace testing {
                 return cameras;
             }
             return std::vector<indiemotion::Camera>();
+        }
+
+        std::optional<indiemotion::Camera> getCameraById(std::string id) override {
+            if (document.HasMember("getCameraById")) {
+                auto cid = document["getCameraById"].GetObject()["id"].GetString();
+                indiemotion::Camera camera(cid);
+
+                if (cid == id) {
+                    return camera;
+                }
+            }
+            return {};
         }
     };
 }

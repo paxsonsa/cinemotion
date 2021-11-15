@@ -40,6 +40,9 @@ SCENARIO("Set Motion Mode Successfully")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
+        Camera c("cam2");
+        session->camera_manager->setActiveCamera(c);
+
 
         WHEN("bridge processes set motion mode=live message")
         {
@@ -106,6 +109,64 @@ SCENARIO("Set Motion Mode Successfully")
     }
 }
 
+SCENARIO("Set Motion Mode Fails")
+{
+    GIVEN("an activated session controller without an active camera configured")
+    {
+        auto delegate = std::make_shared<DummyDelegate>();
+        auto session = std::make_shared<SessionController>(delegate);
+        auto dispatcher = std::make_shared<DummyDispatcher>();
+        auto bridge = SessionBridge(dispatcher, session);
+        session->initialize();
+
+        WHEN("bridge processes set motion mode=live message")
+        {
+            auto message = netMakeMessage();
+            auto payload = message.mutable_motion_set_mode();
+            payload->set_mode(netPayloadsV1::MotionMode::Live);
+            bridge.processMessage(std::move(message));
+
+
+            THEN("a CameraNotSetError should be dispatched")
+            {
+                REQUIRE(dispatcher->messages.size() == 1);
+                auto response = dispatcher->messages[0];
+                REQUIRE(response.has_error());
+                auto error = response.error();
+                REQUIRE(error.type() == "CameraNotSet");
+            }
+
+            THEN("the motion should NOT change")
+            {
+                REQUIRE(session->currentMotionMode() == MotionMode::Off);
+            }
+        }
+
+        WHEN("bridge processes set motion mode=recording message")
+        {
+            auto message = netMakeMessage();
+            auto payload = message.mutable_motion_set_mode();
+            payload->set_mode(netPayloadsV1::MotionMode::Recording);
+            bridge.processMessage(std::move(message));
+
+
+            THEN("a CameraNotSetError should be dispatched")
+            {
+                REQUIRE(dispatcher->messages.size() == 1);
+                auto response = dispatcher->messages[0];
+                REQUIRE(response.has_error());
+                auto error = response.error();
+                REQUIRE(error.type() == "CameraNotSet");
+            }
+
+            THEN("the motion should NOT change")
+            {
+                REQUIRE(session->currentMotionMode() == MotionMode::Off);
+            }
+        }
+    }
+}
+
 SCENARIO("Get Motion Mode Successfully")
 {
     GIVEN("an activated session controller") {
@@ -114,6 +175,8 @@ SCENARIO("Get Motion Mode Successfully")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
+        Camera c("cam2");
+        session->camera_manager->setActiveCamera(c);
         session->setMotionMode(MotionMode::Live);
 
         WHEN("get mode message is processed")

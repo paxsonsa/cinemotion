@@ -20,8 +20,6 @@ namespace indiemotion
         SessionStatus _m_status = SessionStatus::Offline;
         std::shared_ptr<SessionControllerDelegate> _m_delegate = nullptr;
 
-        std::unique_ptr<CameraManager> _m_camManager = nullptr;
-        std::unique_ptr<MotionManager> _m_motionManager = nullptr;
 
         void _throwWhenUninitialized() const
         {
@@ -32,6 +30,9 @@ namespace indiemotion
         }
 
     public:
+        std::unique_ptr<MotionManager> motion_manager = nullptr;
+        std::unique_ptr<CameraManager> camera_manager = nullptr;
+
         SessionController() {}
 
         SessionController(std::shared_ptr<SessionControllerDelegate> delegate) : SessionController()
@@ -51,8 +52,8 @@ namespace indiemotion
             if (_m_delegate)
                 _m_delegate->sessionWillStart();
 
-            _m_camManager = std::make_unique<CameraManager>();
-            _m_motionManager = std::make_unique<MotionManager>();
+            camera_manager = std::make_unique<CameraManager>();
+            motion_manager = std::make_unique<MotionManager>();
             _m_status = SessionStatus::Initialized;
 
             if (_m_delegate)
@@ -91,7 +92,7 @@ namespace indiemotion
         std::optional<Camera> getActiveCamera() const
         {
             _throwWhenUninitialized();
-            return _m_camManager->getActiveCamera();
+            return camera_manager->getActiveCamera();
         }
 
         void setActiveCamera(std::string cameraId)
@@ -100,10 +101,10 @@ namespace indiemotion
             auto cameraOpt = _m_delegate->getCameraById(cameraId);
             if (!cameraOpt)
             {
-                // TODO Raise an error when camera optional is empty
+                throw CameraNotFoundException(cameraId);
             }
             auto camera = cameraOpt.value();
-            _m_camManager->setActiveCamera(camera);
+            camera_manager->setActiveCamera(camera);
             if (_m_delegate)
             {
                 _m_delegate->didSetActiveCamera(camera);
@@ -115,7 +116,14 @@ namespace indiemotion
         void setMotionMode(MotionMode m)
         {
             _throwWhenUninitialized();
-            _m_motionManager->seCurrentMotionMode(m);
+
+
+            if (!camera_manager->getActiveCamera() && m != MotionMode::Off)
+            {
+                throw CameraNotSetException();
+            }
+
+            motion_manager->seCurrentMotionMode(m);
             if (_m_delegate)
             {
                 _m_delegate->didMotionSetMode(m);
@@ -125,7 +133,7 @@ namespace indiemotion
         MotionMode currentMotionMode() const
         {
             _throwWhenUninitialized();
-            return _m_motionManager->currentMotionMode();
+            return motion_manager->currentMotionMode();
         }
 
         // ----------------------------------------------------------------
@@ -133,7 +141,7 @@ namespace indiemotion
         void updateMotionXForm(MotionXForm xform)
         {
             _throwWhenUninitialized();
-            if (_m_motionManager->canAcceptMotionUpdate())
+            if (motion_manager->canAcceptMotionUpdate())
             {
                 if (_m_delegate)
                 {

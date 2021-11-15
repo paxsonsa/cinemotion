@@ -60,7 +60,7 @@ namespace indiemotion {
             }
             catch (const std::exception &e)
             {
-                _logger->error("unexpected error: {}", e.what());
+                _logger->error("unexpected error while processing message: {}", e.what());
                 auto exception = UnknownFatalException();
                 auto err_message = netMakeErrorResponseFromException(message.header().id(), exception);
                 _m_dispatcher->dispatch(std::move(err_message));

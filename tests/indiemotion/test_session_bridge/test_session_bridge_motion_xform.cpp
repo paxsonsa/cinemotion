@@ -39,6 +39,8 @@ SCENARIO("updating the motion xform successfully")
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<SessionController>(delegate);
         session->initialize();
+        Camera c("cam2");
+        session->camera_manager->setActiveCamera(c);
         session->setMotionMode(MotionMode::Live);
 
         auto dispatcher = std::make_shared<DummyDispatcher>();
@@ -83,8 +85,9 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         auto bridge = SessionBridge(dispatcher, session);
         auto xform = MotionXForm::create(
             1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
-
         session->initialize();
+        Camera c("cam2");
+        session->camera_manager->setActiveCamera(c);
 
         WHEN("the session's motion mode is off")
         {

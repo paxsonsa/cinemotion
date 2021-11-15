@@ -26,6 +26,14 @@
   },
   {
     "message": {
+      "setActiveCamera": {
+        "camera_id": "cam2"
+      }
+    },
+    "expected": null
+  },
+  {
+    "message": {
       "motionSetMode": {
         "mode": "Live"
       }
