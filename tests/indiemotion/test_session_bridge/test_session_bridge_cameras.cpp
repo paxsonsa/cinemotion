@@ -9,6 +9,7 @@
 #include <indiemotion/net/dispatch.hpp>
 #include <indiemotion/session.hpp>
 #include <indiemotion/net/message.hpp>
+#include "indiemotion/cameras/camera.hpp"
 
 using namespace indiemotion;
 
@@ -33,13 +34,13 @@ SCENARIO("Listing the Cameras")
 {
     struct DummyDelegate : SessionControllerDelegate
     {
-        std::vector<cameras::Camera> cameraList{
-            cameras::Camera("cam1"),
-            cameras::Camera("cam2"),
-            cameras::Camera("cam3"),
+        std::vector<Camera> cameraList{
+            Camera("cam1"),
+            Camera("cam2"),
+            Camera("cam3"),
         };
 
-        std::vector<cameras::Camera> getAvailableCameras() override
+        std::vector<Camera> getAvailableCameras() override
         {
             return cameraList;
         }
@@ -82,26 +83,26 @@ SCENARIO("Set the Camera Successfully")
     struct DummyDelegate : SessionControllerDelegate
     {
 
-        std::vector<cameras::Camera> cameraList{
-            cameras::Camera("cam1"),
-            cameras::Camera("cam2"),
-            cameras::Camera("cam3"),
+        std::vector<Camera> cameraList{
+            Camera("cam1"),
+            Camera("cam2"),
+            Camera("cam3"),
         };
 
-        std::optional<cameras::Camera> camera;
+        std::optional<Camera> camera;
 
-        std::vector<cameras::Camera> getAvailableCameras() override
+        std::vector<Camera> getAvailableCameras() override
         {
             return cameraList;
         }
 
-        std::optional<cameras::Camera> getCameraById(std::string id) override
+        std::optional<Camera> getCameraById(std::string id) override
         {
             assert(id == "cam2" && "should not be possible in this test case.");
             return cameraList[1];
         }
 
-        void didSetActiveCamera(cameras::Camera cam) override
+        void didSetActiveCamera(Camera cam) override
         {
             camera = cam;
         }

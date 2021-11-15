@@ -21,9 +21,9 @@ namespace indiemotion
          *
          * @return std::vector<std::string>
          */
-        virtual std::vector<cameras::Camera> getAvailableCameras()
+        virtual std::vector<Camera> getAvailableCameras()
         {
-            return std::vector<cameras::Camera>();
+            return std::vector<Camera>();
         }
 
         /**
@@ -35,7 +35,7 @@ namespace indiemotion
          * @param id The camera id to get
          * @return std::optional<cameras::Camera> 
          */
-        virtual std::optional<cameras::Camera> getCameraById(std::string id)
+        virtual std::optional<Camera> getCameraById(std::string id)
         {
             return {};
         }
@@ -46,7 +46,7 @@ namespace indiemotion
          * @param camera 
          */
         // TODO Return an optional error.
-        virtual void didSetActiveCamera(cameras::Camera camera) {}
+        virtual void didSetActiveCamera(Camera camera) {}
 
         // ----------------------------------------------------------------
         // Motion Mode Operations

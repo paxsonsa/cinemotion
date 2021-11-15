@@ -20,7 +20,7 @@ namespace indiemotion
         SessionStatus _m_status = SessionStatus::Offline;
         std::shared_ptr<SessionControllerDelegate> _m_delegate = nullptr;
 
-        std::unique_ptr<cameras::CameraManager> _m_camManager = nullptr;
+        std::unique_ptr<CameraManager> _m_camManager = nullptr;
         std::unique_ptr<MotionManager> _m_motionManager = nullptr;
 
         void _throwWhenUninitialized() const
@@ -51,7 +51,7 @@ namespace indiemotion
             if (_m_delegate)
                 _m_delegate->sessionWillStart();
 
-            _m_camManager = std::make_unique<cameras::CameraManager>();
+            _m_camManager = std::make_unique<CameraManager>();
             _m_motionManager = std::make_unique<MotionManager>();
             _m_status = SessionStatus::Initialized;
 
@@ -78,7 +78,7 @@ namespace indiemotion
 
         // ----------------------------------------------------------------
         // Cameras List
-        std::vector<cameras::Camera> getCameras() const
+        std::vector<Camera> getCameras() const
         {
             _throwWhenUninitialized();
             if (_m_delegate)
@@ -88,7 +88,7 @@ namespace indiemotion
             return {};
         }
 
-        std::optional<cameras::Camera> getActiveCamera() const
+        std::optional<Camera> getActiveCamera() const
         {
             _throwWhenUninitialized();
             return _m_camManager->getActiveCamera();

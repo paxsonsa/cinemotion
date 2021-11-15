@@ -3,7 +3,7 @@
 #include <indiemotion/cameras/camera.hpp>
 #include <indiemotion/common.hpp>
 
-namespace indiemotion::cameras {
+namespace indiemotion {
     class CameraManager {
     private:
         std::optional<Camera> _m_activeCamera;

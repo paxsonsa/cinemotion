@@ -1,5 +1,5 @@
 #pragma once
-#include <indiemotion/session.hpp> //  indiemotion::SessionControllerDelegate
+#include <indiemotion/session.hpp> //  indiemotion::SessionControllerDelegate, indiemotion::Camera
 #include <fixtures/json_helpers.hpp> // rapidjson::Document, loadJSONDocument
 
 namespace testing {
@@ -10,18 +10,18 @@ namespace testing {
             document = loadJSONDocument(json_path);
         }
 
-        std::vector<indiemotion::cameras::Camera> getAvailableCameras() override {
+        std::vector<indiemotion::Camera> getAvailableCameras() override {
             if (document.HasMember("getAvailableCameras")) {
-                std::vector<indiemotion::cameras::Camera> cameras {};
+                std::vector<indiemotion::Camera> cameras {};
                 for (auto &item: document["getAvailableCameras"].GetArray()) {
-                    auto camera = indiemotion::cameras::Camera(
+                    auto camera = indiemotion::Camera(
                         item["id"].GetString()
                     );
                     cameras.push_back(camera);
                 }
                 return cameras;
             }
-            return std::vector<indiemotion::cameras::Camera>();
+            return std::vector<indiemotion::Camera>();
         }
     };
 }
