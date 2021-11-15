@@ -21,7 +21,7 @@ namespace indiemotion
      *
      * @return std::string
      */
-    std::string generateNewIdentifierString() {
+    std::string netGenerateNewIdentifierString() {
         boost::uuids::random_generator generator;
         boost::uuids::uuid uuid = generator();
         return boost::uuids::to_string(uuid);
@@ -33,7 +33,7 @@ namespace indiemotion
      * @return unique pointer to a new message
      */
     NetMessage netMakeMessage() {
-        auto id = generateNewIdentifierString();
+        auto id = netGenerateNewIdentifierString();
         NetMessage m;
         m.mutable_header()->set_id(id);
         return std::move(m);
@@ -45,7 +45,7 @@ namespace indiemotion
      * @return unique pointer to a new message
      */
     NetMessage netMakeMessageWithResponseId(std::string responseId) {
-        auto id = generateNewIdentifierString();
+        auto id = netGenerateNewIdentifierString();
         NetMessage m;
         m.mutable_header()->set_id(id);
         m.mutable_header()->set_responseid(responseId);

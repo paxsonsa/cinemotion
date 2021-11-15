@@ -1,5 +1,5 @@
 {
-  "cameras": [
+  "getAvailableCameras": [
     {"id": "cam1"},
     {"id": "cam2"},
     {"id": "cam3"}

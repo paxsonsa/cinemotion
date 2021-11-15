@@ -4,10 +4,11 @@
       "sessionStart": {
         "sessionProperties": {
           "sessionId": "some_session_ID",
-          "apiVersion": "1.0.0"
+          "apiVersion": "1.0"
         }
       }
-    }
+    },
+    "expected": null
   },
   {
     "message": {
@@ -28,13 +29,14 @@
       "motionSetMode": {
         "mode": "Live"
       }
-    }
+    },
+    "expected": null
   },
   {
     "message": {
       "motionGetMode": {}
     },
-    "expect": {
+    "expected": {
       "motionActiveMode": {
         "mode": "Live"
       }
