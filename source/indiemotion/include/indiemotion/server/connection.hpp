@@ -181,10 +181,10 @@ namespace indiemotion {
          * for processing synchronously.
          *
          * @param err
-         * @param bytesTransfered
+         * @param bytes_transferred
          */
-        void on_read(beast::error_code err, std::size_t bytesTransfered) {
-            boost::ignore_unused(bytesTransfered);
+        void on_read(beast::error_code err, std::size_t bytes_transferred) {
+            boost::ignore_unused(bytes_transferred);
 
             if (err) {
                 if (err == boost::asio::error::operation_aborted) {
@@ -206,16 +206,12 @@ namespace indiemotion {
                 return;
             }
 
-            // TODO Log Activity to Connection is kept alive
-            // keepActive()
-
-            _websocket.text(_websocket.got_text());
-            std::string bufText;
+            std::string text;
             std::ostringstream os;
             os << boost::beast::buffers_to_string(_buffer.data());
             NetMessage message;
-            bufText = os.str();
-            message.ParseFromString(bufText);
+            text = os.str();
+            message.ParseFromString(text);
 
             _buffer.consume(_buffer.size());
             _session_bridge->processMessage(std::move(message));

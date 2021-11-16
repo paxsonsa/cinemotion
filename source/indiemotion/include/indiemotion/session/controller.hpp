@@ -60,6 +60,10 @@ namespace indiemotion
                 _m_delegate->sessionDidStart();
         }
 
+        void set_delegate(std::shared_ptr<SessionControllerDelegate> delegate) {
+            _m_delegate = std::move(delegate);
+        }
+
         // ----------------------------------------------------------------
         // Session Status
         SessionStatus status() const { return _m_status; }
