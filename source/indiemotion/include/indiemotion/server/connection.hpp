@@ -25,33 +25,42 @@ namespace indiemotion {
         }
     };
 
+    using ConnectionStartCallback = std::function<void(std::shared_ptr<SessionController>)>;
+    using ConnectionDisconnectedCallback = std::function<void()>;
+
+    struct ConnectionCallbacks {
+        ConnectionStartCallback onStarted;
+        ConnectionDisconnectedCallback onDisconnect;
+    };
+
     class Connection : public std::enable_shared_from_this<Connection> {
     private:
-//        logging::Logger logger = logging::getLogger("com.indiemotion.server.connection");
+        logging::Logger logger = logging::getLogger("com.indiemotion.server.connection");
         asio::io_context &_io_context;
         websocket::stream<beast::tcp_stream> _m_websocket;
         beast::flat_buffer _m_buffer;
-
+        ConnectionCallbacks _callbacks;
         std::unique_ptr<SessionBridge> _session_bridge;
+        bool stopped = false;
 
     public:
         explicit Connection(asio::io_context &io_context, tcp::socket socket) : _io_context(io_context),
                                                                                 _m_websocket(std::move(socket)) {}
 
-        void start(ConnectionStartCallback &&cb) {
+        void start(ConnectionCallbacks &&callbacks) {
             // We need to be executing within a strand to perform async operations
             // on the I/O objects in this session. Although not strictly necessary
             // for single-threaded contexts, this example code is written to be
             // thread-safe by default.
+            _callbacks = std::move(callbacks);
             asio::dispatch(_m_websocket.get_executor(),
                            beast::bind_front_handler(
                                &Connection::onRun,
-                               shared_from_this(),
-                               std::move(cb)));
+                               shared_from_this()));
         }
 
     private:
-        void onRun(ConnectionStartCallback &&cb) {
+        void onRun() {
             // Set suggested timeout settings for the websocket
             _m_websocket.set_option(
                 websocket::stream_base::timeout::suggested(
@@ -69,11 +78,10 @@ namespace indiemotion {
             _m_websocket.async_accept(
                 beast::bind_front_handler(
                     &Connection::onAccept,
-                    shared_from_this(),
-                    cb));
+                    shared_from_this()));
         }
 
-        void onAccept(ConnectionStartCallback &&cb, beast::error_code err) {
+        void onAccept(beast::error_code err) {
             if (err)
                 return spdlog::error(fmt::format("Connection::onAccept: {}", err.message()));
 
@@ -84,7 +92,7 @@ namespace indiemotion {
                 _m_buffer.commit(message.ByteSizeLong());
                 _m_websocket.write(_m_buffer.data());
             });
-            cb(controller);
+            _callbacks.onStarted(controller);
             _session_bridge = std::make_unique<SessionBridge>(std::move(dispatcher), std::move(controller));
             do_read();
         }
@@ -99,18 +107,26 @@ namespace indiemotion {
 
         void on_read(beast::error_code err, std::size_t bytesTransfered) {
             boost::ignore_unused(bytesTransfered);
-            // Happens when the timer closes the socket
-            if (err == boost::asio::error::operation_aborted)
-                // TODO Connection Shutdown  - Shutdown Session
-                return;
 
-            // This indicates that the websocket_session was closed
-            if (err == websocket::error::closed)
-                // TODO Connection Shutdown - Shutdown Session
-                return;
+            if (err) {
+                if (err == boost::asio::error::operation_aborted) {
+                    logger->error(fmt::format("on_read(): op aborted - {}", err.message()));
+                } else if (err == websocket::error::closed) {
+                    logger->error(fmt::format("on_read(): close - {}", err.message()));
+                } else {
+                    logger->error(fmt::format("Connection::on_read: {}", err.message()));
+                }
 
-            if (err)
-                return spdlog::error(fmt::format("Connection::on_read: {}", err.message()));
+                logger->error("connection error, shutting down session and stopping server");
+
+                NetMessage m;
+                m.mutable_session_shutdown();
+                _session_bridge->processMessage(std::move(m));
+
+                _callbacks.onDisconnect();
+                stopped = true;
+                return;
+            }
 
             // TODO Log Activity to Connection is kept alive
             // keepActive()
@@ -127,7 +143,6 @@ namespace indiemotion {
             _session_bridge->processMessage(std::move(message));
 
             // Do another read
-            std::cout << "starting next read" << std::endl;
             do_read();
         }
     };

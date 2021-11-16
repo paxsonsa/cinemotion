@@ -11,7 +11,6 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 
-
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
@@ -27,7 +26,6 @@ namespace indiemotion {
     class Listener : public std::enable_shared_from_this<Listener> {
         net::io_context &_io_context;
         tcp::acceptor _m_acceptor;
-        ConnectionStartCallback _callback;
 
     public:
         Listener(net::io_context &ioContext,
@@ -64,26 +62,28 @@ namespace indiemotion {
             }
         }
 
-        void listen(ConnectionStartCallback &&cb) {
+        void listen(ConnectionCallbacks &&callbacks) {
             _m_acceptor.async_accept(
                 net::make_strand(_io_context),
                 beast::bind_front_handler(
                     &Listener::onAccept,
                     shared_from_this(),
-                    std::move(cb)
+                    std::move(callbacks)
                 )
             );
         }
 
     private:
-        void onAccept(ConnectionStartCallback &&cb, beast::error_code ec, tcp::socket socket) {
+        void onAccept(ConnectionCallbacks &&callbacks,
+                      beast::error_code ec,
+                      tcp::socket socket) {
             if (ec) {
                 fail(ec, "onaccept");
             } else {
                 // TODO Make Connection;
                 // - Launch an HTTP Session and wait for websocket upgrade.
                 // - All other HTTP Requests should return bad request
-                std::make_shared<Connection>(_io_context, std::move(socket))->start(std::move(cb));
+                std::make_shared<Connection>(_io_context, std::move(socket))->start(std::move(callbacks));
             }
 
             // TODO how to make sure when the connection drops out we continue to listen for new connections

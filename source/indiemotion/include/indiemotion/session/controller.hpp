@@ -68,8 +68,6 @@ namespace indiemotion
         // Session LifeCycle Calls
         void shutdown()
         {
-            _throwWhenUninitialized();
-            // TODO Close down mangers
             if (_m_delegate)
             {
                 _m_delegate->sessionWillShutdown();

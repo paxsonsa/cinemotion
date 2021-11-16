@@ -15,7 +15,7 @@
 namespace net = boost::asio; // from <boost/asio.hpp>
 
 namespace indiemotion {
-    class Server {
+    class Server : public std::enable_shared_from_this<Server> {
         asio::io_context _io_context;
         ServerOptions _options;
 
@@ -24,17 +24,28 @@ namespace indiemotion {
         Server(ServerOptions options)
             : _options(std::move(options)) {};
 
-        void start(ConnectionStartCallback &&cb) {
+        void start(ConnectionStartCallback &&startCallback) {
             auto work = asio::require(_io_context.get_executor(),
                                       asio::execution::outstanding_work.tracked);
             auto const address = net::ip::make_address(_options.address.value_or("0.0.0.0"));
             auto const port = _options.port.value_or(7766);
 
             // Create Listener and Start its listen routine.
+
+            ConnectionCallbacks callbacks;
+            callbacks.onStarted = std::move(startCallback);
+            callbacks.onDisconnect = [&]() {
+                stop();
+            };
+
             std::make_shared<Listener>(_io_context,
-                                       tcp::endpoint{address, port})->listen(std::move(cb));
+                                       tcp::endpoint{address, port})->listen(std::move(callbacks));
             fmt::print("listening on: ws://{}:{}\n", address.to_string(), port);
             _io_context.run();
+        }
+
+        void stop() {
+            _io_context.stop();
         }
     };
 
