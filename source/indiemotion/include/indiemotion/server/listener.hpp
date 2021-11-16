@@ -62,7 +62,7 @@ namespace indiemotion {
             }
         }
 
-        void listen(ConnectionCallbacks &&callbacks) {
+        void listen(SessionConnectionCallbacks &&callbacks) {
             _m_acceptor.async_accept(
                 net::make_strand(_io_context),
                 beast::bind_front_handler(
@@ -74,7 +74,7 @@ namespace indiemotion {
         }
 
     private:
-        void onAccept(ConnectionCallbacks &&callbacks,
+        void onAccept(SessionConnectionCallbacks &&callbacks,
                       beast::error_code ec,
                       tcp::socket socket) {
             if (ec) {
@@ -83,7 +83,7 @@ namespace indiemotion {
                 // TODO Make Connection;
                 // - Launch an HTTP Session and wait for websocket upgrade.
                 // - All other HTTP Requests should return bad request
-                std::make_shared<Connection>(_io_context, std::move(socket))->start(std::move(callbacks));
+                std::make_shared<SessionConnection>(_io_context, std::move(socket))->start(std::move(callbacks));
             }
 
             // TODO how to make sure when the connection drops out we continue to listen for new connections

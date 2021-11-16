@@ -12,62 +12,114 @@
 
 namespace indiemotion {
 
-    using MessageDispatchCallback = std::function<void(NetMessage && message)>;
-
-    struct ConnectionWriterDispatcher : public NetMessageDispatcher {
-
-        MessageDispatchCallback callback;
-
-        ConnectionWriterDispatcher(MessageDispatchCallback f) : callback(f) {}
-
-        void dispatch(NetMessage &&message) override {
-            callback(std::move(message));
-        }
-    };
-
+    /**
+     * A callback that is invoked when the connection is initially started.
+     *
+     * This callback receives a shared pointer to the session controller to have its
+     * delegate updated.
+     * ```
+     *      [&](std::shared_ptr<SessionController> controller) {
+     *          auto delegate = std::make_shared<YourDelegateImpl>();
+     *          controller->set_delegate(std::move(delegate);
+     *      }
+     * ```
+     */
     using ConnectionStartCallback = std::function<void(std::shared_ptr<SessionController>)>;
+
+    /**
+     * A callback that is invoked when the connection was disconnected.
+     *
+     * This is not typically used by client facing code as the SessionServer
+     * provides its own implementation that calls stop.
+     *
+     */
     using ConnectionDisconnectedCallback = std::function<void()>;
 
-    struct ConnectionCallbacks {
-        ConnectionStartCallback onStarted;
-        ConnectionDisconnectedCallback onDisconnect;
+    /**
+     * A container for a set of connection related callbacks.
+     */
+    struct SessionConnectionCallbacks {
+        ConnectionStartCallback on_started;
+        ConnectionDisconnectedCallback on_disconnect;
     };
 
-    class Connection : public std::enable_shared_from_this<Connection> {
+    /**
+     * Represents the main connection logic for interfacing with a session
+     *
+     * A connection handles all websocket socket communication and handling after the
+     * the initial tcp conneciton is made with the server.
+     *
+     */
+    class SessionConnection : public std::enable_shared_from_this<SessionConnection> {
     private:
-        logging::Logger logger = logging::getLogger("com.indiemotion.server.connection");
+        logging::Logger _logger = logging::getLogger("com.indiemotion.server.connection");
         asio::io_context &_io_context;
-        websocket::stream<beast::tcp_stream> _m_websocket;
-        beast::flat_buffer _m_buffer;
-        ConnectionCallbacks _callbacks;
+        websocket::stream<beast::tcp_stream> _websocket;
+        beast::flat_buffer _buffer;
+        SessionConnectionCallbacks _callbacks;
         std::unique_ptr<SessionBridge> _session_bridge;
         bool stopped = false;
 
-    public:
-        explicit Connection(asio::io_context &io_context, tcp::socket socket) : _io_context(io_context),
-                                                                                _m_websocket(std::move(socket)) {}
+        /**
+         * An internal helper structure that is used by the session bridge to
+         * dispatch outgoing messages through the connection itself.
+         */
+        struct ConnectionWriterDispatcher : public NetMessageDispatcher {
 
-        void start(ConnectionCallbacks &&callbacks) {
-            // We need to be executing within a strand to perform async operations
-            // on the I/O objects in this session. Although not strictly necessary
-            // for single-threaded contexts, this example code is written to be
-            // thread-safe by default.
+            std::function<void(NetMessage &&message)> callback;
+
+            /**
+             * Construct the dispatcher with the callback function that will be invoked each time
+             * the bridge dispatches a new message.
+             * @param f A function that takes an owned NetMessage as the argument.
+             */
+            ConnectionWriterDispatcher(std::function<void(NetMessage &&message)> f) : callback(f) {}
+
+            /**
+             * Implementation of the dispatch routine. This calls the stored callback function.
+             * @param message The message that is being dispatched by the bridge.
+             */
+            void dispatch(NetMessage &&message) override {
+                callback(std::move(message));
+            }
+        };
+
+    public:
+        /**
+         * Construct a new connection using the given io_context and tcp socket.
+         *
+         * The tcp::socket will be upgraded once the start() routine is called.
+         *
+         * @param io_context This is the conext that all operations will be executed within.
+         * @param socket The tcp socket to accept websocket communications on.
+         */
+        explicit SessionConnection(asio::io_context &io_context, tcp::socket socket) : _io_context(io_context),
+                                                                                       _websocket(std::move(socket)) {}
+
+        /**
+         * Start the connection and begin accepting websocket communications.
+         * @param callbacks A set of callbacks to use as the connection status changes.
+         */
+        void start(SessionConnectionCallbacks &&callbacks) {
             _callbacks = std::move(callbacks);
-            asio::dispatch(_m_websocket.get_executor(),
+            asio::dispatch(_websocket.get_executor(),
                            beast::bind_front_handler(
-                               &Connection::onRun,
+                               &SessionConnection::onRun,
                                shared_from_this()));
         }
 
     private:
+        /**
+         * Start the accepting of websocket communications.
+         */
         void onRun() {
             // Set suggested timeout settings for the websocket
-            _m_websocket.set_option(
+            _websocket.set_option(
                 websocket::stream_base::timeout::suggested(
                     beast::role_type::server));
 
             // Set a decorator to change the Server of the handshake
-            _m_websocket.set_option(websocket::stream_base::decorator(
+            _websocket.set_option(websocket::stream_base::decorator(
                 [](websocket::response_type &res) {
                     res.set(http::field::server,
                             std::string(BOOST_BEAST_VERSION_STRING) +
@@ -75,55 +127,84 @@ namespace indiemotion {
                 }));
 
             // Accept the websocket handshake
-            _m_websocket.async_accept(
+            _websocket.async_accept(
                 beast::bind_front_handler(
-                    &Connection::onAccept,
+                    &SessionConnection::onAccept,
                     shared_from_this()));
         }
 
+        /**
+         * A method triggered when a websocket is accepted (or not)
+         *
+         * At this stage consider the connection 'started' and the
+         * ConnectionCallbacks.on_start() callback is invoked with a fresh session controller.
+         *
+         * If there is an error the connection exits and then ConnectionCallbacks.on_disconnect() is invoked.
+         *
+         * @param err a potential error while accepting the
+         */
         void onAccept(beast::error_code err) {
-            if (err)
-                return spdlog::error(fmt::format("Connection::onAccept: {}", err.message()));
+            if (err) {
+                _callbacks.on_disconnect();
+                _logger->error(fmt::format("Connection::onAccept: {}", err.message()));
+                return;
+            }
 
             auto controller = std::make_shared<SessionController>();
             auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](NetMessage &&message) {
-                auto os = beast::ostream(_m_buffer);
+                auto os = beast::ostream(_buffer);
                 message.SerializeToOstream(&os);
-                _m_buffer.commit(message.ByteSizeLong());
-                _m_websocket.write(_m_buffer.data());
+                _buffer.commit(message.ByteSizeLong());
+                _websocket.write(_buffer.data());
             });
-            _callbacks.onStarted(controller);
+            _callbacks.on_started(controller);
             _session_bridge = std::make_unique<SessionBridge>(std::move(dispatcher), std::move(controller));
             do_read();
         }
 
+        /**
+         * Schedule an async read task.
+         */
         void do_read() {
-            _m_websocket.async_read(
-                _m_buffer,
+            _websocket.async_read(
+                _buffer,
                 beast::bind_front_handler(
-                    &Connection::on_read,
+                    &SessionConnection::on_read,
                     shared_from_this()));
         }
 
+        /**
+         * Triggered when there is a read event
+         *
+         * This function is the 'brains' of the connection communication.
+         * When an error is countered the connection is promptly shutdown and
+         * the on_disconnect() callback is invoked.
+         *
+         * In normal operations, each mesage is read in and handed to the session bridge
+         * for processing synchronously.
+         *
+         * @param err
+         * @param bytesTransfered
+         */
         void on_read(beast::error_code err, std::size_t bytesTransfered) {
             boost::ignore_unused(bytesTransfered);
 
             if (err) {
                 if (err == boost::asio::error::operation_aborted) {
-                    logger->error(fmt::format("on_read(): op aborted - {}", err.message()));
+                    _logger->error(fmt::format("on_read(): op aborted - {}", err.message()));
                 } else if (err == websocket::error::closed) {
-                    logger->error(fmt::format("on_read(): close - {}", err.message()));
+                    _logger->error(fmt::format("on_read(): close - {}", err.message()));
                 } else {
-                    logger->error(fmt::format("Connection::on_read: {}", err.message()));
+                    _logger->error(fmt::format("Connection::on_read: {}", err.message()));
                 }
 
-                logger->error("connection error, shutting down session and stopping server");
+                _logger->error("connection error, shutting down session and stopping server");
 
                 NetMessage m;
                 m.mutable_session_shutdown();
                 _session_bridge->processMessage(std::move(m));
 
-                _callbacks.onDisconnect();
+                _callbacks.on_disconnect();
                 stopped = true;
                 return;
             }
@@ -131,15 +212,15 @@ namespace indiemotion {
             // TODO Log Activity to Connection is kept alive
             // keepActive()
 
-            _m_websocket.text(_m_websocket.got_text());
+            _websocket.text(_websocket.got_text());
             std::string bufText;
             std::ostringstream os;
-            os << boost::beast::buffers_to_string(_m_buffer.data());
+            os << boost::beast::buffers_to_string(_buffer.data());
             NetMessage message;
             bufText = os.str();
             message.ParseFromString(bufText);
 
-            _m_buffer.consume(_m_buffer.size());
+            _buffer.consume(_buffer.size());
             _session_bridge->processMessage(std::move(message));
 
             // Do another read

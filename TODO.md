@@ -1,17 +1,17 @@
 - Create Echo Server Delegate
-  - Create Server/Connection
+  - Create Server/SessionConnection
     - MVP: Launch Server and Send Basic Setup with Shutdown. 
     - Need to be able to pass in Delegate Constructor
     - Server takes shared_ptr to delegate.
     - Server Start Up
-    - Connection Accepting
+    - SessionConnection Accepting
     - Process Thread
     
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
-        - Only Accept Single Connection
+        - Only Accept Single SessionConnection
         - OnAccept Store Session
-    - Connection (read/write)
+    - SessionConnection (read/write)
         When a connection is made thats when the delegates 
         and the SessionManager are created.
         Do we need a queue for the converted messages?
@@ -34,9 +34,9 @@ LOGGER.error();
 [Protobuf Session Handler]
 ```c++
 
-class Connection {
+class SessionConnection {
 ...
-// Connection will readin protobuf message and wrapp it inside of a message wrapper
+// SessionConnection will readin protobuf message and wrapp it inside of a message wrapper
 // The messageWrapper can be used to determine the handler to use for the message.
 // Essentially, nothing changes for the message handlers except the messages become message wrappers
 protobuf::messages::ClientMessage message;

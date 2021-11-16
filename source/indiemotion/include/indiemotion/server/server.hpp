@@ -32,9 +32,9 @@ namespace indiemotion {
 
             // Create Listener and Start its listen routine.
 
-            ConnectionCallbacks callbacks;
-            callbacks.onStarted = std::move(startCallback);
-            callbacks.onDisconnect = [&]() {
+            SessionConnectionCallbacks callbacks;
+            callbacks.on_started = std::move(startCallback);
+            callbacks.on_disconnect = [&]() {
                 stop();
             };
 
