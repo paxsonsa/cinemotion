@@ -6,6 +6,9 @@
 
 namespace indiemotion::logging
 {
+
+    using Logger = std::shared_ptr<spdlog::logger>;
+
     template <typename Mutex>
     class _ConsoleSink : public spdlog::sinks::base_sink<Mutex>
     {
@@ -45,7 +48,7 @@ namespace indiemotion::logging
         spdlog::register_logger(logger);
     }
 
-    auto getLogger(std::string name)
+    Logger getLogger(std::string name)
     {
         for (auto loggerName : _listParentNames(name))
         {

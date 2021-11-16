@@ -3,40 +3,55 @@
 /* http_connection.hpp */
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/session.hpp>
+#include <indiemotion/net.hpp>
+#include<indiemotion/logging.hpp>
 
-namespace indiemotion::server
-{
-    class Connection : public std::enable_shared_from_this<Connection>
-    {
+#include <boost/beast/core/ostream.hpp>
+#include <google/protobuf/util/json_util.h>
+
+namespace indiemotion {
+
+    using MessageDispatchCallback = std::function<void(NetMessage && message)>;
+
+    struct ConnectionWriterDispatcher : public NetMessageDispatcher {
+
+        MessageDispatchCallback callback;
+
+        ConnectionWriterDispatcher(MessageDispatchCallback f) : callback(f) {}
+
+        void dispatch(NetMessage &&message) override {
+            callback(std::move(message));
+        }
+    };
+
+    class Connection : public std::enable_shared_from_this<Connection> {
     private:
+//        logging::Logger logger = logging::getLogger("com.indiemotion.server.connection");
+        asio::io_context &_io_context;
         websocket::stream<beast::tcp_stream> _m_websocket;
         beast::flat_buffer _m_buffer;
-        // TODO Add boost to common include
-        // TODO init class with socket and set up http connection loop
-    public:
-        explicit Connection(tcp::socket socket) : _m_websocket(std::move(socket))
-        {
-        }
 
-        /**
-         * @brief Start the connection run loop
-         * 
-         */
-        void run()
-        {
+        std::unique_ptr<SessionBridge> _session_bridge;
+
+    public:
+        explicit Connection(asio::io_context &io_context, tcp::socket socket) : _io_context(io_context),
+                                                                                _m_websocket(std::move(socket)) {}
+
+        void start(ConnectionStartCallback &&cb) {
             // We need to be executing within a strand to perform async operations
             // on the I/O objects in this session. Although not strictly necessary
             // for single-threaded contexts, this example code is written to be
             // thread-safe by default.
-            net::dispatch(_m_websocket.get_executor(),
-                          beast::bind_front_handler(
-                              &Connection::onRun,
-                              shared_from_this()));
+            asio::dispatch(_m_websocket.get_executor(),
+                           beast::bind_front_handler(
+                               &Connection::onRun,
+                               shared_from_this(),
+                               std::move(cb)));
         }
 
     private:
-        void onRun()
-        {
+        void onRun(ConnectionStartCallback &&cb) {
             // Set suggested timeout settings for the websocket
             _m_websocket.set_option(
                 websocket::stream_base::timeout::suggested(
@@ -44,8 +59,7 @@ namespace indiemotion::server
 
             // Set a decorator to change the Server of the handshake
             _m_websocket.set_option(websocket::stream_base::decorator(
-                [](websocket::response_type &res)
-                {
+                [](websocket::response_type &res) {
                     res.set(http::field::server,
                             std::string(BOOST_BEAST_VERSION_STRING) +
                                 " indiemotion-server");
@@ -55,54 +69,66 @@ namespace indiemotion::server
             _m_websocket.async_accept(
                 beast::bind_front_handler(
                     &Connection::onAccept,
-                    shared_from_this()));
+                    shared_from_this(),
+                    cb));
         }
 
-        void onAccept(beast::error_code err)
-        {
+        void onAccept(ConnectionStartCallback &&cb, beast::error_code err) {
             if (err)
                 return spdlog::error(fmt::format("Connection::onAccept: {}", err.message()));
 
-            doRead();
+            auto controller = std::make_shared<SessionController>();
+            auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](NetMessage &&message) {
+                auto os = beast::ostream(_m_buffer);
+                message.SerializeToOstream(&os);
+                _m_buffer.commit(message.ByteSizeLong());
+                _m_websocket.write(_m_buffer.data());
+            });
+            cb(controller);
+            _session_bridge = std::make_unique<SessionBridge>(std::move(dispatcher), std::move(controller));
+            do_read();
         }
 
-        void doRead()
-        {
+        void do_read() {
             _m_websocket.async_read(
                 _m_buffer,
                 beast::bind_front_handler(
-                    &Connection::onRead,
+                    &Connection::on_read,
                     shared_from_this()));
         }
 
-        void onRead(beast::error_code err, std::size_t bytesTransfered)
-        {
+        void on_read(beast::error_code err, std::size_t bytesTransfered) {
             boost::ignore_unused(bytesTransfered);
             // Happens when the timer closes the socket
             if (err == boost::asio::error::operation_aborted)
-                // TODO Connection Shutdown
+                // TODO Connection Shutdown  - Shutdown Session
                 return;
 
             // This indicates that the websocket_session was closed
             if (err == websocket::error::closed)
-                // TODO Connection Shutdown
+                // TODO Connection Shutdown - Shutdown Session
                 return;
 
             if (err)
-                return spdlog::error(fmt::format("Connection::onRead: {}", err.message()));
+                return spdlog::error(fmt::format("Connection::on_read: {}", err.message()));
 
             // TODO Log Activity to Connection is kept alive
             // keepActive()
 
-            std::string bufText;
             _m_websocket.text(_m_websocket.got_text());
+            std::string bufText;
             std::ostringstream os;
             os << boost::beast::buffers_to_string(_m_buffer.data());
+            NetMessage message;
             bufText = os.str();
-            fmt::print("read > {}\n", bufText);
+            message.ParseFromString(bufText);
+
+            _m_buffer.consume(_m_buffer.size());
+            _session_bridge->processMessage(std::move(message));
 
             // Do another read
-            doRead();
+            std::cout << "starting next read" << std::endl;
+            do_read();
         }
     };
 }

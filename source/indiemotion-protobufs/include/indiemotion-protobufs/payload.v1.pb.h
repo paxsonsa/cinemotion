@@ -2042,18 +2042,6 @@ class MotionGetMode final :
 
   // accessors -------------------------------------------------------
 
-  enum : int {
-    kModeFieldNumber = 1,
-  };
-  // .indiemotion.protobuf.payloads.v1.MotionMode mode = 1;
-  void clear_mode();
-  ::indiemotion::protobuf::payloads::v1::MotionMode mode() const;
-  void set_mode(::indiemotion::protobuf::payloads::v1::MotionMode value);
-  private:
-  ::indiemotion::protobuf::payloads::v1::MotionMode _internal_mode() const;
-  void _internal_set_mode(::indiemotion::protobuf::payloads::v1::MotionMode value);
-  public:
-
   // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.MotionGetMode)
  private:
   class _Internal;
@@ -2061,7 +2049,6 @@ class MotionGetMode final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int mode_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_payload_2ev1_2eproto;
 };
@@ -3096,26 +3083,6 @@ inline void MotionSetMode::set_mode(::indiemotion::protobuf::payloads::v1::Motio
 // -------------------------------------------------------------------
 
 // MotionGetMode
-
-// .indiemotion.protobuf.payloads.v1.MotionMode mode = 1;
-inline void MotionGetMode::clear_mode() {
-  mode_ = 0;
-}
-inline ::indiemotion::protobuf::payloads::v1::MotionMode MotionGetMode::_internal_mode() const {
-  return static_cast< ::indiemotion::protobuf::payloads::v1::MotionMode >(mode_);
-}
-inline ::indiemotion::protobuf::payloads::v1::MotionMode MotionGetMode::mode() const {
-  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.MotionGetMode.mode)
-  return _internal_mode();
-}
-inline void MotionGetMode::_internal_set_mode(::indiemotion::protobuf::payloads::v1::MotionMode value) {
-  
-  mode_ = value;
-}
-inline void MotionGetMode::set_mode(::indiemotion::protobuf::payloads::v1::MotionMode value) {
-  _internal_set_mode(value);
-  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.MotionGetMode.mode)
-}
 
 // -------------------------------------------------------------------
 

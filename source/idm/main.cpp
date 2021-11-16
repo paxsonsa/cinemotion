@@ -1,71 +1,71 @@
-#include <indiemotion/common.hpp>
+#include <iostream>
+#include <memory>
+#include <thread>
+
+#include <boost/program_options.hpp>
+
+#include <indiemotion/server.hpp>
 #include <indiemotion/session.hpp>
-#include <indiemotion/net/dispatch.hpp>
-#include <indiemotion/net/message.hpp>
-#include <google/protobuf/util/json_util.h>
 
-/*
-Test Format
- [
-    {
-        send: {} // Message to Send
-        expect: null | msg  // Wait for and test the expected response, when null it will not wait.
-    },
- ]
+using namespace indiemotion;
+namespace progopts = boost::program_options;
+
+/**
+ * Command Line Options
  */
-
-struct ServerMessageDispatcher: public indiemotion::NetMessageDispatcher
+struct cli_options
 {
-    std::shared_ptr<asio::io_context> ioContext;
-    void dispatch(indiemotion::NetMessage &&message) override {
-
-    }
+    // Which port should the server use
+    int port;
 };
 
-struct ClientMessageDispatcher: public indiemotion::NetMessageDispatcher
+bool parse_options(std::shared_ptr<cli_options> options, int argc, const char **argv)
 {
-    void dispatch(indiemotion::NetMessage &&message) override {
+    progopts::options_description descriptor{"IndieMotion Debugger CLI"};
 
+    auto port_opt = progopts::value<int>(&options->port)->default_value(8080)->required();
+
+    auto opt = descriptor.add_options();
+    opt = opt("help,h", "Print out this help info");
+    opt = opt("port,p", port_opt, "Port to register service on.");
+
+    progopts::variables_map var_map;
+    progopts::store(progopts::parse_command_line(argc, argv, descriptor), var_map);
+
+    if (var_map.count("help"))
+    {
+        std::cout << descriptor << "\n";
+        return false;
     }
-};
 
-int main()
+    // Notify must come after dealing with help or it could throw an exception
+    progopts::notify(var_map);
+    return true;
+}
+
+int main(int argc, const char **argv)
 {
-//    auto ioContext = std::make_shared<asio::io_context>();
-//    auto work = asio::require(ioContext->get_executor(),
-//                             asio::execution::outstanding_work.tracked);
-//
-//    auto delegate = std::make_shared<DummyDelegate>();
-//    auto session = std::make_shared<indiemotion::SessionController>();
-//    auto dispatcher = std::make_shared<ServerMessageDispatcher>();
-//    dispatcher->ioContext = ioContext;
-//    auto bridge = indiemotion::SessionBridge(dispatcher, session);
-//    bridge.start();
+    auto options = std::make_shared<cli_options>();
+    if (not parse_options(options, argc, argv))
+    {
+        return 1;
+    }
 
-    // TODO load the test format and then process the JSON.
-    // TODO Read Protobuf In the Dispatch a Message process
+    std::cout
+        << "Welcome to IndieMotion Test Server\n"
+        << "Starting Server: 0.0.0.0:" << options->port << "\n\n";
 
-//    ioContext->run();
+    ServerOptions server_options;
+    server_options.address = "0.0.0.0";
+    server_options.port = options->port;
 
-    indiemotion::NetMessage message;
-    auto header = message.mutable_header();
-    header->set_id("test");
+    auto server = Server(server_options);
+    std::thread thread{[&server](){
+        server.start([](std::shared_ptr<SessionController> controller){
+            std::cout << "Session Callback Called...." << std::endl;
+        });
+    }};
 
-    auto payload = message.mutable_motion_xform();
-    auto orientation = payload->mutable_orientation();
-    auto translation = payload->mutable_translation();
-
-    orientation->set_x(1.0f);
-    orientation->set_y(2.0f);
-    orientation->set_z(3.0f);
-    translation->set_x(4.0f);
-    translation->set_y(5.0f);
-    translation->set_z(6.0f);
-
-    std::string buffer;
-    google::protobuf::util::JsonPrintOptions options;
-    google::protobuf::util::MessageToJsonString(message, &buffer);
-
-    std::cout << buffer << "\n";
+    thread.join();
     return 0;
 }

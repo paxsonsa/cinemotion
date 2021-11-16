@@ -1,14 +1,12 @@
-- Refactor Session startup
-  - Client Sends Start Message
-    - Remove Session Activate
-  - Server Responds with Nothing unless error
-- Server Start Up
-- Connection Accepting
-- Process Thread
-- Connection Loop 
-  - Read
-  - Write NetOldMessage from Send Loop
-
+- Create Echo Server Delegate
+  - Create Server/Connection
+    - MVP: Launch Server and Send Basic Setup with Shutdown. 
+    - Need to be able to pass in Delegate Constructor
+    - Server takes shared_ptr to delegate.
+    - Server Start Up
+    - Connection Accepting
+    - Process Thread
+    
 - WebSocket Server
     - Listener (accept) [Maybe as Server???]
         - Only Accept Single Connection
@@ -20,6 +18,7 @@
 
 - SessionProxy
   - Given to SessionControllerDelegate to Control Session and Pass Messages to user.
+  - 
 
 - Reset Call
 - [MAYBE] Use HTTP for all information requests and streamed data via http?

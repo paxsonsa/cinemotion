@@ -4,14 +4,9 @@
 
 */
 #include <indiemotion/common.hpp>
+#include <indiemotion/session.hpp>
 
-namespace indiemotion::server
+namespace indiemotion
 {
-    class ServerDelegate
-    {
-    private:
-    public:
-        virtual ~ServerDelegate() {}
-    };
-
+    using ConnectionStartCallback = std::function<void(std::shared_ptr<SessionController>)>;
 }

@@ -7,47 +7,34 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/server/listener.hpp>
 #include <indiemotion/server/options.hpp>
-#include <indiemotion/server/server_delegate.hpp>
-#include <indiemotion/session/session.hpp>
+#include <indiemotion/server/common.hpp>
+#include <indiemotion/session.hpp>
 
 #include <boost/asio.hpp>
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 
-namespace indiemotion::server
-{
-    class Server
-    {
-    private:
-        std::unique_ptr<Options> _m_options = nullptr;
+namespace indiemotion {
+    class Server {
+        asio::io_context _io_context;
+        ServerOptions _options;
 
     public:
         // Default Constructor
-        Server(std::unique_ptr<Options> options)
-        {
-            _m_options = std::move(options);
-        };
+        Server(ServerOptions options)
+            : _options(std::move(options)) {};
 
-        void start()
-        {
-            // Advertise MDNS
-            // Accept connection and start websocket server
-            // TODO On return the session is initialized
-            // Session initializes by send SESSION_INIT command
-            // SessionDelegate::on_event_emit()
-            // auto session = std::make_shared<SessionController>();
-            // _m_delegate->on_new_session(session);
-            // session->start();
-            auto const threads = 1;
-            net::io_context ioContext{threads};
+        void start(ConnectionStartCallback &&cb) {
+            auto work = asio::require(_io_context.get_executor(),
+                                      asio::execution::outstanding_work.tracked);
+            auto const address = net::ip::make_address(_options.address.value_or("0.0.0.0"));
+            auto const port = _options.port.value_or(7766);
 
-            auto const address = net::ip::make_address(_m_options->address.value_or("0.0.0.0"));
-            auto const port = _m_options->port.value_or(7766);
-
-            std::make_shared<Listener>(ioContext, tcp::endpoint{address, port})->run();
+            // Create Listener and Start its listen routine.
+            std::make_shared<Listener>(_io_context,
+                                       tcp::endpoint{address, port})->listen(std::move(cb));
             fmt::print("listening on: ws://{}:{}\n", address.to_string(), port);
-
-            ioContext.run();
+            _io_context.run();
         }
     };
 

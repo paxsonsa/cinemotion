@@ -8,10 +8,9 @@
 
 #include <indiemotion/common.hpp>
 
-namespace net = boost::asio; // from <boost/asio.hpp>
-namespace indiemotion::server
+namespace indiemotion
 {
-    struct Options
+    struct ServerOptions
     {
         std::optional<std::string> address = {};
         std::optional<unsigned short> port = {};

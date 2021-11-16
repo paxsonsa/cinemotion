@@ -9,16 +9,4 @@ namespace indiemotion {
     struct NetMessageDispatcher {
         virtual void dispatch(NetMessage &&message) = 0;
     };
-
-    struct NetClientMessageDispatcher: public NetMessageDispatcher {
-        void dispatch(NetMessage &&message) override {
-
-        }
-    };
-
-    struct NetServerMessageDispatcher: public NetMessageDispatcher {
-        void dispatch(NetMessage &&message) override {
-
-        }
-    };
 }
