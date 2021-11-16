@@ -1,14 +1,14 @@
-- Create Echo Server Delegate
-  - Create Server/SessionConnection
-    - MVP: Launch Server and Send Basic Setup with Shutdown. 
+- Create Echo SessionServer Delegate
+  - Create SessionServer/SessionConnection
+    - MVP: Launch SessionServer and Send Basic Setup with Shutdown. 
     - Need to be able to pass in Delegate Constructor
-    - Server takes shared_ptr to delegate.
-    - Server Start Up
+    - SessionServer takes shared_ptr to delegate.
+    - SessionServer Start Up
     - SessionConnection Accepting
     - Process Thread
     
-- WebSocket Server
-    - Listener (accept) [Maybe as Server???]
+- WebSocket SessionServer
+    - SessionConnectionListener (accept) [Maybe as SessionServer???]
         - Only Accept Single SessionConnection
         - OnAccept Store Session
     - SessionConnection (read/write)

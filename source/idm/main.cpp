@@ -59,7 +59,7 @@ int main(int argc, const char **argv)
     server_options.address = "0.0.0.0";
     server_options.port = options->port;
 
-    auto server = Server(server_options);
+    auto server = SessionServer(server_options);
     std::thread thread{[&server](){
         server.start([](std::shared_ptr<SessionController> controller){
             std::cout << "Session Callback Called...." << std::endl;

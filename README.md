@@ -1,4 +1,4 @@
-# IndieMotion Server Engine 
+# IndieMotion SessionServer Engine 
 A framework for recording virtual camera motion into a DCC.
 
 

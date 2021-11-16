@@ -6,40 +6,60 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/server/listener.hpp>
-#include <indiemotion/server/options.hpp>
 #include <indiemotion/session.hpp>
 
-#include <boost/asio.hpp>
-
-namespace net = boost::asio; // from <boost/asio.hpp>
-
 namespace indiemotion {
-    class Server : public std::enable_shared_from_this<Server> {
+
+    /**
+     * A set of options to configure the server
+     */
+    struct ServerOptions
+    {
+        /// An address to bind the interface to, defaults to 0.0.0.0
+        std::string address = "0.0.0.0";
+
+        /// The port to bind to, defaults to 7766
+        unsigned short port = 7766;
+    };
+
+    /**
+     * A server for accepting and creating session connections
+     */
+    class SessionServer : public std::enable_shared_from_this<SessionServer> {
         asio::io_context _io_context;
         ServerOptions _options;
 
     public:
-        // Default Constructor
-        Server(ServerOptions options)
+        /**
+         * Construct a server with the given server options.
+         * @param options
+         */
+        SessionServer(ServerOptions options)
             : _options(std::move(options)) {};
 
-        void start(ConnectionStartCallback &&startCallback) {
+        /**
+         * Start the server, blocks until finished.
+         *
+         * It is good practice call this in a new thread as this blocks
+         * The callback is called with the new session controller, this should be used
+         * to configure your runtime delegate for the session.
+         *
+         * @param on_start_callback A callback to invoke when a new session connection is activated
+         */
+        void start(ConnectionStartCallback &&on_start_callback) {
             auto work = asio::require(_io_context.get_executor(),
                                       asio::execution::outstanding_work.tracked);
-            auto const address = net::ip::make_address(_options.address.value_or("0.0.0.0"));
-            auto const port = _options.port.value_or(7766);
-
-            // Create Listener and Start its listen routine.
+            auto const address = asio::ip::make_address(_options.address);
+            auto const port = _options.port;
 
             SessionConnectionCallbacks callbacks;
-            callbacks.on_started = std::move(startCallback);
+            callbacks.on_started = std::move(on_start_callback);
             callbacks.on_disconnect = [&]() {
                 stop();
             };
 
-            std::make_shared<Listener>(_io_context,
-                                       tcp::endpoint{address, port})->listen(std::move(callbacks));
-            fmt::print("listening on: ws://{}:{}\n", address.to_string(), port);
+            std::make_shared<SessionConnectionListener>(_io_context,
+                                                        tcp::endpoint{address, port})->listen(std::move(callbacks));
             _io_context.run();
         }
 

@@ -1,20 +1,7 @@
-// Copyright (c) 2021 Andrew Paxson. All rights reserved. Used under
-// Licensed under the MIT License. See LICENSE file in the project root for full license information.
-/* listener.hpp */
 #pragma once
 #include <indiemotion/common.hpp>
+#include <indiemotion/logging.hpp>
 #include <indiemotion/server/connection.hpp>
-
-#include <boost/asio/dispatch.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-
-namespace beast = boost::beast;         // from <boost/beast.hpp>
-namespace http = beast::http;           // from <boost/beast/http.hpp>
-namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
-namespace net = boost::asio;            // from <boost/asio.hpp> 1
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp> 1
 
 namespace indiemotion {
 
@@ -22,50 +9,75 @@ namespace indiemotion {
         spdlog::error(fmt::format("{}: {}", what, ec.message()));
     }
 
-    class Listener : public std::enable_shared_from_this<Listener> {
-        net::io_context &_io_context;
-        tcp::acceptor _m_acceptor;
+    /**
+     * TCP Connection Listener
+     *
+     * A class used to being accepting TCP Connections on a specific tcp::endpoint
+     * using the io_context for operations.
+     *
+     */
+    class SessionConnectionListener : public std::enable_shared_from_this<SessionConnectionListener> {
+        logging::Logger _logger = logging::getLogger("com.indiemotion.server.listener");
+        asio::io_context &_io_context;
+        tcp::acceptor _acceptor;
 
     public:
-        Listener(net::io_context &ioContext,
-                 tcp::endpoint endpoint) : _io_context(ioContext), _m_acceptor(ioContext) {
+        /**
+         * Construct a listen to listen on the given endpoint for TCP connections.
+         *
+         * This constructor will throw std::runtime_error if there are any problems while configuring
+         * the listener.
+         *
+         * @param io_context The context to execute operations within.
+         * @param endpoint A tcp endpoint to accept connections on.
+         */
+        SessionConnectionListener(asio::io_context &io_context,
+                                  tcp::endpoint endpoint) : _io_context(io_context), _acceptor(io_context) {
             beast::error_code ec;
 
             // Open the acceptor
-            _m_acceptor.open(endpoint.protocol(), ec);
+            _acceptor.open(endpoint.protocol(), ec);
             if (ec) {
-                fail(ec, "open");
-                return;
+                auto msg = fmt::format("failed to open listener's acceptor: {}", ec.message());
+                _logger->error(msg);
+                throw std::runtime_error(msg);
             }
 
             // Allow address reuse
-            _m_acceptor.set_option(net::socket_base::reuse_address(true), ec);
+            _acceptor.set_option(asio::socket_base::reuse_address(true), ec);
             if (ec) {
-                fail(ec, "set_option");
-                return;
+                auto msg = fmt::format("failed to configure address reuse: {}", ec.message());
+                _logger->error(msg);
+                throw std::runtime_error(msg);
             }
 
             // Bind to the server address
-            _m_acceptor.bind(endpoint, ec);
+            _acceptor.bind(endpoint, ec);
             if (ec) {
-                fail(ec, "bind");
-                return;
+                auto msg = fmt::format("failed to bind endpoint: {}", ec.message());
+                _logger->error(msg);
+                throw std::runtime_error(msg);
             }
 
             // Start listening for connections
-            _m_acceptor.listen(
-                net::socket_base::max_listen_connections, ec);
+            _acceptor.listen(
+                asio::socket_base::max_listen_connections, ec);
             if (ec) {
-                fail(ec, "listen");
-                return;
+                auto msg = fmt::format("failed to start listening: {}", ec.message());
+                _logger->error(msg);
+                throw std::runtime_error(msg);
             }
         }
 
+        /**
+         * Start listening and accepting connections.
+         * @param callbacks A set of callbacks that will be invoked during a connections lifecycle.
+         */
         void listen(SessionConnectionCallbacks &&callbacks) {
-            _m_acceptor.async_accept(
-                net::make_strand(_io_context),
+            _acceptor.async_accept(
+                asio::make_strand(_io_context),
                 beast::bind_front_handler(
-                    &Listener::onAccept,
+                    &SessionConnectionListener::onAccept,
                     shared_from_this(),
                     std::move(callbacks)
                 )
@@ -73,20 +85,21 @@ namespace indiemotion {
         }
 
     private:
+        /**
+         * Handle when the async accept is invoked.
+         * @param callbacks
+         * @param ec
+         * @param socket
+         */
         void onAccept(SessionConnectionCallbacks &&callbacks,
                       beast::error_code ec,
                       tcp::socket socket) {
             if (ec) {
-                fail(ec, "onaccept");
+                _logger->error("encountered error accepting connection: {}", ec.message());
+                listen(std::move(callbacks));
             } else {
-                // TODO Make Connection;
-                // - Launch an HTTP Session and wait for websocket upgrade.
-                // - All other HTTP Requests should return bad request
                 std::make_shared<SessionConnection>(_io_context, std::move(socket))->start(std::move(callbacks));
             }
-
-            // TODO how to make sure when the connection drops out we continue to listen for new connections
-            // Store Connection
         }
     };
 }
