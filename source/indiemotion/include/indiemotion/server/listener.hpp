@@ -3,7 +3,6 @@
 /* listener.hpp */
 #pragma once
 #include <indiemotion/common.hpp>
-#include <indiemotion/server/common.hpp>
 #include <indiemotion/server/connection.hpp>
 
 #include <boost/asio/dispatch.hpp>

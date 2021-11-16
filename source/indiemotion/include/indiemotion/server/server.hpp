@@ -7,7 +7,6 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/server/listener.hpp>
 #include <indiemotion/server/options.hpp>
-#include <indiemotion/server/common.hpp>
 #include <indiemotion/session.hpp>
 
 #include <boost/asio.hpp>
