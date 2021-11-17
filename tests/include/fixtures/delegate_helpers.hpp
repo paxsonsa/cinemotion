@@ -10,10 +10,10 @@ namespace testing {
             document = loadJSONDocument(json_path);
         }
 
-        std::vector<indiemotion::Camera> getAvailableCameras() override {
-            if (document.HasMember("getAvailableCameras")) {
+        std::vector<indiemotion::Camera> get_available_cameras() override {
+            if (document.HasMember("get_available_cameras")) {
                 std::vector<indiemotion::Camera> cameras{};
-                for (auto &item: document["getAvailableCameras"].GetArray()) {
+                for (auto &item: document["get_available_cameras"].GetArray()) {
                     auto camera = indiemotion::Camera(
                         item["id"].GetString()
                     );
@@ -24,9 +24,9 @@ namespace testing {
             return std::vector<indiemotion::Camera>();
         }
 
-        std::optional<indiemotion::Camera> getCameraById(std::string id) override {
-            if (document.HasMember("getCameraById")) {
-                auto cid = document["getCameraById"].GetObject()["id"].GetString();
+        std::optional<indiemotion::Camera> get_camera_by_name(std::string id) override {
+            if (document.HasMember("get_camera_by_name")) {
+                auto cid = document["get_camera_by_name"].GetObject()["id"].GetString();
                 indiemotion::Camera camera(cid);
 
                 if (cid == id) {

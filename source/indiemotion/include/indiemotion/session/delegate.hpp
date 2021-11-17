@@ -21,7 +21,7 @@ namespace indiemotion
          *
          * @return std::vector<std::string>
          */
-        virtual std::vector<Camera> getAvailableCameras()
+        virtual std::vector<Camera> get_available_cameras()
         {
             return std::vector<Camera>();
         }
@@ -35,7 +35,7 @@ namespace indiemotion
          * @param id The camera id to get
          * @return std::optional<cameras::Camera> 
          */
-        virtual std::optional<Camera> getCameraById(std::string id)
+        virtual std::optional<Camera> get_camera_by_name(std::string name)
         {
             return {};
         }
@@ -45,27 +45,36 @@ namespace indiemotion
          * 
          * @param camera 
          */
-        // TODO Return an optional error.
-        virtual void didSetActiveCamera(Camera camera) {}
-
-        // ----------------------------------------------------------------
-        // Motion Mode Operations
+        virtual void did_set_active_camera(Camera camera) {}
 
         /**
          * @brief Called when the motion mode is updated
          * 
          * @param m 
          */
-        virtual void didMotionSetMode(MotionMode m) {}
+        virtual void did_set_motion_mode(MotionMode m) {}
 
-        // ----------------------------------------------------------------
-        // Motion XForm Operations
-        virtual void receivedMotionUpdate(MotionXForm m) {}
+        /**
+         * Invoked when a new motion update is received.
+         * @param m
+         */
+        virtual void did_receive_motion_update(MotionXForm m) {}
 
-        // ----------------------------------------------------------------
-        // Session Operations
-        virtual void sessionWillShutdown() {}
-        virtual void sessionWillStart() {}
-        virtual void sessionDidStart() {}
+        /**
+         * Invoke at the beginning of the session shutdown process.
+         */
+        virtual void will_shutdown_session() {}
+
+        /**
+         * Called right before the session is initialized.
+         *
+         * The session state is undefined at this point, do not access it.
+         */
+        virtual void will_start_session() {}
+
+        /**
+         * Called after the session is successfully started.
+         */
+        virtual void did_start_session() {}
     };
 }

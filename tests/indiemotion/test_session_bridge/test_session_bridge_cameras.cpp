@@ -24,7 +24,7 @@ struct DummyDispatcher : NetMessageDispatcher {
 struct DummyDelegate : SessionControllerDelegate{
     bool sessionWillShutdownCalled = false;
 
-    void sessionWillShutdown() //override
+    void will_shutdown_session() //override
     {
         sessionWillShutdownCalled = true;
     }
@@ -40,7 +40,7 @@ SCENARIO("Listing the Cameras")
             Camera("cam3"),
         };
 
-        std::vector<Camera> getAvailableCameras() override
+        std::vector<Camera> get_available_cameras() override
         {
             return cameraList;
         }
@@ -91,18 +91,18 @@ SCENARIO("Set the Camera Successfully")
 
         std::optional<Camera> camera;
 
-        std::vector<Camera> getAvailableCameras() override
+        std::vector<Camera> get_available_cameras() override
         {
             return cameraList;
         }
 
-        std::optional<Camera> getCameraById(std::string id) override
+        std::optional<Camera> get_camera_by_name(std::string id) override
         {
             assert(id == "cam2" && "should not be possible in this test case.");
             return cameraList[1];
         }
 
-        void didSetActiveCamera(Camera cam) override
+        void did_set_active_camera(Camera cam) override
         {
             camera = cam;
         }

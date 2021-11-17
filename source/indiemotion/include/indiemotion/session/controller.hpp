@@ -50,14 +50,14 @@ namespace indiemotion
         void initialize()
         {
             if (_m_delegate)
-                _m_delegate->sessionWillStart();
+                _m_delegate->will_start_session();
 
             camera_manager = std::make_unique<CameraManager>();
             motion_manager = std::make_unique<MotionManager>();
             _m_status = SessionStatus::Initialized;
 
             if (_m_delegate)
-                _m_delegate->sessionDidStart();
+                _m_delegate->did_start_session();
         }
 
         void set_delegate(std::shared_ptr<SessionControllerDelegate> delegate) {
@@ -74,7 +74,7 @@ namespace indiemotion
         {
             if (_m_delegate)
             {
-                _m_delegate->sessionWillShutdown();
+                _m_delegate->will_shutdown_session();
             }
             _m_status = SessionStatus::Offline;
         }
@@ -86,7 +86,7 @@ namespace indiemotion
             _throwWhenUninitialized();
             if (_m_delegate)
             {
-                return _m_delegate->getAvailableCameras();
+                return _m_delegate->get_available_cameras();
             }
             return {};
         }
@@ -100,7 +100,7 @@ namespace indiemotion
         void setActiveCamera(std::string cameraId)
         {
             _throwWhenUninitialized();
-            auto cameraOpt = _m_delegate->getCameraById(cameraId);
+            auto cameraOpt = _m_delegate->get_camera_by_name(cameraId);
             if (!cameraOpt)
             {
                 throw CameraNotFoundException(cameraId);
@@ -109,7 +109,7 @@ namespace indiemotion
             camera_manager->setActiveCamera(camera);
             if (_m_delegate)
             {
-                _m_delegate->didSetActiveCamera(camera);
+                _m_delegate->did_set_active_camera(camera);
             }
         }
 
@@ -128,7 +128,7 @@ namespace indiemotion
             motion_manager->seCurrentMotionMode(m);
             if (_m_delegate)
             {
-                _m_delegate->didMotionSetMode(m);
+                _m_delegate->did_set_motion_mode(m);
             }
         }
 
@@ -147,7 +147,7 @@ namespace indiemotion
             {
                 if (_m_delegate)
                 {
-                    _m_delegate->receivedMotionUpdate(xform);
+                    _m_delegate->did_receive_motion_update(xform);
                 }
             }
         }

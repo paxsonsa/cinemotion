@@ -6,6 +6,5 @@ add_subdirectory(indiemotion)
 
 if(${${PROJECT_NAME}_BUILD_CLI})
     message("Enabled CLI")
-    # add_subdirectory(indiemotion-cli)
     add_subdirectory(idmserver)
 endif()

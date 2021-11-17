@@ -24,7 +24,7 @@ struct DummyDelegate : SessionControllerDelegate
     bool wasReceivedMotionUpdateCalled = false;
     MotionXForm xform;
 
-    void receivedMotionUpdate(MotionXForm m) override
+    void did_receive_motion_update(MotionXForm m) override
     {
         wasReceivedMotionUpdateCalled = true;
         xform = m;

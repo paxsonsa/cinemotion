@@ -25,11 +25,11 @@ struct DummyDelegate: SessionControllerDelegate
     bool sessionWillStartCalled = false;
     bool sessionDidStartCalled = false;
 
-    void sessionWillStart() override {
+    void will_start_session() override {
         sessionWillStartCalled = true;
     }
 
-    void sessionDidStart() override
+    void did_start_session() override
     {
         sessionDidStartCalled = true;
     }
@@ -59,7 +59,7 @@ SCENARIO("Starting the Session")
                 REQUIRE(session->status() == SessionStatus::Initialized);
             }
 
-            AND_THEN("session delegate's sessionWillStart() and sessionDidStart()")
+            AND_THEN("session delegate's will_start_session() and did_start_session()")
             {
                 REQUIRE(delegate->sessionWillStartCalled);
                 REQUIRE(delegate->sessionDidStartCalled);

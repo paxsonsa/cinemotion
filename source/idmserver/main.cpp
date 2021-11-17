@@ -23,36 +23,36 @@ struct DebugDelegate: public SessionControllerDelegate {
 
     std::optional<Camera> active_camera;
 
-    std::vector<Camera> getAvailableCameras() override {
+    std::vector<Camera> get_available_cameras() override {
         return cameras;
     }
 
-    std::optional<Camera> getCameraById(std::string id) override {
+    std::optional<Camera> get_camera_by_name(std::string name) override {
 
         for (auto &cam: cameras)
         {
-            if (cam.name == id) {
+            if (cam.name == name) {
                 return cam;
             }
         }
         return {};
     }
 
-    void didSetActiveCamera(Camera camera) override {
+    void did_set_active_camera(Camera camera) override {
         active_camera = camera;
     }
-    void didMotionSetMode(MotionMode m) override {
+    void did_set_motion_mode(MotionMode m) override {
         logger->info("Motion Mode Did Update: {}", m);
     }
-    void receivedMotionUpdate(MotionXForm m) override {}
+    void did_receive_motion_update(MotionXForm m) override {}
 
-    void sessionWillShutdown() override {
+    void will_shutdown_session() override {
         logger->info("Session is shutting down");
     }
-    void sessionWillStart() override {
+    void will_start_session() override {
         logger->info("Session is starting");
     }
-    void sessionDidStart() override {
+    void did_start_session() override {
         logger->info("Session is started");
     }
 };

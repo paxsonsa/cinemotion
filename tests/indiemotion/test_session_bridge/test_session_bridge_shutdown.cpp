@@ -23,7 +23,7 @@ struct DummyDispatcher : NetMessageDispatcher {
 struct DummyDelegate : SessionControllerDelegate{
     bool sessionWillShutdownCalled = false;
 
-    void sessionWillShutdown() //override
+    void will_shutdown_session() //override
     {
         sessionWillShutdownCalled = true;
     }

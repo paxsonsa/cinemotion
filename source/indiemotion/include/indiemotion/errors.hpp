@@ -40,6 +40,15 @@ namespace indiemotion {
     };
 
     /**
+     * An exception used by delegates to relay errors to the client user.
+     */
+    struct SessionException : Exception {
+        SessionException(std::string m, bool is_fatal = false) : Exception("SessionException",
+                                                                           m,
+                                                                           true) {};
+    };
+
+    /**
      * An Exception that is used when an unknown exception was caught and thus the session
      * is going to shut down.
      */

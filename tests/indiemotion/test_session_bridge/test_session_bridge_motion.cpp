@@ -24,7 +24,7 @@ struct DummyDelegate : SessionControllerDelegate
     bool wasMotionModeDidUpdateCalled = false;
     MotionMode mode = MotionMode::Off;
 
-    void didMotionSetMode(MotionMode m) override
+    void did_set_motion_mode(MotionMode m) override
     {
         wasMotionModeDidUpdateCalled = true;
         mode = m;
