@@ -1,9 +1,6 @@
-- Documentation
-  - Errors
-  - Shutdown
-  
 - SessionProxy
   - Given to SessionControllerDelegate to Control Session and Pass Messages to user.
+  - Requires Async Writes to Connection
 - DelegateError
 - Reset/Set Origin
 - Reset Session
