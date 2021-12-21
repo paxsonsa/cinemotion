@@ -146,13 +146,15 @@ namespace indiemotion {
                 _logger->error(fmt::format("Connection::onAccept: {}", err.message()));
                 return;
             }
-
+            _logger->info("Accepting Connection...");
             auto controller = std::make_shared<SessionController>();
             auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](NetMessage &&message) {
                 auto os = beast::ostream(_buffer);
                 message.SerializeToOstream(&os);
                 _buffer.commit(message.ByteSizeLong());
+                _websocket.binary(true);
                 _websocket.write(_buffer.data());
+                _buffer.consume(message.ByteSizeLong());
             });
             _callbacks.on_started(controller);
             _session_bridge = std::make_unique<SessionBridge>(std::move(dispatcher), std::move(controller));
