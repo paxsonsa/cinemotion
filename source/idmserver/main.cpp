@@ -111,7 +111,6 @@ int main(int argc, const char **argv) {
             controller->set_delegate(std::move(delegate));
         });
     }};
-
     thread.join();
     return 0;
 }

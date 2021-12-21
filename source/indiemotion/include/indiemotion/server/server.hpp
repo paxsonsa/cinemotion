@@ -7,6 +7,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/server/listener.hpp>
 #include <indiemotion/session.hpp>
+#include <indiemotion/logging.hpp>
 
 namespace indiemotion {
 
@@ -28,6 +29,7 @@ namespace indiemotion {
     class SessionServer : public std::enable_shared_from_this<SessionServer> {
         asio::io_context _io_context;
         ServerOptions _options;
+        logging::Logger _log;
 
     public:
         /**
@@ -35,7 +37,9 @@ namespace indiemotion {
          * @param options
          */
         SessionServer(ServerOptions options)
-            : _options(std::move(options)) {};
+            : _options(std::move(options)) {
+            _log = logging::getLogger("com.indiemotion.server.SessionServer");
+        };
 
         /**
          * Start the server, blocks until finished.
@@ -55,7 +59,9 @@ namespace indiemotion {
             SessionConnectionCallbacks callbacks;
             callbacks.on_started = std::move(on_start_callback);
             callbacks.on_disconnect = [&]() {
-                stop();
+                _log->info("server disconnection, listening for new connections");
+                std::make_shared<SessionConnectionListener>(_io_context,
+                                                            tcp::endpoint{address, port})->listen(std::move(callbacks));
             };
 
             std::make_shared<SessionConnectionListener>(_io_context,

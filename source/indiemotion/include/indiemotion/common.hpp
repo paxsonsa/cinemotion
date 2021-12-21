@@ -19,6 +19,7 @@ Header for providing common include across the library
 #include <boost/format.hpp>
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
+#include <google/protobuf/util/json_util.h>
 
 #include <indiemotion/common/boost.hpp>
 #include <indiemotion/common/info.hpp>

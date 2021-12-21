@@ -213,8 +213,12 @@ namespace indiemotion {
             os << boost::beast::buffers_to_string(_buffer.data());
             NetMessage message;
             text = os.str();
+            _logger->trace("payload: {}", text);
             message.ParseFromString(text);
 
+            std::string msg_str;
+            google::protobuf::util::MessageToJsonString(message, &msg_str);
+            _logger->trace("message: {}", msg_str);
             _buffer.consume(_buffer.size());
             _session_bridge->processMessage(std::move(message));
 

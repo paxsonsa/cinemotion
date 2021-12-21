@@ -55,6 +55,7 @@ namespace indiemotion {
                 _m_dispatcher->dispatch(std::move(err_message));
                 if (err.is_fatal)
                 {
+                    _logger->error("caught fatal error, shutting down session: {}", err.message);
                     _m_controller->shutdown();
                 }
             }
@@ -79,6 +80,7 @@ namespace indiemotion {
             auto properties = message.session_start().session_properties();
             if (properties.api_version() != supportedAPIVersion())
             {
+                _logger->error("API Version is not supported: {}", properties.api_version());
                 throw SessionAPIVersionNotSupportedException();
             }
 
