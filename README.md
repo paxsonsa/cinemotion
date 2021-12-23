@@ -70,5 +70,5 @@ struct DebugDelegate: public idm::SessionControllerDelegate {
 
 ### Building Protobuf Source
 ``` bash
-protoc -I=./indiemotion-protobufs --cpp_out=source/indiemotion-protobufs/include/indiemotion-protobufs protobufs/*.proto
+protoc -I=./indiemotion-protobuf --cpp_out=source/indiemotion-protobufs/include/indiemotion-protobufs indiemotion-protobuf/*.proto
 ```
