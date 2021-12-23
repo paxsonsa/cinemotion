@@ -47,7 +47,7 @@ struct TableStruct_payload_2ev1_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[16]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -70,6 +70,9 @@ extern CameraListDefaultTypeInternal _CameraList_default_instance_;
 class Error;
 struct ErrorDefaultTypeInternal;
 extern ErrorDefaultTypeInternal _Error_default_instance_;
+class GetActiveCamera;
+struct GetActiveCameraDefaultTypeInternal;
+extern GetActiveCameraDefaultTypeInternal _GetActiveCamera_default_instance_;
 class GetCameraList;
 struct GetCameraListDefaultTypeInternal;
 extern GetCameraListDefaultTypeInternal _GetCameraList_default_instance_;
@@ -112,6 +115,7 @@ template<> ::indiemotion::protobuf::payloads::v1::Acknowledge* Arena::CreateMayb
 template<> ::indiemotion::protobuf::payloads::v1::Camera* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::Camera>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::CameraList* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::CameraList>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::Error* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::Error>(Arena*);
+template<> ::indiemotion::protobuf::payloads::v1::GetActiveCamera* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::GetActiveCamera>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::GetCameraList* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::GetCameraList>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::MotionActiveMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::MotionActiveMode>(Arena*);
 template<> ::indiemotion::protobuf::payloads::v1::MotionGetMode* Arena::CreateMaybeMessage<::indiemotion::protobuf::payloads::v1::MotionGetMode>(Arena*);
@@ -753,6 +757,150 @@ class SetActiveCamera final :
 };
 // -------------------------------------------------------------------
 
+class GetActiveCamera final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.GetActiveCamera) */ {
+ public:
+  inline GetActiveCamera() : GetActiveCamera(nullptr) {}
+  ~GetActiveCamera() override;
+  explicit constexpr GetActiveCamera(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetActiveCamera(const GetActiveCamera& from);
+  GetActiveCamera(GetActiveCamera&& from) noexcept
+    : GetActiveCamera() {
+    *this = ::std::move(from);
+  }
+
+  inline GetActiveCamera& operator=(const GetActiveCamera& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetActiveCamera& operator=(GetActiveCamera&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetActiveCamera& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetActiveCamera* internal_default_instance() {
+    return reinterpret_cast<const GetActiveCamera*>(
+               &_GetActiveCamera_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(GetActiveCamera& a, GetActiveCamera& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetActiveCamera* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetActiveCamera* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetActiveCamera* New() const final {
+    return new GetActiveCamera();
+  }
+
+  GetActiveCamera* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetActiveCamera>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GetActiveCamera& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GetActiveCamera& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetActiveCamera* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotion.protobuf.payloads.v1.GetActiveCamera";
+  }
+  protected:
+  explicit GetActiveCamera(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCameraIdFieldNumber = 10,
+  };
+  // string camera_id = 10;
+  void clear_camera_id();
+  const std::string& camera_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_camera_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_camera_id();
+  PROTOBUF_MUST_USE_RESULT std::string* release_camera_id();
+  void set_allocated_camera_id(std::string* camera_id);
+  private:
+  const std::string& _internal_camera_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_camera_id(const std::string& value);
+  std::string* _internal_mutable_camera_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:indiemotion.protobuf.payloads.v1.GetActiveCamera)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr camera_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_payload_2ev1_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Camera final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotion.protobuf.payloads.v1.Camera) */ {
  public:
@@ -797,7 +945,7 @@ class Camera final :
                &_Camera_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(Camera& a, Camera& b) {
     a.Swap(&b);
@@ -941,7 +1089,7 @@ class CameraList final :
                &_CameraList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(CameraList& a, CameraList& b) {
     a.Swap(&b);
@@ -1089,7 +1237,7 @@ class SessionServerInfo final :
                &_SessionServerInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(SessionServerInfo& a, SessionServerInfo& b) {
     a.Swap(&b);
@@ -1260,7 +1408,7 @@ class SessionProperties final :
                &_SessionProperties_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(SessionProperties& a, SessionProperties& b) {
     a.Swap(&b);
@@ -1420,7 +1568,7 @@ class SessionStart final :
                &_SessionStart_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(SessionStart& a, SessionStart& b) {
     a.Swap(&b);
@@ -1568,7 +1716,7 @@ class SessionShutdown final :
                &_SessionShutdown_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(SessionShutdown& a, SessionShutdown& b) {
     a.Swap(&b);
@@ -1694,7 +1842,7 @@ class MotionActiveMode final :
                &_MotionActiveMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(MotionActiveMode& a, MotionActiveMode& b) {
     a.Swap(&b);
@@ -1833,7 +1981,7 @@ class MotionSetMode final :
                &_MotionSetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(MotionSetMode& a, MotionSetMode& b) {
     a.Swap(&b);
@@ -1972,7 +2120,7 @@ class MotionGetMode final :
                &_MotionGetMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(MotionGetMode& a, MotionGetMode& b) {
     a.Swap(&b);
@@ -2098,7 +2246,7 @@ class XFormData final :
                &_XFormData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(XFormData& a, XFormData& b) {
     a.Swap(&b);
@@ -2259,7 +2407,7 @@ class MotionXForm final :
                &_MotionXForm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(MotionXForm& a, MotionXForm& b) {
     a.Swap(&b);
@@ -2626,6 +2774,56 @@ inline void SetActiveCamera::set_allocated_camera_id(std::string* camera_id) {
   camera_id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), camera_id,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.SetActiveCamera.camera_id)
+}
+
+// -------------------------------------------------------------------
+
+// GetActiveCamera
+
+// string camera_id = 10;
+inline void GetActiveCamera::clear_camera_id() {
+  camera_id_.ClearToEmpty();
+}
+inline const std::string& GetActiveCamera::camera_id() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.payloads.v1.GetActiveCamera.camera_id)
+  return _internal_camera_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GetActiveCamera::set_camera_id(ArgT0&& arg0, ArgT... args) {
+ 
+ camera_id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotion.protobuf.payloads.v1.GetActiveCamera.camera_id)
+}
+inline std::string* GetActiveCamera::mutable_camera_id() {
+  std::string* _s = _internal_mutable_camera_id();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.payloads.v1.GetActiveCamera.camera_id)
+  return _s;
+}
+inline const std::string& GetActiveCamera::_internal_camera_id() const {
+  return camera_id_.Get();
+}
+inline void GetActiveCamera::_internal_set_camera_id(const std::string& value) {
+  
+  camera_id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* GetActiveCamera::_internal_mutable_camera_id() {
+  
+  return camera_id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* GetActiveCamera::release_camera_id() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.payloads.v1.GetActiveCamera.camera_id)
+  return camera_id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void GetActiveCamera::set_allocated_camera_id(std::string* camera_id) {
+  if (camera_id != nullptr) {
+    
+  } else {
+    
+  }
+  camera_id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), camera_id,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.payloads.v1.GetActiveCamera.camera_id)
 }
 
 // -------------------------------------------------------------------
@@ -3335,6 +3533,8 @@ inline void MotionXForm::set_allocated_orientation(::indiemotion::protobuf::payl
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

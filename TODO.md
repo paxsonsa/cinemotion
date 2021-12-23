@@ -1,3 +1,4 @@
+- Add GetActiveCamera Message
 - SessionProxy
   - Given to SessionControllerDelegate to Control Session and Pass Messages to user.
   - Requires Async Writes to Connection

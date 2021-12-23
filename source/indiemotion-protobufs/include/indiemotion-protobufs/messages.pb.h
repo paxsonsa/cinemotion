@@ -315,6 +315,7 @@ class Message final :
     kGetCameraList = 30,
     kCameraList = 31,
     kSetActiveCamera = 32,
+    kGetActiveCamera = 33,
     kMotionSetMode = 40,
     kMotionGetMode = 41,
     kMotionActiveMode = 42,
@@ -406,6 +407,7 @@ class Message final :
     kGetCameraListFieldNumber = 30,
     kCameraListFieldNumber = 31,
     kSetActiveCameraFieldNumber = 32,
+    kGetActiveCameraFieldNumber = 33,
     kMotionSetModeFieldNumber = 40,
     kMotionGetModeFieldNumber = 41,
     kMotionActiveModeFieldNumber = 42,
@@ -520,6 +522,24 @@ class Message final :
   void unsafe_arena_set_allocated_set_active_camera(
       ::indiemotion::protobuf::payloads::v1::SetActiveCamera* set_active_camera);
   ::indiemotion::protobuf::payloads::v1::SetActiveCamera* unsafe_arena_release_set_active_camera();
+
+  // .indiemotion.protobuf.payloads.v1.GetActiveCamera get_active_camera = 33;
+  bool has_get_active_camera() const;
+  private:
+  bool _internal_has_get_active_camera() const;
+  public:
+  void clear_get_active_camera();
+  const ::indiemotion::protobuf::payloads::v1::GetActiveCamera& get_active_camera() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotion::protobuf::payloads::v1::GetActiveCamera* release_get_active_camera();
+  ::indiemotion::protobuf::payloads::v1::GetActiveCamera* mutable_get_active_camera();
+  void set_allocated_get_active_camera(::indiemotion::protobuf::payloads::v1::GetActiveCamera* get_active_camera);
+  private:
+  const ::indiemotion::protobuf::payloads::v1::GetActiveCamera& _internal_get_active_camera() const;
+  ::indiemotion::protobuf::payloads::v1::GetActiveCamera* _internal_mutable_get_active_camera();
+  public:
+  void unsafe_arena_set_allocated_get_active_camera(
+      ::indiemotion::protobuf::payloads::v1::GetActiveCamera* get_active_camera);
+  ::indiemotion::protobuf::payloads::v1::GetActiveCamera* unsafe_arena_release_get_active_camera();
 
   // .indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;
   bool has_motion_set_mode() const;
@@ -639,6 +659,7 @@ class Message final :
   void set_has_get_camera_list();
   void set_has_camera_list();
   void set_has_set_active_camera();
+  void set_has_get_active_camera();
   void set_has_motion_set_mode();
   void set_has_motion_get_mode();
   void set_has_motion_active_mode();
@@ -661,6 +682,7 @@ class Message final :
     ::indiemotion::protobuf::payloads::v1::GetCameraList* get_camera_list_;
     ::indiemotion::protobuf::payloads::v1::CameraList* camera_list_;
     ::indiemotion::protobuf::payloads::v1::SetActiveCamera* set_active_camera_;
+    ::indiemotion::protobuf::payloads::v1::GetActiveCamera* get_active_camera_;
     ::indiemotion::protobuf::payloads::v1::MotionSetMode* motion_set_mode_;
     ::indiemotion::protobuf::payloads::v1::MotionGetMode* motion_get_mode_;
     ::indiemotion::protobuf::payloads::v1::MotionActiveMode* motion_active_mode_;
@@ -1315,6 +1337,72 @@ inline ::indiemotion::protobuf::payloads::v1::SetActiveCamera* Message::_interna
 inline ::indiemotion::protobuf::payloads::v1::SetActiveCamera* Message::mutable_set_active_camera() {
   ::indiemotion::protobuf::payloads::v1::SetActiveCamera* _msg = _internal_mutable_set_active_camera();
   // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.Message.set_active_camera)
+  return _msg;
+}
+
+// .indiemotion.protobuf.payloads.v1.GetActiveCamera get_active_camera = 33;
+inline bool Message::_internal_has_get_active_camera() const {
+  return payload_case() == kGetActiveCamera;
+}
+inline bool Message::has_get_active_camera() const {
+  return _internal_has_get_active_camera();
+}
+inline void Message::set_has_get_active_camera() {
+  _oneof_case_[0] = kGetActiveCamera;
+}
+inline ::indiemotion::protobuf::payloads::v1::GetActiveCamera* Message::release_get_active_camera() {
+  // @@protoc_insertion_point(field_release:indiemotion.protobuf.Message.get_active_camera)
+  if (_internal_has_get_active_camera()) {
+    clear_has_payload();
+      ::indiemotion::protobuf::payloads::v1::GetActiveCamera* temp = payload_.get_active_camera_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.get_active_camera_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotion::protobuf::payloads::v1::GetActiveCamera& Message::_internal_get_active_camera() const {
+  return _internal_has_get_active_camera()
+      ? *payload_.get_active_camera_
+      : reinterpret_cast< ::indiemotion::protobuf::payloads::v1::GetActiveCamera&>(::indiemotion::protobuf::payloads::v1::_GetActiveCamera_default_instance_);
+}
+inline const ::indiemotion::protobuf::payloads::v1::GetActiveCamera& Message::get_active_camera() const {
+  // @@protoc_insertion_point(field_get:indiemotion.protobuf.Message.get_active_camera)
+  return _internal_get_active_camera();
+}
+inline ::indiemotion::protobuf::payloads::v1::GetActiveCamera* Message::unsafe_arena_release_get_active_camera() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotion.protobuf.Message.get_active_camera)
+  if (_internal_has_get_active_camera()) {
+    clear_has_payload();
+    ::indiemotion::protobuf::payloads::v1::GetActiveCamera* temp = payload_.get_active_camera_;
+    payload_.get_active_camera_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Message::unsafe_arena_set_allocated_get_active_camera(::indiemotion::protobuf::payloads::v1::GetActiveCamera* get_active_camera) {
+  clear_payload();
+  if (get_active_camera) {
+    set_has_get_active_camera();
+    payload_.get_active_camera_ = get_active_camera;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotion.protobuf.Message.get_active_camera)
+}
+inline ::indiemotion::protobuf::payloads::v1::GetActiveCamera* Message::_internal_mutable_get_active_camera() {
+  if (!_internal_has_get_active_camera()) {
+    clear_payload();
+    set_has_get_active_camera();
+    payload_.get_active_camera_ = CreateMaybeMessage< ::indiemotion::protobuf::payloads::v1::GetActiveCamera >(GetArenaForAllocation());
+  }
+  return payload_.get_active_camera_;
+}
+inline ::indiemotion::protobuf::payloads::v1::GetActiveCamera* Message::mutable_get_active_camera() {
+  ::indiemotion::protobuf::payloads::v1::GetActiveCamera* _msg = _internal_mutable_get_active_camera();
+  // @@protoc_insertion_point(field_mutable:indiemotion.protobuf.Message.get_active_camera)
   return _msg;
 }
 

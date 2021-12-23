@@ -83,6 +83,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_messages_2eproto::offsets[] PR
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::indiemotion::protobuf::Message, payload_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -101,7 +102,7 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   ".v1.proto\"\206\001\n\006Header\022-\n\ttimestamp\030\n \001(\0132"
   "\032.google.protobuf.Timestamp\022\n\n\002id\030\024 \001(\t\022"
   "\031\n\021requires_response\030\036 \001(\010\022\027\n\nresponseId"
-  "\030( \001(\tH\000\210\001\001B\r\n\013_responseId\"\354\006\n\007Message\022,"
+  "\030( \001(\tH\000\210\001\001B\r\n\013_responseId\"\274\007\n\007Message\022,"
   "\n\006header\030\001 \001(\0132\034.indiemotion.protobuf.He"
   "ader\022D\n\013acknowledge\030\024 \001(\0132-.indiemotion."
   "protobuf.payloads.v1.AcknowledgeH\000\0228\n\005er"
@@ -111,7 +112,9 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   "raListH\000\022C\n\013camera_list\030\037 \001(\0132,.indiemot"
   "ion.protobuf.payloads.v1.CameraListH\000\022N\n"
   "\021set_active_camera\030  \001(\01321.indiemotion.p"
-  "rotobuf.payloads.v1.SetActiveCameraH\000\022J\n"
+  "rotobuf.payloads.v1.SetActiveCameraH\000\022N\n"
+  "\021get_active_camera\030! \001(\01321.indiemotion.p"
+  "rotobuf.payloads.v1.GetActiveCameraH\000\022J\n"
   "\017motion_set_mode\030( \001(\0132/.indiemotion.pro"
   "tobuf.payloads.v1.MotionSetModeH\000\022J\n\017mot"
   "ion_get_mode\030) \001(\0132/.indiemotion.protobu"
@@ -131,7 +134,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_messages_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_messages_2eproto = {
-  false, false, 1113, descriptor_table_protodef_messages_2eproto, "messages.proto", 
+  false, false, 1193, descriptor_table_protodef_messages_2eproto, "messages.proto", 
   &descriptor_table_messages_2eproto_once, descriptor_table_messages_2eproto_deps, 2, 2,
   schemas, file_default_instances, TableStruct_messages_2eproto::offsets,
   file_level_metadata_messages_2eproto, file_level_enum_descriptors_messages_2eproto, file_level_service_descriptors_messages_2eproto,
@@ -489,6 +492,7 @@ class Message::_Internal {
   static const ::indiemotion::protobuf::payloads::v1::GetCameraList& get_camera_list(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::CameraList& camera_list(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::SetActiveCamera& set_active_camera(const Message* msg);
+  static const ::indiemotion::protobuf::payloads::v1::GetActiveCamera& get_active_camera(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::MotionSetMode& motion_set_mode(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::MotionGetMode& motion_get_mode(const Message* msg);
   static const ::indiemotion::protobuf::payloads::v1::MotionActiveMode& motion_active_mode(const Message* msg);
@@ -520,6 +524,10 @@ Message::_Internal::camera_list(const Message* msg) {
 const ::indiemotion::protobuf::payloads::v1::SetActiveCamera&
 Message::_Internal::set_active_camera(const Message* msg) {
   return *msg->payload_.set_active_camera_;
+}
+const ::indiemotion::protobuf::payloads::v1::GetActiveCamera&
+Message::_Internal::get_active_camera(const Message* msg) {
+  return *msg->payload_.get_active_camera_;
 }
 const ::indiemotion::protobuf::payloads::v1::MotionSetMode&
 Message::_Internal::motion_set_mode(const Message* msg) {
@@ -666,6 +674,31 @@ void Message::clear_set_active_camera() {
   if (_internal_has_set_active_camera()) {
     if (GetArenaForAllocation() == nullptr) {
       delete payload_.set_active_camera_;
+    }
+    clear_has_payload();
+  }
+}
+void Message::set_allocated_get_active_camera(::indiemotion::protobuf::payloads::v1::GetActiveCamera* get_active_camera) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_payload();
+  if (get_active_camera) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(get_active_camera));
+    if (message_arena != submessage_arena) {
+      get_active_camera = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, get_active_camera, submessage_arena);
+    }
+    set_has_get_active_camera();
+    payload_.get_active_camera_ = get_active_camera;
+  }
+  // @@protoc_insertion_point(field_set_allocated:indiemotion.protobuf.Message.get_active_camera)
+}
+void Message::clear_get_active_camera() {
+  if (_internal_has_get_active_camera()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.get_active_camera_;
     }
     clear_has_payload();
   }
@@ -859,6 +892,10 @@ Message::Message(const Message& from)
       _internal_mutable_set_active_camera()->::indiemotion::protobuf::payloads::v1::SetActiveCamera::MergeFrom(from._internal_set_active_camera());
       break;
     }
+    case kGetActiveCamera: {
+      _internal_mutable_get_active_camera()->::indiemotion::protobuf::payloads::v1::GetActiveCamera::MergeFrom(from._internal_get_active_camera());
+      break;
+    }
     case kMotionSetMode: {
       _internal_mutable_motion_set_mode()->::indiemotion::protobuf::payloads::v1::MotionSetMode::MergeFrom(from._internal_motion_set_mode());
       break;
@@ -950,6 +987,12 @@ void Message::clear_payload() {
     case kSetActiveCamera: {
       if (GetArenaForAllocation() == nullptr) {
         delete payload_.set_active_camera_;
+      }
+      break;
+    }
+    case kGetActiveCamera: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete payload_.get_active_camera_;
       }
       break;
     }
@@ -1056,6 +1099,13 @@ const char* Message::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
       case 32:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 2)) {
           ptr = ctx->ParseMessage(_internal_mutable_set_active_camera(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .indiemotion.protobuf.payloads.v1.GetActiveCamera get_active_camera = 33;
+      case 33:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_get_active_camera(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1178,6 +1228,14 @@ failure:
         32, _Internal::set_active_camera(this), target, stream);
   }
 
+  // .indiemotion.protobuf.payloads.v1.GetActiveCamera get_active_camera = 33;
+  if (_internal_has_get_active_camera()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        33, _Internal::get_active_camera(this), target, stream);
+  }
+
   // .indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;
   if (_internal_has_motion_set_mode()) {
     target = stream->EnsureSpace(target);
@@ -1285,6 +1343,13 @@ size_t Message::ByteSizeLong() const {
           *payload_.set_active_camera_);
       break;
     }
+    // .indiemotion.protobuf.payloads.v1.GetActiveCamera get_active_camera = 33;
+    case kGetActiveCamera: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *payload_.get_active_camera_);
+      break;
+    }
     // .indiemotion.protobuf.payloads.v1.MotionSetMode motion_set_mode = 40;
     case kMotionSetMode: {
       total_size += 2 +
@@ -1381,6 +1446,10 @@ void Message::MergeFrom(const Message& from) {
     }
     case kSetActiveCamera: {
       _internal_mutable_set_active_camera()->::indiemotion::protobuf::payloads::v1::SetActiveCamera::MergeFrom(from._internal_set_active_camera());
+      break;
+    }
+    case kGetActiveCamera: {
+      _internal_mutable_get_active_camera()->::indiemotion::protobuf::payloads::v1::GetActiveCamera::MergeFrom(from._internal_get_active_camera());
       break;
     }
     case kMotionSetMode: {
