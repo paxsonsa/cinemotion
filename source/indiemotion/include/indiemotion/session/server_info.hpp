@@ -6,7 +6,7 @@ namespace indiemotion
 
     typedef std::uint32_t SessionServerFeatureSet;
 
-    SessionServerFeatureSet newFeatureSet(std::uint32_t features)
+    SessionServerFeatureSet new_feature_set(std::uint32_t features)
     {
         return SessionServerFeatureSet(features);
     }
@@ -27,10 +27,10 @@ namespace indiemotion
 
     struct SessionServerInfo
     {
-        std::string apiVersion;
+        std::string api_version;
         SessionServerFeatureSet features;
 
-        SessionServerInfo(std::string apiVersion,
-                          SessionServerFeatureSet features) : apiVersion(apiVersion), features(features) {}
+        SessionServerInfo(std::string api_version,
+                          SessionServerFeatureSet features) : api_version(api_version), features(features) {}
     };
 }
