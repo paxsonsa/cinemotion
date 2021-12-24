@@ -14,7 +14,7 @@ namespace progopts = boost::program_options;
 
 struct DebugDelegate: public SessionControllerDelegate {
 
-    logging::Logger logger = logging::getLogger("com.indiemotion.idmserver.delegate");
+    logging::Logger logger = logging::get_logger("com.indiemotion.idmserver.delegate");
     std::vector<Camera> cameras {
         Camera("camera1"),
         Camera("camera2"),

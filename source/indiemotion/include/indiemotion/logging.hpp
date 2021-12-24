@@ -37,9 +37,9 @@ namespace indiemotion::logging
 
     using ConsoleSinkMT = _ConsoleSink<std::mutex>;
 
-    std::vector<std::string> _listParentNames(std::string name);
+    std::vector<std::string> _list_parent_names(std::string name);
 
-    void initializeLogging()
+    void init_logging()
     {
         auto consoleSink = std::make_shared<ConsoleSinkMT>();
         consoleSink->set_level(spdlog::level::trace);
@@ -48,9 +48,9 @@ namespace indiemotion::logging
         spdlog::register_logger(logger);
     }
 
-    Logger getLogger(std::string name)
+    Logger get_logger(std::string name)
     {
-        for (auto loggerName : _listParentNames(name))
+        for (auto loggerName : _list_parent_names(name))
         {
             auto logger = spdlog::get(loggerName);
             if (logger)
@@ -63,11 +63,11 @@ namespace indiemotion::logging
             return logger;
         }
 
-        initializeLogging();
+        init_logging();
         return spdlog::get("root");
     }
 
-    std::vector<std::string> _listParentNames(std::string name)
+    std::vector<std::string> _list_parent_names(std::string name)
     {
 
         std::string cur = "";

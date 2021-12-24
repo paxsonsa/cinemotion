@@ -9,7 +9,7 @@ SCENARIO("Returning logger parent names")
         auto name = "com.indiemotion.session.bridge";
         WHEN("listing the parent names")
         {
-            auto loggerNames = indiemotion::logging::_listParentNames(name);
+            auto loggerNames = indiemotion::logging::_list_parent_names(name);
 
             THEN("the proper list of logger names should be returned")
             {

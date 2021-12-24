@@ -49,7 +49,7 @@ namespace indiemotion {
      */
     class SessionConnection : public std::enable_shared_from_this<SessionConnection> {
     private:
-        logging::Logger _logger = logging::getLogger("com.indiemotion.server.connection");
+        logging::Logger _logger = logging::get_logger("com.indiemotion.server.connection");
         asio::io_context &_io_context;
         websocket::stream<beast::tcp_stream> _websocket;
         beast::flat_buffer _buffer;

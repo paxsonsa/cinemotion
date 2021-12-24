@@ -17,7 +17,7 @@ namespace indiemotion {
      *
      */
     class SessionConnectionListener : public std::enable_shared_from_this<SessionConnectionListener> {
-        logging::Logger _logger = logging::getLogger("com.indiemotion.server.listener");
+        logging::Logger _logger = logging::get_logger("com.indiemotion.server.listener");
         asio::io_context &_io_context;
         tcp::acceptor _acceptor;
 

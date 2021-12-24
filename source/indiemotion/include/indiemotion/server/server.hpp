@@ -38,7 +38,7 @@ namespace indiemotion {
          */
         SessionServer(ServerOptions options)
             : _options(std::move(options)) {
-            _log = logging::getLogger("com.indiemotion.server.SessionServer");
+            _log = logging::get_logger("com.indiemotion.server.SessionServer");
         };
 
         /**

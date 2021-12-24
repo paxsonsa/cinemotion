@@ -14,7 +14,7 @@ namespace indiemotion {
         SessionBridge(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
                       std::shared_ptr<SessionController> controller) {
             _m_dispatcher = std::move(dispatcherPtr);
-            _logger = logging::getLogger(LOGGER_NAME);
+            _logger = logging::get_logger(LOGGER_NAME);
             _m_controller = std::move(controller);
 
             _m_callback_table[NetMessage::PayloadCase::kSessionStart] =
