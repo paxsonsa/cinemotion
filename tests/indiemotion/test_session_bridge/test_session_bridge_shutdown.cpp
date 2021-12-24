@@ -41,7 +41,7 @@ SCENARIO("signalling session shutdown successfully")
 
         WHEN("the client signals a session shutdown")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             message.mutable_session_shutdown();
             bridge.process_message(std::move(message));
 

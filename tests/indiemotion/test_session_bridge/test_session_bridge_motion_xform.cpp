@@ -51,7 +51,7 @@ SCENARIO("updating the motion xform successfully")
             auto xform = MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
 
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
@@ -91,7 +91,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
 
         WHEN("the session's motion mode is off")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
@@ -115,7 +115,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
 
         WHEN("the session's motion mode is live")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
@@ -140,7 +140,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
 
         WHEN("the session's motion mode is recording")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);

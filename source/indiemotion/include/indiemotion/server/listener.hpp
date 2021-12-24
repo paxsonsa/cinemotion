@@ -77,7 +77,7 @@ namespace indiemotion {
             _acceptor.async_accept(
                 asio::make_strand(_io_context),
                 beast::bind_front_handler(
-                    &SessionConnectionListener::onAccept,
+                    &SessionConnectionListener::on_accept,
                     shared_from_this(),
                     std::move(callbacks)
                 )
@@ -91,9 +91,9 @@ namespace indiemotion {
          * @param ec
          * @param socket
          */
-        void onAccept(SessionConnectionCallbacks &&callbacks,
-                      beast::error_code ec,
-                      tcp::socket socket) {
+        void on_accept(SessionConnectionCallbacks &&callbacks,
+                       beast::error_code ec,
+                       tcp::socket socket) {
             if (ec) {
                 _logger->error("encountered error accepting connection: {}", ec.message());
                 listen(std::move(callbacks));

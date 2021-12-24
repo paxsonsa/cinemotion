@@ -38,7 +38,7 @@ namespace testing {
 
         indiemotion::NetMessage message;
         google::protobuf::util::JsonStringToMessage(buffer.GetString(), &message);
-        message.mutable_header()->set_id(indiemotion::netGenerateNewIdentifierString());
+        message.mutable_header()->set_id(indiemotion::net_generate_new_identifier_string());
 
         return std::move(message);
     }

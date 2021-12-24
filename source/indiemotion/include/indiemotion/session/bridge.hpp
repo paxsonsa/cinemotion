@@ -40,7 +40,7 @@ namespace indiemotion {
         void process_message(const NetMessage &&message) {
             auto potential_callback = _m_callback_table[message.payload_case()];
             if (!potential_callback) {
-                auto name = netGetMessagePayloadName(message);
+                auto name = net_get_message_payload_name(message);
                 _logger->error("Could not process the message, no callback is registered for payload case: {}",
                                name);
                 throw std::runtime_error("no callback specified in table for payload case.");
@@ -51,7 +51,7 @@ namespace indiemotion {
                 callback(std::move(message));
             } catch (const Exception &err)
             {
-                auto err_message = netMakeErrorResponseFromException(message.header().id(), err);
+                auto err_message = net_make_error_response_from_exception(message.header().id(), err);
                 _m_dispatcher->dispatch(std::move(err_message));
                 if (err.is_fatal)
                 {
@@ -63,7 +63,7 @@ namespace indiemotion {
             {
                 _logger->error("unexpected error while processing message: {}", e.what());
                 auto exception = UnknownFatalException();
-                auto err_message = netMakeErrorResponseFromException(message.header().id(), exception);
+                auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
                 _m_dispatcher->dispatch(std::move(err_message));
                 _m_controller->shutdown();
             }
@@ -92,7 +92,7 @@ namespace indiemotion {
         }
 
         void _process_get_camera_list(const NetMessage &&message) {
-            auto m = netMakeMessageWithResponseId(message.header().id());
+            auto m = net_make_message_with_response_id(message.header().id());
             auto payload = m.mutable_camera_list();
 
             for (auto srcCam: _m_controller->get_cameras()) {
@@ -108,7 +108,7 @@ namespace indiemotion {
         }
 
         void _process_motion_get_mode(const NetMessage &&message) {
-            auto response = netMakeMessageWithResponseId(message.header().id());
+            auto response = net_make_message_with_response_id(message.header().id());
             auto payload = response.mutable_motion_active_mode();
             switch(_m_controller->current_motion_mode())
             {

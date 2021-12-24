@@ -46,7 +46,7 @@ SCENARIO("Set Motion Mode Successfully")
 
         WHEN("bridge processes set motion mode=live message")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Live);
             bridge.process_message(std::move(message));
@@ -67,7 +67,7 @@ SCENARIO("Set Motion Mode Successfully")
 
         WHEN("bridge processes set motion mode=recording message")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Recording);
             bridge.process_message(std::move(message));
@@ -88,7 +88,7 @@ SCENARIO("Set Motion Mode Successfully")
 
         WHEN("bridge processes set motion mode=off message")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Off);
             bridge.process_message(std::move(message));
@@ -121,7 +121,7 @@ SCENARIO("Set Motion Mode Fails")
 
         WHEN("bridge processes set motion mode=live message")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Live);
             bridge.process_message(std::move(message));
@@ -144,7 +144,7 @@ SCENARIO("Set Motion Mode Fails")
 
         WHEN("bridge processes set motion mode=recording message")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Recording);
             bridge.process_message(std::move(message));
@@ -181,7 +181,7 @@ SCENARIO("Get Motion Mode Successfully")
 
         WHEN("get mode message is processed")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             message.mutable_motion_get_mode();
             bridge.process_message(std::move(message));
 

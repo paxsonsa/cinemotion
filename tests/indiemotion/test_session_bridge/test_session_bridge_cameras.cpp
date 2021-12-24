@@ -57,7 +57,7 @@ SCENARIO("Listing the Cameras")
 
         WHEN("bridge processes list camera messages")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             message.mutable_get_camera_list();
 
             bridge.process_message(std::move(message));
@@ -119,7 +119,7 @@ SCENARIO("Set the Camera Successfully")
 
         WHEN("bridge processes set camera messages")
         {
-            auto message = netMakeMessage();
+            auto message = net_make_message();
             auto payload = message.mutable_set_active_camera();
             payload->set_camera_id("cam2");
             bridge.process_message(std::move(message));
