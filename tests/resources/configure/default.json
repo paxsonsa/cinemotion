@@ -1,10 +1,10 @@
 {
-  "getAvailableCameras": [
+  "get_available_cameras": [
     {"id": "cam1"},
     {"id": "cam2"},
     {"id": "cam3"}
   ],
-  "getCameraById": {
+  "get_camera_by_name": {
     "id": "cam2"
   }
 }

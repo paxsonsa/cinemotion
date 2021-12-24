@@ -20,6 +20,8 @@ namespace testing {
                     cameras.push_back(camera);
                 }
                 return cameras;
+            } else {
+                std::cerr << "get_available_cameras is empty...." << std::endl;
             }
             return std::vector<indiemotion::Camera>();
         }
