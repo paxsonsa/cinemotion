@@ -18,26 +18,26 @@ namespace indiemotion {
             _m_controller = std::move(controller);
 
             _m_callback_table[NetMessage::PayloadCase::kSessionStart] =
-                std::bind(&SessionBridge::_processSessionStart, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_session_start, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kSessionShutdown] =
-                std::bind(&SessionBridge::_processSessionShutdown, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_session_shutdown, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kGetCameraList] =
-                std::bind(&SessionBridge::_processGetCameraList, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kSetActiveCamera] =
-                std::bind(&SessionBridge::_processSetActiveCamera, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_set_active_camera, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kMotionSetMode] =
-                std::bind(&SessionBridge::_processMotionSetMode, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_motion_set_mode, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kMotionGetMode] =
-                std::bind(&SessionBridge::_processMotionGetMode, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_motion_get_mode, this, std::placeholders::_1);
             _m_callback_table[NetMessage::PayloadCase::kMotionXform] =
-                std::bind(&SessionBridge::_processMotionXForm, this, std::placeholders::_1);
+                std::bind(&SessionBridge::_process_motion_xform, this, std::placeholders::_1);
         }
 
         static const std::string APIVersion;
 
-        [[nodiscard]] static std::string supportedAPIVersion() { return SessionBridge::APIVersion; }
+        [[nodiscard]] static std::string supported_api_version() { return SessionBridge::APIVersion; }
 
-        void processMessage(const NetMessage &&message) {
+        void process_message(const NetMessage &&message) {
             auto potential_callback = _m_callback_table[message.payload_case()];
             if (!potential_callback) {
                 auto name = netGetMessagePayloadName(message);
@@ -75,10 +75,10 @@ namespace indiemotion {
         std::shared_ptr<SessionController> _m_controller;
         std::array<std::optional<std::function<void(const NetMessage &&)>>, 128> _m_callback_table;
 
-        void _processSessionStart(const NetMessage &&message) {
+        void _process_session_start(const NetMessage &&message) {
 
             auto properties = message.session_start().session_properties();
-            if (properties.api_version() != supportedAPIVersion())
+            if (properties.api_version() != supported_api_version())
             {
                 _logger->error("API Version is not supported: {}", properties.api_version());
                 throw SessionAPIVersionNotSupportedException();
@@ -87,11 +87,11 @@ namespace indiemotion {
             _m_controller->initialize();
         }
 
-        void _processSessionShutdown(const NetMessage &&message) {
+        void _process_session_shutdown(const NetMessage &&message) {
             _m_controller->shutdown();
         }
 
-        void _processGetCameraList(const NetMessage &&message) {
+        void _process_get_camera_list(const NetMessage &&message) {
             auto m = netMakeMessageWithResponseId(message.header().id());
             auto payload = m.mutable_camera_list();
 
@@ -102,12 +102,12 @@ namespace indiemotion {
             _m_dispatcher->dispatch(std::move(m));
         }
 
-        void _processSetActiveCamera(const NetMessage &&message) {
+        void _process_set_active_camera(const NetMessage &&message) {
             auto camId = message.set_active_camera().camera_id();
             _m_controller->setActiveCamera(camId);
         }
 
-        void _processMotionGetMode(const NetMessage &&message) {
+        void _process_motion_get_mode(const NetMessage &&message) {
             auto response = netMakeMessageWithResponseId(message.header().id());
             auto payload = response.mutable_motion_active_mode();
             switch(_m_controller->currentMotionMode())
@@ -131,7 +131,7 @@ namespace indiemotion {
             _m_dispatcher->dispatch(std::move(response));
         }
 
-        void _processMotionSetMode(const NetMessage &&message) {
+        void _process_motion_set_mode(const NetMessage &&message) {
             auto payload = message.motion_set_mode();
             switch (payload.mode()) {
             case netPayloadsV1::MotionMode::Off:_m_controller->setMotionMode(MotionMode::Off);
@@ -144,7 +144,7 @@ namespace indiemotion {
             }
         }
 
-        void _processMotionXForm(const NetMessage &&message) {
+        void _process_motion_xform(const NetMessage &&message) {
             if (_m_controller->currentMotionMode() == MotionMode::Off) {
                 return;
             }

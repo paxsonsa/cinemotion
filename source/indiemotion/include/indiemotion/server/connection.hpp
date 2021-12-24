@@ -201,7 +201,7 @@ namespace indiemotion {
 
                 NetMessage m;
                 m.mutable_session_shutdown();
-                _session_bridge->processMessage(std::move(m));
+                _session_bridge->process_message(std::move(m));
 
                 _callbacks.on_disconnect();
                 stopped = true;
@@ -220,7 +220,7 @@ namespace indiemotion {
             google::protobuf::util::MessageToJsonString(message, &msg_str);
             _logger->trace("message: {}", msg_str);
             _buffer.consume(_buffer.size());
-            _session_bridge->processMessage(std::move(message));
+            _session_bridge->process_message(std::move(message));
 
             // Do another read
             do_read();

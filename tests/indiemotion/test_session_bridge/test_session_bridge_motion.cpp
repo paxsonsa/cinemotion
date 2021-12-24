@@ -49,7 +49,7 @@ SCENARIO("Set Motion Mode Successfully")
             auto message = netMakeMessage();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Live);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
 
@@ -70,7 +70,7 @@ SCENARIO("Set Motion Mode Successfully")
             auto message = netMakeMessage();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Recording);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
 
@@ -91,7 +91,7 @@ SCENARIO("Set Motion Mode Successfully")
             auto message = netMakeMessage();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Off);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
 
@@ -124,7 +124,7 @@ SCENARIO("Set Motion Mode Fails")
             auto message = netMakeMessage();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Live);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
 
             THEN("a CameraNotSetError should be dispatched")
@@ -147,7 +147,7 @@ SCENARIO("Set Motion Mode Fails")
             auto message = netMakeMessage();
             auto payload = message.mutable_motion_set_mode();
             payload->set_mode(netPayloadsV1::MotionMode::Recording);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
 
             THEN("a CameraNotSetError should be dispatched")
@@ -183,7 +183,7 @@ SCENARIO("Get Motion Mode Successfully")
         {
             auto message = netMakeMessage();
             message.mutable_motion_get_mode();
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             THEN("a active motion mode message should be dispatched")
             {

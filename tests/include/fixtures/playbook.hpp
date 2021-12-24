@@ -217,7 +217,7 @@ namespace testing {
                 google::protobuf::util::JsonPrintOptions options;
                 google::protobuf::util::MessageToJsonString(message, &b);
                 try {
-                    bridge->processMessage(std::move(message));
+                    bridge->process_message(std::move(message));
                 } catch (const std::exception &e) {
                     std::cerr << "Failed to Process Message: " << e.what() << "\n";
                     failed = true;

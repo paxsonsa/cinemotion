@@ -50,7 +50,7 @@ SCENARIO("Starting the Session")
         properties->set_session_id("some_id");
 
         WHEN("start message is processed") {
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             THEN("No response should be returned") {
                 REQUIRE(dispatcher->messages.size() == 0);
@@ -84,7 +84,7 @@ SCENARIO("Starting the session with unsupported API version")
             properties->set_api_version("99.9.999");
             properties->set_session_id("some_id");
 
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             THEN("A session error message should be sent.")
             {

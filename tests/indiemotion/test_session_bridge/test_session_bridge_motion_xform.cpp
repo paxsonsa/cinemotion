@@ -62,7 +62,7 @@ SCENARIO("updating the motion xform successfully")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
 
@@ -103,7 +103,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_z(xform.translation.z);
 
             session->setMotionMode(MotionMode::Off);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             THEN("delegate's received motion routine should NOT be invoked")
             {
@@ -127,7 +127,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_z(xform.translation.z);
 
             session->setMotionMode(MotionMode::Live);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
 
             THEN("delegate's received motion routine should be invoked")
@@ -152,7 +152,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_z(xform.translation.z);
 
             session->setMotionMode(MotionMode::Recording);
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
 
             THEN("delegate's received motion routine should be invoked")

@@ -43,7 +43,7 @@ SCENARIO("signalling session shutdown successfully")
         {
             auto message = netMakeMessage();
             message.mutable_session_shutdown();
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             THEN("then session status should be moved to off")
             {

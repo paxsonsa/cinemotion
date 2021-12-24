@@ -60,7 +60,7 @@ SCENARIO("Listing the Cameras")
             auto message = netMakeMessage();
             message.mutable_get_camera_list();
 
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             REQUIRE(dispatcher->messages.size() == 1);
             auto expected = std::move(dispatcher->messages[0]);
@@ -122,7 +122,7 @@ SCENARIO("Set the Camera Successfully")
             auto message = netMakeMessage();
             auto payload = message.mutable_set_active_camera();
             payload->set_camera_id("cam2");
-            bridge.processMessage(std::move(message));
+            bridge.process_message(std::move(message));
 
             THEN("the delegates camera should be set")
             {
