@@ -101,7 +101,7 @@ namespace indiemotion {
             _callbacks = std::move(callbacks);
             asio::dispatch(_websocket.get_executor(),
                            beast::bind_front_handler(
-                               &SessionConnection::onRun,
+                               &SessionConnection::on_run,
                                shared_from_this()));
         }
 
@@ -109,7 +109,7 @@ namespace indiemotion {
         /**
          * Start the accepting of websocket communications.
          */
-        void onRun() {
+        void on_run() {
             // Set suggested timeout settings for the websocket
             _websocket.set_option(
                 websocket::stream_base::timeout::suggested(
@@ -126,7 +126,7 @@ namespace indiemotion {
             // Accept the websocket handshake
             _websocket.async_accept(
                 beast::bind_front_handler(
-                    &SessionConnection::onAccept,
+                    &SessionConnection::on_accept,
                     shared_from_this()));
         }
 
@@ -140,10 +140,10 @@ namespace indiemotion {
          *
          * @param err a potential error while accepting the
          */
-        void onAccept(beast::error_code err) {
+        void on_accept(beast::error_code err) {
             if (err) {
                 _callbacks.on_disconnect();
-                _logger->error(fmt::format("Connection::onAccept: {}", err.message()));
+                _logger->error(fmt::format("Connection::on_accept: {}", err.message()));
                 return;
             }
             _logger->info("Accepting Connection...");
