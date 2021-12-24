@@ -70,6 +70,10 @@ namespace indiemotion
 
         // ----------------------------------------------------------------
         // Session LifeCycle Calls
+
+        /**
+         * Shutdown the session
+         */
         void shutdown()
         {
             if (_m_delegate)
@@ -79,8 +83,10 @@ namespace indiemotion
             _m_status = SessionStatus::Offline;
         }
 
-        // ----------------------------------------------------------------
-        // Cameras List
+        /**
+         * Get the current list of cameras available
+         * @return a list of camera instances
+         */
         std::vector<Camera> get_cameras() const
         {
             _throw_when_uninitialized();
@@ -91,19 +97,28 @@ namespace indiemotion
             return {};
         }
 
+        /**
+         * Get the currently active camera for the session
+         * @return an instance of a Camera
+         */
         std::optional<Camera> get_active_camera() const
         {
             _throw_when_uninitialized();
             return camera_manager->getActiveCamera();
         }
 
-        void set_active_camera(std::string cameraId)
+        /**
+         * Set the currently active camera to the given name
+         *
+         * @param camera_name The camera name to use as the active camera
+         */
+        void set_active_camera(std::string camera_name)
         {
             _throw_when_uninitialized();
-            auto cameraOpt = _m_delegate->get_camera_by_name(cameraId);
+            auto cameraOpt = _m_delegate->get_camera_by_name(camera_name);
             if (!cameraOpt)
             {
-                throw CameraNotFoundException(cameraId);
+                throw CameraNotFoundException(camera_name);
             }
             auto camera = cameraOpt.value();
             camera_manager->setActiveCamera(camera);
@@ -113,12 +128,14 @@ namespace indiemotion
             }
         }
 
-        // ----------------------------------------------------------------
-        // Motion Mode
+        /**
+         * Set the current motion mode
+         *
+         * @param m the mode to update to
+         */
         void set_motion_mode(MotionMode m)
         {
             _throw_when_uninitialized();
-
 
             if (!camera_manager->getActiveCamera() && m != MotionMode::Off)
             {
@@ -132,14 +149,22 @@ namespace indiemotion
             }
         }
 
+        /**
+         * Get the current motion mode that is set.
+         *
+         * @return a motion mode
+         */
         MotionMode current_motion_mode() const
         {
             _throw_when_uninitialized();
             return motion_manager->currentMotionMode();
         }
 
-        // ----------------------------------------------------------------
-        // Motion Operation
+        /**
+         * Update the currently active camera's transform.
+         *
+         * @param xform A set of xform data.
+         */
         void update_motion_xform(MotionXForm xform)
         {
             _throw_when_uninitialized();
