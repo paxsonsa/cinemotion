@@ -104,7 +104,7 @@ namespace indiemotion
         std::optional<Camera> get_active_camera() const
         {
             _throw_when_uninitialized();
-            return camera_manager->get_active_cameras();
+            return camera_manager->get_active_camera();
         }
 
         /**
@@ -137,7 +137,7 @@ namespace indiemotion
         {
             _throw_when_uninitialized();
 
-            if (!camera_manager->get_active_cameras() && m != MotionMode::Off)
+            if (!camera_manager->get_active_camera() && m != MotionMode::Off)
             {
                 throw CameraNotSetException();
             }
