@@ -95,7 +95,7 @@ namespace indiemotion {
             auto m = netMakeMessageWithResponseId(message.header().id());
             auto payload = m.mutable_camera_list();
 
-            for (auto srcCam: _m_controller->getCameras()) {
+            for (auto srcCam: _m_controller->get_cameras()) {
                 auto cam = payload->add_cameras();
                 cam->set_id(srcCam.name);
             }
@@ -104,13 +104,13 @@ namespace indiemotion {
 
         void _process_set_active_camera(const NetMessage &&message) {
             auto camId = message.set_active_camera().camera_id();
-            _m_controller->setActiveCamera(camId);
+            _m_controller->set_active_camera(camId);
         }
 
         void _process_motion_get_mode(const NetMessage &&message) {
             auto response = netMakeMessageWithResponseId(message.header().id());
             auto payload = response.mutable_motion_active_mode();
-            switch(_m_controller->currentMotionMode())
+            switch(_m_controller->current_motion_mode())
             {
             case (MotionMode::Off):
             {
@@ -134,18 +134,18 @@ namespace indiemotion {
         void _process_motion_set_mode(const NetMessage &&message) {
             auto payload = message.motion_set_mode();
             switch (payload.mode()) {
-            case netPayloadsV1::MotionMode::Off:_m_controller->setMotionMode(MotionMode::Off);
+            case netPayloadsV1::MotionMode::Off:_m_controller->set_motion_mode(MotionMode::Off);
                 break;
-            case netPayloadsV1::MotionMode::Live:_m_controller->setMotionMode(MotionMode::Live);
+            case netPayloadsV1::MotionMode::Live:_m_controller->set_motion_mode(MotionMode::Live);
                 break;
-            case netPayloadsV1::MotionMode::Recording:_m_controller->setMotionMode(MotionMode::Recording);
+            case netPayloadsV1::MotionMode::Recording:_m_controller->set_motion_mode(MotionMode::Recording);
                 break;
             default:break;
             }
         }
 
         void _process_motion_xform(const NetMessage &&message) {
-            if (_m_controller->currentMotionMode() == MotionMode::Off) {
+            if (_m_controller->current_motion_mode() == MotionMode::Off) {
                 return;
             }
 
@@ -159,7 +159,7 @@ namespace indiemotion {
                 payload.orientation().y(),
                 payload.orientation().z()
             );
-            _m_controller->updateMotionXForm(std::move(xform));
+            _m_controller->update_motion_xform(std::move(xform));
         }
     };
 

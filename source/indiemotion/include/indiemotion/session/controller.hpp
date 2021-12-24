@@ -21,7 +21,7 @@ namespace indiemotion
         std::shared_ptr<SessionControllerDelegate> _m_delegate = nullptr;
 
 
-        void _throwWhenUninitialized() const
+        void _throw_when_uninitialized() const
         {
             if (_m_status != SessionStatus::Initialized)
             {
@@ -81,9 +81,9 @@ namespace indiemotion
 
         // ----------------------------------------------------------------
         // Cameras List
-        std::vector<Camera> getCameras() const
+        std::vector<Camera> get_cameras() const
         {
-            _throwWhenUninitialized();
+            _throw_when_uninitialized();
             if (_m_delegate)
             {
                 return _m_delegate->get_available_cameras();
@@ -91,15 +91,15 @@ namespace indiemotion
             return {};
         }
 
-        std::optional<Camera> getActiveCamera() const
+        std::optional<Camera> get_active_camera() const
         {
-            _throwWhenUninitialized();
+            _throw_when_uninitialized();
             return camera_manager->getActiveCamera();
         }
 
-        void setActiveCamera(std::string cameraId)
+        void set_active_camera(std::string cameraId)
         {
-            _throwWhenUninitialized();
+            _throw_when_uninitialized();
             auto cameraOpt = _m_delegate->get_camera_by_name(cameraId);
             if (!cameraOpt)
             {
@@ -115,9 +115,9 @@ namespace indiemotion
 
         // ----------------------------------------------------------------
         // Motion Mode
-        void setMotionMode(MotionMode m)
+        void set_motion_mode(MotionMode m)
         {
-            _throwWhenUninitialized();
+            _throw_when_uninitialized();
 
 
             if (!camera_manager->getActiveCamera() && m != MotionMode::Off)
@@ -132,17 +132,17 @@ namespace indiemotion
             }
         }
 
-        MotionMode currentMotionMode() const
+        MotionMode current_motion_mode() const
         {
-            _throwWhenUninitialized();
+            _throw_when_uninitialized();
             return motion_manager->currentMotionMode();
         }
 
         // ----------------------------------------------------------------
         // Motion Operation
-        void updateMotionXForm(MotionXForm xform)
+        void update_motion_xform(MotionXForm xform)
         {
-            _throwWhenUninitialized();
+            _throw_when_uninitialized();
             if (motion_manager->canAcceptMotionUpdate())
             {
                 if (_m_delegate)

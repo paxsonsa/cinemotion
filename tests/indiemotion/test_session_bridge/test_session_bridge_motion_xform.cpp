@@ -41,7 +41,7 @@ SCENARIO("updating the motion xform successfully")
         session->initialize();
         Camera c("cam2");
         session->camera_manager->setActiveCamera(c);
-        session->setMotionMode(MotionMode::Live);
+        session->set_motion_mode(MotionMode::Live);
 
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
@@ -102,7 +102,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            session->setMotionMode(MotionMode::Off);
+            session->set_motion_mode(MotionMode::Off);
             bridge.process_message(std::move(message));
 
             THEN("delegate's received motion routine should NOT be invoked")
@@ -126,7 +126,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            session->setMotionMode(MotionMode::Live);
+            session->set_motion_mode(MotionMode::Live);
             bridge.process_message(std::move(message));
 
 
@@ -151,7 +151,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            session->setMotionMode(MotionMode::Recording);
+            session->set_motion_mode(MotionMode::Recording);
             bridge.process_message(std::move(message));
 
 

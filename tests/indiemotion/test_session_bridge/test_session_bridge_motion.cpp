@@ -55,7 +55,7 @@ SCENARIO("Set Motion Mode Successfully")
 
             THEN("the motion mode should be updated")
             {
-                REQUIRE(session->currentMotionMode() == MotionMode::Live);
+                REQUIRE(session->current_motion_mode() == MotionMode::Live);
             }
 
             THEN("the delegates motion mode did update")
@@ -76,7 +76,7 @@ SCENARIO("Set Motion Mode Successfully")
 
             THEN("the motion mode should be updated")
             {
-                REQUIRE(session->currentMotionMode() == MotionMode::Recording);
+                REQUIRE(session->current_motion_mode() == MotionMode::Recording);
             }
 
             THEN("the delegates motion mode did update")
@@ -97,7 +97,7 @@ SCENARIO("Set Motion Mode Successfully")
 
             THEN("the motion mode should be updated")
             {
-                REQUIRE(session->currentMotionMode() == MotionMode::Off);
+                REQUIRE(session->current_motion_mode() == MotionMode::Off);
             }
 
             THEN("the delegates motion mode did update")
@@ -138,7 +138,7 @@ SCENARIO("Set Motion Mode Fails")
 
             THEN("the motion should NOT change")
             {
-                REQUIRE(session->currentMotionMode() == MotionMode::Off);
+                REQUIRE(session->current_motion_mode() == MotionMode::Off);
             }
         }
 
@@ -161,7 +161,7 @@ SCENARIO("Set Motion Mode Fails")
 
             THEN("the motion should NOT change")
             {
-                REQUIRE(session->currentMotionMode() == MotionMode::Off);
+                REQUIRE(session->current_motion_mode() == MotionMode::Off);
             }
         }
     }
@@ -177,7 +177,7 @@ SCENARIO("Get Motion Mode Successfully")
         session->initialize();
         Camera c("cam2");
         session->camera_manager->setActiveCamera(c);
-        session->setMotionMode(MotionMode::Live);
+        session->set_motion_mode(MotionMode::Live);
 
         WHEN("get mode message is processed")
         {
