@@ -41,7 +41,7 @@ SCENARIO("Set Motion Mode Successfully")
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
         Camera c("cam2");
-        session->camera_manager->setActiveCamera(c);
+        session->camera_manager->set_active_cameras(c);
 
 
         WHEN("bridge processes set motion mode=live message")
@@ -176,7 +176,7 @@ SCENARIO("Get Motion Mode Successfully")
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
         Camera c("cam2");
-        session->camera_manager->setActiveCamera(c);
+        session->camera_manager->set_active_cameras(c);
         session->set_motion_mode(MotionMode::Live);
 
         WHEN("get mode message is processed")
