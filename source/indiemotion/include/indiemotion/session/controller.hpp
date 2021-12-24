@@ -142,7 +142,7 @@ namespace indiemotion
                 throw CameraNotSetException();
             }
 
-            motion_manager->seCurrentMotionMode(m);
+            motion_manager->set_current_mode(m);
             if (_m_delegate)
             {
                 _m_delegate->did_set_motion_mode(m);
@@ -157,7 +157,7 @@ namespace indiemotion
         MotionMode current_motion_mode() const
         {
             _throw_when_uninitialized();
-            return motion_manager->currentMotionMode();
+            return motion_manager->current_mode();
         }
 
         /**
@@ -168,7 +168,7 @@ namespace indiemotion
         void update_motion_xform(MotionXForm xform)
         {
             _throw_when_uninitialized();
-            if (motion_manager->canAcceptMotionUpdate())
+            if (motion_manager->can_accept_motion_updates())
             {
                 if (_m_delegate)
                 {

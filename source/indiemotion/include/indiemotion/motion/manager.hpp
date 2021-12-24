@@ -9,12 +9,12 @@ namespace indiemotion {
     public:
         MotionManager() {}
 
-        MotionMode currentMotionMode() { return _m_mode; }
-        void seCurrentMotionMode(MotionMode m) {
+        MotionMode current_mode() { return _m_mode; }
+        void set_current_mode(MotionMode m) {
             _m_mode = m;
         }
 
-        bool canAcceptMotionUpdate() {
+        bool can_accept_motion_updates() {
             return _m_mode == MotionMode::Live || _m_mode == MotionMode::Recording;
         }
     };
