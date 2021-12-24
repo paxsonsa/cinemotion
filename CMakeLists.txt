@@ -1,6 +1,3 @@
-# Copyright (c) 2021 Andrew Paxson. All rights reserved. Used under
-# Licensed under the MIT License. See LICENSE file in the project root for full license information.
-# CMakeLists.txt 
 cmake_minimum_required(VERSION 3.20)
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   if(NOT DEFINED WITH_IN_SOURCE_BUILD)

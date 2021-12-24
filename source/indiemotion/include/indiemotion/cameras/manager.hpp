@@ -1,5 +1,4 @@
 #pragma once
-
 #include <indiemotion/cameras/camera.hpp>
 #include <indiemotion/common.hpp>
 
