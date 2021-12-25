@@ -38,6 +38,14 @@ namespace indiemotion {
         [[nodiscard]] static std::string supported_api_version() { return SessionBridge::APIVersion; }
 
         void process_message(const NetMessage &&message) {
+
+			if (message.payload_case() == NetMessage::PayloadCase::PAYLOAD_NOT_SET) {
+				auto exception = MalformedMessageException();
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				return;
+			}
+
             auto potential_callback = _m_callback_table[message.payload_case()];
             if (!potential_callback) {
                 auto name = net_get_message_payload_name(message);
