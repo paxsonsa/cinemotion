@@ -83,7 +83,7 @@ namespace indiemotion
      */
 	struct SessionUninitializedException : Exception
 	{
-		SessionUninitializedException() : Exception("SessionUninitialized",
+		SessionUninitializedException() : Exception("SessionUninitializedError",
 			"Session must be initialized.")
 		{
 		};
@@ -95,7 +95,7 @@ namespace indiemotion
 	 */
 	struct SessionAPIVersionNotSupportedException : Exception
 	{
-		SessionAPIVersionNotSupportedException() : Exception("SessionAPIVersionNotSupported",
+		SessionAPIVersionNotSupportedException() : Exception("SessionAPIVersionNotSupportedError",
 			"request api version is not supported.")
 		{
 		}
@@ -106,7 +106,7 @@ namespace indiemotion
 	 */
 	struct CameraNotSetException : Exception
 	{
-		CameraNotSetException() : Exception("CameraNotSet",
+		CameraNotSetException() : Exception("CameraNotSetError",
 			"an active camera must be set.")
 		{
 		}
@@ -117,7 +117,7 @@ namespace indiemotion
 	 */
 	struct CameraNotFoundException : Exception
 	{
-		CameraNotFoundException(std::string camera_id) : Exception("CameraNotFound",
+		CameraNotFoundException(std::string camera_id) : Exception("CameraNotFoundError",
 			"could not find camera with matching id: "
 				+ camera_id)
 		{
