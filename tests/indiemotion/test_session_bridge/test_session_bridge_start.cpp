@@ -87,7 +87,7 @@ SCENARIO("Starting the session with unsupported API version")
                 auto response = dispatcher->messages[0];
                 REQUIRE(response.has_error());
                 auto error = response.error();
-                REQUIRE(error.type() == "SessionAPIVersionNotSupported");
+                REQUIRE(error.type() == "SessionAPIVersionNotSupportedError");
             }
         }
     }

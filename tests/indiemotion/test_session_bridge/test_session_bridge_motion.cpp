@@ -128,7 +128,7 @@ SCENARIO("Set Motion Mode Fails")
                 auto response = dispatcher->messages[0];
                 REQUIRE(response.has_error());
                 auto error = response.error();
-                REQUIRE(error.type() == "CameraNotSet");
+                REQUIRE(error.type() == "CameraNotSetError");
             }
 
             THEN("the motion should NOT change")
@@ -151,7 +151,7 @@ SCENARIO("Set Motion Mode Fails")
                 auto response = dispatcher->messages[0];
                 REQUIRE(response.has_error());
                 auto error = response.error();
-                REQUIRE(error.type() == "CameraNotSet");
+                REQUIRE(error.type() == "CameraNotSetError");
             }
 
             THEN("the motion should NOT change")
