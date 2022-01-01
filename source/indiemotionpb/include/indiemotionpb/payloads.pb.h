@@ -111,6 +111,39 @@ PROTOBUF_NAMESPACE_CLOSE
 namespace indiemotionpb {
 namespace payloads {
 
+enum Error_Type : int {
+  Error_Type_UnknownError = 0,
+  Error_Type_InputDeviceError = 1,
+  Error_Type_ApplicationError = 2,
+  Error_Type_UserError = 3,
+  Error_Type_BadMessageError = 4,
+  Error_Type_APIVersionNotSupportedError = 5,
+  Error_Type_SessionError = 10,
+  Error_Type_SessionNotInitializedError = 11,
+  Error_Type_CameraNotSetError = 20,
+  Error_Type_CameraNotFoundError = 21,
+  Error_Type_Error_Type_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  Error_Type_Error_Type_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool Error_Type_IsValid(int value);
+constexpr Error_Type Error_Type_Type_MIN = Error_Type_UnknownError;
+constexpr Error_Type Error_Type_Type_MAX = Error_Type_CameraNotFoundError;
+constexpr int Error_Type_Type_ARRAYSIZE = Error_Type_Type_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Error_Type_descriptor();
+template<typename T>
+inline const std::string& Error_Type_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, Error_Type>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function Error_Type_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    Error_Type_descriptor(), enum_t_value);
+}
+inline bool Error_Type_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Error_Type* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Error_Type>(
+    Error_Type_descriptor(), name, value);
+}
 enum SessionPropertyType : int {
   String = 0,
   Int = 1,
@@ -377,39 +410,71 @@ class Error final :
 
   // nested types ----------------------------------------------------
 
+  typedef Error_Type Type;
+  static constexpr Type UnknownError =
+    Error_Type_UnknownError;
+  static constexpr Type InputDeviceError =
+    Error_Type_InputDeviceError;
+  static constexpr Type ApplicationError =
+    Error_Type_ApplicationError;
+  static constexpr Type UserError =
+    Error_Type_UserError;
+  static constexpr Type BadMessageError =
+    Error_Type_BadMessageError;
+  static constexpr Type APIVersionNotSupportedError =
+    Error_Type_APIVersionNotSupportedError;
+  static constexpr Type SessionError =
+    Error_Type_SessionError;
+  static constexpr Type SessionNotInitializedError =
+    Error_Type_SessionNotInitializedError;
+  static constexpr Type CameraNotSetError =
+    Error_Type_CameraNotSetError;
+  static constexpr Type CameraNotFoundError =
+    Error_Type_CameraNotFoundError;
+  static inline bool Type_IsValid(int value) {
+    return Error_Type_IsValid(value);
+  }
+  static constexpr Type Type_MIN =
+    Error_Type_Type_MIN;
+  static constexpr Type Type_MAX =
+    Error_Type_Type_MAX;
+  static constexpr int Type_ARRAYSIZE =
+    Error_Type_Type_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Type_descriptor() {
+    return Error_Type_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Type_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Type>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Type_Name.");
+    return Error_Type_Name(enum_t_value);
+  }
+  static inline bool Type_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      Type* value) {
+    return Error_Type_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTypeFieldNumber = 10,
-    kMessageFieldNumber = 11,
+    kDescriptionFieldNumber = 11,
     kIsFatalFieldNumber = 12,
+    kTypeFieldNumber = 13,
   };
-  // string type = 10;
-  void clear_type();
-  const std::string& type() const;
+  // string description = 11;
+  void clear_description();
+  const std::string& description() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_type(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_type();
-  PROTOBUF_MUST_USE_RESULT std::string* release_type();
-  void set_allocated_type(std::string* type);
+  void set_description(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_description();
+  PROTOBUF_MUST_USE_RESULT std::string* release_description();
+  void set_allocated_description(std::string* description);
   private:
-  const std::string& _internal_type() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_type(const std::string& value);
-  std::string* _internal_mutable_type();
-  public:
-
-  // string message = 11;
-  void clear_message();
-  const std::string& message() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_message(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_message();
-  PROTOBUF_MUST_USE_RESULT std::string* release_message();
-  void set_allocated_message(std::string* message);
-  private:
-  const std::string& _internal_message() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_message(const std::string& value);
-  std::string* _internal_mutable_message();
+  const std::string& _internal_description() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_description(const std::string& value);
+  std::string* _internal_mutable_description();
   public:
 
   // bool is_fatal = 12;
@@ -421,6 +486,15 @@ class Error final :
   void _internal_set_is_fatal(bool value);
   public:
 
+  // .indiemotionpb.payloads.Error.Type type = 13;
+  void clear_type();
+  ::indiemotionpb::payloads::Error_Type type() const;
+  void set_type(::indiemotionpb::payloads::Error_Type value);
+  private:
+  ::indiemotionpb::payloads::Error_Type _internal_type() const;
+  void _internal_set_type(::indiemotionpb::payloads::Error_Type value);
+  public:
+
   // @@protoc_insertion_point(class_scope:indiemotionpb.payloads.Error)
  private:
   class _Internal;
@@ -428,9 +502,9 @@ class Error final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr type_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
   bool is_fatal_;
+  int type_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_payloads_2eproto;
 };
@@ -1952,96 +2026,70 @@ class InputDeviceXForm final :
 
 // Error
 
-// string type = 10;
+// .indiemotionpb.payloads.Error.Type type = 13;
 inline void Error::clear_type() {
-  type_.ClearToEmpty();
+  type_ = 0;
 }
-inline const std::string& Error::type() const {
+inline ::indiemotionpb::payloads::Error_Type Error::_internal_type() const {
+  return static_cast< ::indiemotionpb::payloads::Error_Type >(type_);
+}
+inline ::indiemotionpb::payloads::Error_Type Error::type() const {
   // @@protoc_insertion_point(field_get:indiemotionpb.payloads.Error.type)
   return _internal_type();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Error::set_type(ArgT0&& arg0, ArgT... args) {
- 
- type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void Error::_internal_set_type(::indiemotionpb::payloads::Error_Type value) {
+  
+  type_ = value;
+}
+inline void Error::set_type(::indiemotionpb::payloads::Error_Type value) {
+  _internal_set_type(value);
   // @@protoc_insertion_point(field_set:indiemotionpb.payloads.Error.type)
 }
-inline std::string* Error::mutable_type() {
-  std::string* _s = _internal_mutable_type();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.payloads.Error.type)
-  return _s;
-}
-inline const std::string& Error::_internal_type() const {
-  return type_.Get();
-}
-inline void Error::_internal_set_type(const std::string& value) {
-  
-  type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* Error::_internal_mutable_type() {
-  
-  return type_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* Error::release_type() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.payloads.Error.type)
-  return type_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void Error::set_allocated_type(std::string* type) {
-  if (type != nullptr) {
-    
-  } else {
-    
-  }
-  type_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), type,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.Error.type)
-}
 
-// string message = 11;
-inline void Error::clear_message() {
-  message_.ClearToEmpty();
+// string description = 11;
+inline void Error::clear_description() {
+  description_.ClearToEmpty();
 }
-inline const std::string& Error::message() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.Error.message)
-  return _internal_message();
+inline const std::string& Error::description() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.Error.description)
+  return _internal_description();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Error::set_message(ArgT0&& arg0, ArgT... args) {
+void Error::set_description(ArgT0&& arg0, ArgT... args) {
  
- message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.Error.message)
+ description_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.Error.description)
 }
-inline std::string* Error::mutable_message() {
-  std::string* _s = _internal_mutable_message();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.payloads.Error.message)
+inline std::string* Error::mutable_description() {
+  std::string* _s = _internal_mutable_description();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.payloads.Error.description)
   return _s;
 }
-inline const std::string& Error::_internal_message() const {
-  return message_.Get();
+inline const std::string& Error::_internal_description() const {
+  return description_.Get();
 }
-inline void Error::_internal_set_message(const std::string& value) {
+inline void Error::_internal_set_description(const std::string& value) {
   
-  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  description_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* Error::_internal_mutable_message() {
+inline std::string* Error::_internal_mutable_description() {
   
-  return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  return description_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* Error::release_message() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.payloads.Error.message)
-  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline std::string* Error::release_description() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.payloads.Error.description)
+  return description_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void Error::set_allocated_message(std::string* message) {
-  if (message != nullptr) {
+inline void Error::set_allocated_description(std::string* description) {
+  if (description != nullptr) {
     
   } else {
     
   }
-  message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
+  description_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.Error.message)
+  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.Error.description)
 }
 
 // bool is_fatal = 12;
@@ -2815,6 +2863,11 @@ inline void InputDeviceXForm::set_allocated_orientation(::indiemotionpb::payload
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <> struct is_proto_enum< ::indiemotionpb::payloads::Error_Type> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::indiemotionpb::payloads::Error_Type>() {
+  return ::indiemotionpb::payloads::Error_Type_descriptor();
+}
 template <> struct is_proto_enum< ::indiemotionpb::payloads::SessionPropertyType> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::indiemotionpb::payloads::SessionPropertyType>() {

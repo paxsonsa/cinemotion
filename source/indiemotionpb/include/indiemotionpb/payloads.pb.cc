@@ -31,9 +31,10 @@ struct AcknowledgeDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AcknowledgeDefaultTypeInternal _Acknowledge_default_instance_;
 constexpr Error::Error(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : type_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , message_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , is_fatal_(false){}
+  : description_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , is_fatal_(false)
+  , type_(0)
+{}
 struct ErrorDefaultTypeInternal {
   constexpr ErrorDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -171,7 +172,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT InputDeviceXFormDefaultTypeInte
 }  // namespace payloads
 }  // namespace indiemotionpb
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[12];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[1];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[2];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_payloads_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -186,7 +187,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, type_),
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, message_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, description_),
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, is_fatal_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceInfo, _internal_metadata_),
@@ -288,30 +289,37 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_payloads_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016payloads.proto\022\026indiemotionpb.payloads"
-  "\"\r\n\013Acknowledge\"8\n\005Error\022\014\n\004type\030\n \001(\t\022\017"
-  "\n\007message\030\013 \001(\t\022\020\n\010is_fatal\030\014 \001(\010\":\n\017Inp"
-  "utDeviceInfo\022\022\n\nsession_id\030\n \001(\t\022\023\n\013api_"
-  "version\030\024 \001(\t\"Q\n\021InitializeSession\022<\n\013de"
-  "vice_info\030\n \001(\0132\'.indiemotionpb.payloads"
-  ".InputDeviceInfo\"\021\n\017ShutdownSession\"\024\n\006C"
-  "amera\022\n\n\002id\030\n \001(\t\"=\n\nCameraList\022/\n\007camer"
-  "as\030\001 \003(\0132\036.indiemotionpb.payloads.Camera"
-  "\"\017\n\rGetCameraList\"x\n\017SessionProperty\0229\n\004"
-  "type\030\n \001(\0162+.indiemotionpb.payloads.Sess"
-  "ionPropertyType\022\014\n\004name\030\013 \001(\t\022\022\n\005value\030\014"
-  " \001(\tH\000\210\001\001B\010\n\006_value\"(\n\030GetSessionPropert"
-  "yByName\022\014\n\004name\030\n \001(\t\"\322\001\n\020InputDeviceXFo"
-  "rm\022G\n\013translation\030\001 \001(\01322.indiemotionpb."
-  "payloads.InputDeviceXForm.XFormData\022G\n\013o"
-  "rientation\030\002 \001(\01322.indiemotionpb.payload"
-  "s.InputDeviceXForm.XFormData\032,\n\tXFormDat"
-  "a\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001*5\n\023Se"
-  "ssionPropertyType\022\n\n\006String\020\000\022\007\n\003Int\020\001\022\t"
-  "\n\005Float\020\002b\006proto3"
+  "\"\r\n\013Acknowledge\"\316\002\n\005Error\0220\n\004type\030\r \001(\0162"
+  "\".indiemotionpb.payloads.Error.Type\022\023\n\013d"
+  "escription\030\013 \001(\t\022\020\n\010is_fatal\030\014 \001(\010\"\353\001\n\004T"
+  "ype\022\020\n\014UnknownError\020\000\022\024\n\020InputDeviceErro"
+  "r\020\001\022\024\n\020ApplicationError\020\002\022\r\n\tUserError\020\003"
+  "\022\023\n\017BadMessageError\020\004\022\037\n\033APIVersionNotSu"
+  "pportedError\020\005\022\020\n\014SessionError\020\n\022\036\n\032Sess"
+  "ionNotInitializedError\020\013\022\025\n\021CameraNotSet"
+  "Error\020\024\022\027\n\023CameraNotFoundError\020\025\":\n\017Inpu"
+  "tDeviceInfo\022\022\n\nsession_id\030\n \001(\t\022\023\n\013api_v"
+  "ersion\030\024 \001(\t\"Q\n\021InitializeSession\022<\n\013dev"
+  "ice_info\030\n \001(\0132\'.indiemotionpb.payloads."
+  "InputDeviceInfo\"\021\n\017ShutdownSession\"\024\n\006Ca"
+  "mera\022\n\n\002id\030\n \001(\t\"=\n\nCameraList\022/\n\007camera"
+  "s\030\001 \003(\0132\036.indiemotionpb.payloads.Camera\""
+  "\017\n\rGetCameraList\"x\n\017SessionProperty\0229\n\004t"
+  "ype\030\n \001(\0162+.indiemotionpb.payloads.Sessi"
+  "onPropertyType\022\014\n\004name\030\013 \001(\t\022\022\n\005value\030\014 "
+  "\001(\tH\000\210\001\001B\010\n\006_value\"(\n\030GetSessionProperty"
+  "ByName\022\014\n\004name\030\n \001(\t\"\322\001\n\020InputDeviceXFor"
+  "m\022G\n\013translation\030\001 \001(\01322.indiemotionpb.p"
+  "ayloads.InputDeviceXForm.XFormData\022G\n\013or"
+  "ientation\030\002 \001(\01322.indiemotionpb.payloads"
+  ".InputDeviceXForm.XFormData\032,\n\tXFormData"
+  "\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001*5\n\023Ses"
+  "sionPropertyType\022\n\n\006String\020\000\022\007\n\003Int\020\001\022\t\n"
+  "\005Float\020\002b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_payloads_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_payloads_2eproto = {
-  false, false, 817, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
+  false, false, 1096, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
   &descriptor_table_payloads_2eproto_once, nullptr, 0, 12,
   schemas, file_default_instances, TableStruct_payloads_2eproto::offsets,
   file_level_metadata_payloads_2eproto, file_level_enum_descriptors_payloads_2eproto, file_level_service_descriptors_payloads_2eproto,
@@ -324,9 +332,46 @@ PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_payloads_2eproto(&descriptor_table_payloads_2eproto);
 namespace indiemotionpb {
 namespace payloads {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SessionPropertyType_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Error_Type_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_payloads_2eproto);
   return file_level_enum_descriptors_payloads_2eproto[0];
+}
+bool Error_Type_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 10:
+    case 11:
+    case 20:
+    case 21:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+constexpr Error_Type Error::UnknownError;
+constexpr Error_Type Error::InputDeviceError;
+constexpr Error_Type Error::ApplicationError;
+constexpr Error_Type Error::UserError;
+constexpr Error_Type Error::BadMessageError;
+constexpr Error_Type Error::APIVersionNotSupportedError;
+constexpr Error_Type Error::SessionError;
+constexpr Error_Type Error::SessionNotInitializedError;
+constexpr Error_Type Error::CameraNotSetError;
+constexpr Error_Type Error::CameraNotFoundError;
+constexpr Error_Type Error::Type_MIN;
+constexpr Error_Type Error::Type_MAX;
+constexpr int Error::Type_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SessionPropertyType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_payloads_2eproto);
+  return file_level_enum_descriptors_payloads_2eproto[1];
 }
 bool SessionPropertyType_IsValid(int value) {
   switch (value) {
@@ -511,24 +556,23 @@ Error::Error(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 Error::Error(const Error& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  type_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_type().empty()) {
-    type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_type(), 
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_description().empty()) {
+    description_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_description(), 
       GetArenaForAllocation());
   }
-  message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_message().empty()) {
-    message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_message(), 
-      GetArenaForAllocation());
-  }
-  is_fatal_ = from.is_fatal_;
+  ::memcpy(&is_fatal_, &from.is_fatal_,
+    static_cast<size_t>(reinterpret_cast<char*>(&type_) -
+    reinterpret_cast<char*>(&is_fatal_)) + sizeof(type_));
   // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.Error)
 }
 
 inline void Error::SharedCtor() {
-type_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-is_fatal_ = false;
+description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&is_fatal_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&type_) -
+    reinterpret_cast<char*>(&is_fatal_)) + sizeof(type_));
 }
 
 Error::~Error() {
@@ -540,8 +584,7 @@ Error::~Error() {
 
 inline void Error::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  type_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  message_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void Error::ArenaDtor(void* object) {
@@ -560,9 +603,10 @@ void Error::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  type_.ClearToEmpty();
-  message_.ClearToEmpty();
-  is_fatal_ = false;
+  description_.ClearToEmpty();
+  ::memset(&is_fatal_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&type_) -
+      reinterpret_cast<char*>(&is_fatal_)) + sizeof(type_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -572,21 +616,12 @@ const char* Error::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string type = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          auto str = _internal_mutable_type();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.Error.type"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // string message = 11;
+      // string description = 11;
       case 11:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 90)) {
-          auto str = _internal_mutable_message();
+          auto str = _internal_mutable_description();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.Error.message"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.Error.description"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -595,6 +630,14 @@ const char* Error::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 96)) {
           is_fatal_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .indiemotionpb.payloads.Error.Type type = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 104)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_type(static_cast<::indiemotionpb::payloads::Error_Type>(val));
         } else goto handle_unusual;
         continue;
       default: {
@@ -626,30 +669,27 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string type = 10;
-  if (!this->_internal_type().empty()) {
+  // string description = 11;
+  if (!this->_internal_description().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_type().data(), static_cast<int>(this->_internal_type().length()),
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.Error.type");
+      "indiemotionpb.payloads.Error.description");
     target = stream->WriteStringMaybeAliased(
-        10, this->_internal_type(), target);
-  }
-
-  // string message = 11;
-  if (!this->_internal_message().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.Error.message");
-    target = stream->WriteStringMaybeAliased(
-        11, this->_internal_message(), target);
+        11, this->_internal_description(), target);
   }
 
   // bool is_fatal = 12;
   if (this->_internal_is_fatal() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(12, this->_internal_is_fatal(), target);
+  }
+
+  // .indiemotionpb.payloads.Error.Type type = 13;
+  if (this->_internal_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      13, this->_internal_type(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -668,23 +708,22 @@ size_t Error::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string type = 10;
-  if (!this->_internal_type().empty()) {
+  // string description = 11;
+  if (!this->_internal_description().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_type());
-  }
-
-  // string message = 11;
-  if (!this->_internal_message().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_message());
+        this->_internal_description());
   }
 
   // bool is_fatal = 12;
   if (this->_internal_is_fatal() != 0) {
     total_size += 1 + 1;
+  }
+
+  // .indiemotionpb.payloads.Error.Type type = 13;
+  if (this->_internal_type() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -715,14 +754,14 @@ void Error::MergeFrom(const Error& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_type().empty()) {
-    _internal_set_type(from._internal_type());
-  }
-  if (!from._internal_message().empty()) {
-    _internal_set_message(from._internal_message());
+  if (!from._internal_description().empty()) {
+    _internal_set_description(from._internal_description());
   }
   if (from._internal_is_fatal() != 0) {
     _internal_set_is_fatal(from._internal_is_fatal());
+  }
+  if (from._internal_type() != 0) {
+    _internal_set_type(from._internal_type());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -743,15 +782,15 @@ void Error::InternalSwap(Error* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &type_, GetArenaForAllocation(),
-      &other->type_, other->GetArenaForAllocation()
+      &description_, GetArenaForAllocation(),
+      &other->description_, other->GetArenaForAllocation()
   );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &message_, GetArenaForAllocation(),
-      &other->message_, other->GetArenaForAllocation()
-  );
-  swap(is_fatal_, other->is_fatal_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(Error, type_)
+      + sizeof(Error::type_)
+      - PROTOBUF_FIELD_OFFSET(Error, is_fatal_)>(
+          reinterpret_cast<char*>(&is_fatal_),
+          reinterpret_cast<char*>(&other->is_fatal_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Error::GetMetadata() const {

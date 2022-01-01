@@ -41,24 +41,15 @@ namespace indiemotion
 	};
 
 	/**
-	 * An exception used by delegates to relay errors to the client user.
-	 */
-	struct SessionException : Exception
-	{
-		SessionException(std::string m, bool is_fatal = false) : Exception("SessionException",
-			m,
-			true)
-		{
-		};
-	};
-
-	/**
 	 * An Exception that is used when an unknown exception was caught and thus the session
 	 * is going to shut down.
+	 *
+	 * IndieMotion Error: UnknownError(is_fatal=true)
+	 *
 	 */
 	struct UnknownFatalException : Exception
 	{
-		UnknownFatalException() : Exception("UnknownFatalError",
+		UnknownFatalException() : Exception("UnknownError",
 			"Session encountered an unknown fatal error, shutting down.",
 			true)
 		{
@@ -66,43 +57,97 @@ namespace indiemotion
 	};
 
 	/**
-	 * An Exception when the received message is malformed and not able to be processed.
+	 * An exception used by the input device to relay errors to the application.
+	 *
+	 * IndieMotion Error: InputDeviceError()
+	 *
 	 */
-	struct MalformedMessageException : Exception
+	struct InputDeviceException : Exception
 	{
-		MalformedMessageException() : Exception("MalformedMessageError",
-			"The incoming message is malformed.",
+		InputDeviceException(std::string m, bool is_fatal = false) : Exception("InputDeviceError",
+			m,
+			true)
+		{
+		};
+	};
+
+	/**
+	 * An exception used by application to relay errors to the input device.
+	 *
+	 * IndieMotion Error: ApplicationError()
+	 *
+	 */
+	struct ApplicationException : Exception
+	{
+		ApplicationException(std::string m, bool is_fatal = false) : Exception("ApplicationError",
+			m,
+			true)
+		{
+		};
+	};
+
+	/**
+	 * An exception thrown when the user is doing something incorrect or wrong.
+	 *
+	 * IndieMotion Error: UserError()
+	 *
+	 */
+	struct UserException : Exception
+	{
+		UserException(std::string m, bool is_fatal = false) : Exception("UserError", m, is_fatal)
+		{
+		};
+	};
+
+	/**
+	 * An Exception when the received message is bad or malformed and not able to be processed.
+	 *
+	 * IndieMotion Error: BadMessageError
+	 *
+	 */
+	struct BadMessageException : Exception
+	{
+		BadMessageException(std::string m) : Exception("BadMessageError",
+			m,
 			false)
 		{
 		};
 	};
 
 	/**
-     * An Exception that is thrown when an operation on a session cannot happen because the
-     * Session needs to be initialized.
-     */
-	struct SessionUninitializedException : Exception
-	{
-		SessionUninitializedException() : Exception("SessionUninitializedError",
-			"Session must be initialized.")
-		{
-		};
-	};
-
-	/**
 	 * An Exception that is thrown when the requested API version is
-	 * not supported by the server.
+	 * not supported by the sender.
+	 *
+	 * IndieMotion Error: APIVersionNotSupportedError
+	 *
 	 */
-	struct SessionAPIVersionNotSupportedException : Exception
+	struct APIVersionNotSupportedException : Exception
 	{
-		SessionAPIVersionNotSupportedException() : Exception("SessionAPIVersionNotSupportedError",
+		APIVersionNotSupportedException() : Exception("APIVersionNotSupportedError",
 			"request api version is not supported.")
 		{
 		}
 	};
 
 	/**
+	 * An Exception that is thrown when an operation on a session cannot happen because the
+	 * Session needs to be initialized.
+	 *
+	 * IndieMotion Error: SessionNotInitializedError
+	 *
+	 */
+	struct SessionNotInitializedException : Exception
+	{
+		SessionNotInitializedException() : Exception("SessionNotInitializedError",
+			"Session must be initialized.")
+		{
+		};
+	};
+
+	/**
 	 * An Exception that is thrown when the operation requires a camera to be set and it is not set.
+	 *
+	 * IndieMotion Error: CameraNotSetError
 	 */
 	struct CameraNotSetException : Exception
 	{
@@ -114,6 +159,9 @@ namespace indiemotion
 
 	/**
 	 * An Exception that is thrown when a given camera ID could not be found.
+	 *
+	 * IndieMotion Error: CameraNotFoundError
+	 *
 	 */
 	struct CameraNotFoundException : Exception
 	{
