@@ -26,7 +26,7 @@ namespace indiemotion {
     /**
      * A callback that is invoked when the connection was disconnected.
      *
-     * This is not typically used by client facing code as the SessionServer
+     * This is not typically used by client facing code as the Server
      * provides its own implementation that calls stop.
      *
      */

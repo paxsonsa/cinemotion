@@ -33,7 +33,7 @@ An example of a simple implementation can be found in the `source/idmserver/main
 
 A basic implementation does a few things:
 1. Implement the `indiemotion::SessionControllerDelegate`
-2. Build an Instance of `indiemotion::SessionServer`
+2. Build an Instance of `indiemotion::Server`
 3. Start the Server in a new thread and pass in a `on_start` callback to attach your delegate to the given `SessionController`
 
 Below is a naive implementation
@@ -52,7 +52,7 @@ struct DebugDelegate: public idm::SessionControllerDelegate {
     server_options.address = "0.0.0.0";
     server_options.port = 7766;
     
-    auto server = SessionServer(server_options);
+    auto server = Server(server_options);
     
     // Start Server in thread
     std::thread thread{[&server]() {

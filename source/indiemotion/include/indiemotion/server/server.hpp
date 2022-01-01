@@ -21,7 +21,7 @@ namespace indiemotion {
     /**
      * A server for accepting and creating session connections
      */
-    class SessionServer : public std::enable_shared_from_this<SessionServer> {
+    class Server : public std::enable_shared_from_this<Server> {
         asio::io_context _io_context;
         ServerOptions _options;
         logging::Logger _log;
@@ -31,9 +31,9 @@ namespace indiemotion {
          * Construct a server with the given server options.
          * @param options
          */
-        SessionServer(ServerOptions options)
+        Server(ServerOptions options)
             : _options(std::move(options)) {
-            _log = logging::get_logger("com.indiemotion.server.SessionServer");
+            _log = logging::get_logger("com.indiemotion.server.Server");
         };
 
         /**
