@@ -7,7 +7,7 @@ add_library(${TARGET_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 set_target_properties(${TARGET_NAME} PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION A # Version "A" is macOS convention
-  MACOSX_FRAMEWORK_IDENTIFIER com.andrewpaxson.IndieMotion
+  MACOSX_FRAMEWORK_IDENTIFIER com.andrewpaxson.indiemotionpb
 )
 
 target_link_libraries(${TARGET_NAME}
