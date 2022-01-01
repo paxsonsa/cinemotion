@@ -67,8 +67,9 @@ struct DebugDelegate: public idm::SessionControllerDelegate {
 ...
 ```
 
-
-### Building Protobuf Source
-``` bash
-protoc -I=./indiemotion-protobuf --cpp_out=source/indiemotion-protobufs/include/indiemotion-protobufs indiemotion-protobuf/*.proto
-```
+## Subprojects
+| Path | Description|
+|-----|----|
+| `source/idmserver` | A test server for building basic functionality for InputDevices. |
+| `source/indiemotion` | A C++ Framework for building IndieMotion compliant applications |
+| `source/indiemotiondb` | The protobuf generated source code for protocol messages |
