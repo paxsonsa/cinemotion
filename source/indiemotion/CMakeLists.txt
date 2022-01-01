@@ -1,11 +1,12 @@
 # Always list the source files explicitly, including headers so that they are listed in the IDE
 # If you need to use files based on a variable value, use target_sources
 add_library(indiemotion INTERFACE)
+message("Protbuf Include: ${INDIEMOTION_PROTOBUF_INCLUDE}")
 target_include_directories(indiemotion INTERFACE include ${Boost_INCLUDE_DIRS} ${INDIEMOTION_PROTOBUF_INCLUDE})
 set_target_properties(indiemotion PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION A # Version "A" is macOS convention
-  MACOSX_FRAMEWORK_IDENTIFIER com.andrewpaxson.IndieMotion
+  MACOSX_FRAMEWORK_IDENTIFIER com.andrewpaxson.indiemotion
 )
 
 
@@ -14,7 +15,7 @@ target_link_libraries(indiemotion
         #libraries/targets to link when linking this library
         #this will automatically setup the needed flags and dependencies when linking against this target
     INTERFACE # The following libraries are only linked for this target, and its flags/dependencies will not be used when linking against this target
-        indiemotion-protobufs
+        indiemotionpb
     
         general fmt::fmt 
         spdlog::spdlog

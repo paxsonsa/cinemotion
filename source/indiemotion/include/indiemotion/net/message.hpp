@@ -1,15 +1,16 @@
 #pragma once
 #include <indiemotion/errors.hpp>
-#include <indiemotion-protobufs/messages.pb.h>
-#include <indiemotion-protobufs/payload.v1.pb.h>
+
+#include <indiemotionpb/messages.pb.h>
+#include <indiemotionpb/payloads.pb.h>
 
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
 namespace indiemotion
 {
-    using NetMessage = indiemotion::protobuf::Message;
-    namespace netPayloadsV1 = indiemotion::protobuf::payloads::v1;
+    using NetMessage = indiemotionpb::Message;
+    namespace netPayloadsV1 = indiemotionpb::payloads;
 
     /**
      * @brief Generate is new NetIdentifier
