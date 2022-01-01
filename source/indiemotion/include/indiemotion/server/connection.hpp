@@ -63,20 +63,20 @@ namespace indiemotion {
          */
         struct ConnectionWriterDispatcher : public NetMessageDispatcher {
 
-            std::function<void(NetMessage &&message)> callback;
+            std::function<void(Message &&message)> callback;
 
             /**
              * Construct the dispatcher with the callback function that will be invoked each time
              * the bridge dispatches a new message.
-             * @param f A function that takes an owned NetMessage as the argument.
+             * @param f A function that takes an owned Message as the argument.
              */
-            ConnectionWriterDispatcher(std::function<void(NetMessage &&message)> f) : callback(f) {}
+            ConnectionWriterDispatcher(std::function<void(Message &&message)> f) : callback(f) {}
 
             /**
              * Implementation of the dispatch routine. This calls the stored callback function.
              * @param message The message that is being dispatched by the bridge.
              */
-            void dispatch(NetMessage &&message) override {
+            void dispatch(Message &&message) override {
                 callback(std::move(message));
             }
         };
@@ -148,7 +148,7 @@ namespace indiemotion {
             }
             _logger->info("Accepting Connection...");
             auto controller = std::make_shared<SessionController>();
-            auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](NetMessage &&message) {
+            auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](Message &&message) {
                 auto os = beast::ostream(_buffer);
                 message.SerializeToOstream(&os);
                 _buffer.commit(message.ByteSizeLong());
@@ -199,7 +199,7 @@ namespace indiemotion {
 
                 _logger->error("connection error, shutting down session and stopping server");
 
-                NetMessage m;
+                Message m;
                 m.mutable_session_shutdown();
                 _session_bridge->process_message(std::move(m));
 
@@ -211,7 +211,7 @@ namespace indiemotion {
             std::string text;
             std::ostringstream os;
             os << boost::beast::buffers_to_string(_buffer.data());
-            NetMessage message;
+            Message message;
             text = os.str();
             _logger->trace("payload: {}", text);
             message.ParseFromString(text);

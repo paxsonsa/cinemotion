@@ -31,12 +31,12 @@ namespace testing {
          * @param item An individual array item from the JSON playbook to extract the 'message' from.
          * @return
          */
-    indiemotion::NetMessage loadMessageObject(const rapidjson::Value &item) {
+    indiemotion::Message loadMessageObject(const rapidjson::Value &item) {
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
         item["message"].Accept(writer);
 
-        indiemotion::NetMessage message;
+        indiemotion::Message message;
         google::protobuf::util::JsonStringToMessage(buffer.GetString(), &message);
         message.mutable_header()->set_id(indiemotion::net_generate_new_identifier_string());
 
@@ -47,7 +47,7 @@ namespace testing {
          * @param item An individual array item from the JSON playbook.
          * @return
          */
-    std::optional<indiemotion::NetMessage> loadExpectObject(const rapidjson::Value &item) {
+    std::optional<indiemotion::Message> loadExpectObject(const rapidjson::Value &item) {
         if (!item.HasMember("expected")) {
             std::cerr << "malformed playbook, missing 'expected' item in test item" << std::endl;
             throw std::runtime_error("malformed playbook, missing 'expected' item in test item");
@@ -61,7 +61,7 @@ namespace testing {
         rapidjson::StringBuffer b;
         rapidjson::Writer<rapidjson::StringBuffer> w(b);
         item["expected"].Accept(w);
-        indiemotion::NetMessage e;
+        indiemotion::Message e;
         google::protobuf::util::JsonStringToMessage(b.GetString(), &e);
 
         return std::move(e);

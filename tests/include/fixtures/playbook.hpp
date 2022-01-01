@@ -17,7 +17,7 @@
 
 namespace testing {
 
-    void messageObjectIntoString(const indiemotion::NetMessage &message, std::string &s) {
+    void messageObjectIntoString(const indiemotion::Message &message, std::string &s) {
         google::protobuf::util::JsonPrintOptions options;
         google::protobuf::util::MessageToJsonString(message, &s);
     }
@@ -31,13 +31,13 @@ namespace testing {
         int id;
 
         /// The message to dispatch to the server
-        indiemotion::NetMessage message;
+        indiemotion::Message message;
 
         /// An optional expected result from the server
-        std::optional<indiemotion::NetMessage> expected;
+        std::optional<indiemotion::Message> expected;
 
         /// An optional error to expect as a response from the dispatched message.
-        std::optional<indiemotion::NetMessage> error;
+        std::optional<indiemotion::Message> error;
     };
 
     /**
@@ -89,8 +89,8 @@ namespace testing {
          */
         struct DummyDispatcher : public indiemotion::NetMessageDispatcher {
 
-            std::map<std::string, std::function<void(indiemotion::NetMessage &&)>> responseExpectations;
-            void dispatch(indiemotion::NetMessage &&message) override {
+            std::map<std::string, std::function<void(indiemotion::Message &&)>> responseExpectations;
+            void dispatch(indiemotion::Message &&message) override {
                 if (responseExpectations.count(message.header().responseid())) {
                     responseExpectations[message.header().responseid()](std::move(message));
                 }
@@ -170,7 +170,7 @@ namespace testing {
             if (item.expected) {
                 auto expected = item.expected.value();
                 dispatcher->responseExpectations[item.message.header().id()] =
-                    [&, id = item.id, expected = std::move(expected)](indiemotion::NetMessage &&message) {
+                    [&, id = item.id, expected = std::move(expected)](indiemotion::Message &&message) {
                         google::protobuf::util::MessageDifferencer diff;
                         diff.IgnoreField(expected.descriptor()->FindFieldByName("header"));
 
@@ -198,7 +198,7 @@ namespace testing {
                     };
             } else {
                 dispatcher->responseExpectations[item.message.header().id()] =
-                    [&, id = item.id](indiemotion::NetMessage &&message) {
+                    [&, id = item.id](indiemotion::Message &&message) {
                         failed = true;
                         std::stringstream stream;
                         stream << "FAILED: Message [" << id << "] "

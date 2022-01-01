@@ -8,9 +8,9 @@
 using namespace indiemotion;
 
 struct DummyDispatcher : NetMessageDispatcher {
-    std::vector<NetMessage> messages{};
+    std::vector<Message> messages{};
 
-    void dispatch(NetMessage &&message) {
+    void dispatch(Message &&message) {
         messages.push_back(std::move(message));
     }
 };
@@ -26,7 +26,7 @@ SCENARIO("Send a message without a payload case")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
-        NetMessage message;
+        Message message;
 
         WHEN("message without a payload is processed")
 		{

@@ -9,8 +9,8 @@
 
 namespace indiemotion
 {
-    using NetMessage = indiemotionpb::Message;
-    namespace netPayloadsV1 = indiemotionpb::payloads;
+    using Message = indiemotionpb::Message;
+    namespace message_payloads = indiemotionpb::payloads;
 
     /**
      * @brief Generate is new NetIdentifier
@@ -27,9 +27,9 @@ namespace indiemotion
      * Make a new message and generate the ID.
      * @return unique pointer to a new message
      */
-    NetMessage net_make_message() {
+    Message net_make_message() {
         auto id = net_generate_new_identifier_string();
-        NetMessage m;
+        Message m;
         m.mutable_header()->set_id(id);
         return std::move(m);
     }
@@ -38,9 +38,9 @@ namespace indiemotion
      * Make a new message and generate the ID.
      * @return unique pointer to a new message
      */
-    NetMessage net_make_message_with_response_id(std::string responseId) {
+    Message net_make_message_with_response_id(std::string responseId) {
         auto id = net_generate_new_identifier_string();
-        NetMessage m;
+        Message m;
         m.mutable_header()->set_id(id);
         m.mutable_header()->set_responseid(responseId);
         return std::move(m);
@@ -52,7 +52,7 @@ namespace indiemotion
      * @param exception The exception to generate an error message from
      * @return An error message that is in response to some message id
      */
-    NetMessage net_make_error_response_from_exception(const std::string messageID, const Exception &exception)
+    Message net_make_error_response_from_exception(const std::string messageID, const Exception &exception)
     {
         auto message = net_make_message_with_response_id(messageID);
         auto error = message.mutable_error();
@@ -63,7 +63,7 @@ namespace indiemotion
         return std::move(message);
     }
 
-    std::string net_get_message_payload_name(const NetMessage &message)
+    std::string net_get_message_payload_name(const Message &message)
     {
         auto desc = message.descriptor();
         auto field = desc->FindFieldByNumber(message.payload_case());

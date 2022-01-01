@@ -9,9 +9,9 @@
 using namespace indiemotion;
 
 struct DummyDispatcher : NetMessageDispatcher {
-    std::vector<NetMessage> messages{};
+    std::vector<Message> messages{};
 
-    void dispatch(NetMessage &&message) {
+    void dispatch(Message &&message) {
         messages.push_back(std::move(message));
     }
 };

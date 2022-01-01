@@ -4,6 +4,6 @@
 
 namespace indiemotion {
     struct NetMessageDispatcher {
-        virtual void dispatch(NetMessage &&message) = 0;
+        virtual void dispatch(Message &&message) = 0;
     };
 }

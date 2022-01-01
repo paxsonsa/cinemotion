@@ -7,9 +7,9 @@
 using namespace indiemotion;
 
 struct DummyDispatcher : NetMessageDispatcher {
-    std::vector<NetMessage> messages{};
+    std::vector<Message> messages{};
 
-    void dispatch(NetMessage &&message) {
+    void dispatch(Message &&message) {
         messages.push_back(std::move(message));
     }
 };
@@ -43,7 +43,7 @@ SCENARIO("Set Motion Mode Successfully")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
-            payload->set_mode(netPayloadsV1::MotionMode::Live);
+            payload->set_mode(message_payloads::MotionMode::Live);
             bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
@@ -64,7 +64,7 @@ SCENARIO("Set Motion Mode Successfully")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
-            payload->set_mode(netPayloadsV1::MotionMode::Recording);
+            payload->set_mode(message_payloads::MotionMode::Recording);
             bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
@@ -85,7 +85,7 @@ SCENARIO("Set Motion Mode Successfully")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
-            payload->set_mode(netPayloadsV1::MotionMode::Off);
+            payload->set_mode(message_payloads::MotionMode::Off);
             bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
@@ -118,7 +118,7 @@ SCENARIO("Set Motion Mode Fails")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
-            payload->set_mode(netPayloadsV1::MotionMode::Live);
+            payload->set_mode(message_payloads::MotionMode::Live);
             bridge.process_message(std::move(message));
 
 
@@ -141,7 +141,7 @@ SCENARIO("Set Motion Mode Fails")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
-            payload->set_mode(netPayloadsV1::MotionMode::Recording);
+            payload->set_mode(message_payloads::MotionMode::Recording);
             bridge.process_message(std::move(message));
 
 
@@ -185,7 +185,7 @@ SCENARIO("Get Motion Mode Successfully")
                 REQUIRE(dispatcher->messages.size() == 1);
                 auto response = dispatcher->messages[0];
                 REQUIRE(response.has_motion_active_mode());
-                REQUIRE(response.motion_active_mode().mode() == netPayloadsV1::MotionMode::Live);
+                REQUIRE(response.motion_active_mode().mode() == message_payloads::MotionMode::Live);
             }
 
         }

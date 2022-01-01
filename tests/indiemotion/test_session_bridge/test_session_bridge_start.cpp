@@ -8,9 +8,9 @@
 using namespace indiemotion;
 
 struct DummyDispatcher : NetMessageDispatcher {
-    std::vector<NetMessage> messages{};
+    std::vector<Message> messages{};
 
-    void dispatch(NetMessage &&message) {
+    void dispatch(Message &&message) {
         messages.push_back(std::move(message));
     }
 };
@@ -38,7 +38,7 @@ SCENARIO("Starting the Session")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
-        NetMessage message;
+        Message message;
         auto payload = message.mutable_session_start();
         auto properties = payload->mutable_session_properties();
         properties->set_api_version(SessionBridge::APIVersion);
@@ -73,7 +73,7 @@ SCENARIO("Starting the session with unsupported API version")
 
         WHEN("start message is processed with unsupported version")
         {
-            NetMessage message;
+            Message message;
             auto payload = message.mutable_session_start();
             auto properties = payload->mutable_session_properties();
             properties->set_api_version("99.9.999");

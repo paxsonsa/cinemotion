@@ -17,19 +17,19 @@ namespace indiemotion {
             _logger = logging::get_logger(LOGGER_NAME);
             _m_controller = std::move(controller);
 
-            _m_callback_table[NetMessage::PayloadCase::kSessionStart] =
+            _m_callback_table[Message::PayloadCase::kSessionStart] =
                 std::bind(&SessionBridge::_process_session_start, this, std::placeholders::_1);
-            _m_callback_table[NetMessage::PayloadCase::kSessionShutdown] =
+            _m_callback_table[Message::PayloadCase::kSessionShutdown] =
                 std::bind(&SessionBridge::_process_session_shutdown, this, std::placeholders::_1);
-            _m_callback_table[NetMessage::PayloadCase::kGetCameraList] =
+            _m_callback_table[Message::PayloadCase::kGetCameraList] =
                 std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
-            _m_callback_table[NetMessage::PayloadCase::kSetActiveCamera] =
+            _m_callback_table[Message::PayloadCase::kSetActiveCamera] =
                 std::bind(&SessionBridge::_process_set_active_camera, this, std::placeholders::_1);
-            _m_callback_table[NetMessage::PayloadCase::kMotionSetMode] =
+            _m_callback_table[Message::PayloadCase::kMotionSetMode] =
                 std::bind(&SessionBridge::_process_motion_set_mode, this, std::placeholders::_1);
-            _m_callback_table[NetMessage::PayloadCase::kMotionGetMode] =
+            _m_callback_table[Message::PayloadCase::kMotionGetMode] =
                 std::bind(&SessionBridge::_process_motion_get_mode, this, std::placeholders::_1);
-            _m_callback_table[NetMessage::PayloadCase::kMotionXform] =
+            _m_callback_table[Message::PayloadCase::kMotionXform] =
                 std::bind(&SessionBridge::_process_motion_xform, this, std::placeholders::_1);
         }
 
@@ -37,9 +37,9 @@ namespace indiemotion {
 
         [[nodiscard]] static std::string supported_api_version() { return SessionBridge::APIVersion; }
 
-        void process_message(const NetMessage &&message) {
+        void process_message(const Message &&message) {
 
-			if (message.payload_case() == NetMessage::PayloadCase::PAYLOAD_NOT_SET) {
+			if (message.payload_case() == Message::PayloadCase::PAYLOAD_NOT_SET) {
 				auto exception = MalformedMessageException();
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
 				_m_dispatcher->dispatch(std::move(err_message));
@@ -81,9 +81,9 @@ namespace indiemotion {
         std::shared_ptr<spdlog::logger> _logger;
         std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
         std::shared_ptr<SessionController> _m_controller;
-        std::array<std::optional<std::function<void(const NetMessage &&)>>, 128> _m_callback_table;
+        std::array<std::optional<std::function<void(const Message &&)>>, 128> _m_callback_table;
 
-        void _process_session_start(const NetMessage &&message) {
+        void _process_session_start(const Message &&message) {
 
             auto properties = message.session_start().session_properties();
             if (properties.api_version() != supported_api_version())
@@ -95,11 +95,11 @@ namespace indiemotion {
             _m_controller->initialize();
         }
 
-        void _process_session_shutdown(const NetMessage &&message) {
+        void _process_session_shutdown(const Message &&message) {
             _m_controller->shutdown();
         }
 
-        void _process_get_camera_list(const NetMessage &&message) {
+        void _process_get_camera_list(const Message &&message) {
             auto m = net_make_message_with_response_id(message.header().id());
             auto payload = m.mutable_camera_list();
 
@@ -110,49 +110,49 @@ namespace indiemotion {
             _m_dispatcher->dispatch(std::move(m));
         }
 
-        void _process_set_active_camera(const NetMessage &&message) {
+        void _process_set_active_camera(const Message &&message) {
             auto camId = message.set_active_camera().camera_id();
             _m_controller->set_active_camera(camId);
         }
 
-        void _process_motion_get_mode(const NetMessage &&message) {
+        void _process_motion_get_mode(const Message &&message) {
             auto response = net_make_message_with_response_id(message.header().id());
             auto payload = response.mutable_motion_active_mode();
             switch(_m_controller->current_motion_mode())
             {
             case (MotionMode::Off):
             {
-                payload->set_mode(netPayloadsV1::MotionMode::Off);
+                payload->set_mode(message_payloads::MotionMode::Off);
                 break;
             }
             case (MotionMode::Live):
             {
-                payload->set_mode(netPayloadsV1::MotionMode::Live);
+                payload->set_mode(message_payloads::MotionMode::Live);
                 break;
             }
             case (MotionMode::Recording):
             {
-                payload->set_mode(netPayloadsV1::MotionMode::Recording);
+                payload->set_mode(message_payloads::MotionMode::Recording);
                 break;
             }
             }
             _m_dispatcher->dispatch(std::move(response));
         }
 
-        void _process_motion_set_mode(const NetMessage &&message) {
+        void _process_motion_set_mode(const Message &&message) {
             auto payload = message.motion_set_mode();
             switch (payload.mode()) {
-            case netPayloadsV1::MotionMode::Off:_m_controller->set_motion_mode(MotionMode::Off);
+            case message_payloads::MotionMode::Off:_m_controller->set_motion_mode(MotionMode::Off);
                 break;
-            case netPayloadsV1::MotionMode::Live:_m_controller->set_motion_mode(MotionMode::Live);
+            case message_payloads::MotionMode::Live:_m_controller->set_motion_mode(MotionMode::Live);
                 break;
-            case netPayloadsV1::MotionMode::Recording:_m_controller->set_motion_mode(MotionMode::Recording);
+            case message_payloads::MotionMode::Recording:_m_controller->set_motion_mode(MotionMode::Recording);
                 break;
             default:break;
             }
         }
 
-        void _process_motion_xform(const NetMessage &&message) {
+        void _process_motion_xform(const Message &&message) {
             if (_m_controller->current_motion_mode() == MotionMode::Off) {
                 return;
             }
