@@ -30,18 +30,18 @@ namespace testing {
         /// An ID to identify the item
         int id;
 
-        /// The message to dispatch to the server
+        /// The description to dispatch to the server
         indiemotion::Message message;
 
         /// An optional expected result from the server
         std::optional<indiemotion::Message> expected;
 
-        /// An optional error to expect as a response from the dispatched message.
+        /// An optional error to expect as a response from the dispatched description.
         std::optional<indiemotion::Message> error;
     };
 
     /**
-     * Represents a playbook of message/responses to be dispatched and verified.
+     * Represents a playbook of description/responses to be dispatched and verified.
      */
     struct Playbook {
         std::vector<PlaybookItem> items{};
@@ -74,7 +74,7 @@ namespace testing {
     };
 
     /**
-     * A helper class to run a message playbook and validate their
+     * A helper class to run a description playbook and validate their
      * responses. This is useful for quickly testing the full stack of
      * a session delegate and bridge.
      *
@@ -155,7 +155,7 @@ namespace testing {
             std::cout << "Message [" << item.id << "] -----------------------------" << std::endl;
             std::string m;
             testing::messageObjectIntoString(item.message, m);
-            std::cout << "     message: " << m << std::endl;
+            std::cout << "     description: " << m << std::endl;
 
             if (item.expected) {
                 std::string e;
@@ -202,7 +202,7 @@ namespace testing {
                         failed = true;
                         std::stringstream stream;
                         stream << "FAILED: Message [" << id << "] "
-                               << "    did not expect message to be delivered\n";
+                               << "    did not expect description to be delivered\n";
 
                         std::string b;
                         google::protobuf::util::MessageToJsonString(message, &b);

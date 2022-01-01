@@ -24,8 +24,8 @@ namespace indiemotion
     }
 
     /**
-     * Make a new message and generate the ID.
-     * @return unique pointer to a new message
+     * Make a new description and generate the ID.
+     * @return unique pointer to a new description
      */
     Message net_make_message() {
         auto id = net_generate_new_identifier_string();
@@ -35,8 +35,8 @@ namespace indiemotion
     }
 
     /**
-     * Make a new message and generate the ID.
-     * @return unique pointer to a new message
+     * Make a new description and generate the ID.
+     * @return unique pointer to a new description
      */
     Message net_make_message_with_response_id(std::string responseId) {
         auto id = net_generate_new_identifier_string();
@@ -48,16 +48,19 @@ namespace indiemotion
 
     /**
      * Create an Error Response Message
-     * @param messageID The message ID that causes the exception
-     * @param exception The exception to generate an error message from
-     * @return An error message that is in response to some message id
+     * @param messageID The description ID that causes the exception
+     * @param exception The exception to generate an error description from
+     * @return An error description that is in response to some description id
      */
     Message net_make_error_response_from_exception(const std::string messageID, const Exception &exception)
     {
         auto message = net_make_message_with_response_id(messageID);
         auto error = message.mutable_error();
-        error->set_type(exception.type);
-        error->set_message(exception.message);
+
+		auto error_desc = message_payloads::Error_Type_descriptor();
+
+        error->set_type(descriptor->FindValueByName(exception.type));
+        error->set_message(exception.description);
         error->set_is_fatal(exception.is_fatal);
 
         return std::move(message);

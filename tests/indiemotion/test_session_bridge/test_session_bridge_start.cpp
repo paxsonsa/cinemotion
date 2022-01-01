@@ -44,7 +44,7 @@ SCENARIO("Starting the Session")
         properties->set_api_version(SessionBridge::APIVersion);
         properties->set_session_id("some_id");
 
-        WHEN("start message is processed") {
+        WHEN("start description is processed") {
             bridge.process_message(std::move(message));
 
             THEN("No response should be returned") {
@@ -71,7 +71,7 @@ SCENARIO("Starting the session with unsupported API version")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
-        WHEN("start message is processed with unsupported version")
+        WHEN("start description is processed with unsupported version")
         {
             Message message;
             auto payload = message.mutable_session_start();
@@ -81,7 +81,7 @@ SCENARIO("Starting the session with unsupported API version")
 
             bridge.process_message(std::move(message));
 
-            THEN("A session error message should be sent.")
+            THEN("A session error description should be sent.")
             {
                 REQUIRE(dispatcher->messages.size() == 1);
                 auto response = dispatcher->messages[0];

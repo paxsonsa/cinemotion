@@ -10,18 +10,18 @@ namespace indiemotion
 	{
 		/// The type of error that this exception represents
 		std::string type;
-		/// A user friendly message that describe the error.
-		std::string message;
+		/// A user friendly description that describe the error.
+		std::string description;
 		/// Mark this Exception as Fatal meaning that the session will shutdown immediately.
 		bool is_fatal = false;
 
 		/**
-		 * Construct an Exception from the type and message
+		 * Construct an Exception from the type and description
 		 * @param type A string representing the error type.
-		 * @param message A user friendly message describing the message.
+		 * @param message A user friendly description describing the description.
 		 */
 		Exception(std::string type, std::string message, bool fatal = false) noexcept
-			: type(type), message(message), is_fatal(fatal)
+			: type(type), description(message), is_fatal(fatal)
 		{
 			_m_full_message = type;
 			_m_full_message += ": " + message;
@@ -29,7 +29,7 @@ namespace indiemotion
 
 		/**
 		 * Returns exception string
-		 * @return a string which is a combination of the type and message.
+		 * @return a string which is a combination of the type and description.
 		 */
 		const char* what() const noexcept
 		{
@@ -100,7 +100,7 @@ namespace indiemotion
 	};
 
 	/**
-	 * An Exception when the received message is bad or malformed and not able to be processed.
+	 * An Exception when the received description is bad or malformed and not able to be processed.
 	 *
 	 * IndieMotion Error: BadMessageError
 	 *

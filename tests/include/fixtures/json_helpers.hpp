@@ -27,14 +27,14 @@ namespace testing {
         return std::move(doc);
     }
     /**
-         * Load a 'message' item from the JSON playbook document
-         * @param item An individual array item from the JSON playbook to extract the 'message' from.
+         * Load a 'description' item from the JSON playbook document
+         * @param item An individual array item from the JSON playbook to extract the 'description' from.
          * @return
          */
     indiemotion::Message loadMessageObject(const rapidjson::Value &item) {
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        item["message"].Accept(writer);
+        item["description"].Accept(writer);
 
         indiemotion::Message message;
         google::protobuf::util::JsonStringToMessage(buffer.GetString(), &message);

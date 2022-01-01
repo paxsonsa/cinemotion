@@ -17,20 +17,21 @@ namespace indiemotion {
             _logger = logging::get_logger(LOGGER_NAME);
             _m_controller = std::move(controller);
 
-            _m_callback_table[Message::PayloadCase::kSessionStart] =
-                std::bind(&SessionBridge::_process_session_start, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kSessionShutdown] =
-                std::bind(&SessionBridge::_process_session_shutdown, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kGetCameraList] =
-                std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kSetActiveCamera] =
-                std::bind(&SessionBridge::_process_set_active_camera, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kMotionSetMode] =
-                std::bind(&SessionBridge::_process_motion_set_mode, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kMotionGetMode] =
-                std::bind(&SessionBridge::_process_motion_get_mode, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kMotionXform] =
-                std::bind(&SessionBridge::_process_motion_xform, this, std::placeholders::_1);
+            _m_callback_table[Message::PayloadCase::kInitializeSession] =
+                std::bind(&SessionBridge::_process_initialize_session, this, std::placeholders::_1);
+            _m_callback_table[Message::PayloadCase::kShutdownSession] =
+                std::bind(&SessionBridge::_process_shutdown_session, this, std::placeholders::_1);
+//            _m_callback_table[Message::PayloadCase::kGetCameraList] =
+//                std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
+//
+//            _m_callback_table[Message::PayloadCase::kSetActiveCamera] =
+//                std::bind(&SessionBridge::_process_set_active_camera, this, std::placeholders::_1);
+//            _m_callback_table[Message::PayloadCase::kMotionSetMode] =
+//                std::bind(&SessionBridge::_process_motion_set_mode, this, std::placeholders::_1);
+//            _m_callback_table[Message::PayloadCase::kMotionGetMode] =
+//                std::bind(&SessionBridge::_process_motion_get_mode, this, std::placeholders::_1);
+//            _m_callback_table[Message::PayloadCase::kMotionXform] =
+//                std::bind(&SessionBridge::_process_motion_xform, this, std::placeholders::_1);
         }
 
         static const std::string APIVersion;
@@ -40,7 +41,7 @@ namespace indiemotion {
         void process_message(const Message &&message) {
 
 			if (message.payload_case() == Message::PayloadCase::PAYLOAD_NOT_SET) {
-				auto exception = MalformedMessageException();
+				auto exception = BadMessageException("description is missing payload.");
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
 				_m_dispatcher->dispatch(std::move(err_message));
 				return;
@@ -49,7 +50,7 @@ namespace indiemotion {
             auto potential_callback = _m_callback_table[message.payload_case()];
             if (!potential_callback) {
                 auto name = net_get_message_payload_name(message);
-                _logger->error("Could not process the message, no callback is registered for payload case: {}",
+                _logger->error("Could not process the description, no callback is registered for payload case: {}",
                                name);
                 throw std::runtime_error("no callback specified in table for payload case.");
             }
@@ -63,13 +64,13 @@ namespace indiemotion {
                 _m_dispatcher->dispatch(std::move(err_message));
                 if (err.is_fatal)
                 {
-                    _logger->error("caught fatal error, shutting down session: {}", err.message);
+                    _logger->error("caught fatal error, shutting down session: {}", err.description);
                     _m_controller->shutdown();
                 }
             }
             catch (const std::exception &e)
             {
-                _logger->error("unexpected error while processing message: {}", e.what());
+                _logger->error("unexpected error while processing description: {}", e.what());
                 auto exception = UnknownFatalException();
                 auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
                 _m_dispatcher->dispatch(std::move(err_message));
@@ -83,92 +84,92 @@ namespace indiemotion {
         std::shared_ptr<SessionController> _m_controller;
         std::array<std::optional<std::function<void(const Message &&)>>, 128> _m_callback_table;
 
-        void _process_session_start(const Message &&message) {
+        void _process_initialize_session(const Message &&message) {
 
-            auto properties = message.session_start().session_properties();
-            if (properties.api_version() != supported_api_version())
+            auto device_info = message.initialize_session().device_info();
+            if (device_info.api_version() != supported_api_version())
             {
-                _logger->error("API Version is not supported: {}", properties.api_version());
+                _logger->error("API Version is not supported: {}", device_info.api_version());
                 throw SessionAPIVersionNotSupportedException();
             }
 
             _m_controller->initialize();
         }
 
-        void _process_session_shutdown(const Message &&message) {
+        void _process_shutdown_session(const Message &&message) {
             _m_controller->shutdown();
         }
 
-        void _process_get_camera_list(const Message &&message) {
-            auto m = net_make_message_with_response_id(message.header().id());
-            auto payload = m.mutable_camera_list();
-
-            for (auto srcCam: _m_controller->get_cameras()) {
-                auto cam = payload->add_cameras();
-                cam->set_id(srcCam.name);
-            }
-            _m_dispatcher->dispatch(std::move(m));
-        }
-
-        void _process_set_active_camera(const Message &&message) {
-            auto camId = message.set_active_camera().camera_id();
-            _m_controller->set_active_camera(camId);
-        }
-
-        void _process_motion_get_mode(const Message &&message) {
-            auto response = net_make_message_with_response_id(message.header().id());
-            auto payload = response.mutable_motion_active_mode();
-            switch(_m_controller->current_motion_mode())
-            {
-            case (MotionMode::Off):
-            {
-                payload->set_mode(message_payloads::MotionMode::Off);
-                break;
-            }
-            case (MotionMode::Live):
-            {
-                payload->set_mode(message_payloads::MotionMode::Live);
-                break;
-            }
-            case (MotionMode::Recording):
-            {
-                payload->set_mode(message_payloads::MotionMode::Recording);
-                break;
-            }
-            }
-            _m_dispatcher->dispatch(std::move(response));
-        }
-
-        void _process_motion_set_mode(const Message &&message) {
-            auto payload = message.motion_set_mode();
-            switch (payload.mode()) {
-            case message_payloads::MotionMode::Off:_m_controller->set_motion_mode(MotionMode::Off);
-                break;
-            case message_payloads::MotionMode::Live:_m_controller->set_motion_mode(MotionMode::Live);
-                break;
-            case message_payloads::MotionMode::Recording:_m_controller->set_motion_mode(MotionMode::Recording);
-                break;
-            default:break;
-            }
-        }
-
-        void _process_motion_xform(const Message &&message) {
-            if (_m_controller->current_motion_mode() == MotionMode::Off) {
-                return;
-            }
-
-            auto payload = message.motion_xform();
-
-            auto xform = MotionXForm::create(
-                payload.translation().x(),
-                payload.translation().y(),
-                payload.translation().z(),
-                payload.orientation().x(),
-                payload.orientation().y(),
-                payload.orientation().z()
-            );
-            _m_controller->update_motion_xform(std::move(xform));
-        }
+//        void _process_get_camera_list(const Message &&description) {
+//            auto m = net_make_message_with_response_id(description.header().id());
+//            auto payload = m.mutable_camera_list();
+//
+//            for (auto srcCam: _m_controller->get_cameras()) {
+//                auto cam = payload->add_cameras();
+//                cam->set_id(srcCam.name);
+//            }
+//            _m_dispatcher->dispatch(std::move(m));
+//        }
+//
+//        void _process_set_active_camera(const Message &&description) {
+//            auto camId = description.set_active_camera().camera_id();
+//            _m_controller->set_active_camera(camId);
+//        }
+//
+//        void _process_motion_get_mode(const Message &&description) {
+//            auto response = net_make_message_with_response_id(description.header().id());
+//            auto payload = response.mutable_motion_active_mode();
+//            switch(_m_controller->current_motion_mode())
+//            {
+//            case (MotionMode::Off):
+//            {
+//                payload->set_mode(message_payloads::MotionMode::Off);
+//                break;
+//            }
+//            case (MotionMode::Live):
+//            {
+//                payload->set_mode(message_payloads::MotionMode::Live);
+//                break;
+//            }
+//            case (MotionMode::Recording):
+//            {
+//                payload->set_mode(message_payloads::MotionMode::Recording);
+//                break;
+//            }
+//            }
+//            _m_dispatcher->dispatch(std::move(response));
+//        }
+//
+//        void _process_motion_set_mode(const Message &&description) {
+//            auto payload = description.motion_set_mode();
+//            switch (payload.mode()) {
+//            case message_payloads::MotionMode::Off:_m_controller->set_motion_mode(MotionMode::Off);
+//                break;
+//            case message_payloads::MotionMode::Live:_m_controller->set_motion_mode(MotionMode::Live);
+//                break;
+//            case message_payloads::MotionMode::Recording:_m_controller->set_motion_mode(MotionMode::Recording);
+//                break;
+//            default:break;
+//            }
+//        }
+//
+//        void _process_motion_xform(const Message &&description) {
+//            if (_m_controller->current_motion_mode() == MotionMode::Off) {
+//                return;
+//            }
+//
+//            auto payload = description.motion_xform();
+//
+//            auto xform = MotionXForm::create(
+//                payload.translation().x(),
+//                payload.translation().y(),
+//                payload.translation().z(),
+//                payload.orientation().x(),
+//                payload.orientation().y(),
+//                payload.orientation().z()
+//            );
+//            _m_controller->update_motion_xform(std::move(xform));
+//        }
     };
 
     const std::string SessionBridge::APIVersion = "1.0";

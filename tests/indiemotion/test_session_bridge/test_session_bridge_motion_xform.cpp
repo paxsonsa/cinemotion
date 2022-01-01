@@ -41,7 +41,7 @@ SCENARIO("updating the motion xform successfully")
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
-        WHEN("a motion message is processed")
+        WHEN("a motion description is processed")
         {
             auto xform = MotionXForm::create(
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);

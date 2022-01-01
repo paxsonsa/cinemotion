@@ -76,7 +76,7 @@ recording.
 Errors happen. From your delegate we have provided a helper exception to convey to the client user 
 problems on the server. 
 
-The `indiemotion::SessionException` exception can be used to relay error message to the user. By specifying `is_fatal` 
+The `indiemotion::SessionException` exception can be used to relay error description to the user. By specifying `is_fatal` 
 to the exception, the session will begin its shutdown sequence. 
 
 # Session Shutdown

@@ -39,7 +39,7 @@ SCENARIO("Set Motion Mode Successfully")
         session->camera_manager->set_active_cameras(c);
 
 
-        WHEN("bridge processes set motion mode=live message")
+        WHEN("bridge processes set motion mode=live description")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
@@ -60,7 +60,7 @@ SCENARIO("Set Motion Mode Successfully")
             }
         }
 
-        WHEN("bridge processes set motion mode=recording message")
+        WHEN("bridge processes set motion mode=recording description")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
@@ -81,7 +81,7 @@ SCENARIO("Set Motion Mode Successfully")
             }
         }
 
-        WHEN("bridge processes set motion mode=off message")
+        WHEN("bridge processes set motion mode=off description")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
@@ -114,7 +114,7 @@ SCENARIO("Set Motion Mode Fails")
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
 
-        WHEN("bridge processes set motion mode=live message")
+        WHEN("bridge processes set motion mode=live description")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
@@ -137,7 +137,7 @@ SCENARIO("Set Motion Mode Fails")
             }
         }
 
-        WHEN("bridge processes set motion mode=recording message")
+        WHEN("bridge processes set motion mode=recording description")
         {
             auto message = net_make_message();
             auto payload = message.mutable_motion_set_mode();
@@ -174,13 +174,13 @@ SCENARIO("Get Motion Mode Successfully")
         session->camera_manager->set_active_cameras(c);
         session->set_motion_mode(MotionMode::Live);
 
-        WHEN("get mode message is processed")
+        WHEN("get mode description is processed")
         {
             auto message = net_make_message();
             message.mutable_motion_get_mode();
             bridge.process_message(std::move(message));
 
-            THEN("a active motion mode message should be dispatched")
+            THEN("a active motion mode description should be dispatched")
             {
                 REQUIRE(dispatcher->messages.size() == 1);
                 auto response = dispatcher->messages[0];

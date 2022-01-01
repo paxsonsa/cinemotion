@@ -67,14 +67,14 @@ namespace indiemotion {
 
             /**
              * Construct the dispatcher with the callback function that will be invoked each time
-             * the bridge dispatches a new message.
+             * the bridge dispatches a new description.
              * @param f A function that takes an owned Message as the argument.
              */
             ConnectionWriterDispatcher(std::function<void(Message &&message)> f) : callback(f) {}
 
             /**
              * Implementation of the dispatch routine. This calls the stored callback function.
-             * @param message The message that is being dispatched by the bridge.
+             * @param message The description that is being dispatched by the bridge.
              */
             void dispatch(Message &&message) override {
                 callback(std::move(message));
@@ -218,7 +218,7 @@ namespace indiemotion {
 
             std::string msg_str;
             google::protobuf::util::MessageToJsonString(message, &msg_str);
-            _logger->trace("message: {}", msg_str);
+            _logger->trace("description: {}", msg_str);
             _buffer.consume(_buffer.size());
             _session_bridge->process_message(std::move(message));
 
