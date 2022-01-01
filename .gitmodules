@@ -4,16 +4,9 @@
 [submodule "external/spdlog"]
 	path = external/spdlog
 	url = https://github.com/gabime/spdlog.git
-	
 [submodule "external/doctest"]
 	path = external/doctest
 	url = https://github.com/onqtam/doctest.git
-[submodule "external/replxx"]
-	path = external/replxx
-	url = https://github.com/AmokHuginnsson/replxx.git
 [submodule "external/rapidjson"]
 	path = external/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
-[submodule "indiemotion-protobuf"]
-	path = indiemotion-protobuf
-	url = https://github.com/paxsonsa/indiemotion-protobuf.git
