@@ -110,6 +110,11 @@ namespace indiemotion
 			return bool(_value_ptr);
 		}
 
+		SessionProperty copy() const
+		{
+			return SessionProperty(name(), *_value_ptr);
+		}
+
 		SessionProperty copy_empty() const
 		{
 			return SessionProperty(name());
