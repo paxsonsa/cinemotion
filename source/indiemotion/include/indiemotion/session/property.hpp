@@ -21,6 +21,8 @@ namespace indiemotion
 				return "string";
 			case 4:
 				return "bool";
+			default:
+				return "unknown";
 			}
 		}
 

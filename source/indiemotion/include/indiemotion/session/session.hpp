@@ -20,9 +20,9 @@ namespace indiemotion
 		std::shared_ptr<PropertyObserverList> property_observer_list = nullptr;
 		std::shared_ptr<SessionPropertyTable> property_table = nullptr;
 
-        Session() {}
+		Session() {}
 
-        Session(std::shared_ptr<SessionControllerDelegate> delegate) : Session()
+        Session(std::shared_ptr<SessionControllerDelegate> delegate)
         {
             _m_delegate = delegate;
         }

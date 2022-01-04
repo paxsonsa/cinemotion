@@ -19,6 +19,8 @@ namespace indiemotion
 			_logger = logging::get_logger("bridge");
 			_m_controller = std::move(controller);
 
+			_m_callback_table[Message::PayloadCase::kAcknowledge] =
+				std::bind(&SessionBridge::_process_acknowledge, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kInitializeSession] =
 				std::bind(&SessionBridge::_process_initialize_session, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kShutdownSession] =
@@ -56,7 +58,7 @@ namespace indiemotion
 			if (!potential_callback)
 			{
 				auto name = net_get_message_payload_name(message);
-				_logger->error("Could not process the description, no callback is registered for payload case: {}",
+				_logger->error("Could not process the message, no callback is registered for payload case: {}",
 					name);
 				auto exception = ApplicationException("application does not know how to process message");
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
@@ -102,6 +104,8 @@ namespace indiemotion
 			_m_dispatcher->dispatch(std::move(response));
 		}
 
+		void _process_acknowledge(const Message&& message) {}
+
 		void _process_initialize_session(const Message&& message)
 		{
 			auto device_info = message.initialize_session().device_info();
@@ -112,6 +116,21 @@ namespace indiemotion
 			}
 			_m_controller->initialize();
 			_send_acknowledgement_for(std::move(message));
+
+			auto motion_mode = GlobalProperties::MotionCaptureMode();
+			_m_controller->get_session_property(&motion_mode);
+			auto init_message = net_make_message();
+			try {
+				_populate_property_message(init_message, std::move(motion_mode));
+				_m_dispatcher->dispatch(std::move(init_message));
+			} catch (Exception &exception) {
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				return;
+			}
+
+			init_message = net_make_message();
+			_send_camera_list(std::move(init_message));
 		}
 
 		void _process_shutdown_session(const Message&& message)
@@ -164,30 +183,26 @@ namespace indiemotion
 			}
 
 			auto response = net_make_message_with_response_id(message.header().id());
-			auto payload = response.mutable_session_property();
-			payload->set_name(property.name());
 
-			auto raw_value = property.value();
-			if (property.contains<std::string>())
-				payload->set_string_value(std::get<std::string>(*raw_value));
-			else if (property.contains<std::int64_t>())
-				payload->set_int_value(std::get<std::int64_t>(*raw_value));
-			else if (property.contains<double>())
-				payload->set_float_value(std::get<double>(*raw_value));
-			else if (property.contains<bool>())
-				payload->set_bool_value(std::get<double>(*raw_value));
-			else {
-				auto exception = SessionPropertyTypeException("failed to cast type ");
+			try {
+				_populate_property_message(response, std::move(property));
+			} catch (Exception &exception) {
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
 				_m_dispatcher->dispatch(std::move(err_message));
 				return;
 			}
+
 			_m_dispatcher->dispatch(std::move(response));
 		}
 
 		void _process_get_camera_list(const Message&& message)
 		{
 			auto m = net_make_message_with_response_id(message.header().id());
+			_send_camera_list(std::move(m));
+
+		}
+		void _send_camera_list(Message&& m)
+		{
 			auto payload = m.mutable_camera_list();
 
 			for (auto srcCam: _m_controller->get_cameras())
@@ -218,7 +233,27 @@ namespace indiemotion
             );
             _m_controller->update_motion_xform(std::move(xform));
         }
+
+		void _populate_property_message(Message &message, SessionProperty &&property)
+		{
+			auto payload = message.mutable_session_property();
+			payload->set_name(property.name());
+			auto raw_value = property.value();
+			if (property.contains<std::string>())
+				payload->set_string_value(std::get<std::string>(*raw_value));
+			else if (property.contains<std::int64_t>())
+				payload->set_int_value(std::get<std::int64_t>(*raw_value));
+			else if (property.contains<double>())
+				payload->set_float_value(std::get<double>(*raw_value));
+			else if (property.contains<bool>())
+				payload->set_bool_value(std::get<double>(*raw_value));
+			else
+				throw SessionPropertyTypeException("failed to cast type");
+		}
 	};
 
 	const std::string SessionBridge::APIVersion = "1.0";
+
+
+
 }
