@@ -10,7 +10,7 @@ namespace indiemotion
 	{
 		/// The type of error that this exception represents
 		std::string type;
-		/// A user friendly description that describe the error.
+		/// A user-friendly description that describe the error.
 		std::string description;
 		/// Mark this Exception as Fatal meaning that the session will shutdown immediately.
 		bool is_fatal = false;
@@ -124,7 +124,7 @@ namespace indiemotion
 	struct APIVersionNotSupportedException : Exception
 	{
 		APIVersionNotSupportedException() : Exception("APIVersionNotSupportedError",
-			"request api version is not supported.")
+			"requested api version is not supported.")
 		{
 		}
 	};
@@ -149,9 +149,9 @@ namespace indiemotion
 	 *
 	 * IndieMotion Error: CameraNotSetError
 	 */
-	struct CameraNotSetException : Exception
+	struct ActiveCameraNotSetException : Exception
 	{
-		CameraNotSetException() : Exception("CameraNotSetError",
+		ActiveCameraNotSetException() : Exception("ActiveCameraNotSetError",
 			"an active camera must be set.")
 		{
 		}
@@ -171,4 +171,33 @@ namespace indiemotion
 		{
 		}
 	};
+
+	/**
+	 * An Exception that is thrown when a session property with a given name could not be found.
+	 *
+	 * IndieMotion Error: SessionPropertyNotFoundError
+	 */
+	struct SessionPropertyNotFoundException: Exception
+	{
+		SessionPropertyNotFoundException(std::string name) : Exception("SessionPropertyNotFoundError",
+			"no property with that name: " + name)
+		{
+
+		}
+	};
+
+	/**
+	 * An exception that is thrown when there is a problem with a session property's type.
+	 *
+	 * IndieMotion Error: SessionPropertyTypeError
+	 *
+	 */
+	struct SessionPropertyTypeException: Exception
+	{
+		SessionPropertyTypeException(std::string message) : Exception("SessionPropertyTypeError",
+			message)
+		{
+		}
+	};
+
 } // namespace indiemotion::errors

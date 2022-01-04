@@ -15,13 +15,13 @@ namespace indiemotion {
      * This callback receives a shared pointer to the session controller to have its
      * delegate updated.
      * ```
-     *      [&](std::shared_ptr<SessionController> controller) {
+     *      [&](std::shared_ptr<Session> controller) {
      *          auto delegate = std::make_shared<YourDelegateImpl>();
      *          controller->set_delegate(std::move(delegate);
      *      }
      * ```
      */
-    using ConnectionStartCallback = std::function<void(std::shared_ptr<SessionController>)>;
+    using ConnectionStartCallback = std::function<void(std::shared_ptr<Session>)>;
 
     /**
      * A callback that is invoked when the connection was disconnected.
@@ -147,7 +147,7 @@ namespace indiemotion {
                 return;
             }
             _logger->info("Accepting Connection...");
-            auto controller = std::make_shared<SessionController>();
+            auto controller = std::make_shared<Session>();
             auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](Message &&message) {
                 auto os = beast::ostream(_buffer);
                 message.SerializeToOstream(&os);
@@ -200,7 +200,7 @@ namespace indiemotion {
                 _logger->error("connection error, shutting down session and stopping server");
 
                 Message m;
-                m.mutable_session_shutdown();
+                m.mutable_shutdown_session();
                 _session_bridge->process_message(std::move(m));
 
                 _callbacks.on_disconnect();
@@ -220,6 +220,8 @@ namespace indiemotion {
             google::protobuf::util::MessageToJsonString(message, &msg_str);
             _logger->trace("description: {}", msg_str);
             _buffer.consume(_buffer.size());
+
+			// TODO - handle exceptions
             _session_bridge->process_message(std::move(message));
 
             // Do another read

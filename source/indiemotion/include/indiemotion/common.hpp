@@ -1,5 +1,6 @@
 #pragma once
 #include <any>
+#include <variant>
 #include <cassert>
 #include <exception>
 #include <functional>

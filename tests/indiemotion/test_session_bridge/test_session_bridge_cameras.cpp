@@ -4,7 +4,7 @@
 #include <indiemotion/net/dispatch.hpp>
 #include <indiemotion/session.hpp>
 #include <indiemotion/net/message.hpp>
-#include "indiemotion/cameras/camera.hpp"
+#include "indiemotion/camera.hpp"
 
 using namespace indiemotion;
 
@@ -44,7 +44,7 @@ SCENARIO("Listing the Cameras")
     GIVEN("a session bridge")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
@@ -106,7 +106,7 @@ SCENARIO("Set the Camera Successfully")
     GIVEN("a session bridge")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         session->initialize();
 
         auto dispatcher = std::make_shared<DummyDispatcher>();
@@ -115,13 +115,16 @@ SCENARIO("Set the Camera Successfully")
         WHEN("bridge processes set camera messages")
         {
             auto message = net_make_message();
-            auto payload = message.mutable_set_active_camera();
-            payload->set_camera_id("cam2");
+            auto payload = message.mutable_session_property();
+            payload->set_name(GlobalProperties::ActiveCameraID().name());
+			payload->set_string_value("cam2");
             bridge.process_message(std::move(message));
 
             THEN("the delegates camera should be set")
             {
-                REQUIRE(dispatcher->messages.size() == 0);
+                REQUIRE(dispatcher->messages.size() == 1);
+				auto response = dispatcher->messages[0];
+				REQUIRE(response.has_acknowledge());
                 REQUIRE(delegate->camera.value().name == "cam2");
             }
         }

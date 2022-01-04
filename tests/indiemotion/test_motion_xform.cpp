@@ -1,6 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/common.hpp>
 #include <indiemotion/motion/xform.hpp>
 
 using namespace indiemotion;

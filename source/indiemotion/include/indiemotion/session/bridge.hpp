@@ -4,173 +4,221 @@
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/dispatch.hpp>
 #include <indiemotion/session/server_info.hpp>
-#include <indiemotion/session/controller.hpp>
+#include <indiemotion/session/session.hpp>
+#include <indiemotion/session/property_observer.hpp>
 
-namespace indiemotion {
-    const std::string LOGGER_NAME = "com.indiemotion.session.bridge";
+namespace indiemotion
+{
+	class SessionBridge
+	{
+	public:
+		SessionBridge(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
+			std::shared_ptr<Session> controller)
+		{
+			_m_dispatcher = std::move(dispatcherPtr);
+			_logger = logging::get_logger("bridge");
+			_m_controller = std::move(controller);
 
-    class SessionBridge {
-    public:
-        SessionBridge(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
-                      std::shared_ptr<SessionController> controller) {
-            _m_dispatcher = std::move(dispatcherPtr);
-            _logger = logging::get_logger(LOGGER_NAME);
-            _m_controller = std::move(controller);
+			_m_callback_table[Message::PayloadCase::kInitializeSession] =
+				std::bind(&SessionBridge::_process_initialize_session, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kShutdownSession] =
+				std::bind(&SessionBridge::_process_shutdown_session, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kSessionProperty] =
+				std::bind(&SessionBridge::_process_session_property, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kGetSessionPropertyByName] =
+				std::bind(&SessionBridge::_process_get_session_property, this, std::placeholders::_1);
+            _m_callback_table[Message::PayloadCase::kGetCameraList] =
+                std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kCameraList] =
+				std::bind(&SessionBridge::_process_camera_list, this, std::placeholders::_1);
+            _m_callback_table[Message::PayloadCase::kInputDeviceXform] =
+                std::bind(&SessionBridge::_process_input_device_xform, this, std::placeholders::_1);
+		}
 
-            _m_callback_table[Message::PayloadCase::kInitializeSession] =
-                std::bind(&SessionBridge::_process_initialize_session, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kShutdownSession] =
-                std::bind(&SessionBridge::_process_shutdown_session, this, std::placeholders::_1);
-//            _m_callback_table[Message::PayloadCase::kGetCameraList] =
-//                std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
-//
-//            _m_callback_table[Message::PayloadCase::kSetActiveCamera] =
-//                std::bind(&SessionBridge::_process_set_active_camera, this, std::placeholders::_1);
-//            _m_callback_table[Message::PayloadCase::kMotionSetMode] =
-//                std::bind(&SessionBridge::_process_motion_set_mode, this, std::placeholders::_1);
-//            _m_callback_table[Message::PayloadCase::kMotionGetMode] =
-//                std::bind(&SessionBridge::_process_motion_get_mode, this, std::placeholders::_1);
-//            _m_callback_table[Message::PayloadCase::kMotionXform] =
-//                std::bind(&SessionBridge::_process_motion_xform, this, std::placeholders::_1);
-        }
+		static const std::string APIVersion;
 
-        static const std::string APIVersion;
+		[[nodiscard]] static std::string supported_api_version()
+		{
+			return SessionBridge::APIVersion;
+		}
 
-        [[nodiscard]] static std::string supported_api_version() { return SessionBridge::APIVersion; }
-
-        void process_message(const Message &&message) {
-
-			if (message.payload_case() == Message::PayloadCase::PAYLOAD_NOT_SET) {
+		void process_message(const Message&& message)
+		{
+			if (message.payload_case() == Message::PayloadCase::PAYLOAD_NOT_SET)
+			{
 				auto exception = BadMessageException("description is missing payload.");
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
 				_m_dispatcher->dispatch(std::move(err_message));
 				return;
 			}
 
-            auto potential_callback = _m_callback_table[message.payload_case()];
-            if (!potential_callback) {
-                auto name = net_get_message_payload_name(message);
-                _logger->error("Could not process the description, no callback is registered for payload case: {}",
-                               name);
-                throw std::runtime_error("no callback specified in table for payload case.");
-            }
+			auto potential_callback = _m_callback_table[message.payload_case()];
+			if (!potential_callback)
+			{
+				auto name = net_get_message_payload_name(message);
+				_logger->error("Could not process the description, no callback is registered for payload case: {}",
+					name);
+				auto exception = ApplicationException("application does not know how to process message");
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				return;
+			}
 
-            auto callback = potential_callback.value();
-            try {
-                callback(std::move(message));
-            } catch (const Exception &err)
-            {
-                auto err_message = net_make_error_response_from_exception(message.header().id(), err);
-                _m_dispatcher->dispatch(std::move(err_message));
-                if (err.is_fatal)
-                {
-                    _logger->error("caught fatal error, shutting down session: {}", err.description);
-                    _m_controller->shutdown();
-                }
-            }
-            catch (const std::exception &e)
-            {
-                _logger->error("unexpected error while processing description: {}", e.what());
-                auto exception = UnknownFatalException();
-                auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
-                _m_dispatcher->dispatch(std::move(err_message));
-                _m_controller->shutdown();
-            }
+			auto callback = potential_callback.value();
+			try
+			{
+				callback(std::move(message));
+			}
+			catch (const Exception& err)
+			{
+				auto err_message = net_make_error_response_from_exception(message.header().id(), err);
+				_m_dispatcher->dispatch(std::move(err_message));
+				if (err.is_fatal)
+				{
+					_logger->error("caught fatal error, shutting down session: {}", err.description);
+					_m_controller->shutdown();
+				}
+			}
+			catch (const std::exception& e)
+			{
+				_logger->error("unexpected error while processing description: {}", e.what());
+				auto exception = UnknownFatalException();
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				_m_controller->shutdown();
+			}
+		}
+
+	private:
+		std::shared_ptr<spdlog::logger> _logger;
+		std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
+		std::shared_ptr<Session> _m_controller;
+		std::array<std::optional<std::function<void(const Message&&)>>, 128> _m_callback_table;
+
+		void _send_acknowledgement_for(const Message&& message)
+		{
+			auto response = net_make_message_with_response_id(message.header().id());
+			response.mutable_acknowledge();
+			_m_dispatcher->dispatch(std::move(response));
+		}
+
+		void _process_initialize_session(const Message&& message)
+		{
+			auto device_info = message.initialize_session().device_info();
+			if (device_info.api_version() != supported_api_version())
+			{
+				_logger->error("API Version is not supported: {}", device_info.api_version());
+				throw APIVersionNotSupportedException();
+			}
+			_m_controller->initialize();
+			_send_acknowledgement_for(std::move(message));
+		}
+
+		void _process_shutdown_session(const Message&& message)
+		{
+			_m_controller->shutdown();
+			_send_acknowledgement_for(std::move(message));
+		}
+
+		void _process_session_property(const Message&& message)
+		{
+			auto raw_property = message.session_property();
+			SessionProperty::Value value;
+
+			switch (raw_property.value_case())
+			{
+			case indiemotionpb::payloads::SessionProperty::kIntValue:
+				value = raw_property.int_value();
+				break;
+			case indiemotionpb::payloads::SessionProperty::kStringValue:
+				value = raw_property.string_value();
+				break;
+			case indiemotionpb::payloads::SessionProperty::kFloatValue:
+				value = raw_property.float_value();
+				break;
+			case indiemotionpb::payloads::SessionProperty::kBoolValue:
+				value = raw_property.bool_value();
+				break;
+			case indiemotionpb::payloads::SessionProperty::VALUE_NOT_SET:
+				auto exception = BadMessageException("session property value type is not set.");
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				return;
+			}
+
+			auto property = SessionProperty(raw_property.name(), std::move(value));
+			_m_controller->set_session_property(std::move(property));
+			_send_acknowledgement_for(std::move(message));
+		}
+
+		void _process_get_session_property(const Message&& message)
+		{
+			auto name = message.get_session_property_by_name().name();
+			auto property = SessionProperty(name);
+
+			if (!_m_controller->get_session_property(&property)) {
+				auto exception = SessionPropertyNotFoundException(name);
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				return;
+			}
+
+			auto response = net_make_message_with_response_id(message.header().id());
+			auto payload = response.mutable_session_property();
+			payload->set_name(property.name());
+
+			auto raw_value = property.value();
+			if (property.contains<std::string>())
+				payload->set_string_value(std::get<std::string>(*raw_value));
+			else if (property.contains<std::int64_t>())
+				payload->set_int_value(std::get<std::int64_t>(*raw_value));
+			else if (property.contains<double>())
+				payload->set_float_value(std::get<double>(*raw_value));
+			else if (property.contains<bool>())
+				payload->set_bool_value(std::get<double>(*raw_value));
+			else {
+				auto exception = SessionPropertyTypeException("failed to cast type ");
+				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+				_m_dispatcher->dispatch(std::move(err_message));
+				return;
+			}
+			_m_dispatcher->dispatch(std::move(response));
+		}
+
+		void _process_get_camera_list(const Message&& message)
+		{
+			auto m = net_make_message_with_response_id(message.header().id());
+			auto payload = m.mutable_camera_list();
+
+			for (auto srcCam: _m_controller->get_cameras())
+			{
+				auto cam = payload->add_cameras();
+				cam->set_id(srcCam.name);
+			}
+			_m_dispatcher->dispatch(std::move(m));
+		}
+
+		void _process_camera_list(const Message&& message)
+		{
+			auto exception = ApplicationException("cannot process camera list updates from input device");
+			auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
+			_m_dispatcher->dispatch(std::move(err_message));
+			return;
+		}
+
+        void _process_input_device_xform(const Message &&message) {
+            auto payload = message.input_device_xform();
+            auto xform = MotionXForm::create(
+                payload.translation().x(),
+                payload.translation().y(),
+                payload.translation().z(),
+                payload.orientation().x(),
+                payload.orientation().y(),
+                payload.orientation().z()
+            );
+            _m_controller->update_motion_xform(std::move(xform));
         }
+	};
 
-    private:
-        std::shared_ptr<spdlog::logger> _logger;
-        std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
-        std::shared_ptr<SessionController> _m_controller;
-        std::array<std::optional<std::function<void(const Message &&)>>, 128> _m_callback_table;
-
-        void _process_initialize_session(const Message &&message) {
-
-            auto device_info = message.initialize_session().device_info();
-            if (device_info.api_version() != supported_api_version())
-            {
-                _logger->error("API Version is not supported: {}", device_info.api_version());
-                throw SessionAPIVersionNotSupportedException();
-            }
-
-            _m_controller->initialize();
-        }
-
-        void _process_shutdown_session(const Message &&message) {
-            _m_controller->shutdown();
-        }
-
-//        void _process_get_camera_list(const Message &&description) {
-//            auto m = net_make_message_with_response_id(description.header().id());
-//            auto payload = m.mutable_camera_list();
-//
-//            for (auto srcCam: _m_controller->get_cameras()) {
-//                auto cam = payload->add_cameras();
-//                cam->set_id(srcCam.name);
-//            }
-//            _m_dispatcher->dispatch(std::move(m));
-//        }
-//
-//        void _process_set_active_camera(const Message &&description) {
-//            auto camId = description.set_active_camera().camera_id();
-//            _m_controller->set_active_camera(camId);
-//        }
-//
-//        void _process_motion_get_mode(const Message &&description) {
-//            auto response = net_make_message_with_response_id(description.header().id());
-//            auto payload = response.mutable_motion_active_mode();
-//            switch(_m_controller->current_motion_mode())
-//            {
-//            case (MotionMode::Off):
-//            {
-//                payload->set_mode(message_payloads::MotionMode::Off);
-//                break;
-//            }
-//            case (MotionMode::Live):
-//            {
-//                payload->set_mode(message_payloads::MotionMode::Live);
-//                break;
-//            }
-//            case (MotionMode::Recording):
-//            {
-//                payload->set_mode(message_payloads::MotionMode::Recording);
-//                break;
-//            }
-//            }
-//            _m_dispatcher->dispatch(std::move(response));
-//        }
-//
-//        void _process_motion_set_mode(const Message &&description) {
-//            auto payload = description.motion_set_mode();
-//            switch (payload.mode()) {
-//            case message_payloads::MotionMode::Off:_m_controller->set_motion_mode(MotionMode::Off);
-//                break;
-//            case message_payloads::MotionMode::Live:_m_controller->set_motion_mode(MotionMode::Live);
-//                break;
-//            case message_payloads::MotionMode::Recording:_m_controller->set_motion_mode(MotionMode::Recording);
-//                break;
-//            default:break;
-//            }
-//        }
-//
-//        void _process_motion_xform(const Message &&description) {
-//            if (_m_controller->current_motion_mode() == MotionMode::Off) {
-//                return;
-//            }
-//
-//            auto payload = description.motion_xform();
-//
-//            auto xform = MotionXForm::create(
-//                payload.translation().x(),
-//                payload.translation().y(),
-//                payload.translation().z(),
-//                payload.orientation().x(),
-//                payload.orientation().y(),
-//                payload.orientation().z()
-//            );
-//            _m_controller->update_motion_xform(std::move(xform));
-//        }
-    };
-
-    const std::string SessionBridge::APIVersion = "1.0";
+	const std::string SessionBridge::APIVersion = "1.0";
 }

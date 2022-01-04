@@ -47,7 +47,7 @@ struct TableStruct_payloads_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[13]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -65,6 +65,9 @@ extern CameraDefaultTypeInternal _Camera_default_instance_;
 class CameraList;
 struct CameraListDefaultTypeInternal;
 extern CameraListDefaultTypeInternal _CameraList_default_instance_;
+class ClearSessionPropertyByName;
+struct ClearSessionPropertyByNameDefaultTypeInternal;
+extern ClearSessionPropertyByNameDefaultTypeInternal _ClearSessionPropertyByName_default_instance_;
 class Error;
 struct ErrorDefaultTypeInternal;
 extern ErrorDefaultTypeInternal _Error_default_instance_;
@@ -98,6 +101,7 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::indiemotionpb::payloads::Acknowledge* Arena::CreateMaybeMessage<::indiemotionpb::payloads::Acknowledge>(Arena*);
 template<> ::indiemotionpb::payloads::Camera* Arena::CreateMaybeMessage<::indiemotionpb::payloads::Camera>(Arena*);
 template<> ::indiemotionpb::payloads::CameraList* Arena::CreateMaybeMessage<::indiemotionpb::payloads::CameraList>(Arena*);
+template<> ::indiemotionpb::payloads::ClearSessionPropertyByName* Arena::CreateMaybeMessage<::indiemotionpb::payloads::ClearSessionPropertyByName>(Arena*);
 template<> ::indiemotionpb::payloads::Error* Arena::CreateMaybeMessage<::indiemotionpb::payloads::Error>(Arena*);
 template<> ::indiemotionpb::payloads::GetCameraList* Arena::CreateMaybeMessage<::indiemotionpb::payloads::GetCameraList>(Arena*);
 template<> ::indiemotionpb::payloads::GetSessionPropertyByName* Arena::CreateMaybeMessage<::indiemotionpb::payloads::GetSessionPropertyByName>(Arena*);
@@ -120,7 +124,9 @@ enum Error_Type : int {
   Error_Type_APIVersionNotSupportedError = 5,
   Error_Type_SessionError = 10,
   Error_Type_SessionNotInitializedError = 11,
-  Error_Type_CameraNotSetError = 20,
+  Error_Type_SessionPropertyNotFoundError = 12,
+  Error_Type_SessionPropertyTypeError = 13,
+  Error_Type_ActiveCameraNotSetError = 20,
   Error_Type_CameraNotFoundError = 21,
   Error_Type_Error_Type_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   Error_Type_Error_Type_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
@@ -143,32 +149,6 @@ inline bool Error_Type_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Error_Type* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Error_Type>(
     Error_Type_descriptor(), name, value);
-}
-enum SessionPropertyType : int {
-  String = 0,
-  Int = 1,
-  Float = 2,
-  SessionPropertyType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  SessionPropertyType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
-};
-bool SessionPropertyType_IsValid(int value);
-constexpr SessionPropertyType SessionPropertyType_MIN = String;
-constexpr SessionPropertyType SessionPropertyType_MAX = Float;
-constexpr int SessionPropertyType_ARRAYSIZE = SessionPropertyType_MAX + 1;
-
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SessionPropertyType_descriptor();
-template<typename T>
-inline const std::string& SessionPropertyType_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, SessionPropertyType>::value ||
-    ::std::is_integral<T>::value,
-    "Incorrect type passed to function SessionPropertyType_Name.");
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    SessionPropertyType_descriptor(), enum_t_value);
-}
-inline bool SessionPropertyType_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, SessionPropertyType* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SessionPropertyType>(
-    SessionPropertyType_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -427,8 +407,12 @@ class Error final :
     Error_Type_SessionError;
   static constexpr Type SessionNotInitializedError =
     Error_Type_SessionNotInitializedError;
-  static constexpr Type CameraNotSetError =
-    Error_Type_CameraNotSetError;
+  static constexpr Type SessionPropertyNotFoundError =
+    Error_Type_SessionPropertyNotFoundError;
+  static constexpr Type SessionPropertyTypeError =
+    Error_Type_SessionPropertyTypeError;
+  static constexpr Type ActiveCameraNotSetError =
+    Error_Type_ActiveCameraNotSetError;
   static constexpr Type CameraNotFoundError =
     Error_Type_CameraNotFoundError;
   static inline bool Type_IsValid(int value) {
@@ -1401,6 +1385,14 @@ class SessionProperty final :
   static const SessionProperty& default_instance() {
     return *internal_default_instance();
   }
+  enum ValueCase {
+    kIntValue = 10,
+    kStringValue = 20,
+    kFloatValue = 30,
+    kBoolValue = 40,
+    VALUE_NOT_SET = 0,
+  };
+
   static inline const SessionProperty* internal_default_instance() {
     return reinterpret_cast<const SessionProperty*>(
                &_SessionProperty_default_instance_);
@@ -1477,11 +1469,13 @@ class SessionProperty final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 11,
-    kValueFieldNumber = 12,
-    kTypeFieldNumber = 10,
+    kNameFieldNumber = 1,
+    kIntValueFieldNumber = 10,
+    kStringValueFieldNumber = 20,
+    kFloatValueFieldNumber = 30,
+    kBoolValueFieldNumber = 40,
   };
-  // string name = 11;
+  // string name = 1;
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1495,45 +1489,91 @@ class SessionProperty final :
   std::string* _internal_mutable_name();
   public:
 
-  // optional string value = 12;
-  bool has_value() const;
+  // int64 int_value = 10;
+  bool has_int_value() const;
   private:
-  bool _internal_has_value() const;
+  bool _internal_has_int_value() const;
   public:
-  void clear_value();
-  const std::string& value() const;
+  void clear_int_value();
+  ::PROTOBUF_NAMESPACE_ID::int64 int_value() const;
+  void set_int_value(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_int_value() const;
+  void _internal_set_int_value(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // string string_value = 20;
+  bool has_string_value() const;
+  private:
+  bool _internal_has_string_value() const;
+  public:
+  void clear_string_value();
+  const std::string& string_value() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_value(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_value();
-  PROTOBUF_MUST_USE_RESULT std::string* release_value();
-  void set_allocated_value(std::string* value);
+  void set_string_value(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_string_value();
+  PROTOBUF_MUST_USE_RESULT std::string* release_string_value();
+  void set_allocated_string_value(std::string* string_value);
   private:
-  const std::string& _internal_value() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_value(const std::string& value);
-  std::string* _internal_mutable_value();
+  const std::string& _internal_string_value() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_string_value(const std::string& value);
+  std::string* _internal_mutable_string_value();
   public:
 
-  // .indiemotionpb.payloads.SessionPropertyType type = 10;
-  void clear_type();
-  ::indiemotionpb::payloads::SessionPropertyType type() const;
-  void set_type(::indiemotionpb::payloads::SessionPropertyType value);
+  // double float_value = 30;
+  bool has_float_value() const;
   private:
-  ::indiemotionpb::payloads::SessionPropertyType _internal_type() const;
-  void _internal_set_type(::indiemotionpb::payloads::SessionPropertyType value);
+  bool _internal_has_float_value() const;
+  public:
+  void clear_float_value();
+  double float_value() const;
+  void set_float_value(double value);
+  private:
+  double _internal_float_value() const;
+  void _internal_set_float_value(double value);
   public:
 
+  // bool bool_value = 40;
+  bool has_bool_value() const;
+  private:
+  bool _internal_has_bool_value() const;
+  public:
+  void clear_bool_value();
+  bool bool_value() const;
+  void set_bool_value(bool value);
+  private:
+  bool _internal_bool_value() const;
+  void _internal_set_bool_value(bool value);
+  public:
+
+  void clear_value();
+  ValueCase value_case() const;
   // @@protoc_insertion_point(class_scope:indiemotionpb.payloads.SessionProperty)
  private:
   class _Internal;
+  void set_has_int_value();
+  void set_has_string_value();
+  void set_has_float_value();
+  void set_has_bool_value();
+
+  inline bool has_value() const;
+  inline void clear_has_value();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr value_;
-  int type_;
+  union ValueUnion {
+    constexpr ValueUnion() : _constinit_{} {}
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+    ::PROTOBUF_NAMESPACE_ID::int64 int_value_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr string_value_;
+    double float_value_;
+    bool bool_value_;
+  } value_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
+
   friend struct ::TableStruct_payloads_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1682,6 +1722,150 @@ class GetSessionPropertyByName final :
 };
 // -------------------------------------------------------------------
 
+class ClearSessionPropertyByName final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotionpb.payloads.ClearSessionPropertyByName) */ {
+ public:
+  inline ClearSessionPropertyByName() : ClearSessionPropertyByName(nullptr) {}
+  ~ClearSessionPropertyByName() override;
+  explicit constexpr ClearSessionPropertyByName(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ClearSessionPropertyByName(const ClearSessionPropertyByName& from);
+  ClearSessionPropertyByName(ClearSessionPropertyByName&& from) noexcept
+    : ClearSessionPropertyByName() {
+    *this = ::std::move(from);
+  }
+
+  inline ClearSessionPropertyByName& operator=(const ClearSessionPropertyByName& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ClearSessionPropertyByName& operator=(ClearSessionPropertyByName&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ClearSessionPropertyByName& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ClearSessionPropertyByName* internal_default_instance() {
+    return reinterpret_cast<const ClearSessionPropertyByName*>(
+               &_ClearSessionPropertyByName_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(ClearSessionPropertyByName& a, ClearSessionPropertyByName& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ClearSessionPropertyByName* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ClearSessionPropertyByName* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ClearSessionPropertyByName* New() const final {
+    return new ClearSessionPropertyByName();
+  }
+
+  ClearSessionPropertyByName* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ClearSessionPropertyByName>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ClearSessionPropertyByName& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const ClearSessionPropertyByName& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ClearSessionPropertyByName* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "indiemotionpb.payloads.ClearSessionPropertyByName";
+  }
+  protected:
+  explicit ClearSessionPropertyByName(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 10,
+  };
+  // string name = 10;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_MUST_USE_RESULT std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // @@protoc_insertion_point(class_scope:indiemotionpb.payloads.ClearSessionPropertyByName)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_payloads_2eproto;
+};
+// -------------------------------------------------------------------
+
 class InputDeviceXForm_XFormData final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:indiemotionpb.payloads.InputDeviceXForm.XFormData) */ {
  public:
@@ -1726,7 +1910,7 @@ class InputDeviceXForm_XFormData final :
                &_InputDeviceXForm_XFormData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(InputDeviceXForm_XFormData& a, InputDeviceXForm_XFormData& b) {
     a.Swap(&b);
@@ -1887,7 +2071,7 @@ class InputDeviceXForm final :
                &_InputDeviceXForm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(InputDeviceXForm& a, InputDeviceXForm& b) {
     a.Swap(&b);
@@ -2408,27 +2592,7 @@ CameraList::cameras() const {
 
 // SessionProperty
 
-// .indiemotionpb.payloads.SessionPropertyType type = 10;
-inline void SessionProperty::clear_type() {
-  type_ = 0;
-}
-inline ::indiemotionpb::payloads::SessionPropertyType SessionProperty::_internal_type() const {
-  return static_cast< ::indiemotionpb::payloads::SessionPropertyType >(type_);
-}
-inline ::indiemotionpb::payloads::SessionPropertyType SessionProperty::type() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SessionProperty.type)
-  return _internal_type();
-}
-inline void SessionProperty::_internal_set_type(::indiemotionpb::payloads::SessionPropertyType value) {
-  
-  type_ = value;
-}
-inline void SessionProperty::set_type(::indiemotionpb::payloads::SessionPropertyType value) {
-  _internal_set_type(value);
-  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SessionProperty.type)
-}
-
-// string name = 11;
+// string name = 1;
 inline void SessionProperty::clear_name() {
   name_.ClearToEmpty();
 }
@@ -2474,64 +2638,211 @@ inline void SessionProperty::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.SessionProperty.name)
 }
 
-// optional string value = 12;
-inline bool SessionProperty::_internal_has_value() const {
-  bool value = (_has_bits_[0] & 0x00000001u) != 0;
-  return value;
+// int64 int_value = 10;
+inline bool SessionProperty::_internal_has_int_value() const {
+  return value_case() == kIntValue;
 }
-inline bool SessionProperty::has_value() const {
-  return _internal_has_value();
+inline bool SessionProperty::has_int_value() const {
+  return _internal_has_int_value();
 }
-inline void SessionProperty::clear_value() {
-  value_.ClearToEmpty();
-  _has_bits_[0] &= ~0x00000001u;
+inline void SessionProperty::set_has_int_value() {
+  _oneof_case_[0] = kIntValue;
 }
-inline const std::string& SessionProperty::value() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SessionProperty.value)
-  return _internal_value();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void SessionProperty::set_value(ArgT0&& arg0, ArgT... args) {
- _has_bits_[0] |= 0x00000001u;
- value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SessionProperty.value)
-}
-inline std::string* SessionProperty::mutable_value() {
-  std::string* _s = _internal_mutable_value();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.payloads.SessionProperty.value)
-  return _s;
-}
-inline const std::string& SessionProperty::_internal_value() const {
-  return value_.Get();
-}
-inline void SessionProperty::_internal_set_value(const std::string& value) {
-  _has_bits_[0] |= 0x00000001u;
-  value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* SessionProperty::_internal_mutable_value() {
-  _has_bits_[0] |= 0x00000001u;
-  return value_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* SessionProperty::release_value() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.payloads.SessionProperty.value)
-  if (!_internal_has_value()) {
-    return nullptr;
+inline void SessionProperty::clear_int_value() {
+  if (_internal_has_int_value()) {
+    value_.int_value_ = int64_t{0};
+    clear_has_value();
   }
-  _has_bits_[0] &= ~0x00000001u;
-  return value_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void SessionProperty::set_allocated_value(std::string* value) {
-  if (value != nullptr) {
-    _has_bits_[0] |= 0x00000001u;
-  } else {
-    _has_bits_[0] &= ~0x00000001u;
+inline ::PROTOBUF_NAMESPACE_ID::int64 SessionProperty::_internal_int_value() const {
+  if (_internal_has_int_value()) {
+    return value_.int_value_;
   }
-  value_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.SessionProperty.value)
+  return int64_t{0};
+}
+inline void SessionProperty::_internal_set_int_value(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  if (!_internal_has_int_value()) {
+    clear_value();
+    set_has_int_value();
+  }
+  value_.int_value_ = value;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 SessionProperty::int_value() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SessionProperty.int_value)
+  return _internal_int_value();
+}
+inline void SessionProperty::set_int_value(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_int_value(value);
+  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SessionProperty.int_value)
 }
 
+// string string_value = 20;
+inline bool SessionProperty::_internal_has_string_value() const {
+  return value_case() == kStringValue;
+}
+inline bool SessionProperty::has_string_value() const {
+  return _internal_has_string_value();
+}
+inline void SessionProperty::set_has_string_value() {
+  _oneof_case_[0] = kStringValue;
+}
+inline void SessionProperty::clear_string_value() {
+  if (_internal_has_string_value()) {
+    value_.string_value_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+    clear_has_value();
+  }
+}
+inline const std::string& SessionProperty::string_value() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SessionProperty.string_value)
+  return _internal_string_value();
+}
+template <typename ArgT0, typename... ArgT>
+inline void SessionProperty::set_string_value(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_string_value()) {
+    clear_value();
+    set_has_string_value();
+    value_.string_value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.string_value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SessionProperty.string_value)
+}
+inline std::string* SessionProperty::mutable_string_value() {
+  std::string* _s = _internal_mutable_string_value();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.payloads.SessionProperty.string_value)
+  return _s;
+}
+inline const std::string& SessionProperty::_internal_string_value() const {
+  if (_internal_has_string_value()) {
+    return value_.string_value_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+}
+inline void SessionProperty::_internal_set_string_value(const std::string& value) {
+  if (!_internal_has_string_value()) {
+    clear_value();
+    set_has_string_value();
+    value_.string_value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  value_.string_value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* SessionProperty::_internal_mutable_string_value() {
+  if (!_internal_has_string_value()) {
+    clear_value();
+    set_has_string_value();
+    value_.string_value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  return value_.string_value_.Mutable(
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* SessionProperty::release_string_value() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.payloads.SessionProperty.string_value)
+  if (_internal_has_string_value()) {
+    clear_has_value();
+    return value_.string_value_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  } else {
+    return nullptr;
+  }
+}
+inline void SessionProperty::set_allocated_string_value(std::string* string_value) {
+  if (has_value()) {
+    clear_value();
+  }
+  if (string_value != nullptr) {
+    set_has_string_value();
+    value_.string_value_.UnsafeSetDefault(string_value);
+    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
+    if (arena != nullptr) {
+      arena->Own(string_value);
+    }
+  }
+  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.SessionProperty.string_value)
+}
+
+// double float_value = 30;
+inline bool SessionProperty::_internal_has_float_value() const {
+  return value_case() == kFloatValue;
+}
+inline bool SessionProperty::has_float_value() const {
+  return _internal_has_float_value();
+}
+inline void SessionProperty::set_has_float_value() {
+  _oneof_case_[0] = kFloatValue;
+}
+inline void SessionProperty::clear_float_value() {
+  if (_internal_has_float_value()) {
+    value_.float_value_ = 0;
+    clear_has_value();
+  }
+}
+inline double SessionProperty::_internal_float_value() const {
+  if (_internal_has_float_value()) {
+    return value_.float_value_;
+  }
+  return 0;
+}
+inline void SessionProperty::_internal_set_float_value(double value) {
+  if (!_internal_has_float_value()) {
+    clear_value();
+    set_has_float_value();
+  }
+  value_.float_value_ = value;
+}
+inline double SessionProperty::float_value() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SessionProperty.float_value)
+  return _internal_float_value();
+}
+inline void SessionProperty::set_float_value(double value) {
+  _internal_set_float_value(value);
+  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SessionProperty.float_value)
+}
+
+// bool bool_value = 40;
+inline bool SessionProperty::_internal_has_bool_value() const {
+  return value_case() == kBoolValue;
+}
+inline bool SessionProperty::has_bool_value() const {
+  return _internal_has_bool_value();
+}
+inline void SessionProperty::set_has_bool_value() {
+  _oneof_case_[0] = kBoolValue;
+}
+inline void SessionProperty::clear_bool_value() {
+  if (_internal_has_bool_value()) {
+    value_.bool_value_ = false;
+    clear_has_value();
+  }
+}
+inline bool SessionProperty::_internal_bool_value() const {
+  if (_internal_has_bool_value()) {
+    return value_.bool_value_;
+  }
+  return false;
+}
+inline void SessionProperty::_internal_set_bool_value(bool value) {
+  if (!_internal_has_bool_value()) {
+    clear_value();
+    set_has_bool_value();
+  }
+  value_.bool_value_ = value;
+}
+inline bool SessionProperty::bool_value() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SessionProperty.bool_value)
+  return _internal_bool_value();
+}
+inline void SessionProperty::set_bool_value(bool value) {
+  _internal_set_bool_value(value);
+  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SessionProperty.bool_value)
+}
+
+inline bool SessionProperty::has_value() const {
+  return value_case() != VALUE_NOT_SET;
+}
+inline void SessionProperty::clear_has_value() {
+  _oneof_case_[0] = VALUE_NOT_SET;
+}
+inline SessionProperty::ValueCase SessionProperty::value_case() const {
+  return SessionProperty::ValueCase(_oneof_case_[0]);
+}
 // -------------------------------------------------------------------
 
 // GetSessionPropertyByName
@@ -2580,6 +2891,56 @@ inline void GetSessionPropertyByName::set_allocated_name(std::string* name) {
   name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.GetSessionPropertyByName.name)
+}
+
+// -------------------------------------------------------------------
+
+// ClearSessionPropertyByName
+
+// string name = 10;
+inline void ClearSessionPropertyByName::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& ClearSessionPropertyByName::name() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.payloads.ClearSessionPropertyByName.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ClearSessionPropertyByName::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:indiemotionpb.payloads.ClearSessionPropertyByName.name)
+}
+inline std::string* ClearSessionPropertyByName::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.payloads.ClearSessionPropertyByName.name)
+  return _s;
+}
+inline const std::string& ClearSessionPropertyByName::_internal_name() const {
+  return name_.Get();
+}
+inline void ClearSessionPropertyByName::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ClearSessionPropertyByName::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ClearSessionPropertyByName::release_name() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.payloads.ClearSessionPropertyByName.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ClearSessionPropertyByName::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.payloads.ClearSessionPropertyByName.name)
 }
 
 // -------------------------------------------------------------------
@@ -2855,6 +3216,8 @@ inline void InputDeviceXForm::set_allocated_orientation(::indiemotionpb::payload
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -2867,11 +3230,6 @@ template <> struct is_proto_enum< ::indiemotionpb::payloads::Error_Type> : ::std
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::indiemotionpb::payloads::Error_Type>() {
   return ::indiemotionpb::payloads::Error_Type_descriptor();
-}
-template <> struct is_proto_enum< ::indiemotionpb::payloads::SessionPropertyType> : ::std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::indiemotionpb::payloads::SessionPropertyType>() {
-  return ::indiemotionpb::payloads::SessionPropertyType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

@@ -29,7 +29,7 @@ SCENARIO("signalling session shutdown successfully")
     GIVEN("an activated session controller")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
         session->initialize();
@@ -37,18 +37,24 @@ SCENARIO("signalling session shutdown successfully")
         WHEN("the client signals a session shutdown")
         {
             auto message = net_make_message();
-            message.mutable_session_shutdown();
+            message.mutable_shutdown_session();
             bridge.process_message(std::move(message));
 
             THEN("then session status should be moved to off")
-            {
-                REQUIRE(session->status() == SessionStatus::Offline);
-            }
+			{
+				REQUIRE(session->status() == SessionStatus::Offline);
+			}
 
             THEN("the session delegate is called")
             {
                 REQUIRE(delegate->sessionWillShutdownCalled);
             }
+
+			THEN("Ack response should be returned") {
+				REQUIRE(dispatcher->messages.size() == 1);
+				auto response = dispatcher->messages[0];
+				REQUIRE(response.has_acknowledge());
+			}
         }
     }
 }

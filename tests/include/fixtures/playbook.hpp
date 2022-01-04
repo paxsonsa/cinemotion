@@ -111,7 +111,7 @@ namespace testing {
          */
         PlaybookRunner(Playbook &&playbook) : playbook(std::move(playbook)) {
             dispatcher = std::make_shared<DummyDispatcher>();
-            auto session = std::make_shared<indiemotion::SessionController>();
+            auto session = std::make_shared<indiemotion::Session>();
             bridge = std::make_shared<indiemotion::SessionBridge>(dispatcher, std::move(session));
 
             io_context = std::make_shared<asio::io_context>();
@@ -123,7 +123,7 @@ namespace testing {
          * @param delegate
          */
         void initializeWithDelegate(std::shared_ptr<indiemotion::SessionControllerDelegate> delegate) {
-            auto session = std::make_shared<indiemotion::SessionController>(delegate);
+            auto session = std::make_shared<indiemotion::Session>(delegate);
             bridge = std::make_shared<indiemotion::SessionBridge>(dispatcher, std::move(session));
         }
 

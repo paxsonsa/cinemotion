@@ -1,104 +1,143 @@
-//
-// Created by Andrew Paxson on 2022-01-01.
-//
 #pragma once
 #include <indiemotion/common.hpp>
 
 namespace indiemotion
 {
-	struct SessionPropertyValue
-	{
-		enum ValueType
-		{
-			String = 0,
-			Int,
-			Float,
-		};
-
-		SessionPropertyValue(std::string v) : _value(v), _type(ValueType::String)
-		{
-		}
-
-		SessionPropertyValue(int v) : _value(std::to_string(v)), _type(ValueType::Int)
-		{
-		}
-		SessionPropertyValue(double v) : _value(std::to_string(v)), _type(ValueType::Float)
-		{
-		}
-
-		std::string as_string() noexcept
-		{
-			return _value;
-		}
-
-		int as_int()
-		{
-			return std::stoi(_value);
-		}
-
-		double as_float()
-		{
-			return std::stod(_value);
-		}
-
-		ValueType type()
-		{
-			return _type;
-		}
-
-	private:
-		ValueType _type;
-		std::string _value;
-	};
-
 	struct SessionProperty
 	{
 		friend class SessionPropertyTable;
+		using Value = std::variant<double, std::int64_t, std::string, bool>;
 
-		SessionProperty(std::string name, SessionPropertyValue&& value) : _name(name)
-		{
-			_value_ptr = std::make_shared<SessionPropertyValue>(std::move(value));
-		}
-
-		SessionProperty(std::string name, std::shared_ptr<SessionPropertyValue> value) : _name(name)
-		{
-			_value_ptr = value;
-		}
-
-		SessionProperty(std::string name, int value) : _name(name)
-		{
-			_value_ptr = std::make_shared<SessionPropertyValue>(value);
-		}
-
-		SessionProperty(std::string name, double value) : _name(name)
-		{
-			_value_ptr = std::make_shared<SessionPropertyValue>(value);
-		}
-
-		SessionProperty(std::string name, std::string value) : _name(name)
-		{
-			_value_ptr = std::make_shared<SessionPropertyValue>(value);
+		static std::string index_to_type(const Value &v) {
+			switch(v.index())
+			{
+			case 0:
+				return "std::monotype";
+			case 1:
+				return "float";
+			case 2:
+				return "int64";
+			case 3:
+				return "string";
+			case 4:
+				return "bool";
+			}
 		}
 
 		SessionProperty(std::string name) : _name(name)
 		{
 		}
 
-		std::string name()
+		SessionProperty(std::string name, Value value) : _name(name)
+		{
+			_value_ptr = std::make_shared<Value>(std::move(value));
+		}
+
+		SessionProperty(const SessionProperty p, Value value) : SessionProperty(p.name(), value)
+		{
+		}
+
+		std::string name() const
 		{
 			return _name;
 		}
 
-		std::shared_ptr<SessionPropertyValue> value()
+		const std::shared_ptr<Value> value() const
 		{
 			return _value_ptr;
 		}
 
-		bool is_empty() { return !_value_ptr; }
+		std::optional<std::string> value_str() const
+		{
+			try
+			{
+				return value < std::string > ();
+			}
+			catch (std::bad_variant_access& exc)
+			{
+				return {};
+			}
+		}
+
+		std::optional<std::int64_t> value_int64() const
+		{
+			try
+			{
+				return value < std::int64_t > ();
+			}
+			catch (std::bad_variant_access& exc)
+			{
+				return {};
+			}
+		}
+
+		std::optional<double> value_double() const
+		{
+			try
+			{
+				return value < double > ();
+			}
+			catch (std::bad_variant_access& exc)
+			{
+				return {};
+			}
+		}
+
+		std::optional<bool> value_bool() const
+		{
+			try
+			{
+				return value < bool > ();
+			}
+			catch (std::bad_variant_access& exc)
+			{
+				return {};
+			}
+		}
+
+		template<typename T>
+		bool contains() const
+		{
+			if (!_value_ptr)
+				return false;
+			return std::holds_alternative<T>(*_value_ptr);
+		}
+
+		bool has_value() const
+		{
+			return bool(_value_ptr);
+		}
+
+		SessionProperty copy_empty() const
+		{
+			return SessionProperty(name());
+		}
+
+		SessionProperty with_value(Value v) const
+		{
+			return SessionProperty(name(), v);
+		}
+
+		std::string value_description() {
+			if (_value_ptr)
+			{
+				return index_to_type(*_value_ptr);
+			}
+			return "empty";
+		}
 
 	private:
 		std::string _name;
-		std::shared_ptr<SessionPropertyValue> _value_ptr;
+		std::shared_ptr<Value> _value_ptr = nullptr;
 
+		template<typename T>
+		std::optional<T> value() const
+		{
+			if (_value_ptr)
+			{
+				return std::get<T>(*_value_ptr);
+			}
+			return {};
+		}
 	};
 }

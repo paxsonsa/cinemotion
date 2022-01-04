@@ -33,15 +33,15 @@ This should be the camera that responds to motion updates and view capture.
 ## Motion Setup
 The core purpose of this framework is to allow for motion to be recorded and transmitted to the session.
 The session has a set of motion modes:
-- `indiemotion::MotionMode::Off` - No motion is being transmitted.
-- `indiemotion::MotionMode::Live` - Motion is being transmitted BUT this information is ephemeral and is not recorded.
-- `indiemotion::MotionMode::Recording` - Motion is being transmitted and recording
+- `indiemotion::MotionCaptureMode::Idle` - No motion is being transmitted.
+- `indiemotion::MotionCaptureMode::Live` - Motion is being transmitted BUT this information is ephemeral and is not recorded.
+- `indiemotion::MotionCaptureMode::Recording` - Motion is being transmitted and recording
 
 The delegate receives changes in these modes via the `did_set_motion_mode` member which will 
 provide the new motion mode being set.
 
 ## Receiving Motion Updates
-If the session's motion mode is set to `MotionMode::Live` or `MotionMode::Recording` then your delegate will 
+If the session's motion mode is set to `MotionCaptureMode::Live` or `MotionCaptureMode::Recording` then your delegate will 
 receive motion transform updates through the `did_receive_motion_update` member.
 Depending on the session properties, you will receive motion updates very rapidly which are expected to be applied to
 the active camera.
@@ -55,7 +55,7 @@ in the `translation` and `orientation` members respectively.
 
 ### Initial Origin
 The initial origin from which motion is measure simply the position the camera is at whenever session transition
-from `MotionMode::Off` to live or recording. At the exact moment motion is enabled, that position become the initial origin.
+from `MotionCaptureMode::Idle` to live or recording. At the exact moment motion is enabled, that position become the initial origin.
 
 Because of the nature of some devices, using an absolute position in the real world is not a viable solution 
 (accelerometer based devices). It is on the delegate and DCC to record the initial origin position and 

@@ -1,7 +1,8 @@
 #pragma once
 #include <indiemotion/motion/xform.hpp>
-#include <indiemotion/cameras/camera.hpp>
-#include <indiemotion/session/controller.hpp>
+#include <indiemotion/camera.hpp>
+#include <indiemotion/session/session.hpp>
+#include <indiemotion/session/property.hpp>
 
 namespace indiemotion
 {
@@ -76,5 +77,7 @@ namespace indiemotion
          * Called after the session is successfully started.
          */
         virtual void did_start_session() {}
+
+		virtual void will_update_session_property(const SessionProperty *p) {}
     };
 }

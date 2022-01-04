@@ -6,12 +6,12 @@ namespace indiemotion {
      * @brief A simple value for comparing mode values
      *
      */
-    enum class MotionMode {
+    enum MotionMode {
 
         /**
-         * Off mode symbolizes when no motion is being transmitted to server
+         * Idle mode symbolizes when no motion is being transmitted to server
          */
-        Off,
+        Idle,
 
         /**
          * Live mode symbolizes when motion data is being transmitted but not recorded permanently

@@ -57,10 +57,13 @@ namespace indiemotion
         auto message = net_make_message_with_response_id(messageID);
         auto error = message.mutable_error();
 
-		auto error_desc = message_payloads::Error_Type_descriptor();
+		message_payloads::Error::Type error_type;
+		if (!message_payloads::Error::Type_Parse(exception.type, &error_type)) {
+			error_type = indiemotionpb::payloads::Error::UnknownError;
+		}
 
-        error->set_type(descriptor->FindValueByName(exception.type));
-        error->set_message(exception.description);
+        error->set_type(error_type);
+        error->set_description(exception.description);
         error->set_is_fatal(exception.is_fatal);
 
         return std::move(message);

@@ -34,21 +34,23 @@ SCENARIO("Starting the Session")
 {
     GIVEN("a new controller object") {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
         Message message;
-        auto payload = message.mutable_session_start();
-        auto properties = payload->mutable_session_properties();
+        auto payload = message.mutable_initialize_session();
+        auto properties = payload->mutable_device_info();
         properties->set_api_version(SessionBridge::APIVersion);
         properties->set_session_id("some_id");
 
         WHEN("start description is processed") {
             bridge.process_message(std::move(message));
 
-            THEN("No response should be returned") {
-                REQUIRE(dispatcher->messages.size() == 0);
+            THEN("Ack response should be returned") {
+                REQUIRE(dispatcher->messages.size() == 1);
+				auto response = dispatcher->messages[0];
+				REQUIRE(response.has_acknowledge());
             }
             AND_THEN("session controller status should be activated") {
                 REQUIRE(session->status() == SessionStatus::Initialized);
@@ -67,15 +69,15 @@ SCENARIO("Starting the session with unsupported API version")
 {
     GIVEN("a new controller")
     {
-        auto session = std::make_shared<SessionController>();
+        auto session = std::make_shared<Session>();
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
         WHEN("start description is processed with unsupported version")
         {
             Message message;
-            auto payload = message.mutable_session_start();
-            auto properties = payload->mutable_session_properties();
+            auto payload = message.mutable_initialize_session();
+            auto properties = payload->mutable_device_info();
             properties->set_api_version("99.9.999");
             properties->set_session_id("some_id");
 
@@ -87,7 +89,7 @@ SCENARIO("Starting the session with unsupported API version")
                 auto response = dispatcher->messages[0];
                 REQUIRE(response.has_error());
                 auto error = response.error();
-                REQUIRE(error.type() == "SessionAPIVersionNotSupportedError");
+                REQUIRE(error.type() == indiemotionpb::payloads::Error_Type_APIVersionNotSupportedError);
             }
         }
     }

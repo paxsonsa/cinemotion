@@ -18,27 +18,27 @@ struct DummyDispatcher : NetMessageDispatcher {
 struct DummyDelegate: SessionControllerDelegate {
 };
 
-SCENARIO("Send a description without a payload case")
+SCENARIO("Send a message without a payload case")
 {
     GIVEN("a new controller object") {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
 
         Message message;
 
-        WHEN("description without a payload is processed")
+        WHEN("message without a payload is processed")
 		{
 			bridge.process_message(std::move(message));
 
-			THEN("A 'malformed description' error description should be returned should be returned")
+			THEN("A 'bad message' error message should be returned should be returned")
 			{
 				REQUIRE(dispatcher->messages.size() == 1);
 				auto response = dispatcher->messages[0];
 				REQUIRE(response.has_error());
 				auto error = response.error();
-				REQUIRE(error.type() == "MalformedMessageError");
+				REQUIRE(error.type() == message_payloads::Error::BadMessageError);
 			}
 		}
 	}

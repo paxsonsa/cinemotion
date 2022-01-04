@@ -32,11 +32,14 @@ SCENARIO("updating the motion xform successfully")
     GIVEN("an activated 'live' session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         session->initialize();
-        Camera c("cam2");
-        session->camera_manager->set_active_cameras(c);
-        session->set_motion_mode(MotionMode::Live);
+
+		auto property = GlobalProperties::ActiveCameraID().with_value("cam2");
+		session->property_table->set(std::move(property));
+
+		property = GlobalProperties::MotionCaptureMode().with_value(MotionMode::Live);
+		session->property_table->set(std::move(property));
 
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
@@ -47,7 +50,7 @@ SCENARIO("updating the motion xform successfully")
                 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
 
             auto message = net_make_message();
-            auto payload = message.mutable_motion_xform();
+            auto payload = message.mutable_input_device_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
             orientation->set_y(xform.orientation.y);
@@ -60,7 +63,6 @@ SCENARIO("updating the motion xform successfully")
             bridge.process_message(std::move(message));
 
             REQUIRE_FALSE(dispatcher->messages.size() > 0);
-
             THEN("delegate's recieved motion routine should be invoked")
             {
                 REQUIRE(delegate->wasReceivedMotionUpdateCalled);
@@ -75,19 +77,20 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
     GIVEN("a fresh active session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<SessionController>(delegate);
+        auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionBridge(dispatcher, session);
         auto xform = MotionXForm::create(
             1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
         session->initialize();
-        Camera c("cam2");
-        session->camera_manager->set_active_cameras(c);
+
+		auto property = GlobalProperties::ActiveCameraID().with_value("cam2");
+		session->property_table->set(std::move(property));
 
         WHEN("the session's motion mode is off")
         {
             auto message = net_make_message();
-            auto payload = message.mutable_motion_xform();
+            auto payload = message.mutable_input_device_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
             orientation->set_y(xform.orientation.y);
@@ -97,7 +100,6 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            session->set_motion_mode(MotionMode::Off);
             bridge.process_message(std::move(message));
 
             THEN("delegate's received motion routine should NOT be invoked")
@@ -111,7 +113,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         WHEN("the session's motion mode is live")
         {
             auto message = net_make_message();
-            auto payload = message.mutable_motion_xform();
+            auto payload = message.mutable_input_device_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
             orientation->set_y(xform.orientation.y);
@@ -121,7 +123,9 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            session->set_motion_mode(MotionMode::Live);
+			property = GlobalProperties::MotionCaptureMode().with_value(MotionMode::Live);
+			session->property_table->set(std::move(property));
+
             bridge.process_message(std::move(message));
 
 
@@ -136,7 +140,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         WHEN("the session's motion mode is recording")
         {
             auto message = net_make_message();
-            auto payload = message.mutable_motion_xform();
+            auto payload = message.mutable_input_device_xform();
             auto orientation = payload->mutable_orientation();
             orientation->set_x(xform.orientation.x);
             orientation->set_y(xform.orientation.y);
@@ -146,7 +150,8 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
             translation->set_y(xform.translation.y);
             translation->set_z(xform.translation.z);
 
-            session->set_motion_mode(MotionMode::Recording);
+			property = GlobalProperties::MotionCaptureMode().with_value(MotionMode::Recording);
+			session->property_table->set(std::move(property));
             bridge.process_message(std::move(message));
 
 

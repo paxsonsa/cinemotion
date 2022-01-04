@@ -118,9 +118,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GetCameraListDefaultTypeInterna
 constexpr SessionProperty::SessionProperty(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , value_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , type_(0)
-{}
+  , _oneof_case_{}{}
 struct SessionPropertyDefaultTypeInternal {
   constexpr SessionPropertyDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -142,6 +140,18 @@ struct GetSessionPropertyByNameDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GetSessionPropertyByNameDefaultTypeInternal _GetSessionPropertyByName_default_instance_;
+constexpr ClearSessionPropertyByName::ClearSessionPropertyByName(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct ClearSessionPropertyByNameDefaultTypeInternal {
+  constexpr ClearSessionPropertyByNameDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ClearSessionPropertyByNameDefaultTypeInternal() {}
+  union {
+    ClearSessionPropertyByName _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ClearSessionPropertyByNameDefaultTypeInternal _ClearSessionPropertyByName_default_instance_;
 constexpr InputDeviceXForm_XFormData::InputDeviceXForm_XFormData(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : x_(0)
@@ -171,8 +181,8 @@ struct InputDeviceXFormDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT InputDeviceXFormDefaultTypeInternal _InputDeviceXForm_default_instance_;
 }  // namespace payloads
 }  // namespace indiemotionpb
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[12];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[2];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[13];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_payloads_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -224,23 +234,29 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PR
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, _has_bits_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, _internal_metadata_),
   ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, _oneof_case_[0]),
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, type_),
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, name_),
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, value_),
-  ~0u,
-  ~0u,
-  0,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::GetSessionPropertyByName, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::GetSessionPropertyByName, name_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ClearSessionPropertyByName, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ClearSessionPropertyByName, name_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm_XFormData, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -266,10 +282,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 31, -1, sizeof(::indiemotionpb::payloads::Camera)},
   { 37, -1, sizeof(::indiemotionpb::payloads::CameraList)},
   { 43, -1, sizeof(::indiemotionpb::payloads::GetCameraList)},
-  { 48, 56, sizeof(::indiemotionpb::payloads::SessionProperty)},
+  { 48, -1, sizeof(::indiemotionpb::payloads::SessionProperty)},
   { 59, -1, sizeof(::indiemotionpb::payloads::GetSessionPropertyByName)},
-  { 65, -1, sizeof(::indiemotionpb::payloads::InputDeviceXForm_XFormData)},
-  { 73, -1, sizeof(::indiemotionpb::payloads::InputDeviceXForm)},
+  { 65, -1, sizeof(::indiemotionpb::payloads::ClearSessionPropertyByName)},
+  { 71, -1, sizeof(::indiemotionpb::payloads::InputDeviceXForm_XFormData)},
+  { 79, -1, sizeof(::indiemotionpb::payloads::InputDeviceXForm)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -283,44 +300,47 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_GetCameraList_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_SessionProperty_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_GetSessionPropertyByName_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_ClearSessionPropertyByName_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InputDeviceXForm_XFormData_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InputDeviceXForm_default_instance_),
 };
 
 const char descriptor_table_protodef_payloads_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016payloads.proto\022\026indiemotionpb.payloads"
-  "\"\r\n\013Acknowledge\"\316\002\n\005Error\0220\n\004type\030\r \001(\0162"
+  "\"\r\n\013Acknowledge\"\224\003\n\005Error\0220\n\004type\030\r \001(\0162"
   "\".indiemotionpb.payloads.Error.Type\022\023\n\013d"
-  "escription\030\013 \001(\t\022\020\n\010is_fatal\030\014 \001(\010\"\353\001\n\004T"
+  "escription\030\013 \001(\t\022\020\n\010is_fatal\030\014 \001(\010\"\261\002\n\004T"
   "ype\022\020\n\014UnknownError\020\000\022\024\n\020InputDeviceErro"
   "r\020\001\022\024\n\020ApplicationError\020\002\022\r\n\tUserError\020\003"
   "\022\023\n\017BadMessageError\020\004\022\037\n\033APIVersionNotSu"
   "pportedError\020\005\022\020\n\014SessionError\020\n\022\036\n\032Sess"
-  "ionNotInitializedError\020\013\022\025\n\021CameraNotSet"
-  "Error\020\024\022\027\n\023CameraNotFoundError\020\025\":\n\017Inpu"
-  "tDeviceInfo\022\022\n\nsession_id\030\n \001(\t\022\023\n\013api_v"
-  "ersion\030\024 \001(\t\"Q\n\021InitializeSession\022<\n\013dev"
-  "ice_info\030\n \001(\0132\'.indiemotionpb.payloads."
-  "InputDeviceInfo\"\021\n\017ShutdownSession\"\024\n\006Ca"
-  "mera\022\n\n\002id\030\n \001(\t\"=\n\nCameraList\022/\n\007camera"
-  "s\030\001 \003(\0132\036.indiemotionpb.payloads.Camera\""
-  "\017\n\rGetCameraList\"x\n\017SessionProperty\0229\n\004t"
-  "ype\030\n \001(\0162+.indiemotionpb.payloads.Sessi"
-  "onPropertyType\022\014\n\004name\030\013 \001(\t\022\022\n\005value\030\014 "
-  "\001(\tH\000\210\001\001B\010\n\006_value\"(\n\030GetSessionProperty"
-  "ByName\022\014\n\004name\030\n \001(\t\"\322\001\n\020InputDeviceXFor"
-  "m\022G\n\013translation\030\001 \001(\01322.indiemotionpb.p"
-  "ayloads.InputDeviceXForm.XFormData\022G\n\013or"
-  "ientation\030\002 \001(\01322.indiemotionpb.payloads"
-  ".InputDeviceXForm.XFormData\032,\n\tXFormData"
-  "\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001*5\n\023Ses"
-  "sionPropertyType\022\n\n\006String\020\000\022\007\n\003Int\020\001\022\t\n"
-  "\005Float\020\002b\006proto3"
+  "ionNotInitializedError\020\013\022 \n\034SessionPrope"
+  "rtyNotFoundError\020\014\022\034\n\030SessionPropertyTyp"
+  "eError\020\r\022\033\n\027ActiveCameraNotSetError\020\024\022\027\n"
+  "\023CameraNotFoundError\020\025\":\n\017InputDeviceInf"
+  "o\022\022\n\nsession_id\030\n \001(\t\022\023\n\013api_version\030\024 \001"
+  "(\t\"Q\n\021InitializeSession\022<\n\013device_info\030\n"
+  " \001(\0132\'.indiemotionpb.payloads.InputDevic"
+  "eInfo\"\021\n\017ShutdownSession\"\024\n\006Camera\022\n\n\002id"
+  "\030\n \001(\t\"=\n\nCameraList\022/\n\007cameras\030\001 \003(\0132\036."
+  "indiemotionpb.payloads.Camera\"\017\n\rGetCame"
+  "raList\"\202\001\n\017SessionProperty\022\014\n\004name\030\001 \001(\t"
+  "\022\023\n\tint_value\030\n \001(\003H\000\022\026\n\014string_value\030\024 "
+  "\001(\tH\000\022\025\n\013float_value\030\036 \001(\001H\000\022\024\n\nbool_val"
+  "ue\030( \001(\010H\000B\007\n\005value\"(\n\030GetSessionPropert"
+  "yByName\022\014\n\004name\030\n \001(\t\"*\n\032ClearSessionPro"
+  "pertyByName\022\014\n\004name\030\n \001(\t\"\322\001\n\020InputDevic"
+  "eXForm\022G\n\013translation\030\001 \001(\01322.indiemotio"
+  "npb.payloads.InputDeviceXForm.XFormData\022"
+  "G\n\013orientation\030\002 \001(\01322.indiemotionpb.pay"
+  "loads.InputDeviceXForm.XFormData\032,\n\tXFor"
+  "mData\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001b\006"
+  "proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_payloads_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_payloads_2eproto = {
-  false, false, 1096, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
-  &descriptor_table_payloads_2eproto_once, nullptr, 0, 12,
+  false, false, 1166, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
+  &descriptor_table_payloads_2eproto_once, nullptr, 0, 13,
   schemas, file_default_instances, TableStruct_payloads_2eproto::offsets,
   file_level_metadata_payloads_2eproto, file_level_enum_descriptors_payloads_2eproto, file_level_service_descriptors_payloads_2eproto,
 };
@@ -346,6 +366,8 @@ bool Error_Type_IsValid(int value) {
     case 5:
     case 10:
     case 11:
+    case 12:
+    case 13:
     case 20:
     case 21:
       return true;
@@ -363,27 +385,14 @@ constexpr Error_Type Error::BadMessageError;
 constexpr Error_Type Error::APIVersionNotSupportedError;
 constexpr Error_Type Error::SessionError;
 constexpr Error_Type Error::SessionNotInitializedError;
-constexpr Error_Type Error::CameraNotSetError;
+constexpr Error_Type Error::SessionPropertyNotFoundError;
+constexpr Error_Type Error::SessionPropertyTypeError;
+constexpr Error_Type Error::ActiveCameraNotSetError;
 constexpr Error_Type Error::CameraNotFoundError;
 constexpr Error_Type Error::Type_MIN;
 constexpr Error_Type Error::Type_MAX;
 constexpr int Error::Type_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SessionPropertyType_descriptor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_payloads_2eproto);
-  return file_level_enum_descriptors_payloads_2eproto[1];
-}
-bool SessionPropertyType_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 1:
-    case 2:
-      return true;
-    default:
-      return false;
-  }
-}
-
 
 // ===================================================================
 
@@ -1941,10 +1950,6 @@ void GetCameraList::InternalSwap(GetCameraList* other) {
 
 class SessionProperty::_Internal {
  public:
-  using HasBits = decltype(std::declval<SessionProperty>()._has_bits_);
-  static void set_has_value(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
 };
 
 SessionProperty::SessionProperty(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -1957,27 +1962,41 @@ SessionProperty::SessionProperty(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.SessionProperty)
 }
 SessionProperty::SessionProperty(const SessionProperty& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (!from._internal_name().empty()) {
     name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
       GetArenaForAllocation());
   }
-  value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (from._internal_has_value()) {
-    value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_value(), 
-      GetArenaForAllocation());
+  clear_has_value();
+  switch (from.value_case()) {
+    case kIntValue: {
+      _internal_set_int_value(from._internal_int_value());
+      break;
+    }
+    case kStringValue: {
+      _internal_set_string_value(from._internal_string_value());
+      break;
+    }
+    case kFloatValue: {
+      _internal_set_float_value(from._internal_float_value());
+      break;
+    }
+    case kBoolValue: {
+      _internal_set_bool_value(from._internal_bool_value());
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
   }
-  type_ = from.type_;
   // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.SessionProperty)
 }
 
 inline void SessionProperty::SharedCtor() {
 name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-type_ = 0;
+clear_has_value();
 }
 
 SessionProperty::~SessionProperty() {
@@ -1990,7 +2009,9 @@ SessionProperty::~SessionProperty() {
 inline void SessionProperty::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  value_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (has_value()) {
+    clear_value();
+  }
 }
 
 void SessionProperty::ArenaDtor(void* object) {
@@ -2003,6 +2024,33 @@ void SessionProperty::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
+void SessionProperty::clear_value() {
+// @@protoc_insertion_point(one_of_clear_start:indiemotionpb.payloads.SessionProperty)
+  switch (value_case()) {
+    case kIntValue: {
+      // No need to clear
+      break;
+    }
+    case kStringValue: {
+      value_.string_value_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+      break;
+    }
+    case kFloatValue: {
+      // No need to clear
+      break;
+    }
+    case kBoolValue: {
+      // No need to clear
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
+  }
+  _oneof_case_[0] = VALUE_NOT_SET;
+}
+
+
 void SessionProperty::Clear() {
 // @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.SessionProperty)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -2010,45 +2058,52 @@ void SessionProperty::Clear() {
   (void) cached_has_bits;
 
   name_.ClearToEmpty();
-  cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    value_.ClearNonDefaultToEmpty();
-  }
-  type_ = 0;
-  _has_bits_.Clear();
+  clear_value();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* SessionProperty::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .indiemotionpb.payloads.SessionPropertyType type = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-          _internal_set_type(static_cast<::indiemotionpb::payloads::SessionPropertyType>(val));
-        } else goto handle_unusual;
-        continue;
-      // string name = 11;
-      case 11:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 90)) {
+      // string name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           auto str = _internal_mutable_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionProperty.name"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional string value = 12;
-      case 12:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 98)) {
-          auto str = _internal_mutable_value();
+      // int64 int_value = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
+          _internal_set_int_value(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string string_value = 20;
+      case 20:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 162)) {
+          auto str = _internal_mutable_string_value();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionProperty.value"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionProperty.string_value"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // double float_value = 30;
+      case 30:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 241)) {
+          _internal_set_float_value(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
+          ptr += sizeof(double);
+        } else goto handle_unusual;
+        continue;
+      // bool bool_value = 40;
+      case 40:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _internal_set_bool_value(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -2068,7 +2123,6 @@ const char* SessionProperty::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPAC
     }  // switch
   }  // while
 success:
-  _has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -2082,31 +2136,42 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .indiemotionpb.payloads.SessionPropertyType type = 10;
-  if (this->_internal_type() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      10, this->_internal_type(), target);
-  }
-
-  // string name = 11;
+  // string name = 1;
   if (!this->_internal_name().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "indiemotionpb.payloads.SessionProperty.name");
     target = stream->WriteStringMaybeAliased(
-        11, this->_internal_name(), target);
+        1, this->_internal_name(), target);
   }
 
-  // optional string value = 12;
-  if (_internal_has_value()) {
+  // int64 int_value = 10;
+  if (_internal_has_int_value()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(10, this->_internal_int_value(), target);
+  }
+
+  // string string_value = 20;
+  if (_internal_has_string_value()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_value().data(), static_cast<int>(this->_internal_value().length()),
+      this->_internal_string_value().data(), static_cast<int>(this->_internal_string_value().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.SessionProperty.value");
+      "indiemotionpb.payloads.SessionProperty.string_value");
     target = stream->WriteStringMaybeAliased(
-        12, this->_internal_value(), target);
+        20, this->_internal_string_value(), target);
+  }
+
+  // double float_value = 30;
+  if (_internal_has_float_value()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(30, this->_internal_float_value(), target);
+  }
+
+  // bool bool_value = 40;
+  if (_internal_has_bool_value()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(40, this->_internal_bool_value(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2125,27 +2190,42 @@ size_t SessionProperty::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 11;
+  // string name = 1;
   if (!this->_internal_name().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_name());
   }
 
-  // optional string value = 12;
-  cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_value());
+  switch (value_case()) {
+    // int64 int_value = 10;
+    case kIntValue: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
+          this->_internal_int_value());
+      break;
+    }
+    // string string_value = 20;
+    case kStringValue: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_string_value());
+      break;
+    }
+    // double float_value = 30;
+    case kFloatValue: {
+      total_size += 2 + 8;
+      break;
+    }
+    // bool bool_value = 40;
+    case kBoolValue: {
+      total_size += 2 + 1;
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
   }
-
-  // .indiemotionpb.payloads.SessionPropertyType type = 10;
-  if (this->_internal_type() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
-  }
-
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
         _internal_metadata_, total_size, &_cached_size_);
@@ -2177,11 +2257,26 @@ void SessionProperty::MergeFrom(const SessionProperty& from) {
   if (!from._internal_name().empty()) {
     _internal_set_name(from._internal_name());
   }
-  if (from._internal_has_value()) {
-    _internal_set_value(from._internal_value());
-  }
-  if (from._internal_type() != 0) {
-    _internal_set_type(from._internal_type());
+  switch (from.value_case()) {
+    case kIntValue: {
+      _internal_set_int_value(from._internal_int_value());
+      break;
+    }
+    case kStringValue: {
+      _internal_set_string_value(from._internal_string_value());
+      break;
+    }
+    case kFloatValue: {
+      _internal_set_float_value(from._internal_float_value());
+      break;
+    }
+    case kBoolValue: {
+      _internal_set_bool_value(from._internal_bool_value());
+      break;
+    }
+    case VALUE_NOT_SET: {
+      break;
+    }
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2200,18 +2295,13 @@ bool SessionProperty::IsInitialized() const {
 void SessionProperty::InternalSwap(SessionProperty* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &name_, GetArenaForAllocation(),
       &other->name_, other->GetArenaForAllocation()
   );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &value_, GetArenaForAllocation(),
-      &other->value_, other->GetArenaForAllocation()
-  );
-  swap(type_, other->type_);
+  swap(value_, other->value_);
+  swap(_oneof_case_[0], other->_oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SessionProperty::GetMetadata() const {
@@ -2418,6 +2508,206 @@ void GetSessionPropertyByName::InternalSwap(GetSessionPropertyByName* other) {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
       file_level_metadata_payloads_2eproto[9]);
+}
+
+// ===================================================================
+
+class ClearSessionPropertyByName::_Internal {
+ public:
+};
+
+ClearSessionPropertyByName::ClearSessionPropertyByName(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.ClearSessionPropertyByName)
+}
+ClearSessionPropertyByName::ClearSessionPropertyByName(const ClearSessionPropertyByName& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.ClearSessionPropertyByName)
+}
+
+inline void ClearSessionPropertyByName::SharedCtor() {
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+ClearSessionPropertyByName::~ClearSessionPropertyByName() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.ClearSessionPropertyByName)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ClearSessionPropertyByName::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void ClearSessionPropertyByName::ArenaDtor(void* object) {
+  ClearSessionPropertyByName* _this = reinterpret_cast< ClearSessionPropertyByName* >(object);
+  (void)_this;
+}
+void ClearSessionPropertyByName::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ClearSessionPropertyByName::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ClearSessionPropertyByName::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.ClearSessionPropertyByName)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  name_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ClearSessionPropertyByName::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string name = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.ClearSessionPropertyByName.name"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* ClearSessionPropertyByName::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.ClearSessionPropertyByName)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string name = 10;
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "indiemotionpb.payloads.ClearSessionPropertyByName.name");
+    target = stream->WriteStringMaybeAliased(
+        10, this->_internal_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.ClearSessionPropertyByName)
+  return target;
+}
+
+size_t ClearSessionPropertyByName::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.ClearSessionPropertyByName)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string name = 10;
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ClearSessionPropertyByName::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ClearSessionPropertyByName::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ClearSessionPropertyByName::GetClassData() const { return &_class_data_; }
+
+void ClearSessionPropertyByName::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<ClearSessionPropertyByName *>(to)->MergeFrom(
+      static_cast<const ClearSessionPropertyByName &>(from));
+}
+
+
+void ClearSessionPropertyByName::MergeFrom(const ClearSessionPropertyByName& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.ClearSessionPropertyByName)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ClearSessionPropertyByName::CopyFrom(const ClearSessionPropertyByName& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.ClearSessionPropertyByName)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ClearSessionPropertyByName::IsInitialized() const {
+  return true;
+}
+
+void ClearSessionPropertyByName::InternalSwap(ClearSessionPropertyByName* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, GetArenaForAllocation(),
+      &other->name_, other->GetArenaForAllocation()
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ClearSessionPropertyByName::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
+      file_level_metadata_payloads_2eproto[10]);
 }
 
 // ===================================================================
@@ -2654,7 +2944,7 @@ void InputDeviceXForm_XFormData::InternalSwap(InputDeviceXForm_XFormData* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata InputDeviceXForm_XFormData::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[10]);
+      file_level_metadata_payloads_2eproto[11]);
 }
 
 // ===================================================================
@@ -2902,7 +3192,7 @@ void InputDeviceXForm::InternalSwap(InputDeviceXForm* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata InputDeviceXForm::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[11]);
+      file_level_metadata_payloads_2eproto[12]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -2938,6 +3228,9 @@ template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::SessionProperty* Arena::
 }
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::GetSessionPropertyByName* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::GetSessionPropertyByName >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::GetSessionPropertyByName >(arena);
+}
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::ClearSessionPropertyByName* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::ClearSessionPropertyByName >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::ClearSessionPropertyByName >(arena);
 }
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::InputDeviceXForm_XFormData* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::InputDeviceXForm_XFormData >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::InputDeviceXForm_XFormData >(arena);

@@ -106,7 +106,7 @@ int main(int argc, const char **argv) {
 
     auto server = Server(server_options);
     std::thread thread{[&server]() {
-        server.start([](std::shared_ptr<SessionController> controller) {
+        server.start([](std::shared_ptr<Session> controller) {
             auto delegate = std::make_shared<DebugDelegate>();
             controller->set_delegate(std::move(delegate));
         });
