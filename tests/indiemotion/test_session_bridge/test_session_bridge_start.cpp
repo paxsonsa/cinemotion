@@ -48,7 +48,7 @@ SCENARIO("Starting the Session")
             bridge.process_message(std::move(message));
 
             THEN("Ack response should be returned") {
-                REQUIRE(dispatcher->messages.size() == 1);
+                REQUIRE(dispatcher->messages.size() > 0);
 				auto response = dispatcher->messages[0];
 				REQUIRE(response.has_acknowledge());
             }
