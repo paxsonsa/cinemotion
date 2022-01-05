@@ -39,6 +39,17 @@ namespace indiemotion::logging
 
     std::vector<std::string> _list_parent_names(std::string name);
 
+	struct _logging_configuration
+	{
+		static spdlog::level::level_enum level;
+	};
+	spdlog::level::level_enum _logging_configuration::level = spdlog::level::trace;
+
+	void set_global_level(spdlog::level::level_enum level)
+	{
+		_logging_configuration::level = level;
+	}
+
     void init_logging()
     {
         auto consoleSink = std::make_shared<ConsoleSinkMT>();

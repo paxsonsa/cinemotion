@@ -15,7 +15,7 @@ struct DummyDispatcher : NetMessageDispatcher {
     }
 };
 
-struct DummyDelegate: SessionControllerDelegate
+struct DummyDelegate: Application
 {
     bool sessionWillStartCalled = false;
     bool sessionDidStartCalled = false;
@@ -36,12 +36,12 @@ SCENARIO("Starting the Session")
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(dispatcher, session);
+        auto bridge = SessionService(dispatcher, session);
 
         Message message;
         auto payload = message.mutable_initialize_session();
         auto properties = payload->mutable_device_info();
-        properties->set_api_version(SessionBridge::APIVersion);
+        properties->set_api_version(SessionService::APIVersion);
         properties->set_session_id("some_id");
 
         WHEN("start description is processed") {
@@ -71,7 +71,7 @@ SCENARIO("Starting the session with unsupported API version")
     {
         auto session = std::make_shared<Session>();
         auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(dispatcher, session);
+        auto bridge = SessionService(dispatcher, session);
 
         WHEN("start description is processed with unsupported version")
         {

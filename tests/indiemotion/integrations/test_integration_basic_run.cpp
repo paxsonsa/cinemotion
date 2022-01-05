@@ -7,7 +7,7 @@
 
 using namespace indiemotion;
 
-struct DummyDelegate : SessionControllerDelegate
+struct DummyDelegate : Application
 {
 	DummyDelegate() {}
 
@@ -55,14 +55,14 @@ struct DummyDelegate : SessionControllerDelegate
 	void will_start_session() override
 	{
 		will_start_session_called = true;
-		SessionControllerDelegate::will_start_session();
+		Application::will_start_session();
 	}
 
 	bool did_start_session_called = false;
 	void did_start_session() override
 	{
 		did_start_session_called = true;
-		SessionControllerDelegate::did_start_session();
+		Application::did_start_session();
 	}
 
 	std::optional<SessionProperty> updated_session_property_value;
@@ -92,7 +92,7 @@ TEST_CASE("Basic Start Up of Session")
 	auto delegate = std::make_shared<DummyDelegate>();
 	auto session = std::make_shared<Session>(delegate);
 	auto dispatcher = std::make_shared<DummyDispatcher>();
-	auto bridge = SessionBridge(dispatcher, session);
+	auto bridge = SessionService(dispatcher, session);
 
 	// Initialize
 	{

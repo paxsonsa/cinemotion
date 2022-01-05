@@ -9,10 +9,10 @@
 
 namespace indiemotion
 {
-	class SessionBridge
+	class SessionService
 	{
 	public:
-		SessionBridge(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
+		SessionService(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
 			std::shared_ptr<Session> controller)
 		{
 			_m_dispatcher = std::move(dispatcherPtr);
@@ -20,28 +20,28 @@ namespace indiemotion
 			_m_controller = std::move(controller);
 
 			_m_callback_table[Message::PayloadCase::kAcknowledge] =
-				std::bind(&SessionBridge::_process_acknowledge, this, std::placeholders::_1);
+				std::bind(&SessionService::_process_acknowledge, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kInitializeSession] =
-				std::bind(&SessionBridge::_process_initialize_session, this, std::placeholders::_1);
+				std::bind(&SessionService::_process_initialize_session, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kShutdownSession] =
-				std::bind(&SessionBridge::_process_shutdown_session, this, std::placeholders::_1);
+				std::bind(&SessionService::_process_shutdown_session, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kSessionProperty] =
-				std::bind(&SessionBridge::_process_session_property, this, std::placeholders::_1);
+				std::bind(&SessionService::_process_session_property, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kGetSessionPropertyByName] =
-				std::bind(&SessionBridge::_process_get_session_property, this, std::placeholders::_1);
+				std::bind(&SessionService::_process_get_session_property, this, std::placeholders::_1);
             _m_callback_table[Message::PayloadCase::kGetCameraList] =
-                std::bind(&SessionBridge::_process_get_camera_list, this, std::placeholders::_1);
+                std::bind(&SessionService::_process_get_camera_list, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kCameraList] =
-				std::bind(&SessionBridge::_process_camera_list, this, std::placeholders::_1);
+				std::bind(&SessionService::_process_camera_list, this, std::placeholders::_1);
             _m_callback_table[Message::PayloadCase::kInputDeviceXform] =
-                std::bind(&SessionBridge::_process_input_device_xform, this, std::placeholders::_1);
+                std::bind(&SessionService::_process_input_device_xform, this, std::placeholders::_1);
 		}
 
 		static const std::string APIVersion;
 
 		[[nodiscard]] static std::string supported_api_version()
 		{
-			return SessionBridge::APIVersion;
+			return SessionService::APIVersion;
 		}
 
 		void process_message(const Message&& message)
@@ -252,7 +252,7 @@ namespace indiemotion
 		}
 	};
 
-	const std::string SessionBridge::APIVersion = "1.0";
+	const std::string SessionService::APIVersion = "1.0";
 
 
 

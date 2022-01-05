@@ -14,7 +14,7 @@ struct DummyDispatcher : NetMessageDispatcher {
     }
 };
 
-struct DummyDelegate : SessionControllerDelegate
+struct DummyDelegate : Application
 {
     bool wasReceivedMotionUpdateCalled = false;
     MotionXForm xform;
@@ -42,7 +42,7 @@ SCENARIO("updating the motion xform successfully")
 		session->property_table->set(std::move(property));
 
         auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(dispatcher, session);
+        auto bridge = SessionService(dispatcher, session);
 
         WHEN("a motion description is processed")
         {
@@ -79,7 +79,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(dispatcher, session);
+        auto bridge = SessionService(dispatcher, session);
         auto xform = MotionXForm::create(
             1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f);
         session->initialize();

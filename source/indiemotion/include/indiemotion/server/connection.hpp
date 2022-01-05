@@ -17,7 +17,7 @@ namespace indiemotion {
      * ```
      *      [&](std::shared_ptr<Session> controller) {
      *          auto delegate = std::make_shared<YourDelegateImpl>();
-     *          controller->set_delegate(std::move(delegate);
+     *          controller->set_application(std::move(delegate);
      *      }
      * ```
      */
@@ -54,7 +54,7 @@ namespace indiemotion {
         websocket::stream<beast::tcp_stream> _websocket;
         beast::flat_buffer _buffer;
         SessionConnectionCallbacks _callbacks;
-        std::unique_ptr<SessionBridge> _session_bridge;
+        std::unique_ptr<SessionService> _session_bridge;
         bool stopped = false;
 
         /**
@@ -157,7 +157,7 @@ namespace indiemotion {
                 _buffer.consume(message.ByteSizeLong());
             });
             _callbacks.on_started(controller);
-            _session_bridge = std::make_unique<SessionBridge>(std::move(dispatcher), std::move(controller));
+            _session_bridge = std::make_unique<SessionService>(std::move(dispatcher), std::move(controller));
             do_read();
         }
 

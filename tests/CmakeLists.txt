@@ -1,9 +1,3 @@
-
-# Generate the test configuration header.
-set(TEST_RESOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/resources)
-file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-configure_file(include/configure.hpp.in include/configure.hpp)
-
 file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/indiemotion/*.cpp)
 foreach(item ${TEST_FILES})
     get_filename_component(name ${item} NAME_WE)

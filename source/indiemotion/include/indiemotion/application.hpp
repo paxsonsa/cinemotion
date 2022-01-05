@@ -6,10 +6,10 @@
 
 namespace indiemotion
 {
-    class SessionControllerDelegate
+    class Application
     {
     public:
-        virtual ~SessionControllerDelegate() {}
+        virtual ~Application() {}
 
         // ---------------------------------------------------------------------
         // Camera Operations

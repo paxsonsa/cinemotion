@@ -15,7 +15,7 @@ struct DummyDispatcher : NetMessageDispatcher {
     }
 };
 
-struct DummyDelegate : SessionControllerDelegate{
+struct DummyDelegate : Application{
     bool sessionWillShutdownCalled = false;
 
     void will_shutdown_session() //override
@@ -31,7 +31,7 @@ SCENARIO("signalling session shutdown successfully")
         auto delegate = std::make_shared<DummyDelegate>();
         auto session = std::make_shared<Session>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
-        auto bridge = SessionBridge(dispatcher, session);
+        auto bridge = SessionService(dispatcher, session);
         session->initialize();
 
         WHEN("the client signals a session shutdown")

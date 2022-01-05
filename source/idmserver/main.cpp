@@ -12,7 +12,7 @@ using namespace indiemotion;
 namespace progopts = boost::program_options;
 
 
-struct DebugDelegate: public SessionControllerDelegate {
+struct DebugApp: public Application {
 
     logging::Logger logger = logging::get_logger("com.indiemotion.idmserver.delegate");
     std::vector<Camera> cameras {
@@ -28,7 +28,6 @@ struct DebugDelegate: public SessionControllerDelegate {
     }
 
     std::optional<Camera> get_camera_by_name(std::string name) override {
-
         for (auto &cam: cameras)
         {
             if (cam.name == name) {
@@ -39,12 +38,15 @@ struct DebugDelegate: public SessionControllerDelegate {
     }
 
     void did_set_active_camera(Camera camera) override {
-        active_camera = camera;
+        logger->info("Active Camera Updated: {}", camera.name);
+		active_camera = camera;
+
     }
     void did_set_motion_mode(MotionMode m) override {
         logger->info("Motion Mode Did Update: {}", m);
     }
-    void did_receive_motion_update(MotionXForm m) override {}
+    void did_receive_motion_update(MotionXForm m) override {
+	}
 
     void will_shutdown_session() override {
         logger->info("Session is shutting down");
@@ -88,6 +90,7 @@ bool parse_options(std::shared_ptr<cli_options> options, int argc, const char **
 }
 
 int main(int argc, const char **argv) {
+	logging::set_global_level(spdlog::level::info);
     auto options = std::make_shared<cli_options>();
     if (not parse_options(options, argc, argv)) {
         return 1;
@@ -107,8 +110,8 @@ int main(int argc, const char **argv) {
     auto server = Server(server_options);
     std::thread thread{[&server]() {
         server.start([](std::shared_ptr<Session> controller) {
-            auto delegate = std::make_shared<DebugDelegate>();
-            controller->set_delegate(std::move(delegate));
+            auto delegate = std::make_shared<DebugApp>();
+			controller->set_application(std::move(delegate));
         });
     }};
     thread.join();

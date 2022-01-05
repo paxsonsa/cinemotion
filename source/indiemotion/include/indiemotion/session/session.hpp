@@ -2,7 +2,7 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
 #include <indiemotion/motion.hpp>
-#include <indiemotion/session/delegate.hpp>
+#include <indiemotion/application.hpp>
 #include <indiemotion/session/property_table.hpp>
 #include <indiemotion/session/global_properties.hpp>
 
@@ -22,9 +22,9 @@ namespace indiemotion
 
 		Session() {}
 
-        Session(std::shared_ptr<SessionControllerDelegate> delegate)
+        Session(std::shared_ptr<Application> delegate)
         {
-            _m_delegate = delegate;
+			_application = delegate;
         }
 
         /**
@@ -36,8 +36,8 @@ namespace indiemotion
          */
         void initialize()
         {
-            if (_m_delegate)
-                _m_delegate->will_start_session();
+            if (_application)
+                _application->will_start_session();
 
             _m_status = SessionStatus::Initialized;
 			property_table = std::make_shared<SessionPropertyTable>();
@@ -63,20 +63,22 @@ namespace indiemotion
 				std::bind(&Session::_motion_mode_changed, this, std::placeholders::_1)
 			));
 
-            if (_m_delegate)
-                _m_delegate->did_start_session();
+            if (_application)
+                _application->did_start_session();
 
         }
 
 		/**
-		 * Set the current delegate for the controller.
+		 * Set the current application for the session.
 		 *
-		 * The delegate is
+		 * The application is the main interface to responding to changes
+		 * in the session. As the session receives changes from the input device,
+		 * the application is used to complete or notify of those actions.
 		 *
-		 * @param delegate
+		 * @param app
 		 */
-        void set_delegate(std::shared_ptr<SessionControllerDelegate> delegate) {
-            _m_delegate = std::move(delegate);
+        void set_application(std::shared_ptr<Application> app) {
+			_application = std::move(app);
         }
 
         // ----------------------------------------------------------------
@@ -91,9 +93,9 @@ namespace indiemotion
          */
         void shutdown()
         {
-            if (_m_delegate)
+            if (_application)
             {
-                _m_delegate->will_shutdown_session();
+                _application->will_shutdown_session();
             }
             _m_status = SessionStatus::Offline;
         }
@@ -105,9 +107,9 @@ namespace indiemotion
         std::vector<Camera> get_cameras() const
         {
             _throw_when_uninitialized();
-            if (_m_delegate)
+            if (_application)
             {
-                return _m_delegate->get_available_cameras();
+                return _application->get_available_cameras();
             }
             return {};
         }
@@ -122,9 +124,9 @@ namespace indiemotion
             _throw_when_uninitialized();
             if (can_accept_motion_updates())
             {
-                if (_m_delegate)
+                if (_application)
                 {
-                    _m_delegate->did_receive_motion_update(xform);
+                    _application->did_receive_motion_update(xform);
                 }
             }
         }
@@ -155,7 +157,7 @@ namespace indiemotion
 			}
 			else
 			{
-				_m_delegate->will_update_session_property(&property);
+				_application->will_update_session_property(&property);
 			}
 			property_table->set(std::move(property));
 		}
@@ -171,7 +173,7 @@ namespace indiemotion
 
 	private:
 		SessionStatus _m_status = SessionStatus::Offline;
-		std::shared_ptr<SessionControllerDelegate> _m_delegate = nullptr;
+		std::shared_ptr<Application> _application = nullptr;
 
 		void _throw_when_uninitialized() const
 		{
@@ -190,11 +192,11 @@ namespace indiemotion
 				throw SessionPropertyTypeException("active camera must be string value.");
 			}
 
-			auto cam = _m_delegate->get_camera_by_name(camera_id);
+			auto cam = _application->get_camera_by_name(camera_id);
 			if (!cam){
 				throw CameraNotFoundException(camera_id);
 			}
-			_m_delegate->did_set_active_camera(cam.value());
+			_application->did_set_active_camera(cam.value());
 		}
 
 		void _motion_mode_changed(const std::shared_ptr<SessionProperty::Value> value)
@@ -206,11 +208,11 @@ namespace indiemotion
 			switch(mode)
 			{
 			case MotionMode::Idle:
-				_m_delegate->did_set_motion_mode(mode);
+				_application->did_set_motion_mode(mode);
 				return;
 			default:
 				if (property_table->get(&property)) {
-					_m_delegate->did_set_motion_mode(mode);
+					_application->did_set_motion_mode(mode);
 					return;
 				}
 			}
