@@ -3,8 +3,6 @@
   - Server(callbacks)
 - InputDevice
   - Interaction from Delegate to Service/InputDevice
-  - 
-  
 - Reset/Set Origin
 - Reset Session
 - Video Streaming
@@ -27,7 +25,7 @@
   - Camera Focal Ring
   - Camera Aperture
   - Event Triggers?
-
+- Refactor Logging Header
 - Add CMake CI (macOS/Linux)
 - mDNS and SD
   - https://github.com/mjansson/mdns
