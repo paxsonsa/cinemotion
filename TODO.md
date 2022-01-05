@@ -1,13 +1,33 @@
-- SessionProxy
-  - Given to SessionControllerDelegate to Control Session and Pass Messages to user.
-  - Requires Async Writes to Connection
-- DelegateError
+- Handle Error Messages
+- Make Server Generation more declarative
+  - Server(callbacks)
+- InputDevice
+  - Interaction from Delegate to Service/InputDevice
+  - 
+  
 - Reset/Set Origin
 - Reset Session
-- Generate Track Manager
 - Video Streaming
-  - Breakdown
+  - Road to Apdative Streaming
+    1. Stream JPEG Full Frame
+       1. Support 
+    2. Implement HLS
+       1. https://github.com/oatpp/example-hls-media-stream
+       2. 
   - Seperate io_context/thread.
+- Generate Track Manager
+- Backpressure?
+  - Video Stream?
+    - What if we can process incoming frames fast encough?
+      - Throw out?
+    - Can't process Motion Capture fast enough.
+  - Motion Updates?
+- Animatable Channels?
+  - Camera Focal Length
+  - Camera Focal Ring
+  - Camera Aperture
+  - Event Triggers?
+
 - Add CMake CI (macOS/Linux)
 - mDNS and SD
   - https://github.com/mjansson/mdns
@@ -15,5 +35,4 @@
 - SSL Connection
 - Server Logging Configuration
   - Logging Levels
-  - Logger Names in Output 
-- [MAYBE] Use HTTP for all information requests and streamed data via http?
+  - Logger Names in Output
