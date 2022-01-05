@@ -14,8 +14,13 @@ namespace progopts = boost::program_options;
 
 struct DebugApp: public Application {
 
-    logging::Logger logger = logging::get_logger("com.indiemotion.idmserver.delegate");
-    std::vector<Camera> cameras {
+	logging::Logger logger;
+
+	DebugApp() {
+    	logger = logging::get_logger("com.indiemotion.idmserver");
+	}
+
+	std::vector<Camera> cameras {
         Camera("camera1"),
         Camera("camera2"),
         Camera("camera3"),
@@ -91,6 +96,8 @@ bool parse_options(std::shared_ptr<cli_options> options, int argc, const char **
 
 int main(int argc, const char **argv) {
 	logging::set_global_level(spdlog::level::info);
+	logging::configure_default_logger("com.indiemotion");
+
     auto options = std::make_shared<cli_options>();
     if (not parse_options(options, argc, argv)) {
         return 1;

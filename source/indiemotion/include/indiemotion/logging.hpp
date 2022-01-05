@@ -6,7 +6,6 @@
 
 namespace indiemotion::logging
 {
-
     using Logger = std::shared_ptr<spdlog::logger>;
 
     template <typename Mutex>
@@ -16,7 +15,7 @@ namespace indiemotion::logging
         void sink_it_(const spdlog::details::log_msg &msg) override
         {
             // log_msg is a struct containing the log entry info like level, timestamp, thread id etc.
-            // msg.raw contains pre formatted log
+            // msg.raw contains pre-formatted log
 
             // If needed (very likely but not mandatory), the sink formats the description before sending it to its final destination:
             spdlog::memory_buf_t formatted;
@@ -39,24 +38,29 @@ namespace indiemotion::logging
 
     std::vector<std::string> _list_parent_names(std::string name);
 
-	struct _logging_configuration
+	struct _settings
 	{
 		static spdlog::level::level_enum level;
 	};
-	spdlog::level::level_enum _logging_configuration::level = spdlog::level::trace;
+	spdlog::level::level_enum _settings::level = spdlog::level::trace;
+
+	void configure_default_logger(std::string name)
+	{
+		auto consoleSink = std::make_shared<ConsoleSinkMT>();
+		consoleSink->set_level(_settings::level);
+		auto logger = std::make_shared<spdlog::logger>(name, consoleSink);
+		logger->set_level(_settings::level);
+		spdlog::register_logger(logger);
+	}
 
 	void set_global_level(spdlog::level::level_enum level)
 	{
-		_logging_configuration::level = level;
+		_settings::level = level;
 	}
 
     void init_logging()
     {
-        auto consoleSink = std::make_shared<ConsoleSinkMT>();
-        consoleSink->set_level(spdlog::level::trace);
-        auto logger = std::make_shared<spdlog::logger>("root", consoleSink);
-        logger->set_level(spdlog::level::trace);
-        spdlog::register_logger(logger);
+		configure_default_logger("root");
     }
 
     Logger get_logger(std::string name)
@@ -102,5 +106,4 @@ namespace indiemotion::logging
         std::reverse(names.begin(), names.end());
         return names;
     }
-
 } // namespace indiemotion

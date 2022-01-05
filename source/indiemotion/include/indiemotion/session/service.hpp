@@ -16,7 +16,7 @@ namespace indiemotion
 			std::shared_ptr<Session> controller)
 		{
 			_m_dispatcher = std::move(dispatcherPtr);
-			_logger = logging::get_logger("bridge");
+			_logger = logging::get_logger("com.indiemotion.service");
 			_m_controller = std::move(controller);
 
 			_m_callback_table[Message::PayloadCase::kAcknowledge] =
