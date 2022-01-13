@@ -52,7 +52,8 @@ namespace indiemotion {
         logging::Logger _logger = logging::get_logger("com.indiemotion.server.connection");
         asio::io_context &_io_context;
         websocket::stream<beast::tcp_stream> _websocket;
-        beast::flat_buffer _buffer;
+        beast::flat_buffer _read_buffer;
+		beast::flat_buffer _write_buffer;
         SessionConnectionCallbacks _callbacks;
         std::unique_ptr<SessionService> _session_bridge;
         bool stopped = false;
@@ -149,12 +150,15 @@ namespace indiemotion {
             _logger->info("Accepting Connection...");
             auto controller = std::make_shared<Session>();
             auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](Message &&message) {
-                auto os = beast::ostream(_buffer);
+                auto os = beast::ostream(_write_buffer);
                 message.SerializeToOstream(&os);
-                _buffer.commit(message.ByteSizeLong());
+				std::cout << "commiting bytes: " << message.ByteSizeLong() << std::endl;
+				_write_buffer.commit(message.ByteSizeLong());
                 _websocket.binary(true);
-                _websocket.write(_buffer.data());
-                _buffer.consume(message.ByteSizeLong());
+
+				_websocket.write(_write_buffer.data());
+				_write_buffer.clear();
+//				_write_buffer.consume(message.ByteSizeLong());
             });
             _callbacks.on_started(controller);
             _session_bridge = std::make_unique<SessionService>(std::move(dispatcher), std::move(controller));
@@ -166,7 +170,7 @@ namespace indiemotion {
          */
         void do_read() {
             _websocket.async_read(
-                _buffer,
+				_read_buffer,
                 beast::bind_front_handler(
                     &SessionConnection::on_read,
                     shared_from_this()));
@@ -190,15 +194,16 @@ namespace indiemotion {
 
             if (err) {
                 if (err == boost::asio::error::operation_aborted) {
-                    _logger->error(fmt::format("on_read(): op aborted - {}", err.message()));
+                    _logger->error(fmt::format("Connection::on_read: op aborted - {}", err.message()));
                 } else if (err == websocket::error::closed) {
-                    _logger->error(fmt::format("on_read(): close - {}", err.message()));
+                    _logger->error(fmt::format("Connection::on_read: close - {}", err.message()));
+
                 } else {
                     _logger->error(fmt::format("Connection::on_read: {}", err.message()));
                 }
-
                 _logger->error("connection error, shutting down session and stopping server");
 
+				// TODO - Figure out bug when multiple connections are made why the second shutdown crashes
                 Message m;
                 m.mutable_shutdown_session();
                 _session_bridge->process_message(std::move(m));
@@ -210,7 +215,7 @@ namespace indiemotion {
 
             std::string text;
             std::ostringstream os;
-            os << boost::beast::buffers_to_string(_buffer.data());
+            os << boost::beast::buffers_to_string(_read_buffer.data());
             Message message;
             text = os.str();
             _logger->trace("payload: {}", text);
@@ -219,7 +224,7 @@ namespace indiemotion {
             std::string msg_str;
             google::protobuf::util::MessageToJsonString(message, &msg_str);
             _logger->trace("description: {}", msg_str);
-            _buffer.consume(_buffer.size());
+			_read_buffer.consume(_read_buffer.size());
 
 			// TODO - handle exceptions
             _session_bridge->process_message(std::move(message));
