@@ -50,10 +50,8 @@ SCENARIO("signalling session shutdown successfully")
                 REQUIRE(delegate->sessionWillShutdownCalled);
             }
 
-			THEN("Ack response should be returned") {
-				REQUIRE(dispatcher->messages.size() == 1);
-				auto response = dispatcher->messages[0];
-				REQUIRE(response.has_acknowledge());
+			THEN("No response should be returned") {
+				REQUIRE(dispatcher->messages.size() == 0);
 			}
         }
     }
