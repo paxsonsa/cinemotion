@@ -51,6 +51,7 @@ struct DebugApp: public Application {
         logger->info("Motion Mode Did Update: {}", m);
     }
     void did_receive_motion_update(MotionXForm m) override {
+		logger->info("MotionXForm: {}", m.description());
 	}
 
     void will_shutdown_session() override {
