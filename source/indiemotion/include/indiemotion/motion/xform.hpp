@@ -90,6 +90,19 @@ namespace indiemotion {
             std::swap(orientation, rhs.orientation);
         }
 
+		std::string description() const  {
+			std::stringstream stream;
+			stream << "t:("
+			       << translation.x << ", "
+				   << translation.y << ", "
+				   << translation.z << ") "
+				   << "o:("
+				   << orientation.x << ", "
+				   << orientation.y << ", "
+				   << orientation.z << ")";
+			return stream.str();
+		}
+
         static MotionXForm zero() {
             auto xform = MotionXForm();
             xform.translation = MotionTranslation::zero();
