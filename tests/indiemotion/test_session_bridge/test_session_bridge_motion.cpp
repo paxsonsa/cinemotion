@@ -37,7 +37,7 @@ SCENARIO("Set Motion Mode Successfully")
 	GIVEN("an activated session controller")
 	{
 		auto delegate = std::make_shared<DummyDelegate>();
-		auto session = std::make_shared<Session>(delegate);
+		auto session = std::make_shared<SessionCon>(delegate);
 		auto dispatcher = std::make_shared<DummyDispatcher>();
 		auto bridge = SessionService(dispatcher, session);
 		session->initialize();
@@ -142,7 +142,7 @@ SCENARIO("Set Motion Mode Fails")
 	GIVEN("an activated session controller without an active camera configured")
 	{
 		auto delegate = std::make_shared<DummyDelegate>();
-		auto session = std::make_shared<Session>(delegate);
+		auto session = std::make_shared<SessionCon>(delegate);
 		auto dispatcher = std::make_shared<DummyDispatcher>();
 		auto bridge = SessionService(dispatcher, session);
 		session->initialize();
@@ -204,7 +204,7 @@ SCENARIO("Get Motion Mode Successfully")
 	GIVEN("an activated session controller")
 	{
 		auto delegate = std::make_shared<DummyDelegate>();
-		auto session = std::make_shared<Session>(delegate);
+		auto session = std::make_shared<SessionCon>(delegate);
 		auto dispatcher = std::make_shared<DummyDispatcher>();
 		auto bridge = SessionService(dispatcher, session);
 		session->initialize();

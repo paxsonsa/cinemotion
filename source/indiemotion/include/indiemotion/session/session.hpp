@@ -14,21 +14,21 @@ namespace indiemotion
         Initialized,
     };
 
-    class Session
+    class SessionCon
     {
     public:
 		std::shared_ptr<PropertyObserverList> property_observer_list = nullptr;
 		std::shared_ptr<SessionPropertyTable> property_table = nullptr;
 
-		Session() {}
+		SessionCon() {}
 
-        Session(std::shared_ptr<Application> delegate)
+        SessionCon(std::shared_ptr<Application> delegate)
         {
 			_application = delegate;
         }
 
         /**
-         * Initialize the Session
+         * Initialize the SessionCon
          *
          * This must be called before any operation can be performed on the session
          * to sure the delegate and managers are ready for operations.
@@ -55,12 +55,12 @@ namespace indiemotion
 			property_observer_list = std::make_shared<PropertyObserverList>();
 			property_observer_list->observers.push_back(make_property_observer(
 				GlobalProperties::ActiveCameraID(),
-				std::bind(&Session::_active_camera_changed, this, std::placeholders::_1)
+				std::bind(&SessionCon::_active_camera_changed, this, std::placeholders::_1)
 			));
 
 			property_observer_list->observers.push_back(make_property_observer(
 				GlobalProperties::MotionCaptureMode(),
-				std::bind(&Session::_motion_mode_changed, this, std::placeholders::_1)
+				std::bind(&SessionCon::_motion_mode_changed, this, std::placeholders::_1)
 			));
 
             if (_application)
@@ -82,11 +82,11 @@ namespace indiemotion
         }
 
         // ----------------------------------------------------------------
-        // Session Status
+        // SessionCon Status
         SessionStatus status() const { return _m_status; }
 
         // ----------------------------------------------------------------
-        // Session LifeCycle Calls
+        // SessionCon LifeCycle Calls
 
         /**
          * Shutdown the session

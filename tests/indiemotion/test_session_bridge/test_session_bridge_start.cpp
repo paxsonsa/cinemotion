@@ -30,11 +30,11 @@ struct DummyDelegate: Application
     }
 };
 
-SCENARIO("Starting the Session")
+SCENARIO("Starting the SessionCon")
 {
     GIVEN("a new controller object") {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<Session>(delegate);
+        auto session = std::make_shared<SessionCon>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionService(dispatcher, session);
 
@@ -69,7 +69,7 @@ SCENARIO("Starting the session with unsupported API version")
 {
     GIVEN("a new controller")
     {
-        auto session = std::make_shared<Session>();
+        auto session = std::make_shared<SessionCon>();
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionService(dispatcher, session);
 

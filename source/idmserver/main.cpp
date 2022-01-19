@@ -55,13 +55,13 @@ struct DebugApp: public Application {
 	}
 
     void will_shutdown_session() override {
-        logger->info("Session is shutting down");
+        logger->info("SessionCon is shutting down");
     }
     void will_start_session() override {
-        logger->info("Session is starting");
+        logger->info("SessionCon is starting");
     }
     void did_start_session() override {
-        logger->info("Session is started");
+        logger->info("SessionCon is started");
     }
 };
 
@@ -117,7 +117,7 @@ int main(int argc, const char **argv) {
 
     auto server = Server(server_options);
     std::thread thread{[&server]() {
-        server.start([](std::shared_ptr<Session> controller) {
+        server.start([](std::shared_ptr<SessionCon> controller) {
             auto delegate = std::make_shared<DebugApp>();
 			controller->set_application(std::move(delegate));
         });

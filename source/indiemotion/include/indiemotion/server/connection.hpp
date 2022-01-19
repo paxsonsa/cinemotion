@@ -15,13 +15,13 @@ namespace indiemotion {
      * This callback receives a shared pointer to the session controller to have its
      * delegate updated.
      * ```
-     *      [&](std::shared_ptr<Session> controller) {
+     *      [&](std::shared_ptr<SessionCon> controller) {
      *          auto delegate = std::make_shared<YourDelegateImpl>();
      *          controller->set_application(std::move(delegate);
      *      }
      * ```
      */
-    using ConnectionStartCallback = std::function<void(std::shared_ptr<Session>)>;
+    using ConnectionStartCallback = std::function<void(std::shared_ptr<SessionCon>)>;
 
     /**
      * A callback that is invoked when the connection was disconnected.
@@ -148,7 +148,7 @@ namespace indiemotion {
                 return;
             }
             _logger->info("Accepting Connection...");
-            auto controller = std::make_shared<Session>();
+            auto controller = std::make_shared<SessionCon>();
             auto dispatcher = std::make_shared<ConnectionWriterDispatcher>([&](Message &&message) {
                 auto os = beast::ostream(_write_buffer);
                 message.SerializeToOstream(&os);

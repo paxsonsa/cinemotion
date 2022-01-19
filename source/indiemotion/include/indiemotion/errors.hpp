@@ -50,7 +50,7 @@ namespace indiemotion
 	struct UnknownFatalException : Exception
 	{
 		UnknownFatalException() : Exception("UnknownError",
-			"Session encountered an unknown fatal error, shutting down.",
+			"SessionCon encountered an unknown fatal error, shutting down.",
 			true)
 		{
 		};
@@ -131,7 +131,7 @@ namespace indiemotion
 
 	/**
 	 * An Exception that is thrown when an operation on a session cannot happen because the
-	 * Session needs to be initialized.
+	 * SessionCon needs to be initialized.
 	 *
 	 * IndieMotion Error: SessionNotInitializedError
 	 *
@@ -139,7 +139,7 @@ namespace indiemotion
 	struct SessionNotInitializedException : Exception
 	{
 		SessionNotInitializedException() : Exception("SessionNotInitializedError",
-			"Session must be initialized.")
+			"SessionCon must be initialized.")
 		{
 		};
 	};

@@ -5,7 +5,7 @@
 - InputDevice
   - Interaction from Controller to Service/InputDevice
 - Reset/Set Origin
-- Reset Session
+- Reset SessionCon
 - Video Streaming
   - Road to Apdative Streaming
     1. Stream JPEG Full Frame

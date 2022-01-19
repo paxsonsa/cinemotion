@@ -1,11 +1,11 @@
-# Session Controller Delegates
+# SessionCon Controller Delegates
 The `indiemotion::Application` is the core interface for hooking into your DCC. 
 The header file `indiemotion/session/delegate.hpp` contains the most detailed and up-to-date documentation
 about the different members to the class.
 
 This document to describs the intended lifecycle for a session and what you can expect.
 
-## Session Start Up
+## SessionCon Start Up
 Once a connection is established the session will begin to start up.
 At that moment the delegates `will_start_session()` member will be invoked and it should be used
 to set up the DCC to begin accepting the sessions input.
@@ -79,7 +79,7 @@ problems on the server.
 The `indiemotion::SessionException` exception can be used to relay error description to the user. By specifying `is_fatal` 
 to the exception, the session will begin its shutdown sequence. 
 
-# Session Shutdown
+# SessionCon Shutdown
 Nothing lasts forever. When the session begins to shutdown, the `will_shutdown_session` member will be invoked.
 At this stage the session is closing (and the connection could terminate). Your delegate should ensure a clean up of
 the application.

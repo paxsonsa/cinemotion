@@ -6,7 +6,7 @@
 
 using namespace indiemotion;
 
-TEST_CASE("Test Session Property")
+TEST_CASE("Test SessionCon Property")
 {
 	auto property = SessionProperty("name");
 	REQUIRE_FALSE(property.has_value());
@@ -40,7 +40,7 @@ TEST_CASE("Test Session Property")
 	REQUIRE_FALSE(property.value_str());
 }
 
-TEST_CASE("Test Session Property Table")
+TEST_CASE("Test SessionCon Property Table")
 {
 	auto table = SessionPropertyTable();
 	auto property = SessionProperty("name", "string");

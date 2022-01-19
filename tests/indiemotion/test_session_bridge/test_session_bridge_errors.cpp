@@ -26,7 +26,7 @@ SCENARIO("Send a message without a payload case")
 	GIVEN("a new controller object")
 	{
 		auto delegate = std::make_shared<DummyDelegate>();
-		auto session = std::make_shared<Session>(delegate);
+		auto session = std::make_shared<SessionCon>(delegate);
 		auto dispatcher = std::make_shared<DummyDispatcher>();
 		auto bridge = SessionService(dispatcher, session);
 

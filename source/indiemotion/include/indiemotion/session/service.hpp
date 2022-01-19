@@ -13,7 +13,7 @@ namespace indiemotion
 	{
 	public:
 		SessionService(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
-			std::shared_ptr<Session> controller)
+			std::shared_ptr<SessionCon> controller)
 		{
 			_m_dispatcher = std::move(dispatcherPtr);
 			_logger = logging::get_logger("com.indiemotion.service");
@@ -94,7 +94,7 @@ namespace indiemotion
 	private:
 		std::shared_ptr<spdlog::logger> _logger;
 		std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
-		std::shared_ptr<Session> _m_controller;
+		std::shared_ptr<SessionCon> _m_controller;
 		std::array<std::optional<std::function<void(const Message&&)>>, 128> _m_callback_table;
 
 		void _send_acknowledgement_for(const Message&& message)

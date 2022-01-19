@@ -47,7 +47,7 @@ SCENARIO("Listing the Cameras")
 	GIVEN("a session bridge")
 	{
 		auto delegate = std::make_shared<DummyDelegate>();
-		auto session = std::make_shared<Session>(delegate);
+		auto session = std::make_shared<SessionCon>(delegate);
 		auto dispatcher = std::make_shared<DummyDispatcher>();
 		auto bridge = SessionService(dispatcher, session);
 		session->initialize();
@@ -107,7 +107,7 @@ SCENARIO("Set the Camera Successfully")
 	GIVEN("a session bridge")
 	{
 		auto delegate = std::make_shared<DummyDelegate>();
-		auto session = std::make_shared<Session>(delegate);
+		auto session = std::make_shared<SessionCon>(delegate);
 		session->initialize();
 
 		auto dispatcher = std::make_shared<DummyDispatcher>();

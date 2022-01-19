@@ -32,7 +32,7 @@ SCENARIO("updating the motion xform successfully")
     GIVEN("an activated 'live' session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<Session>(delegate);
+        auto session = std::make_shared<SessionCon>(delegate);
         session->initialize();
 
 		auto property = GlobalProperties::ActiveCameraID().with_value("cam2");
@@ -77,7 +77,7 @@ SCENARIO("updating the motion xform when motion mode is not live or recording")
     GIVEN("a fresh active session")
     {
         auto delegate = std::make_shared<DummyDelegate>();
-        auto session = std::make_shared<Session>(delegate);
+        auto session = std::make_shared<SessionCon>(delegate);
         auto dispatcher = std::make_shared<DummyDispatcher>();
         auto bridge = SessionService(dispatcher, session);
         auto xform = MotionXForm::create(

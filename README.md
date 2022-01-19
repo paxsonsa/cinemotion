@@ -34,7 +34,7 @@ An example of a simple implementation can be found in the `source/idmserver/main
 A basic implementation does a few things:
 1. Implement the `indiemotion::Application`
 2. Build an Instance of `indiemotion::Server`
-3. Start the Server in a new thread and pass in a `on_start` callback to attach your application to the given `Session`
+3. Start the Server in a new thread and pass in a `on_start` callback to attach your application to the given `SessionCon`
 
 Below is a naive implementation
 ```cpp
@@ -56,7 +56,7 @@ struct DebugApp: public idm::Application {
     
     // Start Server in thread
     std::thread thread{[&server]() {
-        server.start([](std::shared_ptr<Session> session) {
+        server.start([](std::shared_ptr<SessionCon> session) {
             // Create the Application
             auto app = std::make_shared<DebugApp>();
             
