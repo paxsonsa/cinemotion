@@ -199,7 +199,6 @@ namespace indiemotion
 		{
 			auto m = net_make_message_with_response_id(message.header().id());
 			_send_camera_list(std::move(m));
-
 		}
 		void _send_camera_list(Message&& m)
 		{

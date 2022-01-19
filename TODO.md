@@ -1,8 +1,9 @@
+# TDOD Notes
 - Handle Error Messages
 - Make Server Generation more declarative
   - Server(callbacks)
 - InputDevice
-  - Interaction from Delegate to Service/InputDevice
+  - Interaction from Controller to Service/InputDevice
 - Reset/Set Origin
 - Reset Session
 - Video Streaming
@@ -34,3 +35,14 @@
 - Server Logging Configuration
   - Logging Levels
   - Logger Names in Output
+
+
+### Python Bindings Thoughts:
+```python
+import indiemotion as idm
+
+server = idm.Server()
+server.controller = Controller()
+
+
+```
