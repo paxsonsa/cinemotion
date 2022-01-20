@@ -10,12 +10,12 @@ namespace indiemotion
 			_context = std::move(context);
 		}
 
-		std::shared_ptr<ContextView const> const context() const
+		ContextView const context() const
 		{
-			return _context;
+			return ContextView(_context);
 		}
 
-		std::shared_ptr<Context> const mutable_context() const
+		std::shared_ptr<Context> const mutable_context()
 		{
 			return _context;
 		}
