@@ -5,6 +5,17 @@
 
 namespace indiemotion
 {
+
+	enum PropertyScope {
+		Global
+	};
+
+	const auto GP_MotionCaptureMode = "motion_capture_mode";
+	const auto GP_ActiveCameraID = "active_camera";
+	const auto GP_SessionName = "session_name";
+	const auto GP_SessionStatus = "session_status";
+
+
 	/**
 	 * Represents a property id
 	 */
@@ -68,7 +79,7 @@ namespace indiemotion
 		 * @param id A property id to look up.
 		 * @return shared pointer, nullptr if the value is missing.
 		 */
-		std::shared_ptr<PropertyValue const> const find(const PropertyID id) const
+		std::shared_ptr<PropertyValue const> const find(const PropertyID &id) const
 		{
 			auto search = _table.find(id);
 			if (search != _table.end())
