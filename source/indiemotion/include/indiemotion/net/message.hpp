@@ -10,7 +10,7 @@
 namespace indiemotion
 {
     using Message = indiemotionpb::Message;
-    namespace message_payloads = indiemotionpb::payloads;
+    namespace Payloads = indiemotionpb::payloads;
 
     /**
      * @brief Generate is new NetIdentifier
@@ -57,8 +57,8 @@ namespace indiemotion
         auto message = net_make_message_with_response_id(messageID);
         auto error = message.mutable_error();
 
-		message_payloads::Error::Type error_type;
-		if (!message_payloads::Error::Type_Parse(exception.type, &error_type)) {
+		Payloads::Error::Type error_type;
+		if (!Payloads::Error::Type_Parse(exception.type, &error_type)) {
 			error_type = indiemotionpb::payloads::Error::UnknownError;
 		}
 

@@ -31,7 +31,6 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/timestamp.pb.h>
 #include "payloads.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
@@ -276,17 +275,12 @@ class Message final :
     return *internal_default_instance();
   }
   enum PayloadCase {
-    kAcknowledge = 20,
     kError = 25,
     kInitializeSession = 31,
     kShutdownSession = 32,
-    kCameraList = 40,
-    kGetCameraList = 41,
-    kSessionProperty = 50,
-    kGetSessionPropertyByName = 51,
-    kClearSessionPropertyByName = 52,
-    kInputDeviceInfo = 60,
-    kInputDeviceXform = 61,
+    kSessionInfo = 40,
+    kSceneInfo = 50,
+    kMotionInfo = 60,
     PAYLOAD_NOT_SET = 0,
   };
 
@@ -367,17 +361,12 @@ class Message final :
 
   enum : int {
     kHeaderFieldNumber = 1,
-    kAcknowledgeFieldNumber = 20,
     kErrorFieldNumber = 25,
     kInitializeSessionFieldNumber = 31,
     kShutdownSessionFieldNumber = 32,
-    kCameraListFieldNumber = 40,
-    kGetCameraListFieldNumber = 41,
-    kSessionPropertyFieldNumber = 50,
-    kGetSessionPropertyByNameFieldNumber = 51,
-    kClearSessionPropertyByNameFieldNumber = 52,
-    kInputDeviceInfoFieldNumber = 60,
-    kInputDeviceXformFieldNumber = 61,
+    kSessionInfoFieldNumber = 40,
+    kSceneInfoFieldNumber = 50,
+    kMotionInfoFieldNumber = 60,
   };
   // .indiemotionpb.Header header = 1;
   bool has_header() const;
@@ -396,24 +385,6 @@ class Message final :
   void unsafe_arena_set_allocated_header(
       ::indiemotionpb::Header* header);
   ::indiemotionpb::Header* unsafe_arena_release_header();
-
-  // .indiemotionpb.payloads.Acknowledge acknowledge = 20;
-  bool has_acknowledge() const;
-  private:
-  bool _internal_has_acknowledge() const;
-  public:
-  void clear_acknowledge();
-  const ::indiemotionpb::payloads::Acknowledge& acknowledge() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::Acknowledge* release_acknowledge();
-  ::indiemotionpb::payloads::Acknowledge* mutable_acknowledge();
-  void set_allocated_acknowledge(::indiemotionpb::payloads::Acknowledge* acknowledge);
-  private:
-  const ::indiemotionpb::payloads::Acknowledge& _internal_acknowledge() const;
-  ::indiemotionpb::payloads::Acknowledge* _internal_mutable_acknowledge();
-  public:
-  void unsafe_arena_set_allocated_acknowledge(
-      ::indiemotionpb::payloads::Acknowledge* acknowledge);
-  ::indiemotionpb::payloads::Acknowledge* unsafe_arena_release_acknowledge();
 
   // .indiemotionpb.payloads.Error error = 25;
   bool has_error() const;
@@ -469,148 +440,71 @@ class Message final :
       ::indiemotionpb::payloads::ShutdownSession* shutdown_session);
   ::indiemotionpb::payloads::ShutdownSession* unsafe_arena_release_shutdown_session();
 
-  // .indiemotionpb.payloads.CameraList camera_list = 40;
-  bool has_camera_list() const;
+  // .indiemotionpb.payloads.SessionInfo session_info = 40;
+  bool has_session_info() const;
   private:
-  bool _internal_has_camera_list() const;
+  bool _internal_has_session_info() const;
   public:
-  void clear_camera_list();
-  const ::indiemotionpb::payloads::CameraList& camera_list() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::CameraList* release_camera_list();
-  ::indiemotionpb::payloads::CameraList* mutable_camera_list();
-  void set_allocated_camera_list(::indiemotionpb::payloads::CameraList* camera_list);
+  void clear_session_info();
+  const ::indiemotionpb::payloads::SessionInfo& session_info() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::SessionInfo* release_session_info();
+  ::indiemotionpb::payloads::SessionInfo* mutable_session_info();
+  void set_allocated_session_info(::indiemotionpb::payloads::SessionInfo* session_info);
   private:
-  const ::indiemotionpb::payloads::CameraList& _internal_camera_list() const;
-  ::indiemotionpb::payloads::CameraList* _internal_mutable_camera_list();
+  const ::indiemotionpb::payloads::SessionInfo& _internal_session_info() const;
+  ::indiemotionpb::payloads::SessionInfo* _internal_mutable_session_info();
   public:
-  void unsafe_arena_set_allocated_camera_list(
-      ::indiemotionpb::payloads::CameraList* camera_list);
-  ::indiemotionpb::payloads::CameraList* unsafe_arena_release_camera_list();
+  void unsafe_arena_set_allocated_session_info(
+      ::indiemotionpb::payloads::SessionInfo* session_info);
+  ::indiemotionpb::payloads::SessionInfo* unsafe_arena_release_session_info();
 
-  // .indiemotionpb.payloads.GetCameraList get_camera_list = 41;
-  bool has_get_camera_list() const;
+  // .indiemotionpb.payloads.SceneInfo scene_info = 50;
+  bool has_scene_info() const;
   private:
-  bool _internal_has_get_camera_list() const;
+  bool _internal_has_scene_info() const;
   public:
-  void clear_get_camera_list();
-  const ::indiemotionpb::payloads::GetCameraList& get_camera_list() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::GetCameraList* release_get_camera_list();
-  ::indiemotionpb::payloads::GetCameraList* mutable_get_camera_list();
-  void set_allocated_get_camera_list(::indiemotionpb::payloads::GetCameraList* get_camera_list);
+  void clear_scene_info();
+  const ::indiemotionpb::payloads::SceneInfo& scene_info() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::SceneInfo* release_scene_info();
+  ::indiemotionpb::payloads::SceneInfo* mutable_scene_info();
+  void set_allocated_scene_info(::indiemotionpb::payloads::SceneInfo* scene_info);
   private:
-  const ::indiemotionpb::payloads::GetCameraList& _internal_get_camera_list() const;
-  ::indiemotionpb::payloads::GetCameraList* _internal_mutable_get_camera_list();
+  const ::indiemotionpb::payloads::SceneInfo& _internal_scene_info() const;
+  ::indiemotionpb::payloads::SceneInfo* _internal_mutable_scene_info();
   public:
-  void unsafe_arena_set_allocated_get_camera_list(
-      ::indiemotionpb::payloads::GetCameraList* get_camera_list);
-  ::indiemotionpb::payloads::GetCameraList* unsafe_arena_release_get_camera_list();
+  void unsafe_arena_set_allocated_scene_info(
+      ::indiemotionpb::payloads::SceneInfo* scene_info);
+  ::indiemotionpb::payloads::SceneInfo* unsafe_arena_release_scene_info();
 
-  // .indiemotionpb.payloads.SessionProperty session_property = 50;
-  bool has_session_property() const;
+  // .indiemotionpb.payloads.MotionInfo motion_info = 60;
+  bool has_motion_info() const;
   private:
-  bool _internal_has_session_property() const;
+  bool _internal_has_motion_info() const;
   public:
-  void clear_session_property();
-  const ::indiemotionpb::payloads::SessionProperty& session_property() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::SessionProperty* release_session_property();
-  ::indiemotionpb::payloads::SessionProperty* mutable_session_property();
-  void set_allocated_session_property(::indiemotionpb::payloads::SessionProperty* session_property);
+  void clear_motion_info();
+  const ::indiemotionpb::payloads::MotionInfo& motion_info() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::MotionInfo* release_motion_info();
+  ::indiemotionpb::payloads::MotionInfo* mutable_motion_info();
+  void set_allocated_motion_info(::indiemotionpb::payloads::MotionInfo* motion_info);
   private:
-  const ::indiemotionpb::payloads::SessionProperty& _internal_session_property() const;
-  ::indiemotionpb::payloads::SessionProperty* _internal_mutable_session_property();
+  const ::indiemotionpb::payloads::MotionInfo& _internal_motion_info() const;
+  ::indiemotionpb::payloads::MotionInfo* _internal_mutable_motion_info();
   public:
-  void unsafe_arena_set_allocated_session_property(
-      ::indiemotionpb::payloads::SessionProperty* session_property);
-  ::indiemotionpb::payloads::SessionProperty* unsafe_arena_release_session_property();
-
-  // .indiemotionpb.payloads.GetSessionPropertyByName get_session_property_by_name = 51;
-  bool has_get_session_property_by_name() const;
-  private:
-  bool _internal_has_get_session_property_by_name() const;
-  public:
-  void clear_get_session_property_by_name();
-  const ::indiemotionpb::payloads::GetSessionPropertyByName& get_session_property_by_name() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::GetSessionPropertyByName* release_get_session_property_by_name();
-  ::indiemotionpb::payloads::GetSessionPropertyByName* mutable_get_session_property_by_name();
-  void set_allocated_get_session_property_by_name(::indiemotionpb::payloads::GetSessionPropertyByName* get_session_property_by_name);
-  private:
-  const ::indiemotionpb::payloads::GetSessionPropertyByName& _internal_get_session_property_by_name() const;
-  ::indiemotionpb::payloads::GetSessionPropertyByName* _internal_mutable_get_session_property_by_name();
-  public:
-  void unsafe_arena_set_allocated_get_session_property_by_name(
-      ::indiemotionpb::payloads::GetSessionPropertyByName* get_session_property_by_name);
-  ::indiemotionpb::payloads::GetSessionPropertyByName* unsafe_arena_release_get_session_property_by_name();
-
-  // .indiemotionpb.payloads.ClearSessionPropertyByName clear_session_property_by_name = 52;
-  bool has_clear_session_property_by_name() const;
-  private:
-  bool _internal_has_clear_session_property_by_name() const;
-  public:
-  void clear_clear_session_property_by_name();
-  const ::indiemotionpb::payloads::ClearSessionPropertyByName& clear_session_property_by_name() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::ClearSessionPropertyByName* release_clear_session_property_by_name();
-  ::indiemotionpb::payloads::ClearSessionPropertyByName* mutable_clear_session_property_by_name();
-  void set_allocated_clear_session_property_by_name(::indiemotionpb::payloads::ClearSessionPropertyByName* clear_session_property_by_name);
-  private:
-  const ::indiemotionpb::payloads::ClearSessionPropertyByName& _internal_clear_session_property_by_name() const;
-  ::indiemotionpb::payloads::ClearSessionPropertyByName* _internal_mutable_clear_session_property_by_name();
-  public:
-  void unsafe_arena_set_allocated_clear_session_property_by_name(
-      ::indiemotionpb::payloads::ClearSessionPropertyByName* clear_session_property_by_name);
-  ::indiemotionpb::payloads::ClearSessionPropertyByName* unsafe_arena_release_clear_session_property_by_name();
-
-  // .indiemotionpb.payloads.InputDeviceInfo input_device_info = 60;
-  bool has_input_device_info() const;
-  private:
-  bool _internal_has_input_device_info() const;
-  public:
-  void clear_input_device_info();
-  const ::indiemotionpb::payloads::InputDeviceInfo& input_device_info() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::InputDeviceInfo* release_input_device_info();
-  ::indiemotionpb::payloads::InputDeviceInfo* mutable_input_device_info();
-  void set_allocated_input_device_info(::indiemotionpb::payloads::InputDeviceInfo* input_device_info);
-  private:
-  const ::indiemotionpb::payloads::InputDeviceInfo& _internal_input_device_info() const;
-  ::indiemotionpb::payloads::InputDeviceInfo* _internal_mutable_input_device_info();
-  public:
-  void unsafe_arena_set_allocated_input_device_info(
-      ::indiemotionpb::payloads::InputDeviceInfo* input_device_info);
-  ::indiemotionpb::payloads::InputDeviceInfo* unsafe_arena_release_input_device_info();
-
-  // .indiemotionpb.payloads.InputDeviceXForm input_device_xform = 61;
-  bool has_input_device_xform() const;
-  private:
-  bool _internal_has_input_device_xform() const;
-  public:
-  void clear_input_device_xform();
-  const ::indiemotionpb::payloads::InputDeviceXForm& input_device_xform() const;
-  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::InputDeviceXForm* release_input_device_xform();
-  ::indiemotionpb::payloads::InputDeviceXForm* mutable_input_device_xform();
-  void set_allocated_input_device_xform(::indiemotionpb::payloads::InputDeviceXForm* input_device_xform);
-  private:
-  const ::indiemotionpb::payloads::InputDeviceXForm& _internal_input_device_xform() const;
-  ::indiemotionpb::payloads::InputDeviceXForm* _internal_mutable_input_device_xform();
-  public:
-  void unsafe_arena_set_allocated_input_device_xform(
-      ::indiemotionpb::payloads::InputDeviceXForm* input_device_xform);
-  ::indiemotionpb::payloads::InputDeviceXForm* unsafe_arena_release_input_device_xform();
+  void unsafe_arena_set_allocated_motion_info(
+      ::indiemotionpb::payloads::MotionInfo* motion_info);
+  ::indiemotionpb::payloads::MotionInfo* unsafe_arena_release_motion_info();
 
   void clear_payload();
   PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:indiemotionpb.Message)
  private:
   class _Internal;
-  void set_has_acknowledge();
   void set_has_error();
   void set_has_initialize_session();
   void set_has_shutdown_session();
-  void set_has_camera_list();
-  void set_has_get_camera_list();
-  void set_has_session_property();
-  void set_has_get_session_property_by_name();
-  void set_has_clear_session_property_by_name();
-  void set_has_input_device_info();
-  void set_has_input_device_xform();
+  void set_has_session_info();
+  void set_has_scene_info();
+  void set_has_motion_info();
 
   inline bool has_payload() const;
   inline void clear_has_payload();
@@ -622,17 +516,12 @@ class Message final :
   union PayloadUnion {
     constexpr PayloadUnion() : _constinit_{} {}
       ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
-    ::indiemotionpb::payloads::Acknowledge* acknowledge_;
     ::indiemotionpb::payloads::Error* error_;
     ::indiemotionpb::payloads::InitializeSession* initialize_session_;
     ::indiemotionpb::payloads::ShutdownSession* shutdown_session_;
-    ::indiemotionpb::payloads::CameraList* camera_list_;
-    ::indiemotionpb::payloads::GetCameraList* get_camera_list_;
-    ::indiemotionpb::payloads::SessionProperty* session_property_;
-    ::indiemotionpb::payloads::GetSessionPropertyByName* get_session_property_by_name_;
-    ::indiemotionpb::payloads::ClearSessionPropertyByName* clear_session_property_by_name_;
-    ::indiemotionpb::payloads::InputDeviceInfo* input_device_info_;
-    ::indiemotionpb::payloads::InputDeviceXForm* input_device_xform_;
+    ::indiemotionpb::payloads::SessionInfo* session_info_;
+    ::indiemotionpb::payloads::SceneInfo* scene_info_;
+    ::indiemotionpb::payloads::MotionInfo* motion_info_;
   } payload_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
@@ -848,72 +737,6 @@ inline void Message::set_allocated_header(::indiemotionpb::Header* header) {
   // @@protoc_insertion_point(field_set_allocated:indiemotionpb.Message.header)
 }
 
-// .indiemotionpb.payloads.Acknowledge acknowledge = 20;
-inline bool Message::_internal_has_acknowledge() const {
-  return payload_case() == kAcknowledge;
-}
-inline bool Message::has_acknowledge() const {
-  return _internal_has_acknowledge();
-}
-inline void Message::set_has_acknowledge() {
-  _oneof_case_[0] = kAcknowledge;
-}
-inline ::indiemotionpb::payloads::Acknowledge* Message::release_acknowledge() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.acknowledge)
-  if (_internal_has_acknowledge()) {
-    clear_has_payload();
-      ::indiemotionpb::payloads::Acknowledge* temp = payload_.acknowledge_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    payload_.acknowledge_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::indiemotionpb::payloads::Acknowledge& Message::_internal_acknowledge() const {
-  return _internal_has_acknowledge()
-      ? *payload_.acknowledge_
-      : reinterpret_cast< ::indiemotionpb::payloads::Acknowledge&>(::indiemotionpb::payloads::_Acknowledge_default_instance_);
-}
-inline const ::indiemotionpb::payloads::Acknowledge& Message::acknowledge() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.acknowledge)
-  return _internal_acknowledge();
-}
-inline ::indiemotionpb::payloads::Acknowledge* Message::unsafe_arena_release_acknowledge() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.acknowledge)
-  if (_internal_has_acknowledge()) {
-    clear_has_payload();
-    ::indiemotionpb::payloads::Acknowledge* temp = payload_.acknowledge_;
-    payload_.acknowledge_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void Message::unsafe_arena_set_allocated_acknowledge(::indiemotionpb::payloads::Acknowledge* acknowledge) {
-  clear_payload();
-  if (acknowledge) {
-    set_has_acknowledge();
-    payload_.acknowledge_ = acknowledge;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.acknowledge)
-}
-inline ::indiemotionpb::payloads::Acknowledge* Message::_internal_mutable_acknowledge() {
-  if (!_internal_has_acknowledge()) {
-    clear_payload();
-    set_has_acknowledge();
-    payload_.acknowledge_ = CreateMaybeMessage< ::indiemotionpb::payloads::Acknowledge >(GetArenaForAllocation());
-  }
-  return payload_.acknowledge_;
-}
-inline ::indiemotionpb::payloads::Acknowledge* Message::mutable_acknowledge() {
-  ::indiemotionpb::payloads::Acknowledge* _msg = _internal_mutable_acknowledge();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.acknowledge)
-  return _msg;
-}
-
 // .indiemotionpb.payloads.Error error = 25;
 inline bool Message::_internal_has_error() const {
   return payload_case() == kError;
@@ -1112,465 +935,201 @@ inline ::indiemotionpb::payloads::ShutdownSession* Message::mutable_shutdown_ses
   return _msg;
 }
 
-// .indiemotionpb.payloads.CameraList camera_list = 40;
-inline bool Message::_internal_has_camera_list() const {
-  return payload_case() == kCameraList;
+// .indiemotionpb.payloads.SessionInfo session_info = 40;
+inline bool Message::_internal_has_session_info() const {
+  return payload_case() == kSessionInfo;
 }
-inline bool Message::has_camera_list() const {
-  return _internal_has_camera_list();
+inline bool Message::has_session_info() const {
+  return _internal_has_session_info();
 }
-inline void Message::set_has_camera_list() {
-  _oneof_case_[0] = kCameraList;
+inline void Message::set_has_session_info() {
+  _oneof_case_[0] = kSessionInfo;
 }
-inline ::indiemotionpb::payloads::CameraList* Message::release_camera_list() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.camera_list)
-  if (_internal_has_camera_list()) {
+inline ::indiemotionpb::payloads::SessionInfo* Message::release_session_info() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.Message.session_info)
+  if (_internal_has_session_info()) {
     clear_has_payload();
-      ::indiemotionpb::payloads::CameraList* temp = payload_.camera_list_;
+      ::indiemotionpb::payloads::SessionInfo* temp = payload_.session_info_;
     if (GetArenaForAllocation() != nullptr) {
       temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
     }
-    payload_.camera_list_ = nullptr;
+    payload_.session_info_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline const ::indiemotionpb::payloads::CameraList& Message::_internal_camera_list() const {
-  return _internal_has_camera_list()
-      ? *payload_.camera_list_
-      : reinterpret_cast< ::indiemotionpb::payloads::CameraList&>(::indiemotionpb::payloads::_CameraList_default_instance_);
+inline const ::indiemotionpb::payloads::SessionInfo& Message::_internal_session_info() const {
+  return _internal_has_session_info()
+      ? *payload_.session_info_
+      : reinterpret_cast< ::indiemotionpb::payloads::SessionInfo&>(::indiemotionpb::payloads::_SessionInfo_default_instance_);
 }
-inline const ::indiemotionpb::payloads::CameraList& Message::camera_list() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.camera_list)
-  return _internal_camera_list();
+inline const ::indiemotionpb::payloads::SessionInfo& Message::session_info() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.Message.session_info)
+  return _internal_session_info();
 }
-inline ::indiemotionpb::payloads::CameraList* Message::unsafe_arena_release_camera_list() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.camera_list)
-  if (_internal_has_camera_list()) {
+inline ::indiemotionpb::payloads::SessionInfo* Message::unsafe_arena_release_session_info() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.session_info)
+  if (_internal_has_session_info()) {
     clear_has_payload();
-    ::indiemotionpb::payloads::CameraList* temp = payload_.camera_list_;
-    payload_.camera_list_ = nullptr;
+    ::indiemotionpb::payloads::SessionInfo* temp = payload_.session_info_;
+    payload_.session_info_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline void Message::unsafe_arena_set_allocated_camera_list(::indiemotionpb::payloads::CameraList* camera_list) {
+inline void Message::unsafe_arena_set_allocated_session_info(::indiemotionpb::payloads::SessionInfo* session_info) {
   clear_payload();
-  if (camera_list) {
-    set_has_camera_list();
-    payload_.camera_list_ = camera_list;
+  if (session_info) {
+    set_has_session_info();
+    payload_.session_info_ = session_info;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.camera_list)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.session_info)
 }
-inline ::indiemotionpb::payloads::CameraList* Message::_internal_mutable_camera_list() {
-  if (!_internal_has_camera_list()) {
+inline ::indiemotionpb::payloads::SessionInfo* Message::_internal_mutable_session_info() {
+  if (!_internal_has_session_info()) {
     clear_payload();
-    set_has_camera_list();
-    payload_.camera_list_ = CreateMaybeMessage< ::indiemotionpb::payloads::CameraList >(GetArenaForAllocation());
+    set_has_session_info();
+    payload_.session_info_ = CreateMaybeMessage< ::indiemotionpb::payloads::SessionInfo >(GetArenaForAllocation());
   }
-  return payload_.camera_list_;
+  return payload_.session_info_;
 }
-inline ::indiemotionpb::payloads::CameraList* Message::mutable_camera_list() {
-  ::indiemotionpb::payloads::CameraList* _msg = _internal_mutable_camera_list();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.camera_list)
+inline ::indiemotionpb::payloads::SessionInfo* Message::mutable_session_info() {
+  ::indiemotionpb::payloads::SessionInfo* _msg = _internal_mutable_session_info();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.session_info)
   return _msg;
 }
 
-// .indiemotionpb.payloads.GetCameraList get_camera_list = 41;
-inline bool Message::_internal_has_get_camera_list() const {
-  return payload_case() == kGetCameraList;
+// .indiemotionpb.payloads.SceneInfo scene_info = 50;
+inline bool Message::_internal_has_scene_info() const {
+  return payload_case() == kSceneInfo;
 }
-inline bool Message::has_get_camera_list() const {
-  return _internal_has_get_camera_list();
+inline bool Message::has_scene_info() const {
+  return _internal_has_scene_info();
 }
-inline void Message::set_has_get_camera_list() {
-  _oneof_case_[0] = kGetCameraList;
+inline void Message::set_has_scene_info() {
+  _oneof_case_[0] = kSceneInfo;
 }
-inline ::indiemotionpb::payloads::GetCameraList* Message::release_get_camera_list() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.get_camera_list)
-  if (_internal_has_get_camera_list()) {
+inline ::indiemotionpb::payloads::SceneInfo* Message::release_scene_info() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.Message.scene_info)
+  if (_internal_has_scene_info()) {
     clear_has_payload();
-      ::indiemotionpb::payloads::GetCameraList* temp = payload_.get_camera_list_;
+      ::indiemotionpb::payloads::SceneInfo* temp = payload_.scene_info_;
     if (GetArenaForAllocation() != nullptr) {
       temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
     }
-    payload_.get_camera_list_ = nullptr;
+    payload_.scene_info_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline const ::indiemotionpb::payloads::GetCameraList& Message::_internal_get_camera_list() const {
-  return _internal_has_get_camera_list()
-      ? *payload_.get_camera_list_
-      : reinterpret_cast< ::indiemotionpb::payloads::GetCameraList&>(::indiemotionpb::payloads::_GetCameraList_default_instance_);
+inline const ::indiemotionpb::payloads::SceneInfo& Message::_internal_scene_info() const {
+  return _internal_has_scene_info()
+      ? *payload_.scene_info_
+      : reinterpret_cast< ::indiemotionpb::payloads::SceneInfo&>(::indiemotionpb::payloads::_SceneInfo_default_instance_);
 }
-inline const ::indiemotionpb::payloads::GetCameraList& Message::get_camera_list() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.get_camera_list)
-  return _internal_get_camera_list();
+inline const ::indiemotionpb::payloads::SceneInfo& Message::scene_info() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.Message.scene_info)
+  return _internal_scene_info();
 }
-inline ::indiemotionpb::payloads::GetCameraList* Message::unsafe_arena_release_get_camera_list() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.get_camera_list)
-  if (_internal_has_get_camera_list()) {
+inline ::indiemotionpb::payloads::SceneInfo* Message::unsafe_arena_release_scene_info() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.scene_info)
+  if (_internal_has_scene_info()) {
     clear_has_payload();
-    ::indiemotionpb::payloads::GetCameraList* temp = payload_.get_camera_list_;
-    payload_.get_camera_list_ = nullptr;
+    ::indiemotionpb::payloads::SceneInfo* temp = payload_.scene_info_;
+    payload_.scene_info_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline void Message::unsafe_arena_set_allocated_get_camera_list(::indiemotionpb::payloads::GetCameraList* get_camera_list) {
+inline void Message::unsafe_arena_set_allocated_scene_info(::indiemotionpb::payloads::SceneInfo* scene_info) {
   clear_payload();
-  if (get_camera_list) {
-    set_has_get_camera_list();
-    payload_.get_camera_list_ = get_camera_list;
+  if (scene_info) {
+    set_has_scene_info();
+    payload_.scene_info_ = scene_info;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.get_camera_list)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.scene_info)
 }
-inline ::indiemotionpb::payloads::GetCameraList* Message::_internal_mutable_get_camera_list() {
-  if (!_internal_has_get_camera_list()) {
+inline ::indiemotionpb::payloads::SceneInfo* Message::_internal_mutable_scene_info() {
+  if (!_internal_has_scene_info()) {
     clear_payload();
-    set_has_get_camera_list();
-    payload_.get_camera_list_ = CreateMaybeMessage< ::indiemotionpb::payloads::GetCameraList >(GetArenaForAllocation());
+    set_has_scene_info();
+    payload_.scene_info_ = CreateMaybeMessage< ::indiemotionpb::payloads::SceneInfo >(GetArenaForAllocation());
   }
-  return payload_.get_camera_list_;
+  return payload_.scene_info_;
 }
-inline ::indiemotionpb::payloads::GetCameraList* Message::mutable_get_camera_list() {
-  ::indiemotionpb::payloads::GetCameraList* _msg = _internal_mutable_get_camera_list();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.get_camera_list)
+inline ::indiemotionpb::payloads::SceneInfo* Message::mutable_scene_info() {
+  ::indiemotionpb::payloads::SceneInfo* _msg = _internal_mutable_scene_info();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.scene_info)
   return _msg;
 }
 
-// .indiemotionpb.payloads.SessionProperty session_property = 50;
-inline bool Message::_internal_has_session_property() const {
-  return payload_case() == kSessionProperty;
+// .indiemotionpb.payloads.MotionInfo motion_info = 60;
+inline bool Message::_internal_has_motion_info() const {
+  return payload_case() == kMotionInfo;
 }
-inline bool Message::has_session_property() const {
-  return _internal_has_session_property();
+inline bool Message::has_motion_info() const {
+  return _internal_has_motion_info();
 }
-inline void Message::set_has_session_property() {
-  _oneof_case_[0] = kSessionProperty;
+inline void Message::set_has_motion_info() {
+  _oneof_case_[0] = kMotionInfo;
 }
-inline ::indiemotionpb::payloads::SessionProperty* Message::release_session_property() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.session_property)
-  if (_internal_has_session_property()) {
+inline ::indiemotionpb::payloads::MotionInfo* Message::release_motion_info() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.Message.motion_info)
+  if (_internal_has_motion_info()) {
     clear_has_payload();
-      ::indiemotionpb::payloads::SessionProperty* temp = payload_.session_property_;
+      ::indiemotionpb::payloads::MotionInfo* temp = payload_.motion_info_;
     if (GetArenaForAllocation() != nullptr) {
       temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
     }
-    payload_.session_property_ = nullptr;
+    payload_.motion_info_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline const ::indiemotionpb::payloads::SessionProperty& Message::_internal_session_property() const {
-  return _internal_has_session_property()
-      ? *payload_.session_property_
-      : reinterpret_cast< ::indiemotionpb::payloads::SessionProperty&>(::indiemotionpb::payloads::_SessionProperty_default_instance_);
+inline const ::indiemotionpb::payloads::MotionInfo& Message::_internal_motion_info() const {
+  return _internal_has_motion_info()
+      ? *payload_.motion_info_
+      : reinterpret_cast< ::indiemotionpb::payloads::MotionInfo&>(::indiemotionpb::payloads::_MotionInfo_default_instance_);
 }
-inline const ::indiemotionpb::payloads::SessionProperty& Message::session_property() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.session_property)
-  return _internal_session_property();
+inline const ::indiemotionpb::payloads::MotionInfo& Message::motion_info() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.Message.motion_info)
+  return _internal_motion_info();
 }
-inline ::indiemotionpb::payloads::SessionProperty* Message::unsafe_arena_release_session_property() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.session_property)
-  if (_internal_has_session_property()) {
+inline ::indiemotionpb::payloads::MotionInfo* Message::unsafe_arena_release_motion_info() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.motion_info)
+  if (_internal_has_motion_info()) {
     clear_has_payload();
-    ::indiemotionpb::payloads::SessionProperty* temp = payload_.session_property_;
-    payload_.session_property_ = nullptr;
+    ::indiemotionpb::payloads::MotionInfo* temp = payload_.motion_info_;
+    payload_.motion_info_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline void Message::unsafe_arena_set_allocated_session_property(::indiemotionpb::payloads::SessionProperty* session_property) {
+inline void Message::unsafe_arena_set_allocated_motion_info(::indiemotionpb::payloads::MotionInfo* motion_info) {
   clear_payload();
-  if (session_property) {
-    set_has_session_property();
-    payload_.session_property_ = session_property;
+  if (motion_info) {
+    set_has_motion_info();
+    payload_.motion_info_ = motion_info;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.session_property)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.motion_info)
 }
-inline ::indiemotionpb::payloads::SessionProperty* Message::_internal_mutable_session_property() {
-  if (!_internal_has_session_property()) {
+inline ::indiemotionpb::payloads::MotionInfo* Message::_internal_mutable_motion_info() {
+  if (!_internal_has_motion_info()) {
     clear_payload();
-    set_has_session_property();
-    payload_.session_property_ = CreateMaybeMessage< ::indiemotionpb::payloads::SessionProperty >(GetArenaForAllocation());
+    set_has_motion_info();
+    payload_.motion_info_ = CreateMaybeMessage< ::indiemotionpb::payloads::MotionInfo >(GetArenaForAllocation());
   }
-  return payload_.session_property_;
+  return payload_.motion_info_;
 }
-inline ::indiemotionpb::payloads::SessionProperty* Message::mutable_session_property() {
-  ::indiemotionpb::payloads::SessionProperty* _msg = _internal_mutable_session_property();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.session_property)
-  return _msg;
-}
-
-// .indiemotionpb.payloads.GetSessionPropertyByName get_session_property_by_name = 51;
-inline bool Message::_internal_has_get_session_property_by_name() const {
-  return payload_case() == kGetSessionPropertyByName;
-}
-inline bool Message::has_get_session_property_by_name() const {
-  return _internal_has_get_session_property_by_name();
-}
-inline void Message::set_has_get_session_property_by_name() {
-  _oneof_case_[0] = kGetSessionPropertyByName;
-}
-inline ::indiemotionpb::payloads::GetSessionPropertyByName* Message::release_get_session_property_by_name() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.get_session_property_by_name)
-  if (_internal_has_get_session_property_by_name()) {
-    clear_has_payload();
-      ::indiemotionpb::payloads::GetSessionPropertyByName* temp = payload_.get_session_property_by_name_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    payload_.get_session_property_by_name_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::indiemotionpb::payloads::GetSessionPropertyByName& Message::_internal_get_session_property_by_name() const {
-  return _internal_has_get_session_property_by_name()
-      ? *payload_.get_session_property_by_name_
-      : reinterpret_cast< ::indiemotionpb::payloads::GetSessionPropertyByName&>(::indiemotionpb::payloads::_GetSessionPropertyByName_default_instance_);
-}
-inline const ::indiemotionpb::payloads::GetSessionPropertyByName& Message::get_session_property_by_name() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.get_session_property_by_name)
-  return _internal_get_session_property_by_name();
-}
-inline ::indiemotionpb::payloads::GetSessionPropertyByName* Message::unsafe_arena_release_get_session_property_by_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.get_session_property_by_name)
-  if (_internal_has_get_session_property_by_name()) {
-    clear_has_payload();
-    ::indiemotionpb::payloads::GetSessionPropertyByName* temp = payload_.get_session_property_by_name_;
-    payload_.get_session_property_by_name_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void Message::unsafe_arena_set_allocated_get_session_property_by_name(::indiemotionpb::payloads::GetSessionPropertyByName* get_session_property_by_name) {
-  clear_payload();
-  if (get_session_property_by_name) {
-    set_has_get_session_property_by_name();
-    payload_.get_session_property_by_name_ = get_session_property_by_name;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.get_session_property_by_name)
-}
-inline ::indiemotionpb::payloads::GetSessionPropertyByName* Message::_internal_mutable_get_session_property_by_name() {
-  if (!_internal_has_get_session_property_by_name()) {
-    clear_payload();
-    set_has_get_session_property_by_name();
-    payload_.get_session_property_by_name_ = CreateMaybeMessage< ::indiemotionpb::payloads::GetSessionPropertyByName >(GetArenaForAllocation());
-  }
-  return payload_.get_session_property_by_name_;
-}
-inline ::indiemotionpb::payloads::GetSessionPropertyByName* Message::mutable_get_session_property_by_name() {
-  ::indiemotionpb::payloads::GetSessionPropertyByName* _msg = _internal_mutable_get_session_property_by_name();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.get_session_property_by_name)
-  return _msg;
-}
-
-// .indiemotionpb.payloads.ClearSessionPropertyByName clear_session_property_by_name = 52;
-inline bool Message::_internal_has_clear_session_property_by_name() const {
-  return payload_case() == kClearSessionPropertyByName;
-}
-inline bool Message::has_clear_session_property_by_name() const {
-  return _internal_has_clear_session_property_by_name();
-}
-inline void Message::set_has_clear_session_property_by_name() {
-  _oneof_case_[0] = kClearSessionPropertyByName;
-}
-inline ::indiemotionpb::payloads::ClearSessionPropertyByName* Message::release_clear_session_property_by_name() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.clear_session_property_by_name)
-  if (_internal_has_clear_session_property_by_name()) {
-    clear_has_payload();
-      ::indiemotionpb::payloads::ClearSessionPropertyByName* temp = payload_.clear_session_property_by_name_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    payload_.clear_session_property_by_name_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::indiemotionpb::payloads::ClearSessionPropertyByName& Message::_internal_clear_session_property_by_name() const {
-  return _internal_has_clear_session_property_by_name()
-      ? *payload_.clear_session_property_by_name_
-      : reinterpret_cast< ::indiemotionpb::payloads::ClearSessionPropertyByName&>(::indiemotionpb::payloads::_ClearSessionPropertyByName_default_instance_);
-}
-inline const ::indiemotionpb::payloads::ClearSessionPropertyByName& Message::clear_session_property_by_name() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.clear_session_property_by_name)
-  return _internal_clear_session_property_by_name();
-}
-inline ::indiemotionpb::payloads::ClearSessionPropertyByName* Message::unsafe_arena_release_clear_session_property_by_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.clear_session_property_by_name)
-  if (_internal_has_clear_session_property_by_name()) {
-    clear_has_payload();
-    ::indiemotionpb::payloads::ClearSessionPropertyByName* temp = payload_.clear_session_property_by_name_;
-    payload_.clear_session_property_by_name_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void Message::unsafe_arena_set_allocated_clear_session_property_by_name(::indiemotionpb::payloads::ClearSessionPropertyByName* clear_session_property_by_name) {
-  clear_payload();
-  if (clear_session_property_by_name) {
-    set_has_clear_session_property_by_name();
-    payload_.clear_session_property_by_name_ = clear_session_property_by_name;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.clear_session_property_by_name)
-}
-inline ::indiemotionpb::payloads::ClearSessionPropertyByName* Message::_internal_mutable_clear_session_property_by_name() {
-  if (!_internal_has_clear_session_property_by_name()) {
-    clear_payload();
-    set_has_clear_session_property_by_name();
-    payload_.clear_session_property_by_name_ = CreateMaybeMessage< ::indiemotionpb::payloads::ClearSessionPropertyByName >(GetArenaForAllocation());
-  }
-  return payload_.clear_session_property_by_name_;
-}
-inline ::indiemotionpb::payloads::ClearSessionPropertyByName* Message::mutable_clear_session_property_by_name() {
-  ::indiemotionpb::payloads::ClearSessionPropertyByName* _msg = _internal_mutable_clear_session_property_by_name();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.clear_session_property_by_name)
-  return _msg;
-}
-
-// .indiemotionpb.payloads.InputDeviceInfo input_device_info = 60;
-inline bool Message::_internal_has_input_device_info() const {
-  return payload_case() == kInputDeviceInfo;
-}
-inline bool Message::has_input_device_info() const {
-  return _internal_has_input_device_info();
-}
-inline void Message::set_has_input_device_info() {
-  _oneof_case_[0] = kInputDeviceInfo;
-}
-inline ::indiemotionpb::payloads::InputDeviceInfo* Message::release_input_device_info() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.input_device_info)
-  if (_internal_has_input_device_info()) {
-    clear_has_payload();
-      ::indiemotionpb::payloads::InputDeviceInfo* temp = payload_.input_device_info_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    payload_.input_device_info_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::indiemotionpb::payloads::InputDeviceInfo& Message::_internal_input_device_info() const {
-  return _internal_has_input_device_info()
-      ? *payload_.input_device_info_
-      : reinterpret_cast< ::indiemotionpb::payloads::InputDeviceInfo&>(::indiemotionpb::payloads::_InputDeviceInfo_default_instance_);
-}
-inline const ::indiemotionpb::payloads::InputDeviceInfo& Message::input_device_info() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.input_device_info)
-  return _internal_input_device_info();
-}
-inline ::indiemotionpb::payloads::InputDeviceInfo* Message::unsafe_arena_release_input_device_info() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.input_device_info)
-  if (_internal_has_input_device_info()) {
-    clear_has_payload();
-    ::indiemotionpb::payloads::InputDeviceInfo* temp = payload_.input_device_info_;
-    payload_.input_device_info_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void Message::unsafe_arena_set_allocated_input_device_info(::indiemotionpb::payloads::InputDeviceInfo* input_device_info) {
-  clear_payload();
-  if (input_device_info) {
-    set_has_input_device_info();
-    payload_.input_device_info_ = input_device_info;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.input_device_info)
-}
-inline ::indiemotionpb::payloads::InputDeviceInfo* Message::_internal_mutable_input_device_info() {
-  if (!_internal_has_input_device_info()) {
-    clear_payload();
-    set_has_input_device_info();
-    payload_.input_device_info_ = CreateMaybeMessage< ::indiemotionpb::payloads::InputDeviceInfo >(GetArenaForAllocation());
-  }
-  return payload_.input_device_info_;
-}
-inline ::indiemotionpb::payloads::InputDeviceInfo* Message::mutable_input_device_info() {
-  ::indiemotionpb::payloads::InputDeviceInfo* _msg = _internal_mutable_input_device_info();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.input_device_info)
-  return _msg;
-}
-
-// .indiemotionpb.payloads.InputDeviceXForm input_device_xform = 61;
-inline bool Message::_internal_has_input_device_xform() const {
-  return payload_case() == kInputDeviceXform;
-}
-inline bool Message::has_input_device_xform() const {
-  return _internal_has_input_device_xform();
-}
-inline void Message::set_has_input_device_xform() {
-  _oneof_case_[0] = kInputDeviceXform;
-}
-inline ::indiemotionpb::payloads::InputDeviceXForm* Message::release_input_device_xform() {
-  // @@protoc_insertion_point(field_release:indiemotionpb.Message.input_device_xform)
-  if (_internal_has_input_device_xform()) {
-    clear_has_payload();
-      ::indiemotionpb::payloads::InputDeviceXForm* temp = payload_.input_device_xform_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    payload_.input_device_xform_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::indiemotionpb::payloads::InputDeviceXForm& Message::_internal_input_device_xform() const {
-  return _internal_has_input_device_xform()
-      ? *payload_.input_device_xform_
-      : reinterpret_cast< ::indiemotionpb::payloads::InputDeviceXForm&>(::indiemotionpb::payloads::_InputDeviceXForm_default_instance_);
-}
-inline const ::indiemotionpb::payloads::InputDeviceXForm& Message::input_device_xform() const {
-  // @@protoc_insertion_point(field_get:indiemotionpb.Message.input_device_xform)
-  return _internal_input_device_xform();
-}
-inline ::indiemotionpb::payloads::InputDeviceXForm* Message::unsafe_arena_release_input_device_xform() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.input_device_xform)
-  if (_internal_has_input_device_xform()) {
-    clear_has_payload();
-    ::indiemotionpb::payloads::InputDeviceXForm* temp = payload_.input_device_xform_;
-    payload_.input_device_xform_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void Message::unsafe_arena_set_allocated_input_device_xform(::indiemotionpb::payloads::InputDeviceXForm* input_device_xform) {
-  clear_payload();
-  if (input_device_xform) {
-    set_has_input_device_xform();
-    payload_.input_device_xform_ = input_device_xform;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.input_device_xform)
-}
-inline ::indiemotionpb::payloads::InputDeviceXForm* Message::_internal_mutable_input_device_xform() {
-  if (!_internal_has_input_device_xform()) {
-    clear_payload();
-    set_has_input_device_xform();
-    payload_.input_device_xform_ = CreateMaybeMessage< ::indiemotionpb::payloads::InputDeviceXForm >(GetArenaForAllocation());
-  }
-  return payload_.input_device_xform_;
-}
-inline ::indiemotionpb::payloads::InputDeviceXForm* Message::mutable_input_device_xform() {
-  ::indiemotionpb::payloads::InputDeviceXForm* _msg = _internal_mutable_input_device_xform();
-  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.input_device_xform)
+inline ::indiemotionpb::payloads::MotionInfo* Message::mutable_motion_info() {
+  ::indiemotionpb::payloads::MotionInfo* _msg = _internal_mutable_motion_info();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.motion_info)
   return _msg;
 }
 

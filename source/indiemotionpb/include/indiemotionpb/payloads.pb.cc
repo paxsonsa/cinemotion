@@ -18,17 +18,6 @@
 PROTOBUF_PRAGMA_INIT_SEG
 namespace indiemotionpb {
 namespace payloads {
-constexpr Acknowledge::Acknowledge(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
-struct AcknowledgeDefaultTypeInternal {
-  constexpr AcknowledgeDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~AcknowledgeDefaultTypeInternal() {}
-  union {
-    Acknowledge _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AcknowledgeDefaultTypeInternal _Acknowledge_default_instance_;
 constexpr Error::Error(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : description_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
@@ -44,22 +33,22 @@ struct ErrorDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ErrorDefaultTypeInternal _Error_default_instance_;
-constexpr InputDeviceInfo::InputDeviceInfo(
+constexpr SessionInfo::SessionInfo(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : session_id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  : session_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , api_version_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
-struct InputDeviceInfoDefaultTypeInternal {
-  constexpr InputDeviceInfoDefaultTypeInternal()
+struct SessionInfoDefaultTypeInternal {
+  constexpr SessionInfoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~InputDeviceInfoDefaultTypeInternal() {}
+  ~SessionInfoDefaultTypeInternal() {}
   union {
-    InputDeviceInfo _instance;
+    SessionInfo _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT InputDeviceInfoDefaultTypeInternal _InputDeviceInfo_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SessionInfoDefaultTypeInternal _SessionInfo_default_instance_;
 constexpr InitializeSession::InitializeSession(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : device_info_(nullptr){}
+  : session_info_(nullptr){}
 struct InitializeSessionDefaultTypeInternal {
   constexpr InitializeSessionDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -92,105 +81,67 @@ struct CameraDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CameraDefaultTypeInternal _Camera_default_instance_;
-constexpr CameraList::CameraList(
+constexpr SceneInfo::SceneInfo(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : cameras_(){}
-struct CameraListDefaultTypeInternal {
-  constexpr CameraListDefaultTypeInternal()
+  : cameras_()
+  , active_camera_(nullptr){}
+struct SceneInfoDefaultTypeInternal {
+  constexpr SceneInfoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~CameraListDefaultTypeInternal() {}
+  ~SceneInfoDefaultTypeInternal() {}
   union {
-    CameraList _instance;
+    SceneInfo _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CameraListDefaultTypeInternal _CameraList_default_instance_;
-constexpr GetCameraList::GetCameraList(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
-struct GetCameraListDefaultTypeInternal {
-  constexpr GetCameraListDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~GetCameraListDefaultTypeInternal() {}
-  union {
-    GetCameraList _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GetCameraListDefaultTypeInternal _GetCameraList_default_instance_;
-constexpr SessionProperty::SessionProperty(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , _oneof_case_{}{}
-struct SessionPropertyDefaultTypeInternal {
-  constexpr SessionPropertyDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~SessionPropertyDefaultTypeInternal() {}
-  union {
-    SessionProperty _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SessionPropertyDefaultTypeInternal _SessionProperty_default_instance_;
-constexpr GetSessionPropertyByName::GetSessionPropertyByName(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
-struct GetSessionPropertyByNameDefaultTypeInternal {
-  constexpr GetSessionPropertyByNameDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~GetSessionPropertyByNameDefaultTypeInternal() {}
-  union {
-    GetSessionPropertyByName _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GetSessionPropertyByNameDefaultTypeInternal _GetSessionPropertyByName_default_instance_;
-constexpr ClearSessionPropertyByName::ClearSessionPropertyByName(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
-struct ClearSessionPropertyByNameDefaultTypeInternal {
-  constexpr ClearSessionPropertyByNameDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~ClearSessionPropertyByNameDefaultTypeInternal() {}
-  union {
-    ClearSessionPropertyByName _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ClearSessionPropertyByNameDefaultTypeInternal _ClearSessionPropertyByName_default_instance_;
-constexpr InputDeviceXForm_XFormData::InputDeviceXForm_XFormData(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SceneInfoDefaultTypeInternal _SceneInfo_default_instance_;
+constexpr XForm_Vector::XForm_Vector(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : x_(0)
   , y_(0)
   , z_(0){}
-struct InputDeviceXForm_XFormDataDefaultTypeInternal {
-  constexpr InputDeviceXForm_XFormDataDefaultTypeInternal()
+struct XForm_VectorDefaultTypeInternal {
+  constexpr XForm_VectorDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~InputDeviceXForm_XFormDataDefaultTypeInternal() {}
+  ~XForm_VectorDefaultTypeInternal() {}
   union {
-    InputDeviceXForm_XFormData _instance;
+    XForm_Vector _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT InputDeviceXForm_XFormDataDefaultTypeInternal _InputDeviceXForm_XFormData_default_instance_;
-constexpr InputDeviceXForm::InputDeviceXForm(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT XForm_VectorDefaultTypeInternal _XForm_Vector_default_instance_;
+constexpr XForm::XForm(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : translation_(nullptr)
   , orientation_(nullptr){}
-struct InputDeviceXFormDefaultTypeInternal {
-  constexpr InputDeviceXFormDefaultTypeInternal()
+struct XFormDefaultTypeInternal {
+  constexpr XFormDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~InputDeviceXFormDefaultTypeInternal() {}
+  ~XFormDefaultTypeInternal() {}
   union {
-    InputDeviceXForm _instance;
+    XForm _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT InputDeviceXFormDefaultTypeInternal _InputDeviceXForm_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT XFormDefaultTypeInternal _XForm_default_instance_;
+constexpr MotionInfo::MotionInfo(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : xform_(nullptr)
+  , status_(0)
+{}
+struct MotionInfoDefaultTypeInternal {
+  constexpr MotionInfoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~MotionInfoDefaultTypeInternal() {}
+  union {
+    MotionInfo _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MotionInfoDefaultTypeInternal _MotionInfo_default_instance_;
 }  // namespace payloads
 }  // namespace indiemotionpb
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[13];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[1];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[9];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[2];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_payloads_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Acknowledge, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -200,18 +151,18 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PR
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, description_),
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Error, is_fatal_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceInfo, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceInfo, session_id_),
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceInfo, api_version_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionInfo, session_name_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionInfo, api_version_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InitializeSession, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InitializeSession, device_info_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InitializeSession, session_info_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ShutdownSession, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -224,123 +175,91 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PR
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Camera, id_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::CameraList, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::CameraList, cameras_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, active_camera_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, cameras_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::GetCameraList, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm_Vector, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm_Vector, x_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm_Vector, y_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm_Vector, z_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, name_),
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SessionProperty, value_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::GetSessionPropertyByName, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::GetSessionPropertyByName, name_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm, translation_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm, orientation_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ClearSessionPropertyByName, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::MotionInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ClearSessionPropertyByName, name_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm_XFormData, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm_XFormData, x_),
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm_XFormData, y_),
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm_XFormData, z_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm, translation_),
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::InputDeviceXForm, orientation_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::MotionInfo, status_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::MotionInfo, xform_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::indiemotionpb::payloads::Acknowledge)},
-  { 5, -1, sizeof(::indiemotionpb::payloads::Error)},
-  { 13, -1, sizeof(::indiemotionpb::payloads::InputDeviceInfo)},
-  { 20, -1, sizeof(::indiemotionpb::payloads::InitializeSession)},
-  { 26, -1, sizeof(::indiemotionpb::payloads::ShutdownSession)},
-  { 31, -1, sizeof(::indiemotionpb::payloads::Camera)},
-  { 37, -1, sizeof(::indiemotionpb::payloads::CameraList)},
-  { 43, -1, sizeof(::indiemotionpb::payloads::GetCameraList)},
-  { 48, -1, sizeof(::indiemotionpb::payloads::SessionProperty)},
-  { 59, -1, sizeof(::indiemotionpb::payloads::GetSessionPropertyByName)},
-  { 65, -1, sizeof(::indiemotionpb::payloads::ClearSessionPropertyByName)},
-  { 71, -1, sizeof(::indiemotionpb::payloads::InputDeviceXForm_XFormData)},
-  { 79, -1, sizeof(::indiemotionpb::payloads::InputDeviceXForm)},
+  { 0, -1, sizeof(::indiemotionpb::payloads::Error)},
+  { 8, -1, sizeof(::indiemotionpb::payloads::SessionInfo)},
+  { 15, -1, sizeof(::indiemotionpb::payloads::InitializeSession)},
+  { 21, -1, sizeof(::indiemotionpb::payloads::ShutdownSession)},
+  { 26, -1, sizeof(::indiemotionpb::payloads::Camera)},
+  { 32, -1, sizeof(::indiemotionpb::payloads::SceneInfo)},
+  { 39, -1, sizeof(::indiemotionpb::payloads::XForm_Vector)},
+  { 47, -1, sizeof(::indiemotionpb::payloads::XForm)},
+  { 54, -1, sizeof(::indiemotionpb::payloads::MotionInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_Acknowledge_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_Error_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InputDeviceInfo_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_SessionInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InitializeSession_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_ShutdownSession_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_Camera_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_CameraList_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_GetCameraList_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_SessionProperty_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_GetSessionPropertyByName_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_ClearSessionPropertyByName_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InputDeviceXForm_XFormData_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InputDeviceXForm_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_SceneInfo_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_XForm_Vector_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_XForm_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_MotionInfo_default_instance_),
 };
 
 const char descriptor_table_protodef_payloads_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016payloads.proto\022\026indiemotionpb.payloads"
-  "\"\r\n\013Acknowledge\"\224\003\n\005Error\0220\n\004type\030\r \001(\0162"
-  "\".indiemotionpb.payloads.Error.Type\022\023\n\013d"
-  "escription\030\013 \001(\t\022\020\n\010is_fatal\030\014 \001(\010\"\261\002\n\004T"
-  "ype\022\020\n\014UnknownError\020\000\022\024\n\020InputDeviceErro"
-  "r\020\001\022\024\n\020ApplicationError\020\002\022\r\n\tUserError\020\003"
-  "\022\023\n\017BadMessageError\020\004\022\037\n\033APIVersionNotSu"
-  "pportedError\020\005\022\020\n\014SessionError\020\n\022\036\n\032Sess"
-  "ionNotInitializedError\020\013\022 \n\034SessionPrope"
-  "rtyNotFoundError\020\014\022\034\n\030SessionPropertyTyp"
-  "eError\020\r\022\033\n\027ActiveCameraNotSetError\020\024\022\027\n"
-  "\023CameraNotFoundError\020\025\":\n\017InputDeviceInf"
-  "o\022\022\n\nsession_id\030\n \001(\t\022\023\n\013api_version\030\024 \001"
-  "(\t\"Q\n\021InitializeSession\022<\n\013device_info\030\n"
-  " \001(\0132\'.indiemotionpb.payloads.InputDevic"
-  "eInfo\"\021\n\017ShutdownSession\"\024\n\006Camera\022\n\n\002id"
-  "\030\n \001(\t\"=\n\nCameraList\022/\n\007cameras\030\001 \003(\0132\036."
-  "indiemotionpb.payloads.Camera\"\017\n\rGetCame"
-  "raList\"\202\001\n\017SessionProperty\022\014\n\004name\030\001 \001(\t"
-  "\022\023\n\tint_value\030\n \001(\003H\000\022\026\n\014string_value\030\024 "
-  "\001(\tH\000\022\025\n\013float_value\030\036 \001(\001H\000\022\024\n\nbool_val"
-  "ue\030( \001(\010H\000B\007\n\005value\"(\n\030GetSessionPropert"
-  "yByName\022\014\n\004name\030\n \001(\t\"*\n\032ClearSessionPro"
-  "pertyByName\022\014\n\004name\030\n \001(\t\"\322\001\n\020InputDevic"
-  "eXForm\022G\n\013translation\030\001 \001(\01322.indiemotio"
-  "npb.payloads.InputDeviceXForm.XFormData\022"
-  "G\n\013orientation\030\002 \001(\01322.indiemotionpb.pay"
-  "loads.InputDeviceXForm.XFormData\032,\n\tXFor"
-  "mData\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022\t\n\001z\030\003 \001(\001b\006"
-  "proto3"
+  "\"\324\002\n\005Error\0220\n\004type\030\r \001(\0162\".indiemotionpb"
+  ".payloads.Error.Type\022\023\n\013description\030\013 \001("
+  "\t\022\020\n\010is_fatal\030\014 \001(\010\"\361\001\n\004Type\022\020\n\014UnknownE"
+  "rror\020\000\022\024\n\020InputDeviceError\020\001\022\024\n\020Applicat"
+  "ionError\020\002\022\r\n\tUserError\020\003\022\023\n\017BadMessageE"
+  "rror\020\004\022\037\n\033APIVersionNotSupportedError\020\005\022"
+  "\020\n\014SessionError\020\n\022\036\n\032SessionNotInitializ"
+  "edError\020\013\022\033\n\027ActiveCameraNotSetError\020\024\022\027"
+  "\n\023CameraNotFoundError\020\025\"8\n\013SessionInfo\022\024"
+  "\n\014session_name\030\n \001(\t\022\023\n\013api_version\030\024 \001("
+  "\t\"N\n\021InitializeSession\0229\n\014session_info\030\n"
+  " \001(\0132#.indiemotionpb.payloads.SessionInf"
+  "o\"\021\n\017ShutdownSession\"\024\n\006Camera\022\n\n\002id\030\n \001"
+  "(\t\"s\n\tSceneInfo\0225\n\ractive_camera\030\n \001(\0132\036"
+  ".indiemotionpb.payloads.Camera\022/\n\007camera"
+  "s\030\024 \003(\0132\036.indiemotionpb.payloads.Camera\""
+  "\250\001\n\005XForm\0229\n\013translation\030\001 \001(\0132$.indiemo"
+  "tionpb.payloads.XForm.Vector\0229\n\013orientat"
+  "ion\030\002 \001(\0132$.indiemotionpb.payloads.XForm"
+  ".Vector\032)\n\006Vector\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022"
+  "\t\n\001z\030\003 \001(\001\"\242\001\n\nMotionInfo\0229\n\006status\030\001 \001("
+  "\0162).indiemotionpb.payloads.MotionInfo.St"
+  "atus\022,\n\005xform\030\n \001(\0132\035.indiemotionpb.payl"
+  "oads.XForm\"+\n\006Status\022\010\n\004Idle\020\000\022\010\n\004Live\020\001"
+  "\022\r\n\tRecording\020\002b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_payloads_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_payloads_2eproto = {
-  false, false, 1166, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
-  &descriptor_table_payloads_2eproto_once, nullptr, 0, 13,
+  false, false, 1023, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
+  &descriptor_table_payloads_2eproto_once, nullptr, 0, 9,
   schemas, file_default_instances, TableStruct_payloads_2eproto::offsets,
   file_level_metadata_payloads_2eproto, file_level_enum_descriptors_payloads_2eproto, file_level_service_descriptors_payloads_2eproto,
 };
@@ -366,8 +285,6 @@ bool Error_Type_IsValid(int value) {
     case 5:
     case 10:
     case 11:
-    case 12:
-    case 13:
     case 20:
     case 21:
       return true;
@@ -385,167 +302,35 @@ constexpr Error_Type Error::BadMessageError;
 constexpr Error_Type Error::APIVersionNotSupportedError;
 constexpr Error_Type Error::SessionError;
 constexpr Error_Type Error::SessionNotInitializedError;
-constexpr Error_Type Error::SessionPropertyNotFoundError;
-constexpr Error_Type Error::SessionPropertyTypeError;
 constexpr Error_Type Error::ActiveCameraNotSetError;
 constexpr Error_Type Error::CameraNotFoundError;
 constexpr Error_Type Error::Type_MIN;
 constexpr Error_Type Error::Type_MAX;
 constexpr int Error::Type_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
-
-// ===================================================================
-
-class Acknowledge::_Internal {
- public:
-};
-
-Acknowledge::Acknowledge(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MotionInfo_Status_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_payloads_2eproto);
+  return file_level_enum_descriptors_payloads_2eproto[1];
+}
+bool MotionInfo_Status_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
   }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.Acknowledge)
-}
-Acknowledge::Acknowledge(const Acknowledge& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.Acknowledge)
 }
 
-inline void Acknowledge::SharedCtor() {
-}
-
-Acknowledge::~Acknowledge() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.Acknowledge)
-  if (GetArenaForAllocation() != nullptr) return;
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-inline void Acknowledge::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-}
-
-void Acknowledge::ArenaDtor(void* object) {
-  Acknowledge* _this = reinterpret_cast< Acknowledge* >(object);
-  (void)_this;
-}
-void Acknowledge::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void Acknowledge::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-
-void Acknowledge::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.Acknowledge)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* Acknowledge::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* Acknowledge::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.Acknowledge)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.Acknowledge)
-  return target;
-}
-
-size_t Acknowledge::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.Acknowledge)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Acknowledge::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    Acknowledge::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Acknowledge::GetClassData() const { return &_class_data_; }
-
-void Acknowledge::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<Acknowledge *>(to)->MergeFrom(
-      static_cast<const Acknowledge &>(from));
-}
-
-
-void Acknowledge::MergeFrom(const Acknowledge& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.Acknowledge)
-  GOOGLE_DCHECK_NE(&from, this);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void Acknowledge::CopyFrom(const Acknowledge& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.Acknowledge)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool Acknowledge::IsInitialized() const {
-  return true;
-}
-
-void Acknowledge::InternalSwap(Acknowledge* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata Acknowledge::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[0]);
-}
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+constexpr MotionInfo_Status MotionInfo::Idle;
+constexpr MotionInfo_Status MotionInfo::Live;
+constexpr MotionInfo_Status MotionInfo::Recording;
+constexpr MotionInfo_Status MotionInfo::Status_MIN;
+constexpr MotionInfo_Status MotionInfo::Status_MAX;
+constexpr int MotionInfo::Status_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
 
 // ===================================================================
 
@@ -805,30 +590,30 @@ void Error::InternalSwap(Error* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata Error::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[1]);
+      file_level_metadata_payloads_2eproto[0]);
 }
 
 // ===================================================================
 
-class InputDeviceInfo::_Internal {
+class SessionInfo::_Internal {
  public:
 };
 
-InputDeviceInfo::InputDeviceInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SessionInfo::SessionInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.InputDeviceInfo)
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.SessionInfo)
 }
-InputDeviceInfo::InputDeviceInfo(const InputDeviceInfo& from)
+SessionInfo::SessionInfo(const SessionInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  session_id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_session_id().empty()) {
-    session_id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_session_id(), 
+  session_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_session_name().empty()) {
+    session_name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_session_name(), 
       GetArenaForAllocation());
   }
   api_version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
@@ -836,60 +621,60 @@ InputDeviceInfo::InputDeviceInfo(const InputDeviceInfo& from)
     api_version_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_api_version(), 
       GetArenaForAllocation());
   }
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.InputDeviceInfo)
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.SessionInfo)
 }
 
-inline void InputDeviceInfo::SharedCtor() {
-session_id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void SessionInfo::SharedCtor() {
+session_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 api_version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-InputDeviceInfo::~InputDeviceInfo() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.InputDeviceInfo)
+SessionInfo::~SessionInfo() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.SessionInfo)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void InputDeviceInfo::SharedDtor() {
+inline void SessionInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  session_id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  session_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   api_version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-void InputDeviceInfo::ArenaDtor(void* object) {
-  InputDeviceInfo* _this = reinterpret_cast< InputDeviceInfo* >(object);
+void SessionInfo::ArenaDtor(void* object) {
+  SessionInfo* _this = reinterpret_cast< SessionInfo* >(object);
   (void)_this;
 }
-void InputDeviceInfo::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void SessionInfo::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void InputDeviceInfo::SetCachedSize(int size) const {
+void SessionInfo::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
-void InputDeviceInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.InputDeviceInfo)
+void SessionInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.SessionInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  session_id_.ClearToEmpty();
+  session_name_.ClearToEmpty();
   api_version_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* InputDeviceInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* SessionInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string session_id = 10;
+      // string session_name = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          auto str = _internal_mutable_session_id();
+          auto str = _internal_mutable_session_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.InputDeviceInfo.session_id"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionInfo.session_name"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -898,7 +683,7 @@ const char* InputDeviceInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPAC
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 162)) {
           auto str = _internal_mutable_api_version();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.InputDeviceInfo.api_version"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionInfo.api_version"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -925,20 +710,20 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* InputDeviceInfo::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* SessionInfo::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.InputDeviceInfo)
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.SessionInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string session_id = 10;
-  if (!this->_internal_session_id().empty()) {
+  // string session_name = 10;
+  if (!this->_internal_session_name().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_session_id().data(), static_cast<int>(this->_internal_session_id().length()),
+      this->_internal_session_name().data(), static_cast<int>(this->_internal_session_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.InputDeviceInfo.session_id");
+      "indiemotionpb.payloads.SessionInfo.session_name");
     target = stream->WriteStringMaybeAliased(
-        10, this->_internal_session_id(), target);
+        10, this->_internal_session_name(), target);
   }
 
   // string api_version = 20;
@@ -946,7 +731,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_api_version().data(), static_cast<int>(this->_internal_api_version().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.InputDeviceInfo.api_version");
+      "indiemotionpb.payloads.SessionInfo.api_version");
     target = stream->WriteStringMaybeAliased(
         20, this->_internal_api_version(), target);
   }
@@ -955,23 +740,23 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.InputDeviceInfo)
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.SessionInfo)
   return target;
 }
 
-size_t InputDeviceInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.InputDeviceInfo)
+size_t SessionInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.SessionInfo)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string session_id = 10;
-  if (!this->_internal_session_id().empty()) {
+  // string session_name = 10;
+  if (!this->_internal_session_name().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_session_id());
+        this->_internal_session_name());
   }
 
   // string api_version = 20;
@@ -990,27 +775,27 @@ size_t InputDeviceInfo::ByteSizeLong() const {
   return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData InputDeviceInfo::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SessionInfo::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    InputDeviceInfo::MergeImpl
+    SessionInfo::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*InputDeviceInfo::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SessionInfo::GetClassData() const { return &_class_data_; }
 
-void InputDeviceInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+void SessionInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
                       const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<InputDeviceInfo *>(to)->MergeFrom(
-      static_cast<const InputDeviceInfo &>(from));
+  static_cast<SessionInfo *>(to)->MergeFrom(
+      static_cast<const SessionInfo &>(from));
 }
 
 
-void InputDeviceInfo::MergeFrom(const InputDeviceInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.InputDeviceInfo)
+void SessionInfo::MergeFrom(const SessionInfo& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.SessionInfo)
   GOOGLE_DCHECK_NE(&from, this);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_session_id().empty()) {
-    _internal_set_session_id(from._internal_session_id());
+  if (!from._internal_session_name().empty()) {
+    _internal_set_session_name(from._internal_session_name());
   }
   if (!from._internal_api_version().empty()) {
     _internal_set_api_version(from._internal_api_version());
@@ -1018,24 +803,24 @@ void InputDeviceInfo::MergeFrom(const InputDeviceInfo& from) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void InputDeviceInfo::CopyFrom(const InputDeviceInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.InputDeviceInfo)
+void SessionInfo::CopyFrom(const SessionInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.SessionInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool InputDeviceInfo::IsInitialized() const {
+bool SessionInfo::IsInitialized() const {
   return true;
 }
 
-void InputDeviceInfo::InternalSwap(InputDeviceInfo* other) {
+void SessionInfo::InternalSwap(SessionInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &session_id_, GetArenaForAllocation(),
-      &other->session_id_, other->GetArenaForAllocation()
+      &session_name_, GetArenaForAllocation(),
+      &other->session_name_, other->GetArenaForAllocation()
   );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -1044,22 +829,22 @@ void InputDeviceInfo::InternalSwap(InputDeviceInfo* other) {
   );
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata InputDeviceInfo::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SessionInfo::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[2]);
+      file_level_metadata_payloads_2eproto[1]);
 }
 
 // ===================================================================
 
 class InitializeSession::_Internal {
  public:
-  static const ::indiemotionpb::payloads::InputDeviceInfo& device_info(const InitializeSession* msg);
+  static const ::indiemotionpb::payloads::SessionInfo& session_info(const InitializeSession* msg);
 };
 
-const ::indiemotionpb::payloads::InputDeviceInfo&
-InitializeSession::_Internal::device_info(const InitializeSession* msg) {
-  return *msg->device_info_;
+const ::indiemotionpb::payloads::SessionInfo&
+InitializeSession::_Internal::session_info(const InitializeSession* msg) {
+  return *msg->session_info_;
 }
 InitializeSession::InitializeSession(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -1073,16 +858,16 @@ InitializeSession::InitializeSession(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 InitializeSession::InitializeSession(const InitializeSession& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_device_info()) {
-    device_info_ = new ::indiemotionpb::payloads::InputDeviceInfo(*from.device_info_);
+  if (from._internal_has_session_info()) {
+    session_info_ = new ::indiemotionpb::payloads::SessionInfo(*from.session_info_);
   } else {
-    device_info_ = nullptr;
+    session_info_ = nullptr;
   }
   // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.InitializeSession)
 }
 
 inline void InitializeSession::SharedCtor() {
-device_info_ = nullptr;
+session_info_ = nullptr;
 }
 
 InitializeSession::~InitializeSession() {
@@ -1094,7 +879,7 @@ InitializeSession::~InitializeSession() {
 
 inline void InitializeSession::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete device_info_;
+  if (this != internal_default_instance()) delete session_info_;
 }
 
 void InitializeSession::ArenaDtor(void* object) {
@@ -1113,10 +898,10 @@ void InitializeSession::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && device_info_ != nullptr) {
-    delete device_info_;
+  if (GetArenaForAllocation() == nullptr && session_info_ != nullptr) {
+    delete session_info_;
   }
-  device_info_ = nullptr;
+  session_info_ = nullptr;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1126,10 +911,10 @@ const char* InitializeSession::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .indiemotionpb.payloads.InputDeviceInfo device_info = 10;
+      // .indiemotionpb.payloads.SessionInfo session_info = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          ptr = ctx->ParseMessage(_internal_mutable_device_info(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_session_info(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1162,12 +947,12 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .indiemotionpb.payloads.InputDeviceInfo device_info = 10;
-  if (this->_internal_has_device_info()) {
+  // .indiemotionpb.payloads.SessionInfo session_info = 10;
+  if (this->_internal_has_session_info()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        10, _Internal::device_info(this), target, stream);
+        10, _Internal::session_info(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1186,11 +971,11 @@ size_t InitializeSession::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .indiemotionpb.payloads.InputDeviceInfo device_info = 10;
-  if (this->_internal_has_device_info()) {
+  // .indiemotionpb.payloads.SessionInfo session_info = 10;
+  if (this->_internal_has_session_info()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *device_info_);
+        *session_info_);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1221,8 +1006,8 @@ void InitializeSession::MergeFrom(const InitializeSession& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_device_info()) {
-    _internal_mutable_device_info()->::indiemotionpb::payloads::InputDeviceInfo::MergeFrom(from._internal_device_info());
+  if (from._internal_has_session_info()) {
+    _internal_mutable_session_info()->::indiemotionpb::payloads::SessionInfo::MergeFrom(from._internal_session_info());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1241,13 +1026,13 @@ bool InitializeSession::IsInitialized() const {
 void InitializeSession::InternalSwap(InitializeSession* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(device_info_, other->device_info_);
+  swap(session_info_, other->session_info_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata InitializeSession::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[3]);
+      file_level_metadata_payloads_2eproto[2]);
 }
 
 // ===================================================================
@@ -1400,7 +1185,7 @@ void ShutdownSession::InternalSwap(ShutdownSession* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ShutdownSession::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[4]);
+      file_level_metadata_payloads_2eproto[3]);
 }
 
 // ===================================================================
@@ -1600,16 +1385,21 @@ void Camera::InternalSwap(Camera* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata Camera::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[5]);
+      file_level_metadata_payloads_2eproto[4]);
 }
 
 // ===================================================================
 
-class CameraList::_Internal {
+class SceneInfo::_Internal {
  public:
+  static const ::indiemotionpb::payloads::Camera& active_camera(const SceneInfo* msg);
 };
 
-CameraList::CameraList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+const ::indiemotionpb::payloads::Camera&
+SceneInfo::_Internal::active_camera(const SceneInfo* msg) {
+  return *msg->active_camera_;
+}
+SceneInfo::SceneInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
   cameras_(arena) {
@@ -1617,65 +1407,83 @@ CameraList::CameraList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.CameraList)
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.SceneInfo)
 }
-CameraList::CameraList(const CameraList& from)
+SceneInfo::SceneInfo(const SceneInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       cameras_(from.cameras_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.CameraList)
+  if (from._internal_has_active_camera()) {
+    active_camera_ = new ::indiemotionpb::payloads::Camera(*from.active_camera_);
+  } else {
+    active_camera_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.SceneInfo)
 }
 
-inline void CameraList::SharedCtor() {
+inline void SceneInfo::SharedCtor() {
+active_camera_ = nullptr;
 }
 
-CameraList::~CameraList() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.CameraList)
+SceneInfo::~SceneInfo() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.SceneInfo)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void CameraList::SharedDtor() {
+inline void SceneInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete active_camera_;
 }
 
-void CameraList::ArenaDtor(void* object) {
-  CameraList* _this = reinterpret_cast< CameraList* >(object);
+void SceneInfo::ArenaDtor(void* object) {
+  SceneInfo* _this = reinterpret_cast< SceneInfo* >(object);
   (void)_this;
 }
-void CameraList::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void SceneInfo::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void CameraList::SetCachedSize(int size) const {
+void SceneInfo::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
-void CameraList::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.CameraList)
+void SceneInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.SceneInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cameras_.Clear();
+  if (GetArenaForAllocation() == nullptr && active_camera_ != nullptr) {
+    delete active_camera_;
+  }
+  active_camera_ = nullptr;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* CameraList::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* SceneInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // repeated .indiemotionpb.payloads.Camera cameras = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
-          ptr -= 1;
+      // .indiemotionpb.payloads.Camera active_camera = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          ptr = ctx->ParseMessage(_internal_mutable_active_camera(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .indiemotionpb.payloads.Camera cameras = 20;
+      case 20:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 162)) {
+          ptr -= 2;
           do {
-            ptr += 1;
+            ptr += 2;
             ptr = ctx->ParseMessage(_internal_add_cameras(), ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<162>(ptr));
         } else goto handle_unusual;
         continue;
       default: {
@@ -1701,43 +1509,58 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* CameraList::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* SceneInfo::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.CameraList)
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.SceneInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .indiemotionpb.payloads.Camera cameras = 1;
+  // .indiemotionpb.payloads.Camera active_camera = 10;
+  if (this->_internal_has_active_camera()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        10, _Internal::active_camera(this), target, stream);
+  }
+
+  // repeated .indiemotionpb.payloads.Camera cameras = 20;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->_internal_cameras_size()); i < n; i++) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, this->_internal_cameras(i), target, stream);
+      InternalWriteMessage(20, this->_internal_cameras(i), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.CameraList)
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.SceneInfo)
   return target;
 }
 
-size_t CameraList::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.CameraList)
+size_t SceneInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.SceneInfo)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .indiemotionpb.payloads.Camera cameras = 1;
-  total_size += 1UL * this->_internal_cameras_size();
+  // repeated .indiemotionpb.payloads.Camera cameras = 20;
+  total_size += 2UL * this->_internal_cameras_size();
   for (const auto& msg : this->cameras_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
+  // .indiemotionpb.payloads.Camera active_camera = 10;
+  if (this->_internal_has_active_camera()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *active_camera_);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
         _internal_metadata_, total_size, &_cached_size_);
@@ -1747,1023 +1570,110 @@ size_t CameraList::ByteSizeLong() const {
   return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CameraList::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SceneInfo::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    CameraList::MergeImpl
+    SceneInfo::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CameraList::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SceneInfo::GetClassData() const { return &_class_data_; }
 
-void CameraList::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+void SceneInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
                       const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<CameraList *>(to)->MergeFrom(
-      static_cast<const CameraList &>(from));
+  static_cast<SceneInfo *>(to)->MergeFrom(
+      static_cast<const SceneInfo &>(from));
 }
 
 
-void CameraList::MergeFrom(const CameraList& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.CameraList)
+void SceneInfo::MergeFrom(const SceneInfo& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.SceneInfo)
   GOOGLE_DCHECK_NE(&from, this);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   cameras_.MergeFrom(from.cameras_);
+  if (from._internal_has_active_camera()) {
+    _internal_mutable_active_camera()->::indiemotionpb::payloads::Camera::MergeFrom(from._internal_active_camera());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void CameraList::CopyFrom(const CameraList& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.CameraList)
+void SceneInfo::CopyFrom(const SceneInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.SceneInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool CameraList::IsInitialized() const {
+bool SceneInfo::IsInitialized() const {
   return true;
 }
 
-void CameraList::InternalSwap(CameraList* other) {
+void SceneInfo::InternalSwap(SceneInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   cameras_.InternalSwap(&other->cameras_);
+  swap(active_camera_, other->active_camera_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata CameraList::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SceneInfo::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[6]);
+      file_level_metadata_payloads_2eproto[5]);
 }
 
 // ===================================================================
 
-class GetCameraList::_Internal {
+class XForm_Vector::_Internal {
  public:
 };
 
-GetCameraList::GetCameraList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+XForm_Vector::XForm_Vector(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.GetCameraList)
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.XForm.Vector)
 }
-GetCameraList::GetCameraList(const GetCameraList& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.GetCameraList)
-}
-
-inline void GetCameraList::SharedCtor() {
-}
-
-GetCameraList::~GetCameraList() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.GetCameraList)
-  if (GetArenaForAllocation() != nullptr) return;
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-inline void GetCameraList::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-}
-
-void GetCameraList::ArenaDtor(void* object) {
-  GetCameraList* _this = reinterpret_cast< GetCameraList* >(object);
-  (void)_this;
-}
-void GetCameraList::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void GetCameraList::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-
-void GetCameraList::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.GetCameraList)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* GetCameraList::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* GetCameraList::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.GetCameraList)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.GetCameraList)
-  return target;
-}
-
-size_t GetCameraList::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.GetCameraList)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GetCameraList::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    GetCameraList::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetCameraList::GetClassData() const { return &_class_data_; }
-
-void GetCameraList::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<GetCameraList *>(to)->MergeFrom(
-      static_cast<const GetCameraList &>(from));
-}
-
-
-void GetCameraList::MergeFrom(const GetCameraList& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.GetCameraList)
-  GOOGLE_DCHECK_NE(&from, this);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void GetCameraList::CopyFrom(const GetCameraList& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.GetCameraList)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool GetCameraList::IsInitialized() const {
-  return true;
-}
-
-void GetCameraList::InternalSwap(GetCameraList* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata GetCameraList::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[7]);
-}
-
-// ===================================================================
-
-class SessionProperty::_Internal {
- public:
-};
-
-SessionProperty::SessionProperty(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.SessionProperty)
-}
-SessionProperty::SessionProperty(const SessionProperty& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_name().empty()) {
-    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
-      GetArenaForAllocation());
-  }
-  clear_has_value();
-  switch (from.value_case()) {
-    case kIntValue: {
-      _internal_set_int_value(from._internal_int_value());
-      break;
-    }
-    case kStringValue: {
-      _internal_set_string_value(from._internal_string_value());
-      break;
-    }
-    case kFloatValue: {
-      _internal_set_float_value(from._internal_float_value());
-      break;
-    }
-    case kBoolValue: {
-      _internal_set_bool_value(from._internal_bool_value());
-      break;
-    }
-    case VALUE_NOT_SET: {
-      break;
-    }
-  }
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.SessionProperty)
-}
-
-inline void SessionProperty::SharedCtor() {
-name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-clear_has_value();
-}
-
-SessionProperty::~SessionProperty() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.SessionProperty)
-  if (GetArenaForAllocation() != nullptr) return;
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-inline void SessionProperty::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (has_value()) {
-    clear_value();
-  }
-}
-
-void SessionProperty::ArenaDtor(void* object) {
-  SessionProperty* _this = reinterpret_cast< SessionProperty* >(object);
-  (void)_this;
-}
-void SessionProperty::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void SessionProperty::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-
-void SessionProperty::clear_value() {
-// @@protoc_insertion_point(one_of_clear_start:indiemotionpb.payloads.SessionProperty)
-  switch (value_case()) {
-    case kIntValue: {
-      // No need to clear
-      break;
-    }
-    case kStringValue: {
-      value_.string_value_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-      break;
-    }
-    case kFloatValue: {
-      // No need to clear
-      break;
-    }
-    case kBoolValue: {
-      // No need to clear
-      break;
-    }
-    case VALUE_NOT_SET: {
-      break;
-    }
-  }
-  _oneof_case_[0] = VALUE_NOT_SET;
-}
-
-
-void SessionProperty::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.SessionProperty)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  name_.ClearToEmpty();
-  clear_value();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* SessionProperty::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string name = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
-          auto str = _internal_mutable_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionProperty.name"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // int64 int_value = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
-          _internal_set_int_value(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // string string_value = 20;
-      case 20:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 162)) {
-          auto str = _internal_mutable_string_value();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SessionProperty.string_value"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // double float_value = 30;
-      case 30:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 241)) {
-          _internal_set_float_value(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
-          ptr += sizeof(double);
-        } else goto handle_unusual;
-        continue;
-      // bool bool_value = 40;
-      case 40:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
-          _internal_set_bool_value(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      default: {
-      handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-    }  // switch
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* SessionProperty::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.SessionProperty)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string name = 1;
-  if (!this->_internal_name().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.SessionProperty.name");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_name(), target);
-  }
-
-  // int64 int_value = 10;
-  if (_internal_has_int_value()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(10, this->_internal_int_value(), target);
-  }
-
-  // string string_value = 20;
-  if (_internal_has_string_value()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_string_value().data(), static_cast<int>(this->_internal_string_value().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.SessionProperty.string_value");
-    target = stream->WriteStringMaybeAliased(
-        20, this->_internal_string_value(), target);
-  }
-
-  // double float_value = 30;
-  if (_internal_has_float_value()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(30, this->_internal_float_value(), target);
-  }
-
-  // bool bool_value = 40;
-  if (_internal_has_bool_value()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(40, this->_internal_bool_value(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.SessionProperty)
-  return target;
-}
-
-size_t SessionProperty::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.SessionProperty)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string name = 1;
-  if (!this->_internal_name().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-  }
-
-  switch (value_case()) {
-    // int64 int_value = 10;
-    case kIntValue: {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
-          this->_internal_int_value());
-      break;
-    }
-    // string string_value = 20;
-    case kStringValue: {
-      total_size += 2 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_string_value());
-      break;
-    }
-    // double float_value = 30;
-    case kFloatValue: {
-      total_size += 2 + 8;
-      break;
-    }
-    // bool bool_value = 40;
-    case kBoolValue: {
-      total_size += 2 + 1;
-      break;
-    }
-    case VALUE_NOT_SET: {
-      break;
-    }
-  }
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SessionProperty::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    SessionProperty::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SessionProperty::GetClassData() const { return &_class_data_; }
-
-void SessionProperty::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<SessionProperty *>(to)->MergeFrom(
-      static_cast<const SessionProperty &>(from));
-}
-
-
-void SessionProperty::MergeFrom(const SessionProperty& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.SessionProperty)
-  GOOGLE_DCHECK_NE(&from, this);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_name().empty()) {
-    _internal_set_name(from._internal_name());
-  }
-  switch (from.value_case()) {
-    case kIntValue: {
-      _internal_set_int_value(from._internal_int_value());
-      break;
-    }
-    case kStringValue: {
-      _internal_set_string_value(from._internal_string_value());
-      break;
-    }
-    case kFloatValue: {
-      _internal_set_float_value(from._internal_float_value());
-      break;
-    }
-    case kBoolValue: {
-      _internal_set_bool_value(from._internal_bool_value());
-      break;
-    }
-    case VALUE_NOT_SET: {
-      break;
-    }
-  }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void SessionProperty::CopyFrom(const SessionProperty& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.SessionProperty)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool SessionProperty::IsInitialized() const {
-  return true;
-}
-
-void SessionProperty::InternalSwap(SessionProperty* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &name_, GetArenaForAllocation(),
-      &other->name_, other->GetArenaForAllocation()
-  );
-  swap(value_, other->value_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata SessionProperty::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[8]);
-}
-
-// ===================================================================
-
-class GetSessionPropertyByName::_Internal {
- public:
-};
-
-GetSessionPropertyByName::GetSessionPropertyByName(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.GetSessionPropertyByName)
-}
-GetSessionPropertyByName::GetSessionPropertyByName(const GetSessionPropertyByName& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_name().empty()) {
-    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
-      GetArenaForAllocation());
-  }
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.GetSessionPropertyByName)
-}
-
-inline void GetSessionPropertyByName::SharedCtor() {
-name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-
-GetSessionPropertyByName::~GetSessionPropertyByName() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.GetSessionPropertyByName)
-  if (GetArenaForAllocation() != nullptr) return;
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-inline void GetSessionPropertyByName::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-
-void GetSessionPropertyByName::ArenaDtor(void* object) {
-  GetSessionPropertyByName* _this = reinterpret_cast< GetSessionPropertyByName* >(object);
-  (void)_this;
-}
-void GetSessionPropertyByName::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void GetSessionPropertyByName::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-
-void GetSessionPropertyByName::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.GetSessionPropertyByName)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  name_.ClearToEmpty();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* GetSessionPropertyByName::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string name = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          auto str = _internal_mutable_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.GetSessionPropertyByName.name"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      default: {
-      handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-    }  // switch
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* GetSessionPropertyByName::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.GetSessionPropertyByName)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string name = 10;
-  if (!this->_internal_name().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.GetSessionPropertyByName.name");
-    target = stream->WriteStringMaybeAliased(
-        10, this->_internal_name(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.GetSessionPropertyByName)
-  return target;
-}
-
-size_t GetSessionPropertyByName::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.GetSessionPropertyByName)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string name = 10;
-  if (!this->_internal_name().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GetSessionPropertyByName::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    GetSessionPropertyByName::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetSessionPropertyByName::GetClassData() const { return &_class_data_; }
-
-void GetSessionPropertyByName::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<GetSessionPropertyByName *>(to)->MergeFrom(
-      static_cast<const GetSessionPropertyByName &>(from));
-}
-
-
-void GetSessionPropertyByName::MergeFrom(const GetSessionPropertyByName& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.GetSessionPropertyByName)
-  GOOGLE_DCHECK_NE(&from, this);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_name().empty()) {
-    _internal_set_name(from._internal_name());
-  }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void GetSessionPropertyByName::CopyFrom(const GetSessionPropertyByName& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.GetSessionPropertyByName)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool GetSessionPropertyByName::IsInitialized() const {
-  return true;
-}
-
-void GetSessionPropertyByName::InternalSwap(GetSessionPropertyByName* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &name_, GetArenaForAllocation(),
-      &other->name_, other->GetArenaForAllocation()
-  );
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata GetSessionPropertyByName::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[9]);
-}
-
-// ===================================================================
-
-class ClearSessionPropertyByName::_Internal {
- public:
-};
-
-ClearSessionPropertyByName::ClearSessionPropertyByName(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.ClearSessionPropertyByName)
-}
-ClearSessionPropertyByName::ClearSessionPropertyByName(const ClearSessionPropertyByName& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_name().empty()) {
-    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
-      GetArenaForAllocation());
-  }
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.ClearSessionPropertyByName)
-}
-
-inline void ClearSessionPropertyByName::SharedCtor() {
-name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-
-ClearSessionPropertyByName::~ClearSessionPropertyByName() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.ClearSessionPropertyByName)
-  if (GetArenaForAllocation() != nullptr) return;
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-inline void ClearSessionPropertyByName::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-
-void ClearSessionPropertyByName::ArenaDtor(void* object) {
-  ClearSessionPropertyByName* _this = reinterpret_cast< ClearSessionPropertyByName* >(object);
-  (void)_this;
-}
-void ClearSessionPropertyByName::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void ClearSessionPropertyByName::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-
-void ClearSessionPropertyByName::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.ClearSessionPropertyByName)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  name_.ClearToEmpty();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* ClearSessionPropertyByName::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string name = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          auto str = _internal_mutable_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.ClearSessionPropertyByName.name"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      default: {
-      handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-    }  // switch
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* ClearSessionPropertyByName::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.ClearSessionPropertyByName)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string name = 10;
-  if (!this->_internal_name().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.ClearSessionPropertyByName.name");
-    target = stream->WriteStringMaybeAliased(
-        10, this->_internal_name(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.ClearSessionPropertyByName)
-  return target;
-}
-
-size_t ClearSessionPropertyByName::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.ClearSessionPropertyByName)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string name = 10;
-  if (!this->_internal_name().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ClearSessionPropertyByName::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    ClearSessionPropertyByName::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ClearSessionPropertyByName::GetClassData() const { return &_class_data_; }
-
-void ClearSessionPropertyByName::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<ClearSessionPropertyByName *>(to)->MergeFrom(
-      static_cast<const ClearSessionPropertyByName &>(from));
-}
-
-
-void ClearSessionPropertyByName::MergeFrom(const ClearSessionPropertyByName& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.ClearSessionPropertyByName)
-  GOOGLE_DCHECK_NE(&from, this);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_name().empty()) {
-    _internal_set_name(from._internal_name());
-  }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void ClearSessionPropertyByName::CopyFrom(const ClearSessionPropertyByName& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.ClearSessionPropertyByName)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ClearSessionPropertyByName::IsInitialized() const {
-  return true;
-}
-
-void ClearSessionPropertyByName::InternalSwap(ClearSessionPropertyByName* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &name_, GetArenaForAllocation(),
-      &other->name_, other->GetArenaForAllocation()
-  );
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata ClearSessionPropertyByName::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[10]);
-}
-
-// ===================================================================
-
-class InputDeviceXForm_XFormData::_Internal {
- public:
-};
-
-InputDeviceXForm_XFormData::InputDeviceXForm_XFormData(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.InputDeviceXForm.XFormData)
-}
-InputDeviceXForm_XFormData::InputDeviceXForm_XFormData(const InputDeviceXForm_XFormData& from)
+XForm_Vector::XForm_Vector(const XForm_Vector& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&x_, &from.x_,
     static_cast<size_t>(reinterpret_cast<char*>(&z_) -
     reinterpret_cast<char*>(&x_)) + sizeof(z_));
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.XForm.Vector)
 }
 
-inline void InputDeviceXForm_XFormData::SharedCtor() {
+inline void XForm_Vector::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&x_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&z_) -
     reinterpret_cast<char*>(&x_)) + sizeof(z_));
 }
 
-InputDeviceXForm_XFormData::~InputDeviceXForm_XFormData() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+XForm_Vector::~XForm_Vector() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.XForm.Vector)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void InputDeviceXForm_XFormData::SharedDtor() {
+inline void XForm_Vector::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void InputDeviceXForm_XFormData::ArenaDtor(void* object) {
-  InputDeviceXForm_XFormData* _this = reinterpret_cast< InputDeviceXForm_XFormData* >(object);
+void XForm_Vector::ArenaDtor(void* object) {
+  XForm_Vector* _this = reinterpret_cast< XForm_Vector* >(object);
   (void)_this;
 }
-void InputDeviceXForm_XFormData::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void XForm_Vector::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void InputDeviceXForm_XFormData::SetCachedSize(int size) const {
+void XForm_Vector::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
-void InputDeviceXForm_XFormData::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+void XForm_Vector::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.XForm.Vector)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2774,7 +1684,7 @@ void InputDeviceXForm_XFormData::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* InputDeviceXForm_XFormData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* XForm_Vector::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
@@ -2824,9 +1734,9 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* InputDeviceXForm_XFormData::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* XForm_Vector::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.XForm.Vector)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2852,12 +1762,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.XForm.Vector)
   return target;
 }
 
-size_t InputDeviceXForm_XFormData::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+size_t XForm_Vector::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.XForm.Vector)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -2888,21 +1798,21 @@ size_t InputDeviceXForm_XFormData::ByteSizeLong() const {
   return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData InputDeviceXForm_XFormData::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XForm_Vector::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    InputDeviceXForm_XFormData::MergeImpl
+    XForm_Vector::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*InputDeviceXForm_XFormData::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XForm_Vector::GetClassData() const { return &_class_data_; }
 
-void InputDeviceXForm_XFormData::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+void XForm_Vector::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
                       const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<InputDeviceXForm_XFormData *>(to)->MergeFrom(
-      static_cast<const InputDeviceXForm_XFormData &>(from));
+  static_cast<XForm_Vector *>(to)->MergeFrom(
+      static_cast<const XForm_Vector &>(from));
 }
 
 
-void InputDeviceXForm_XFormData::MergeFrom(const InputDeviceXForm_XFormData& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+void XForm_Vector::MergeFrom(const XForm_Vector& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.XForm.Vector)
   GOOGLE_DCHECK_NE(&from, this);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
@@ -2919,107 +1829,107 @@ void InputDeviceXForm_XFormData::MergeFrom(const InputDeviceXForm_XFormData& fro
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void InputDeviceXForm_XFormData::CopyFrom(const InputDeviceXForm_XFormData& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.InputDeviceXForm.XFormData)
+void XForm_Vector::CopyFrom(const XForm_Vector& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.XForm.Vector)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool InputDeviceXForm_XFormData::IsInitialized() const {
+bool XForm_Vector::IsInitialized() const {
   return true;
 }
 
-void InputDeviceXForm_XFormData::InternalSwap(InputDeviceXForm_XFormData* other) {
+void XForm_Vector::InternalSwap(XForm_Vector* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(InputDeviceXForm_XFormData, z_)
-      + sizeof(InputDeviceXForm_XFormData::z_)
-      - PROTOBUF_FIELD_OFFSET(InputDeviceXForm_XFormData, x_)>(
+      PROTOBUF_FIELD_OFFSET(XForm_Vector, z_)
+      + sizeof(XForm_Vector::z_)
+      - PROTOBUF_FIELD_OFFSET(XForm_Vector, x_)>(
           reinterpret_cast<char*>(&x_),
           reinterpret_cast<char*>(&other->x_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata InputDeviceXForm_XFormData::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata XForm_Vector::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[11]);
+      file_level_metadata_payloads_2eproto[6]);
 }
 
 // ===================================================================
 
-class InputDeviceXForm::_Internal {
+class XForm::_Internal {
  public:
-  static const ::indiemotionpb::payloads::InputDeviceXForm_XFormData& translation(const InputDeviceXForm* msg);
-  static const ::indiemotionpb::payloads::InputDeviceXForm_XFormData& orientation(const InputDeviceXForm* msg);
+  static const ::indiemotionpb::payloads::XForm_Vector& translation(const XForm* msg);
+  static const ::indiemotionpb::payloads::XForm_Vector& orientation(const XForm* msg);
 };
 
-const ::indiemotionpb::payloads::InputDeviceXForm_XFormData&
-InputDeviceXForm::_Internal::translation(const InputDeviceXForm* msg) {
+const ::indiemotionpb::payloads::XForm_Vector&
+XForm::_Internal::translation(const XForm* msg) {
   return *msg->translation_;
 }
-const ::indiemotionpb::payloads::InputDeviceXForm_XFormData&
-InputDeviceXForm::_Internal::orientation(const InputDeviceXForm* msg) {
+const ::indiemotionpb::payloads::XForm_Vector&
+XForm::_Internal::orientation(const XForm* msg) {
   return *msg->orientation_;
 }
-InputDeviceXForm::InputDeviceXForm(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+XForm::XForm(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.InputDeviceXForm)
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.XForm)
 }
-InputDeviceXForm::InputDeviceXForm(const InputDeviceXForm& from)
+XForm::XForm(const XForm& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_translation()) {
-    translation_ = new ::indiemotionpb::payloads::InputDeviceXForm_XFormData(*from.translation_);
+    translation_ = new ::indiemotionpb::payloads::XForm_Vector(*from.translation_);
   } else {
     translation_ = nullptr;
   }
   if (from._internal_has_orientation()) {
-    orientation_ = new ::indiemotionpb::payloads::InputDeviceXForm_XFormData(*from.orientation_);
+    orientation_ = new ::indiemotionpb::payloads::XForm_Vector(*from.orientation_);
   } else {
     orientation_ = nullptr;
   }
-  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.InputDeviceXForm)
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.XForm)
 }
 
-inline void InputDeviceXForm::SharedCtor() {
+inline void XForm::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&translation_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&orientation_) -
     reinterpret_cast<char*>(&translation_)) + sizeof(orientation_));
 }
 
-InputDeviceXForm::~InputDeviceXForm() {
-  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.InputDeviceXForm)
+XForm::~XForm() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.XForm)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void InputDeviceXForm::SharedDtor() {
+inline void XForm::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete translation_;
   if (this != internal_default_instance()) delete orientation_;
 }
 
-void InputDeviceXForm::ArenaDtor(void* object) {
-  InputDeviceXForm* _this = reinterpret_cast< InputDeviceXForm* >(object);
+void XForm::ArenaDtor(void* object) {
+  XForm* _this = reinterpret_cast< XForm* >(object);
   (void)_this;
 }
-void InputDeviceXForm::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void XForm::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void InputDeviceXForm::SetCachedSize(int size) const {
+void XForm::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
-void InputDeviceXForm::Clear() {
-// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.InputDeviceXForm)
+void XForm::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.XForm)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3035,20 +1945,20 @@ void InputDeviceXForm::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* InputDeviceXForm::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* XForm::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .indiemotionpb.payloads.InputDeviceXForm.XFormData translation = 1;
+      // .indiemotionpb.payloads.XForm.Vector translation = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_translation(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .indiemotionpb.payloads.InputDeviceXForm.XFormData orientation = 2;
+      // .indiemotionpb.payloads.XForm.Vector orientation = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_orientation(), ptr);
@@ -3078,13 +1988,13 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* InputDeviceXForm::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* XForm::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.InputDeviceXForm)
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.XForm)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .indiemotionpb.payloads.InputDeviceXForm.XFormData translation = 1;
+  // .indiemotionpb.payloads.XForm.Vector translation = 1;
   if (this->_internal_has_translation()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -3092,7 +2002,7 @@ failure:
         1, _Internal::translation(this), target, stream);
   }
 
-  // .indiemotionpb.payloads.InputDeviceXForm.XFormData orientation = 2;
+  // .indiemotionpb.payloads.XForm.Vector orientation = 2;
   if (this->_internal_has_orientation()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -3104,26 +2014,26 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.InputDeviceXForm)
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.XForm)
   return target;
 }
 
-size_t InputDeviceXForm::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.InputDeviceXForm)
+size_t XForm::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.XForm)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .indiemotionpb.payloads.InputDeviceXForm.XFormData translation = 1;
+  // .indiemotionpb.payloads.XForm.Vector translation = 1;
   if (this->_internal_has_translation()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *translation_);
   }
 
-  // .indiemotionpb.payloads.InputDeviceXForm.XFormData orientation = 2;
+  // .indiemotionpb.payloads.XForm.Vector orientation = 2;
   if (this->_internal_has_orientation()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -3139,74 +2049,305 @@ size_t InputDeviceXForm::ByteSizeLong() const {
   return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData InputDeviceXForm::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XForm::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
-    InputDeviceXForm::MergeImpl
+    XForm::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*InputDeviceXForm::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XForm::GetClassData() const { return &_class_data_; }
 
-void InputDeviceXForm::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+void XForm::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
                       const ::PROTOBUF_NAMESPACE_ID::Message&from) {
-  static_cast<InputDeviceXForm *>(to)->MergeFrom(
-      static_cast<const InputDeviceXForm &>(from));
+  static_cast<XForm *>(to)->MergeFrom(
+      static_cast<const XForm &>(from));
 }
 
 
-void InputDeviceXForm::MergeFrom(const InputDeviceXForm& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.InputDeviceXForm)
+void XForm::MergeFrom(const XForm& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.XForm)
   GOOGLE_DCHECK_NE(&from, this);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_has_translation()) {
-    _internal_mutable_translation()->::indiemotionpb::payloads::InputDeviceXForm_XFormData::MergeFrom(from._internal_translation());
+    _internal_mutable_translation()->::indiemotionpb::payloads::XForm_Vector::MergeFrom(from._internal_translation());
   }
   if (from._internal_has_orientation()) {
-    _internal_mutable_orientation()->::indiemotionpb::payloads::InputDeviceXForm_XFormData::MergeFrom(from._internal_orientation());
+    _internal_mutable_orientation()->::indiemotionpb::payloads::XForm_Vector::MergeFrom(from._internal_orientation());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void InputDeviceXForm::CopyFrom(const InputDeviceXForm& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.InputDeviceXForm)
+void XForm::CopyFrom(const XForm& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.XForm)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool InputDeviceXForm::IsInitialized() const {
+bool XForm::IsInitialized() const {
   return true;
 }
 
-void InputDeviceXForm::InternalSwap(InputDeviceXForm* other) {
+void XForm::InternalSwap(XForm* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(InputDeviceXForm, orientation_)
-      + sizeof(InputDeviceXForm::orientation_)
-      - PROTOBUF_FIELD_OFFSET(InputDeviceXForm, translation_)>(
+      PROTOBUF_FIELD_OFFSET(XForm, orientation_)
+      + sizeof(XForm::orientation_)
+      - PROTOBUF_FIELD_OFFSET(XForm, translation_)>(
           reinterpret_cast<char*>(&translation_),
           reinterpret_cast<char*>(&other->translation_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata InputDeviceXForm::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata XForm::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[12]);
+      file_level_metadata_payloads_2eproto[7]);
+}
+
+// ===================================================================
+
+class MotionInfo::_Internal {
+ public:
+  static const ::indiemotionpb::payloads::XForm& xform(const MotionInfo* msg);
+};
+
+const ::indiemotionpb::payloads::XForm&
+MotionInfo::_Internal::xform(const MotionInfo* msg) {
+  return *msg->xform_;
+}
+MotionInfo::MotionInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.MotionInfo)
+}
+MotionInfo::MotionInfo(const MotionInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_xform()) {
+    xform_ = new ::indiemotionpb::payloads::XForm(*from.xform_);
+  } else {
+    xform_ = nullptr;
+  }
+  status_ = from.status_;
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.MotionInfo)
+}
+
+inline void MotionInfo::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&xform_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&status_) -
+    reinterpret_cast<char*>(&xform_)) + sizeof(status_));
+}
+
+MotionInfo::~MotionInfo() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.MotionInfo)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void MotionInfo::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete xform_;
+}
+
+void MotionInfo::ArenaDtor(void* object) {
+  MotionInfo* _this = reinterpret_cast< MotionInfo* >(object);
+  (void)_this;
+}
+void MotionInfo::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void MotionInfo::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void MotionInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.MotionInfo)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && xform_ != nullptr) {
+    delete xform_;
+  }
+  xform_ = nullptr;
+  status_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* MotionInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .indiemotionpb.payloads.MotionInfo.Status status = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_status(static_cast<::indiemotionpb::payloads::MotionInfo_Status>(val));
+        } else goto handle_unusual;
+        continue;
+      // .indiemotionpb.payloads.XForm xform = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          ptr = ctx->ParseMessage(_internal_mutable_xform(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* MotionInfo::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.MotionInfo)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .indiemotionpb.payloads.MotionInfo.Status status = 1;
+  if (this->_internal_status() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_status(), target);
+  }
+
+  // .indiemotionpb.payloads.XForm xform = 10;
+  if (this->_internal_has_xform()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        10, _Internal::xform(this), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.MotionInfo)
+  return target;
+}
+
+size_t MotionInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.MotionInfo)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .indiemotionpb.payloads.XForm xform = 10;
+  if (this->_internal_has_xform()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *xform_);
+  }
+
+  // .indiemotionpb.payloads.MotionInfo.Status status = 1;
+  if (this->_internal_status() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_status());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MotionInfo::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    MotionInfo::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MotionInfo::GetClassData() const { return &_class_data_; }
+
+void MotionInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<MotionInfo *>(to)->MergeFrom(
+      static_cast<const MotionInfo &>(from));
+}
+
+
+void MotionInfo::MergeFrom(const MotionInfo& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.MotionInfo)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_xform()) {
+    _internal_mutable_xform()->::indiemotionpb::payloads::XForm::MergeFrom(from._internal_xform());
+  }
+  if (from._internal_status() != 0) {
+    _internal_set_status(from._internal_status());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void MotionInfo::CopyFrom(const MotionInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.MotionInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MotionInfo::IsInitialized() const {
+  return true;
+}
+
+void MotionInfo::InternalSwap(MotionInfo* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(MotionInfo, status_)
+      + sizeof(MotionInfo::status_)
+      - PROTOBUF_FIELD_OFFSET(MotionInfo, xform_)>(
+          reinterpret_cast<char*>(&xform_),
+          reinterpret_cast<char*>(&other->xform_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata MotionInfo::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
+      file_level_metadata_payloads_2eproto[8]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace payloads
 }  // namespace indiemotionpb
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::Acknowledge* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::Acknowledge >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::Acknowledge >(arena);
-}
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::Error* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::Error >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::Error >(arena);
 }
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::InputDeviceInfo* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::InputDeviceInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::InputDeviceInfo >(arena);
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::SessionInfo* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::SessionInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::SessionInfo >(arena);
 }
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::InitializeSession* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::InitializeSession >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::InitializeSession >(arena);
@@ -3217,26 +2358,17 @@ template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::ShutdownSession* Arena::
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::Camera* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::Camera >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::Camera >(arena);
 }
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::CameraList* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::CameraList >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::CameraList >(arena);
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::SceneInfo* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::SceneInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::SceneInfo >(arena);
 }
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::GetCameraList* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::GetCameraList >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::GetCameraList >(arena);
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::XForm_Vector* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::XForm_Vector >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::XForm_Vector >(arena);
 }
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::SessionProperty* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::SessionProperty >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::SessionProperty >(arena);
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::XForm* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::XForm >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::XForm >(arena);
 }
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::GetSessionPropertyByName* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::GetSessionPropertyByName >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::GetSessionPropertyByName >(arena);
-}
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::ClearSessionPropertyByName* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::ClearSessionPropertyByName >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::ClearSessionPropertyByName >(arena);
-}
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::InputDeviceXForm_XFormData* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::InputDeviceXForm_XFormData >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::InputDeviceXForm_XFormData >(arena);
-}
-template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::InputDeviceXForm* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::InputDeviceXForm >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::InputDeviceXForm >(arena);
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::MotionInfo* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::MotionInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::MotionInfo >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

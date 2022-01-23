@@ -6,7 +6,7 @@ namespace indiemotion {
      * @brief A simple value for comparing mode values
      *
      */
-    enum MotionMode {
+    enum MotionStatus {
 
         /**
          * Idle mode symbolizes when no motion is being transmitted to server

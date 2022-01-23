@@ -3,44 +3,28 @@
 #include <indiemotion/logging.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/dispatch.hpp>
-#include <indiemotion/session/server_info.hpp>
-#include <indiemotion/session/session.hpp>
+#include <indiemotion/controller.hpp>
 
 namespace indiemotion
 {
-	class SessionService
+	struct Service
 	{
-	public:
-		SessionService(std::shared_ptr<NetMessageDispatcher> dispatcherPtr,
-			std::shared_ptr<SessionCon> controller)
+		Service(std::shared_ptr<NetMessageDispatcher> dispatcher_ptr,
+			           std::shared_ptr<SessionController> controller)
 		{
-			_m_dispatcher = std::move(dispatcherPtr);
-			_logger = logging::get_logger("com.indiemotion.service");
+			_m_dispatcher = std::move(dispatcher_ptr);
+			_logger = logging::get_logger("com.indiemotion.sessionservice");
 			_m_controller = std::move(controller);
 
-			_m_callback_table[Message::PayloadCase::kAcknowledge] =
-				std::bind(&SessionService::_process_acknowledge, this, std::placeholders::_1);
+			/// Initialize the callback table
 			_m_callback_table[Message::PayloadCase::kInitializeSession] =
-				std::bind(&SessionService::_process_initialize_session, this, std::placeholders::_1);
-			_m_callback_table[Message::PayloadCase::kShutdownSession] =
-				std::bind(&SessionService::_process_shutdown_session, this, std::placeholders::_1);
-			_m_callback_table[Message::PayloadCase::kSessionProperty] =
-				std::bind(&SessionService::_process_session_property, this, std::placeholders::_1);
-			_m_callback_table[Message::PayloadCase::kGetSessionPropertyByName] =
-				std::bind(&SessionService::_process_get_session_property, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kGetCameraList] =
-                std::bind(&SessionService::_process_get_camera_list, this, std::placeholders::_1);
-			_m_callback_table[Message::PayloadCase::kCameraList] =
-				std::bind(&SessionService::_process_camera_list, this, std::placeholders::_1);
-            _m_callback_table[Message::PayloadCase::kInputDeviceXform] =
-                std::bind(&SessionService::_process_input_device_xform, this, std::placeholders::_1);
-		}
+				std::bind(&Service::_process_initialize_session, this, std::placeholders::_1);
 
-		static const std::string APIVersion;
+		}
 
 		[[nodiscard]] static std::string supported_api_version()
 		{
-			return SessionService::APIVersion;
+			return "1.0";
 		}
 
 		void process_message(const Message&& message)
@@ -93,29 +77,18 @@ namespace indiemotion
 	private:
 		std::shared_ptr<spdlog::logger> _logger;
 		std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
-		std::shared_ptr<SessionCon> _m_controller;
-		std::array<std::optional<std::function<void(const Message&&)>>, 128> _m_callback_table;
+		std::shared_ptr<SessionController> _m_controller;
+		std::array<std::optional<std::function<void(const Message&&)>>, 128> _m_callback_table {};
 
 		void _process_initialize_session(const Message&& message)
 		{
-			auto device_info = message.initialize_session().device_info();
-			if (device_info.api_version() != supported_api_version())
+			auto session_info = message.initialize_session().session_info();
+			if (session_info.api_version() != supported_api_version())
 			{
-				_logger->error("API Version is not supported: {}", device_info.api_version());
+				_logger->error("API Version is not supported: {}", session_info.api_version());
 				throw APIVersionNotSupportedException();
 			}
-			_m_controller->initialize();
-		}
-
-		void _process_shutdown_session(const Message&& message)
-		{
-			_m_controller->shutdown();
-			_send_acknowledgement_for(std::move(message));
+			_m_controller->initialize(session_info.session_name());
 		}
 	};
-
-	const std::string SessionService::APIVersion = "1.0";
-
-
-
 }
