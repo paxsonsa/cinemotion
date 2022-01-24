@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/controller.hpp>
+#include <indiemotion/services/session_service.hpp>
 
 using namespace indiemotion;
 
@@ -17,7 +17,7 @@ struct DummySceneDelegate: SceneDelegate
 		};
 	}
 
-	void scene_updated(std::shared_ptr<SceneContext const> scene) override
+	void scene_updated(const std::shared_ptr<const SceneContext>& scene) override
 	{
 		active_cam = scene->active_camera_name;
 	}
@@ -27,7 +27,7 @@ TEST_CASE("Test Scene Camera Manipulation")
 {
 	auto delegate = std::make_shared<DummySceneDelegate>();
 	auto ctx = indiemotion::make_context();
-	auto scene = indiemotion::SceneManager(ctx, delegate);
+	auto scene = indiemotion::SceneService(ctx, delegate);
 	REQUIRE(scene.cameras().size() == 3);
 
 	scene.update_active_camera("cam1");

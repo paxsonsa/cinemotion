@@ -1,7 +1,7 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/errors.hpp>
-#include <indiemotion/motion.hpp>
+#include <indiemotion/services/motion_service.hpp>
 #include <indiemotion/application.hpp>
 #include <indiemotion/session/property_table.hpp>
 #include <indiemotion/session/global_properties.hpp>

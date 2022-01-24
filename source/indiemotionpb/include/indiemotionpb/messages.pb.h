@@ -280,6 +280,7 @@ class Message final :
     kShutdownSession = 32,
     kSessionInfo = 40,
     kSceneInfo = 50,
+    kActiveCameraUpdated = 51,
     kMotionInfo = 60,
     PAYLOAD_NOT_SET = 0,
   };
@@ -366,6 +367,7 @@ class Message final :
     kShutdownSessionFieldNumber = 32,
     kSessionInfoFieldNumber = 40,
     kSceneInfoFieldNumber = 50,
+    kActiveCameraUpdatedFieldNumber = 51,
     kMotionInfoFieldNumber = 60,
   };
   // .indiemotionpb.Header header = 1;
@@ -476,6 +478,24 @@ class Message final :
       ::indiemotionpb::payloads::SceneInfo* scene_info);
   ::indiemotionpb::payloads::SceneInfo* unsafe_arena_release_scene_info();
 
+  // .indiemotionpb.payloads.ActiveCamera active_camera_updated = 51;
+  bool has_active_camera_updated() const;
+  private:
+  bool _internal_has_active_camera_updated() const;
+  public:
+  void clear_active_camera_updated();
+  const ::indiemotionpb::payloads::ActiveCamera& active_camera_updated() const;
+  PROTOBUF_MUST_USE_RESULT ::indiemotionpb::payloads::ActiveCamera* release_active_camera_updated();
+  ::indiemotionpb::payloads::ActiveCamera* mutable_active_camera_updated();
+  void set_allocated_active_camera_updated(::indiemotionpb::payloads::ActiveCamera* active_camera_updated);
+  private:
+  const ::indiemotionpb::payloads::ActiveCamera& _internal_active_camera_updated() const;
+  ::indiemotionpb::payloads::ActiveCamera* _internal_mutable_active_camera_updated();
+  public:
+  void unsafe_arena_set_allocated_active_camera_updated(
+      ::indiemotionpb::payloads::ActiveCamera* active_camera_updated);
+  ::indiemotionpb::payloads::ActiveCamera* unsafe_arena_release_active_camera_updated();
+
   // .indiemotionpb.payloads.MotionInfo motion_info = 60;
   bool has_motion_info() const;
   private:
@@ -504,6 +524,7 @@ class Message final :
   void set_has_shutdown_session();
   void set_has_session_info();
   void set_has_scene_info();
+  void set_has_active_camera_updated();
   void set_has_motion_info();
 
   inline bool has_payload() const;
@@ -521,6 +542,7 @@ class Message final :
     ::indiemotionpb::payloads::ShutdownSession* shutdown_session_;
     ::indiemotionpb::payloads::SessionInfo* session_info_;
     ::indiemotionpb::payloads::SceneInfo* scene_info_;
+    ::indiemotionpb::payloads::ActiveCamera* active_camera_updated_;
     ::indiemotionpb::payloads::MotionInfo* motion_info_;
   } payload_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -1064,6 +1086,72 @@ inline ::indiemotionpb::payloads::SceneInfo* Message::_internal_mutable_scene_in
 inline ::indiemotionpb::payloads::SceneInfo* Message::mutable_scene_info() {
   ::indiemotionpb::payloads::SceneInfo* _msg = _internal_mutable_scene_info();
   // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.scene_info)
+  return _msg;
+}
+
+// .indiemotionpb.payloads.ActiveCamera active_camera_updated = 51;
+inline bool Message::_internal_has_active_camera_updated() const {
+  return payload_case() == kActiveCameraUpdated;
+}
+inline bool Message::has_active_camera_updated() const {
+  return _internal_has_active_camera_updated();
+}
+inline void Message::set_has_active_camera_updated() {
+  _oneof_case_[0] = kActiveCameraUpdated;
+}
+inline ::indiemotionpb::payloads::ActiveCamera* Message::release_active_camera_updated() {
+  // @@protoc_insertion_point(field_release:indiemotionpb.Message.active_camera_updated)
+  if (_internal_has_active_camera_updated()) {
+    clear_has_payload();
+      ::indiemotionpb::payloads::ActiveCamera* temp = payload_.active_camera_updated_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.active_camera_updated_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::indiemotionpb::payloads::ActiveCamera& Message::_internal_active_camera_updated() const {
+  return _internal_has_active_camera_updated()
+      ? *payload_.active_camera_updated_
+      : reinterpret_cast< ::indiemotionpb::payloads::ActiveCamera&>(::indiemotionpb::payloads::_ActiveCamera_default_instance_);
+}
+inline const ::indiemotionpb::payloads::ActiveCamera& Message::active_camera_updated() const {
+  // @@protoc_insertion_point(field_get:indiemotionpb.Message.active_camera_updated)
+  return _internal_active_camera_updated();
+}
+inline ::indiemotionpb::payloads::ActiveCamera* Message::unsafe_arena_release_active_camera_updated() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:indiemotionpb.Message.active_camera_updated)
+  if (_internal_has_active_camera_updated()) {
+    clear_has_payload();
+    ::indiemotionpb::payloads::ActiveCamera* temp = payload_.active_camera_updated_;
+    payload_.active_camera_updated_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Message::unsafe_arena_set_allocated_active_camera_updated(::indiemotionpb::payloads::ActiveCamera* active_camera_updated) {
+  clear_payload();
+  if (active_camera_updated) {
+    set_has_active_camera_updated();
+    payload_.active_camera_updated_ = active_camera_updated;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:indiemotionpb.Message.active_camera_updated)
+}
+inline ::indiemotionpb::payloads::ActiveCamera* Message::_internal_mutable_active_camera_updated() {
+  if (!_internal_has_active_camera_updated()) {
+    clear_payload();
+    set_has_active_camera_updated();
+    payload_.active_camera_updated_ = CreateMaybeMessage< ::indiemotionpb::payloads::ActiveCamera >(GetArenaForAllocation());
+  }
+  return payload_.active_camera_updated_;
+}
+inline ::indiemotionpb::payloads::ActiveCamera* Message::mutable_active_camera_updated() {
+  ::indiemotionpb::payloads::ActiveCamera* _msg = _internal_mutable_active_camera_updated();
+  // @@protoc_insertion_point(field_mutable:indiemotionpb.Message.active_camera_updated)
   return _msg;
 }
 

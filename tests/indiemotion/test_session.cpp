@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include <indiemotion/controller.hpp>
+#include <indiemotion/services/session_service.hpp>
 
 using namespace indiemotion;
 
@@ -10,7 +10,7 @@ struct DummyDelegate: SessionDelegate
 	std::string name = "";
 	bool shutdown = false;
 
-	void session_updated(std::shared_ptr<const SessionContext> session) override
+	void session_updated(const std::shared_ptr<const SessionContext>& session) override
 	{
 		initialized = session->initialized;
 		name = session->name;

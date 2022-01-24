@@ -71,7 +71,7 @@ struct ShutdownSessionDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ShutdownSessionDefaultTypeInternal _ShutdownSession_default_instance_;
 constexpr Camera::Camera(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct CameraDefaultTypeInternal {
   constexpr CameraDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -81,10 +81,22 @@ struct CameraDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CameraDefaultTypeInternal _Camera_default_instance_;
+constexpr ActiveCamera::ActiveCamera(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct ActiveCameraDefaultTypeInternal {
+  constexpr ActiveCameraDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ActiveCameraDefaultTypeInternal() {}
+  union {
+    ActiveCamera _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ActiveCameraDefaultTypeInternal _ActiveCamera_default_instance_;
 constexpr SceneInfo::SceneInfo(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : cameras_()
-  , active_camera_(nullptr){}
+  , active_camera_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct SceneInfoDefaultTypeInternal {
   constexpr SceneInfoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -137,7 +149,7 @@ struct MotionInfoDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MotionInfoDefaultTypeInternal _MotionInfo_default_instance_;
 }  // namespace payloads
 }  // namespace indiemotionpb
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[9];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_payloads_2eproto[10];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_payloads_2eproto[2];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_payloads_2eproto = nullptr;
 
@@ -173,13 +185,19 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_payloads_2eproto::offsets[] PR
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Camera, id_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::Camera, name_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ActiveCamera, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::ActiveCamera, name_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, active_camera_),
+  PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, active_camera_name_),
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::SceneInfo, cameras_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::payloads::XForm_Vector, _internal_metadata_),
@@ -210,10 +228,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 15, -1, sizeof(::indiemotionpb::payloads::InitializeSession)},
   { 21, -1, sizeof(::indiemotionpb::payloads::ShutdownSession)},
   { 26, -1, sizeof(::indiemotionpb::payloads::Camera)},
-  { 32, -1, sizeof(::indiemotionpb::payloads::SceneInfo)},
-  { 39, -1, sizeof(::indiemotionpb::payloads::XForm_Vector)},
-  { 47, -1, sizeof(::indiemotionpb::payloads::XForm)},
-  { 54, -1, sizeof(::indiemotionpb::payloads::MotionInfo)},
+  { 32, -1, sizeof(::indiemotionpb::payloads::ActiveCamera)},
+  { 38, -1, sizeof(::indiemotionpb::payloads::SceneInfo)},
+  { 45, -1, sizeof(::indiemotionpb::payloads::XForm_Vector)},
+  { 53, -1, sizeof(::indiemotionpb::payloads::XForm)},
+  { 60, -1, sizeof(::indiemotionpb::payloads::MotionInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -222,6 +241,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_InitializeSession_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_ShutdownSession_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_Camera_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_ActiveCamera_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_SceneInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_XForm_Vector_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::indiemotionpb::payloads::_XForm_default_instance_),
@@ -242,24 +262,24 @@ const char descriptor_table_protodef_payloads_2eproto[] PROTOBUF_SECTION_VARIABL
   "\n\014session_name\030\n \001(\t\022\023\n\013api_version\030\024 \001("
   "\t\"N\n\021InitializeSession\0229\n\014session_info\030\n"
   " \001(\0132#.indiemotionpb.payloads.SessionInf"
-  "o\"\021\n\017ShutdownSession\"\024\n\006Camera\022\n\n\002id\030\n \001"
-  "(\t\"s\n\tSceneInfo\0225\n\ractive_camera\030\n \001(\0132\036"
-  ".indiemotionpb.payloads.Camera\022/\n\007camera"
-  "s\030\024 \003(\0132\036.indiemotionpb.payloads.Camera\""
-  "\250\001\n\005XForm\0229\n\013translation\030\001 \001(\0132$.indiemo"
-  "tionpb.payloads.XForm.Vector\0229\n\013orientat"
-  "ion\030\002 \001(\0132$.indiemotionpb.payloads.XForm"
-  ".Vector\032)\n\006Vector\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\022"
-  "\t\n\001z\030\003 \001(\001\"\242\001\n\nMotionInfo\0229\n\006status\030\001 \001("
-  "\0162).indiemotionpb.payloads.MotionInfo.St"
-  "atus\022,\n\005xform\030\n \001(\0132\035.indiemotionpb.payl"
-  "oads.XForm\"+\n\006Status\022\010\n\004Idle\020\000\022\010\n\004Live\020\001"
-  "\022\r\n\tRecording\020\002b\006proto3"
+  "o\"\021\n\017ShutdownSession\"\026\n\006Camera\022\014\n\004name\030\n"
+  " \001(\t\"\034\n\014ActiveCamera\022\014\n\004name\030\n \001(\t\"X\n\tSc"
+  "eneInfo\022\032\n\022active_camera_name\030\n \001(\t\022/\n\007c"
+  "ameras\030\024 \003(\0132\036.indiemotionpb.payloads.Ca"
+  "mera\"\250\001\n\005XForm\0229\n\013translation\030\001 \001(\0132$.in"
+  "diemotionpb.payloads.XForm.Vector\0229\n\013ori"
+  "entation\030\002 \001(\0132$.indiemotionpb.payloads."
+  "XForm.Vector\032)\n\006Vector\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002"
+  " \001(\001\022\t\n\001z\030\003 \001(\001\"\242\001\n\nMotionInfo\0229\n\006status"
+  "\030\001 \001(\0162).indiemotionpb.payloads.MotionIn"
+  "fo.Status\022,\n\005xform\030\n \001(\0132\035.indiemotionpb"
+  ".payloads.XForm\"+\n\006Status\022\010\n\004Idle\020\000\022\010\n\004L"
+  "ive\020\001\022\r\n\tRecording\020\002b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_payloads_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_payloads_2eproto = {
-  false, false, 1023, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
-  &descriptor_table_payloads_2eproto_once, nullptr, 0, 9,
+  false, false, 1028, descriptor_table_protodef_payloads_2eproto, "payloads.proto", 
+  &descriptor_table_payloads_2eproto_once, nullptr, 0, 10,
   schemas, file_default_instances, TableStruct_payloads_2eproto::offsets,
   file_level_metadata_payloads_2eproto, file_level_enum_descriptors_payloads_2eproto, file_level_service_descriptors_payloads_2eproto,
 };
@@ -1206,16 +1226,16 @@ Camera::Camera(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 Camera::Camera(const Camera& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_id().empty()) {
-    id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_id(), 
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
       GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.Camera)
 }
 
 inline void Camera::SharedCtor() {
-id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 Camera::~Camera() {
@@ -1227,7 +1247,7 @@ Camera::~Camera() {
 
 inline void Camera::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void Camera::ArenaDtor(void* object) {
@@ -1246,7 +1266,7 @@ void Camera::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  id_.ClearToEmpty();
+  name_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1256,12 +1276,12 @@ const char* Camera::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string id = 10;
+      // string name = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          auto str = _internal_mutable_id();
+          auto str = _internal_mutable_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.Camera.id"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.Camera.name"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1294,14 +1314,14 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string id = 10;
-  if (!this->_internal_id().empty()) {
+  // string name = 10;
+  if (!this->_internal_name().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "indiemotionpb.payloads.Camera.id");
+      "indiemotionpb.payloads.Camera.name");
     target = stream->WriteStringMaybeAliased(
-        10, this->_internal_id(), target);
+        10, this->_internal_name(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1320,11 +1340,11 @@ size_t Camera::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string id = 10;
-  if (!this->_internal_id().empty()) {
+  // string name = 10;
+  if (!this->_internal_name().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_id());
+        this->_internal_name());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1355,8 +1375,8 @@ void Camera::MergeFrom(const Camera& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_id().empty()) {
-    _internal_set_id(from._internal_id());
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1377,8 +1397,8 @@ void Camera::InternalSwap(Camera* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &id_, GetArenaForAllocation(),
-      &other->id_, other->GetArenaForAllocation()
+      &name_, GetArenaForAllocation(),
+      &other->name_, other->GetArenaForAllocation()
   );
 }
 
@@ -1390,15 +1410,210 @@ void Camera::InternalSwap(Camera* other) {
 
 // ===================================================================
 
-class SceneInfo::_Internal {
+class ActiveCamera::_Internal {
  public:
-  static const ::indiemotionpb::payloads::Camera& active_camera(const SceneInfo* msg);
 };
 
-const ::indiemotionpb::payloads::Camera&
-SceneInfo::_Internal::active_camera(const SceneInfo* msg) {
-  return *msg->active_camera_;
+ActiveCamera::ActiveCamera(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:indiemotionpb.payloads.ActiveCamera)
 }
+ActiveCamera::ActiveCamera(const ActiveCamera& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.ActiveCamera)
+}
+
+inline void ActiveCamera::SharedCtor() {
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+ActiveCamera::~ActiveCamera() {
+  // @@protoc_insertion_point(destructor:indiemotionpb.payloads.ActiveCamera)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ActiveCamera::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void ActiveCamera::ArenaDtor(void* object) {
+  ActiveCamera* _this = reinterpret_cast< ActiveCamera* >(object);
+  (void)_this;
+}
+void ActiveCamera::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ActiveCamera::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ActiveCamera::Clear() {
+// @@protoc_insertion_point(message_clear_start:indiemotionpb.payloads.ActiveCamera)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  name_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ActiveCamera::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string name = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.ActiveCamera.name"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* ActiveCamera::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:indiemotionpb.payloads.ActiveCamera)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string name = 10;
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "indiemotionpb.payloads.ActiveCamera.name");
+    target = stream->WriteStringMaybeAliased(
+        10, this->_internal_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:indiemotionpb.payloads.ActiveCamera)
+  return target;
+}
+
+size_t ActiveCamera::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:indiemotionpb.payloads.ActiveCamera)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string name = 10;
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ActiveCamera::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ActiveCamera::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ActiveCamera::GetClassData() const { return &_class_data_; }
+
+void ActiveCamera::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<ActiveCamera *>(to)->MergeFrom(
+      static_cast<const ActiveCamera &>(from));
+}
+
+
+void ActiveCamera::MergeFrom(const ActiveCamera& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:indiemotionpb.payloads.ActiveCamera)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ActiveCamera::CopyFrom(const ActiveCamera& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:indiemotionpb.payloads.ActiveCamera)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ActiveCamera::IsInitialized() const {
+  return true;
+}
+
+void ActiveCamera::InternalSwap(ActiveCamera* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, GetArenaForAllocation(),
+      &other->name_, other->GetArenaForAllocation()
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ActiveCamera::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
+      file_level_metadata_payloads_2eproto[5]);
+}
+
+// ===================================================================
+
+class SceneInfo::_Internal {
+ public:
+};
+
 SceneInfo::SceneInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
@@ -1413,16 +1628,16 @@ SceneInfo::SceneInfo(const SceneInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       cameras_(from.cameras_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_active_camera()) {
-    active_camera_ = new ::indiemotionpb::payloads::Camera(*from.active_camera_);
-  } else {
-    active_camera_ = nullptr;
+  active_camera_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_active_camera_name().empty()) {
+    active_camera_name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_active_camera_name(), 
+      GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:indiemotionpb.payloads.SceneInfo)
 }
 
 inline void SceneInfo::SharedCtor() {
-active_camera_ = nullptr;
+active_camera_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 SceneInfo::~SceneInfo() {
@@ -1434,7 +1649,7 @@ SceneInfo::~SceneInfo() {
 
 inline void SceneInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete active_camera_;
+  active_camera_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void SceneInfo::ArenaDtor(void* object) {
@@ -1454,10 +1669,7 @@ void SceneInfo::Clear() {
   (void) cached_has_bits;
 
   cameras_.Clear();
-  if (GetArenaForAllocation() == nullptr && active_camera_ != nullptr) {
-    delete active_camera_;
-  }
-  active_camera_ = nullptr;
+  active_camera_name_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1467,10 +1679,12 @@ const char* SceneInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .indiemotionpb.payloads.Camera active_camera = 10;
+      // string active_camera_name = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          ptr = ctx->ParseMessage(_internal_mutable_active_camera(), ptr);
+          auto str = _internal_mutable_active_camera_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "indiemotionpb.payloads.SceneInfo.active_camera_name"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1515,12 +1729,14 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .indiemotionpb.payloads.Camera active_camera = 10;
-  if (this->_internal_has_active_camera()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        10, _Internal::active_camera(this), target, stream);
+  // string active_camera_name = 10;
+  if (!this->_internal_active_camera_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_active_camera_name().data(), static_cast<int>(this->_internal_active_camera_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "indiemotionpb.payloads.SceneInfo.active_camera_name");
+    target = stream->WriteStringMaybeAliased(
+        10, this->_internal_active_camera_name(), target);
   }
 
   // repeated .indiemotionpb.payloads.Camera cameras = 20;
@@ -1554,11 +1770,11 @@ size_t SceneInfo::ByteSizeLong() const {
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // .indiemotionpb.payloads.Camera active_camera = 10;
-  if (this->_internal_has_active_camera()) {
+  // string active_camera_name = 10;
+  if (!this->_internal_active_camera_name().empty()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *active_camera_);
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_active_camera_name());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1590,8 +1806,8 @@ void SceneInfo::MergeFrom(const SceneInfo& from) {
   (void) cached_has_bits;
 
   cameras_.MergeFrom(from.cameras_);
-  if (from._internal_has_active_camera()) {
-    _internal_mutable_active_camera()->::indiemotionpb::payloads::Camera::MergeFrom(from._internal_active_camera());
+  if (!from._internal_active_camera_name().empty()) {
+    _internal_set_active_camera_name(from._internal_active_camera_name());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1611,13 +1827,17 @@ void SceneInfo::InternalSwap(SceneInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   cameras_.InternalSwap(&other->cameras_);
-  swap(active_camera_, other->active_camera_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &active_camera_name_, GetArenaForAllocation(),
+      &other->active_camera_name_, other->GetArenaForAllocation()
+  );
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SceneInfo::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[5]);
+      file_level_metadata_payloads_2eproto[6]);
 }
 
 // ===================================================================
@@ -1854,7 +2074,7 @@ void XForm_Vector::InternalSwap(XForm_Vector* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XForm_Vector::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[6]);
+      file_level_metadata_payloads_2eproto[7]);
 }
 
 // ===================================================================
@@ -2102,7 +2322,7 @@ void XForm::InternalSwap(XForm* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata XForm::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[7]);
+      file_level_metadata_payloads_2eproto[8]);
 }
 
 // ===================================================================
@@ -2336,7 +2556,7 @@ void MotionInfo::InternalSwap(MotionInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MotionInfo::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_payloads_2eproto_getter, &descriptor_table_payloads_2eproto_once,
-      file_level_metadata_payloads_2eproto[8]);
+      file_level_metadata_payloads_2eproto[9]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -2357,6 +2577,9 @@ template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::ShutdownSession* Arena::
 }
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::Camera* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::Camera >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::Camera >(arena);
+}
+template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::ActiveCamera* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::ActiveCamera >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::indiemotionpb::payloads::ActiveCamera >(arena);
 }
 template<> PROTOBUF_NOINLINE ::indiemotionpb::payloads::SceneInfo* Arena::CreateMaybeMessage< ::indiemotionpb::payloads::SceneInfo >(Arena* arena) {
   return Arena::CreateMessageInternal< ::indiemotionpb::payloads::SceneInfo >(arena);

@@ -70,6 +70,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_messages_2eproto::offsets[] PR
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::indiemotionpb::Message, payload_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -85,7 +86,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016messages.proto\022\rindiemotionpb\032\016payload"
   "s.proto\"<\n\006Header\022\n\n\002id\030\024 \001(\t\022\027\n\nrespons"
-  "eId\030( \001(\tH\000\210\001\001B\r\n\013_responseId\"\252\003\n\007Messag"
+  "eId\030( \001(\tH\000\210\001\001B\r\n\013_responseId\"\361\003\n\007Messag"
   "e\022%\n\006header\030\001 \001(\0132\025.indiemotionpb.Header"
   "\022.\n\005error\030\031 \001(\0132\035.indiemotionpb.payloads"
   ".ErrorH\000\022G\n\022initialize_session\030\037 \001(\0132).i"
@@ -94,16 +95,18 @@ const char descriptor_table_protodef_messages_2eproto[] PROTOBUF_SECTION_VARIABL
   "npb.payloads.ShutdownSessionH\000\022;\n\014sessio"
   "n_info\030( \001(\0132#.indiemotionpb.payloads.Se"
   "ssionInfoH\000\0227\n\nscene_info\0302 \001(\0132!.indiem"
-  "otionpb.payloads.SceneInfoH\000\0229\n\013motion_i"
-  "nfo\030< \001(\0132\".indiemotionpb.payloads.Motio"
-  "nInfoH\000B\t\n\007payloadb\006proto3"
+  "otionpb.payloads.SceneInfoH\000\022E\n\025active_c"
+  "amera_updated\0303 \001(\0132$.indiemotionpb.payl"
+  "oads.ActiveCameraH\000\0229\n\013motion_info\030< \001(\013"
+  "2\".indiemotionpb.payloads.MotionInfoH\000B\t"
+  "\n\007payloadb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_messages_2eproto_deps[1] = {
   &::descriptor_table_payloads_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_messages_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_messages_2eproto = {
-  false, false, 546, descriptor_table_protodef_messages_2eproto, "messages.proto", 
+  false, false, 617, descriptor_table_protodef_messages_2eproto, "messages.proto", 
   &descriptor_table_messages_2eproto_once, descriptor_table_messages_2eproto_deps, 1, 2,
   schemas, file_default_instances, TableStruct_messages_2eproto::offsets,
   file_level_metadata_messages_2eproto, file_level_enum_descriptors_messages_2eproto, file_level_service_descriptors_messages_2eproto,
@@ -381,6 +384,7 @@ class Message::_Internal {
   static const ::indiemotionpb::payloads::ShutdownSession& shutdown_session(const Message* msg);
   static const ::indiemotionpb::payloads::SessionInfo& session_info(const Message* msg);
   static const ::indiemotionpb::payloads::SceneInfo& scene_info(const Message* msg);
+  static const ::indiemotionpb::payloads::ActiveCamera& active_camera_updated(const Message* msg);
   static const ::indiemotionpb::payloads::MotionInfo& motion_info(const Message* msg);
 };
 
@@ -407,6 +411,10 @@ Message::_Internal::session_info(const Message* msg) {
 const ::indiemotionpb::payloads::SceneInfo&
 Message::_Internal::scene_info(const Message* msg) {
   return *msg->payload_.scene_info_;
+}
+const ::indiemotionpb::payloads::ActiveCamera&
+Message::_Internal::active_camera_updated(const Message* msg) {
+  return *msg->payload_.active_camera_updated_;
 }
 const ::indiemotionpb::payloads::MotionInfo&
 Message::_Internal::motion_info(const Message* msg) {
@@ -537,6 +545,31 @@ void Message::clear_scene_info() {
     clear_has_payload();
   }
 }
+void Message::set_allocated_active_camera_updated(::indiemotionpb::payloads::ActiveCamera* active_camera_updated) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_payload();
+  if (active_camera_updated) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(active_camera_updated));
+    if (message_arena != submessage_arena) {
+      active_camera_updated = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, active_camera_updated, submessage_arena);
+    }
+    set_has_active_camera_updated();
+    payload_.active_camera_updated_ = active_camera_updated;
+  }
+  // @@protoc_insertion_point(field_set_allocated:indiemotionpb.Message.active_camera_updated)
+}
+void Message::clear_active_camera_updated() {
+  if (_internal_has_active_camera_updated()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.active_camera_updated_;
+    }
+    clear_has_payload();
+  }
+}
 void Message::set_allocated_motion_info(::indiemotionpb::payloads::MotionInfo* motion_info) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   clear_payload();
@@ -599,6 +632,10 @@ Message::Message(const Message& from)
     }
     case kSceneInfo: {
       _internal_mutable_scene_info()->::indiemotionpb::payloads::SceneInfo::MergeFrom(from._internal_scene_info());
+      break;
+    }
+    case kActiveCameraUpdated: {
+      _internal_mutable_active_camera_updated()->::indiemotionpb::payloads::ActiveCamera::MergeFrom(from._internal_active_camera_updated());
       break;
     }
     case kMotionInfo: {
@@ -675,6 +712,12 @@ void Message::clear_payload() {
       }
       break;
     }
+    case kActiveCameraUpdated: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete payload_.active_camera_updated_;
+      }
+      break;
+    }
     case kMotionInfo: {
       if (GetArenaForAllocation() == nullptr) {
         delete payload_.motion_info_;
@@ -748,6 +791,13 @@ const char* Message::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
       case 50:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 146)) {
           ptr = ctx->ParseMessage(_internal_mutable_scene_info(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .indiemotionpb.payloads.ActiveCamera active_camera_updated = 51;
+      case 51:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 154)) {
+          ptr = ctx->ParseMessage(_internal_mutable_active_camera_updated(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -835,6 +885,14 @@ failure:
         50, _Internal::scene_info(this), target, stream);
   }
 
+  // .indiemotionpb.payloads.ActiveCamera active_camera_updated = 51;
+  if (_internal_has_active_camera_updated()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        51, _Internal::active_camera_updated(this), target, stream);
+  }
+
   // .indiemotionpb.payloads.MotionInfo motion_info = 60;
   if (_internal_has_motion_info()) {
     target = stream->EnsureSpace(target);
@@ -902,6 +960,13 @@ size_t Message::ByteSizeLong() const {
           *payload_.scene_info_);
       break;
     }
+    // .indiemotionpb.payloads.ActiveCamera active_camera_updated = 51;
+    case kActiveCameraUpdated: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *payload_.active_camera_updated_);
+      break;
+    }
     // .indiemotionpb.payloads.MotionInfo motion_info = 60;
     case kMotionInfo: {
       total_size += 2 +
@@ -963,6 +1028,10 @@ void Message::MergeFrom(const Message& from) {
     }
     case kSceneInfo: {
       _internal_mutable_scene_info()->::indiemotionpb::payloads::SceneInfo::MergeFrom(from._internal_scene_info());
+      break;
+    }
+    case kActiveCameraUpdated: {
+      _internal_mutable_active_camera_updated()->::indiemotionpb::payloads::ActiveCamera::MergeFrom(from._internal_active_camera_updated());
       break;
     }
     case kMotionInfo: {

@@ -12,9 +12,9 @@ namespace indiemotion
 		}
 	};
 
-	struct MotionManager
+	struct MotionService
 	{
-		MotionManager(std::shared_ptr<Context> ctx, std::shared_ptr<MotionDelegate> delegate)
+		MotionService(std::shared_ptr<Context> ctx, std::shared_ptr<MotionDelegate> delegate)
 			: _ctx(ctx), _delegate(delegate)
 		{
 			_ctx->motion = std::make_shared<MotionContext>();

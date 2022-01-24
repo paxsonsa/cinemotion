@@ -7,13 +7,13 @@ namespace indiemotion
 	struct SceneDelegate
 	{
 		virtual std::vector<Camera> get_scene_cameras() = 0;
-		virtual void scene_updated(std::shared_ptr<SceneContext const> scene)
+		virtual void scene_updated(const std::shared_ptr<const SceneContext>& scene)
 		{
 		};
 	};
 
-	struct SceneManager {
-		SceneManager(std::shared_ptr<Context> ctx, std::shared_ptr<SceneDelegate> delegate): _ctx(ctx), _delegate(delegate) {
+	struct SceneService {
+		SceneService(std::shared_ptr<Context> ctx, std::shared_ptr<SceneDelegate> delegate): _ctx(ctx), _delegate(delegate) {
 			_ctx->scene = std::make_unique<SceneContext>();
 		}
 
@@ -28,6 +28,9 @@ namespace indiemotion
 
 		void update_active_camera(std::optional<std::string> name)
 		{
+			if (_ctx->scene->active_camera_name == name)
+				return;
+
 			_ctx->scene->active_camera_name = name;
 			update();
 		}

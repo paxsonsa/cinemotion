@@ -3,22 +3,31 @@
 #include <indiemotion/logging.hpp>
 #include <indiemotion/net/message.hpp>
 #include <indiemotion/net/dispatch.hpp>
-#include <indiemotion/controller.hpp>
+#include <indiemotion/services/session_service.hpp>
+#include <indiemotion/services/scene_service.hpp>
+#include <indiemotion/services/motion_service.hpp>
 
 namespace indiemotion
 {
+	Message make_message_from(std::shared_ptr<SceneContext const> const& ctx);
+	Message make_message_from(std::shared_ptr<MotionContext const> const& ctx);
+
 	struct Service
 	{
-		Service(std::shared_ptr<NetMessageDispatcher> dispatcher_ptr,
-			           std::shared_ptr<SessionController> controller)
+		const std::shared_ptr<Context> ctx;
+
+		Service(std::shared_ptr<NetMessageDispatcher> dispatcher_ptr): ctx(std::make_shared<Context>())
 		{
-			_m_dispatcher = std::move(dispatcher_ptr);
+			_dispatcher = std::move(dispatcher_ptr);
 			_logger = logging::get_logger("com.indiemotion.sessionservice");
-			_m_controller = std::move(controller);
 
 			/// Initialize the callback table
 			_m_callback_table[Message::PayloadCase::kInitializeSession] =
 				std::bind(&Service::_process_initialize_session, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kSceneInfo] =
+				std::bind(&Service::_process_scene_info_update, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kMotionInfo] =
+				std::bind(&Service::_process_motion_info_update, this, std::placeholders::_1);
 
 		}
 
@@ -27,13 +36,31 @@ namespace indiemotion
 			return "1.0";
 		}
 
+		void init_session_service(std::shared_ptr<SessionDelegate> delegate)
+		{
+			_logger->info("initializing session service.");
+			_session_service = std::make_shared<SessionService>(ctx, delegate);
+		}
+
+		void init_scene_service(std::shared_ptr<SceneDelegate> delegate)
+		{
+			_logger->info("initializing scene service.");
+			_scene_service = std::make_shared<SceneService>(ctx, delegate);
+		}
+
+		void init_motion_service(std::shared_ptr<MotionDelegate> delegate)
+		{
+			_logger->info("initializing motion service.");
+			_motion_service = std::make_shared<MotionService>(ctx, delegate);
+		}
+
 		void process_message(const Message&& message)
 		{
 			if (message.payload_case() == Message::PayloadCase::PAYLOAD_NOT_SET)
 			{
 				auto exception = BadMessageException("description is missing payload.");
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
-				_m_dispatcher->dispatch(std::move(err_message));
+				_dispatcher->dispatch(std::move(err_message));
 				return;
 			}
 
@@ -45,7 +72,7 @@ namespace indiemotion
 					name);
 				auto exception = ApplicationException("application does not know how to process message");
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
-				_m_dispatcher->dispatch(std::move(err_message));
+				_dispatcher->dispatch(std::move(err_message));
 				return;
 			}
 
@@ -57,11 +84,11 @@ namespace indiemotion
 			catch (const Exception& err)
 			{
 				auto err_message = net_make_error_response_from_exception(message.header().id(), err);
-				_m_dispatcher->dispatch(std::move(err_message));
+				_dispatcher->dispatch(std::move(err_message));
 				if (err.is_fatal)
 				{
 					_logger->error("caught fatal error, shutting down session: {}", err.description);
-					_m_controller->shutdown();
+					_session_service->shutdown();
 				}
 			}
 			catch (const std::exception& e)
@@ -69,16 +96,33 @@ namespace indiemotion
 				_logger->error("unexpected error while processing description: {}", e.what());
 				auto exception = UnknownFatalException();
 				auto err_message = net_make_error_response_from_exception(message.header().id(), exception);
-				_m_dispatcher->dispatch(std::move(err_message));
-				_m_controller->shutdown();
+				_dispatcher->dispatch(std::move(err_message));
+				_session_service->shutdown();
 			}
 		}
 
 	private:
 		std::shared_ptr<spdlog::logger> _logger;
-		std::shared_ptr<NetMessageDispatcher> _m_dispatcher;
-		std::shared_ptr<SessionController> _m_controller;
-		std::array<std::optional<std::function<void(const Message&&)>>, 128> _m_callback_table {};
+		std::shared_ptr<NetMessageDispatcher> _dispatcher;
+		std::shared_ptr<SessionService> _session_service;
+		std::shared_ptr<SceneService> _scene_service;
+		std::shared_ptr<MotionService> _motion_service;
+
+		std::array<std::optional<std::function<void(const Message&&)>>, 128> _m_callback_table{};
+
+		void _send_current_scene_info()
+		{
+			assert(ctx->scene && "The scene context should be initialized before attemptting to send it.");
+			auto message = make_message_from(ctx->scene);
+			_dispatcher->dispatch(std::move(message));
+		}
+
+		void _send_current_motion_info()
+		{
+			assert(ctx->motion && "The motion context should be initialized before attemptting to send it.");
+			auto message = make_message_from(ctx->motion);
+			_dispatcher->dispatch(std::move(message));
+		}
 
 		void _process_initialize_session(const Message&& message)
 		{
@@ -88,7 +132,64 @@ namespace indiemotion
 				_logger->error("API Version is not supported: {}", session_info.api_version());
 				throw APIVersionNotSupportedException();
 			}
-			_m_controller->initialize(session_info.session_name());
+			_session_service->initialize(session_info.session_name());
+
+			_send_current_scene_info();
+			_send_current_motion_info();
+		}
+
+		void _process_scene_info_update(const Message&& message)
+		{
+			auto scene_info = message.scene_info();
+			auto active_camera = scene_info.active_camera_name();
+			_scene_service->update_active_camera(active_camera);
+			// TODO Pass responsibility of processing scene_info to service
+		}
+
+		void _process_motion_info_update(const Message&& message)
+		{
+			auto motion_info = message.motion_info();
+			// TODO handle update inside of the motion service.
 		}
 	};
+
+	Message make_message_from(std::shared_ptr<SceneContext const> const& ctx)
+	{
+		auto m = net_make_message();
+		auto scene_info = m.mutable_scene_info();
+
+		for (auto src_cam: ctx->cameras)
+		{
+			auto cam = scene_info->add_cameras();
+			cam->set_name(src_cam.name);
+		}
+
+		if (ctx->active_camera_name.has_value())
+		{
+			scene_info->set_active_camera_name(ctx->active_camera_name.value());
+		}
+
+		return m;
+	}
+
+	Message make_message_from(std::shared_ptr<MotionContext const> const& ctx)
+	{
+		auto m = net_make_message();
+		auto motion_info = m.mutable_motion_info();
+
+		switch(ctx->status)
+		{
+		case MotionStatus::Idle:
+			motion_info->set_status(Payloads::MotionInfo_Status_Idle);
+			break;
+		case MotionStatus::Live:
+			motion_info->set_status(Payloads::MotionInfo_Status_Live);
+			break;
+		case MotionStatus::Recording:
+			motion_info->set_status(Payloads::MotionInfo_Status_Recording);
+			break;
+		}
+
+		return m;
+	}
 }

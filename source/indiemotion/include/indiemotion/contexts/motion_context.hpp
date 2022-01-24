@@ -8,5 +8,10 @@ namespace indiemotion
 	{
 		MotionStatus status;
 		MotionXForm current_xform;
+
+		static std::shared_ptr<MotionContext> create()
+		{
+			return std::make_shared<MotionContext>();
+		}
 	};
 }
