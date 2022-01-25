@@ -1,23 +1,17 @@
 #pragma once
 #include <indiemotion/common.hpp>
 #include <indiemotion/services/motion_service.hpp>
-#include <indiemotion/scene.hpp>
+#include <indiemotion/services/scene_service.hpp>
 #include <indiemotion/contexts/context.hpp>
 
 namespace indiemotion
 {
-	struct SessionDelegate
-	{
-		virtual void session_updated(const std::shared_ptr<const SessionContext>& session)
-		{
-		}
-	};
 
 	struct SessionService final
 	{
 		std::shared_ptr<Context> ctx;
 
-		SessionService(std::shared_ptr<Context> ctx, std::shared_ptr<SessionDelegate> delegate)
+		SessionService(std::shared_ptr<Context> ctx, std::shared_ptr<SessionContext::Delegate> delegate)
 			: ctx(ctx), _delegate(delegate)
 		{
 			ctx->session = std::make_shared<SessionContext>();
@@ -47,13 +41,14 @@ namespace indiemotion
 		}
 
 	private:
-		std::shared_ptr<SessionDelegate> _delegate;
+		std::shared_ptr<SessionContext::Delegate> _delegate;
 
 		void update()
 		{
 			if (_delegate)
 			{
-				_delegate->session_updated(ctx->session);
+				auto view = ContextView(ctx);
+				_delegate->session_updated(view);
 			}
 		}
 	};

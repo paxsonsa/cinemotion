@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <indiemotion/services/session_service.hpp>
+#include "motion_context.hpp"
 
 using namespace indiemotion;
 

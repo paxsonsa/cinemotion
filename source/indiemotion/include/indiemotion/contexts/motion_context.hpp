@@ -4,6 +4,8 @@
 
 namespace indiemotion
 {
+	struct ContextView;
+
 	struct MotionContext
 	{
 		MotionStatus status;
@@ -13,5 +15,11 @@ namespace indiemotion
 		{
 			return std::make_shared<MotionContext>();
 		}
+
+		struct Delegate
+		{
+			virtual void motion_updated(const ContextView& ctx) {};
+		};
 	};
+
 }

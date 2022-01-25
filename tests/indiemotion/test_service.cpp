@@ -4,23 +4,22 @@
 
 using namespace indiemotion;
 
-struct DummyDelegate : public SessionDelegate, SceneDelegate
+struct DummyDelegate : public SessionContext::Delegate, SceneContext::Delegate
 {
 	SessionContext session_ctx;
 	SceneContext scene_ctx;
 
-	void session_updated(const std::shared_ptr<const SessionContext>& session) override
-	{
-		session_ctx = *session;
-	}
-
-	void scene_updated(const std::shared_ptr<const SceneContext>& scene) override
-	{
-		scene_ctx = *scene;
-	}
 	std::vector<Camera> get_scene_cameras() override
 	{
 		return std::vector<Camera>();
+	}
+	void scene_updated(const ContextView& ctx) override
+	{
+		scene_ctx = *(ctx.scene());
+	}
+	void session_updated(const ContextView& ctx) override
+	{
+		session_ctx = *(ctx.session());
 	}
 };
 
@@ -43,8 +42,8 @@ SCENARIO("Basic Execution the Session")
 		auto dispatcher = std::make_shared<DummyDispatcher>();
 		auto service = Service(dispatcher);
 		service.init_session_service(delegate);
+		service.init_scene_service(delegate);
 		service.init_motion_service(nullptr);
-		service.init_scene_service(nullptr);
 
 		WHEN("initialized message is processed")
 		{
@@ -133,9 +132,14 @@ SCENARIO("Basic Execution the Session")
 
 			THEN("the delegate scene context should be updated")
 			{
-				REQUIRE(delegate->scene_ctx.active_camera_name == "cam1");
+				REQUIRE(delegate->scene_ctx.active_camera_name.value() == "cam1");
 			}
 		}
+
+		// TODO Update Motion Status
+		// TODO Send Motion XForm
+		// TODO Change Motion Status
+		// TODO Shutdown
 
 	}
 }

@@ -1,52 +1,92 @@
 #pragma once
+#include <indiemotion/errors.hpp>
 #include <indiemotion/motion/status.hpp>
 #include <indiemotion/motion/xform.hpp>
+#include <indiemotion/net/message.hpp>
 #include <indiemotion/contexts/context.hpp>
 
 namespace indiemotion
 {
-	struct MotionDelegate
-	{
-		virtual void motion_updated(std::shared_ptr<MotionContext const> motion)
-		{
-		}
-	};
 
 	struct MotionService
 	{
-		MotionService(std::shared_ptr<Context> ctx, std::shared_ptr<MotionDelegate> delegate)
+		MotionService(std::shared_ptr<Context> ctx, std::shared_ptr<MotionContext::Delegate> delegate)
 			: _ctx(ctx), _delegate(delegate)
 		{
 			_ctx->motion = std::make_shared<MotionContext>();
 			update();
 		}
 
-		MotionStatus status() const
+		void process(const Payloads::MotionInfo& info)
+		{
+			MotionStatus new_status = translate_status(info);
+			auto cur_status = status(new_status);
+
+			// Idle mode, not motion capture.
+			if (cur_status != MotionStatus::Idle)
+			{
+				extract_xform(info);
+			}
+			update();
+		}
+		void extract_xform(const Payloads::MotionInfo& info)
+		{
+			auto in_xform = info.xform();
+			auto xform = MotionXForm::create(
+				in_xform.translation().x(),
+				in_xform.translation().y(),
+				in_xform.translation().z(),
+				in_xform.orientation().x(),
+				in_xform.orientation().y(),
+				in_xform.orientation().z()
+			);
+			_ctx->motion->current_xform = xform;
+		}
+		MotionStatus translate_status(const Payloads::MotionInfo& info) const
+		{
+			MotionStatus new_status;
+			switch(info.status())
+			{
+			case Payloads::MotionInfo_Status_Idle:
+				new_status = Idle;
+				break;
+			case Payloads::MotionInfo_Status_Live:
+				new_status = Live;
+				break;
+			case Payloads::MotionInfo_Status_Recording:
+				new_status = Recording;
+				break;
+			default:
+				throw std::runtime_error("Unknown MotionInfo_Status value in MotionService::process");
+			}
+			return new_status;
+		}
+
+		MotionStatus status() const noexcept
 		{
 			return _ctx->motion->status;
 		}
 
-		void status(MotionStatus status)
+		MotionStatus status(MotionStatus status)
 		{
+			if (!scene_is_active_camera_set(_ctx->view()))
+			{
+				throw ActiveCameraNotSetException();
+			}
 			_ctx->motion->status = status;
 			update();
-		}
-
-		void update_xform(MotionXForm&& xform)
-		{
-			_ctx->motion->current_xform = std::move(xform);
-			update();
+			return status;
 		}
 
 	private:
 		std::shared_ptr<Context> _ctx;
-		std::shared_ptr<MotionDelegate> _delegate;
+		std::shared_ptr<MotionContext::Delegate> _delegate;
 
 		void update()
 		{
 			if (_delegate)
 			{
-				_delegate->motion_updated(_ctx->motion);
+				_delegate->motion_updated(_ctx->view());
 			}
 		}
 	};

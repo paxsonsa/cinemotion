@@ -1,16 +1,24 @@
 #pragma once
+#include <indiemotion/common.hpp>
 #include <indiemotion/contexts/motion_context.hpp>
 #include <indiemotion/contexts/scene_context.hpp>
 #include <indiemotion/contexts/session_context.hpp>
 
 namespace indiemotion
 {
+	struct ContextView;
 
-	struct Context
+	struct Context: std::enable_shared_from_this<Context>
 	{
 		std::shared_ptr <SessionContext> session;
 		std::shared_ptr <SceneContext> scene;
 		std::shared_ptr <MotionContext> motion;
+
+		const ContextView view();
+
+
+	private:
+		std::shared_ptr<ContextView> _view;
 	};
 
 	struct ContextView
@@ -42,6 +50,17 @@ namespace indiemotion
 	{
 		auto c = std::make_shared<Context>();
 		return c;
+	}
+
+	const ContextView Context::view()
+	{
+		return ContextView(shared_from_this());
+	}
+
+
+	bool scene_is_active_camera_set(const ContextView& ctx)
+	{
+		return ctx.scene()->active_camera_name.has_value();
 	}
 
 }

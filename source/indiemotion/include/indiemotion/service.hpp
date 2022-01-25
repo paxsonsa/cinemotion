@@ -36,19 +36,19 @@ namespace indiemotion
 			return "1.0";
 		}
 
-		void init_session_service(std::shared_ptr<SessionDelegate> delegate)
+		void init_session_service(std::shared_ptr<SessionContext::Delegate> delegate)
 		{
 			_logger->info("initializing session service.");
 			_session_service = std::make_shared<SessionService>(ctx, delegate);
 		}
 
-		void init_scene_service(std::shared_ptr<SceneDelegate> delegate)
+		void init_scene_service(std::shared_ptr<SceneContext::Delegate> delegate)
 		{
 			_logger->info("initializing scene service.");
 			_scene_service = std::make_shared<SceneService>(ctx, delegate);
 		}
 
-		void init_motion_service(std::shared_ptr<MotionDelegate> delegate)
+		void init_motion_service(std::shared_ptr<MotionContext::Delegate> delegate)
 		{
 			_logger->info("initializing motion service.");
 			_motion_service = std::make_shared<MotionService>(ctx, delegate);
@@ -141,15 +141,13 @@ namespace indiemotion
 		void _process_scene_info_update(const Message&& message)
 		{
 			auto scene_info = message.scene_info();
-			auto active_camera = scene_info.active_camera_name();
-			_scene_service->update_active_camera(active_camera);
-			// TODO Pass responsibility of processing scene_info to service
+			_scene_service->process(scene_info);
 		}
 
 		void _process_motion_info_update(const Message&& message)
 		{
 			auto motion_info = message.motion_info();
-			// TODO handle update inside of the motion service.
+			_motion_service->process(motion_info);
 		}
 	};
 

@@ -1234,7 +1234,11 @@ class SceneInfo final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotionpb::payloads::Camera >&
       cameras() const;
 
-  // string active_camera_name = 10;
+  // optional string active_camera_name = 10;
+  bool has_active_camera_name() const;
+  private:
+  bool _internal_has_active_camera_name() const;
+  public:
   void clear_active_camera_name();
   const std::string& active_camera_name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1255,9 +1259,10 @@ class SceneInfo final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::indiemotionpb::payloads::Camera > cameras_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr active_camera_name_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_payloads_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2177,9 +2182,17 @@ inline void ActiveCamera::set_allocated_name(std::string* name) {
 
 // SceneInfo
 
-// string active_camera_name = 10;
+// optional string active_camera_name = 10;
+inline bool SceneInfo::_internal_has_active_camera_name() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool SceneInfo::has_active_camera_name() const {
+  return _internal_has_active_camera_name();
+}
 inline void SceneInfo::clear_active_camera_name() {
   active_camera_name_.ClearToEmpty();
+  _has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& SceneInfo::active_camera_name() const {
   // @@protoc_insertion_point(field_get:indiemotionpb.payloads.SceneInfo.active_camera_name)
@@ -2188,7 +2201,7 @@ inline const std::string& SceneInfo::active_camera_name() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void SceneInfo::set_active_camera_name(ArgT0&& arg0, ArgT... args) {
- 
+ _has_bits_[0] |= 0x00000001u;
  active_camera_name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:indiemotionpb.payloads.SceneInfo.active_camera_name)
 }
@@ -2201,22 +2214,26 @@ inline const std::string& SceneInfo::_internal_active_camera_name() const {
   return active_camera_name_.Get();
 }
 inline void SceneInfo::_internal_set_active_camera_name(const std::string& value) {
-  
+  _has_bits_[0] |= 0x00000001u;
   active_camera_name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
 inline std::string* SceneInfo::_internal_mutable_active_camera_name() {
-  
+  _has_bits_[0] |= 0x00000001u;
   return active_camera_name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* SceneInfo::release_active_camera_name() {
   // @@protoc_insertion_point(field_release:indiemotionpb.payloads.SceneInfo.active_camera_name)
-  return active_camera_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  if (!_internal_has_active_camera_name()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000001u;
+  return active_camera_name_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
 inline void SceneInfo::set_allocated_active_camera_name(std::string* active_camera_name) {
   if (active_camera_name != nullptr) {
-    
+    _has_bits_[0] |= 0x00000001u;
   } else {
-    
+    _has_bits_[0] &= ~0x00000001u;
   }
   active_camera_name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), active_camera_name,
       GetArenaForAllocation());
