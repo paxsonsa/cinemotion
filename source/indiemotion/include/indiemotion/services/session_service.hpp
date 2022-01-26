@@ -37,6 +37,12 @@ namespace indiemotion
 		void shutdown()
 		{
 			ctx->session->shutdown = true;
+			ctx->session->initialized = false;
+			if (_delegate)
+			{
+				auto view = ContextView(ctx);
+				_delegate->on_shutdown(view);
+			}
 			update();
 		}
 

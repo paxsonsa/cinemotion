@@ -13,6 +13,7 @@ namespace indiemotion
 		struct Delegate
 		{
 			virtual void session_updated(const ContextView& ctx) {}
+			virtual void on_shutdown(const ContextView& ctx) {}
 		};
 	};
 }

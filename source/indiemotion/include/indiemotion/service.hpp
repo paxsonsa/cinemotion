@@ -28,6 +28,8 @@ namespace indiemotion
 				std::bind(&Service::_process_scene_info_update, this, std::placeholders::_1);
 			_m_callback_table[Message::PayloadCase::kMotionInfo] =
 				std::bind(&Service::_process_motion_info_update, this, std::placeholders::_1);
+			_m_callback_table[Message::PayloadCase::kShutdownSession] =
+				std::bind(&Service::_process_shutdown_session, this, std::placeholders::_1);
 
 		}
 
@@ -148,6 +150,11 @@ namespace indiemotion
 		{
 			auto motion_info = message.motion_info();
 			_motion_service->process(motion_info);
+		}
+
+		void _process_shutdown_session(const Message&& message)
+		{
+			_session_service->shutdown();
 		}
 	};
 

@@ -26,6 +26,8 @@ namespace indiemotion
 			if (cur_status != MotionStatus::Idle)
 			{
 				extract_xform(info);
+			} else {
+				reset_xform();
 			}
 			update();
 		}
@@ -40,6 +42,12 @@ namespace indiemotion
 				in_xform.orientation().y(),
 				in_xform.orientation().z()
 			);
+			_ctx->motion->current_xform = xform;
+		}
+
+		void reset_xform()
+		{
+			auto xform = MotionXForm::zero();
 			_ctx->motion->current_xform = xform;
 		}
 		MotionStatus translate_status(const Payloads::MotionInfo& info) const
@@ -74,7 +82,6 @@ namespace indiemotion
 				throw ActiveCameraNotSetException();
 			}
 			_ctx->motion->status = status;
-			update();
 			return status;
 		}
 
