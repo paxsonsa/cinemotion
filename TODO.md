@@ -1,4 +1,5 @@
 # TDOD Notes
+- Process Throws as "Errors in Repsonse too"
 - Handle Error Messages
 - Make Server Generation more declarative
   - Server(callbacks)
