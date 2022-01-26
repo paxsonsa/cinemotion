@@ -309,5 +309,3 @@ SCENARIO("Making a message from MotionInfo")
 		}
 	}
 }
-// TODO Fix Tests and Clear out old things
-// TODO Add proper error handling.
