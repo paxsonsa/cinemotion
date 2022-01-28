@@ -1,0 +1,111 @@
+/**
+Copyright 2021 Andrew Paxson <axiom.tragic-0w@icloud.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+syntax = "proto3";
+package indiemotionpb.payloads;
+
+/// Defines an error that has occurred on the senders side.
+message Error {
+
+  enum Type {
+    UnknownError = 0;
+    InputDeviceError = 1;
+    ApplicationError = 2;
+    UserError = 3;
+    BadMessageError = 4;
+    APIVersionNotSupportedError = 5;
+
+    SessionError = 10;
+    SessionNotInitializedError = 11;
+
+    ActiveCameraNotSetError = 20;
+    CameraNotFoundError = 21;
+  }
+  /// The Type of error that this is.
+  Type type = 13;
+
+  /// The human readable description of the error that occured.
+  string description = 11;
+
+  /// Specifies whether the error is fatal. When true, the session will send immediately following the
+  /// reception of this message.
+  bool is_fatal = 12;
+}
+
+/// Data defining the input device information
+message SessionInfo {
+  string session_name = 10;
+  string api_version = 20;
+}
+
+/// A message to initialize the session with the given device information.
+message InitializeSession
+{
+  /// The input device information to use when initializing the session.
+  SessionInfo session_info = 10;
+}
+
+/// A message to shutdown the current session.
+message ShutdownSession {}
+
+/// Defines the data that makes up a camera
+message Camera {string name = 10;}
+
+/// Defines the data that makes up a camera
+message ActiveCamera {string name = 10;}
+
+/// Define the data the represents informaiton about the scene
+/// This information can be cameras, objects, or coordinates.
+message SceneInfo {
+  optional string active_camera_name = 10;
+  repeated Camera cameras = 20;
+}
+
+/// Motion Data that is sent from the Input Device
+message XForm {
+  /// Transform Data Vector
+  message Vector {
+    double x = 1;
+    double y = 2;
+    double z = 3;
+  }
+  /// The current translation of the camera from origin
+  Vector translation = 1;
+
+  /// The current translation of the camera from origin
+  Vector orientation = 2;
+}
+
+/// Represents the motion capture data that is current being generated.
+message MotionInfo {
+
+  /// Represents the current motion capture status.
+  enum Status {
+    /// Motion data is not transferring/recording
+    Idle = 0;
+
+    /// Motion data is not transferring but not being recorded.
+    Live = 1;
+
+    /// Motion Data is being transferred and recorded.
+    Recording = 2;
+  }
+
+  /// The current status of motion capturing.
+  Status status = 1;
+
+  /// Represents the current transform frame.
+  XForm xform = 10;
+}

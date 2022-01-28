@@ -1,0 +1,37 @@
+/**
+Copyright 2021 Andrew Paxson <axiom.tragic-0w@icloud.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+syntax = "proto3";
+package indiemotionpb;
+
+import "payloads.proto";
+
+message Header {
+  string id = 20;
+  optional string responseId = 40;
+}
+
+message Message {
+  Header header = 1;
+  oneof payload {
+    indiemotionpb.payloads.Error error = 25;
+    indiemotionpb.payloads.InitializeSession initialize_session = 31;
+    indiemotionpb.payloads.ShutdownSession shutdown_session = 32;
+    indiemotionpb.payloads.SessionInfo session_info = 40;
+    indiemotionpb.payloads.SceneInfo scene_info = 50;
+    indiemotionpb.payloads.ActiveCamera active_camera_updated = 51;
+    indiemotionpb.payloads.MotionInfo motion_info = 60;
+  }
+}
