@@ -27,43 +27,54 @@ ctest
 ## Basic Server Implementation
 IndieMotion works by establishing a server that listens for incoming connections
 and establishes a connection and session. As a DCC Implementor, your job is to provide the glue
-layer for manipulating your DCCs environment by providing an implementation of `indiemotion::Application`.
+layer for manipulating your DCCs environment by providing an implementation of a few delegates. Each delegate is 
+responsible for receiving updates to certain parts of the context data.
+
+The `indiemotion::Context` is a composite value-type of other sub-context structures:
+- `SceneContext` contains information about the actual 3D scene and objects, specifically the cameras.
+- `SessionContext` contains information about the current session state (e.g. the name, is it initialized, etc.)
+- `MotionContext` contains the information about the current transform and motion capture status.
 
 An example of a simple implementation can be found in the `source/idmserver/main.cpp`
 
 A basic implementation does a few things:
-1. Implement the `indiemotion::Application`
-2. Build an Instance of `indiemotion::Server`
-3. Start the Server in a new thread and pass in a `on_start` callback to attach your application to the given `SessionCon`
+1. Implement the delegates for each context.
+2. Define the options for the server.
+3. Build an Instance of `indiemotion::Server`
+4. Start the Server in a new thread.
 
 Below is a naive implementation
 ```cpp
-#include <indiemotion/session.hpp>
 #include <indiemotion/server.hpp>
 
 using idm = indiemotion;
 
-struct DebugApp: public idm::Application {
+struct DebugDelegate: public idm::SessionDelegate, idm::SceneDelegate, idm::MotionDelegate {
     ...
 };
 
 // Within some function/class
-    Options server_options;
-    server_options.address = "0.0.0.0";
-    server_options.port = 7766;
-    
-    auto server = Server(server_options);
-    
-    // Start Server in thread
-    std::thread thread{[&server]() {
-        server.start([](std::shared_ptr<SessionCon> session) {
-            // Create the Application
-            auto app = std::make_shared<DebugApp>();
-            
-            // Pass Ownership to the controller.
-            session->set_application(std::move(app));
-        });
-    }};
+auto delegate = std::make_shared<DebugDelegate>();
+DelegateInfo delegate_info;
+delegate_info.session = delegate;
+delegate_info.scene = delegate;
+delegate_info.motion = delegate;
+
+Options server_options;
+server_options.address = "0.0.0.0";
+server_options.port = 7766;
+server_options.delegate_info = delegate_info;
+
+server_options.on_connect = [&]() {};
+server_options.on_disconnect = [&]() {};
+
+auto server = Server(server_options);
+std::thread thread{[&server]() {
+    server.start();
+}};
+
+thread.join();
+return 0;
 ...
 ```
 
