@@ -165,37 +165,9 @@ namespace indiemotion
 	 */
 	struct CameraNotFoundException : Exception
 	{
-		CameraNotFoundException(std::string camera_id) : Exception("CameraNotFoundError",
-			"could not find camera with matching id: "
-				+ camera_id)
-		{
-		}
-	};
-
-	/**
-	 * An Exception that is thrown when a session property with a given name could not be found.
-	 *
-	 * IndieMotion Error: SessionPropertyNotFoundError
-	 */
-	struct SessionPropertyNotFoundException: Exception
-	{
-		SessionPropertyNotFoundException(std::string name) : Exception("SessionPropertyNotFoundError",
-			"no property with that name: " + name)
-		{
-
-		}
-	};
-
-	/**
-	 * An exception that is thrown when there is a problem with a session property's type.
-	 *
-	 * IndieMotion Error: SessionPropertyTypeError
-	 *
-	 */
-	struct SessionPropertyTypeException: Exception
-	{
-		SessionPropertyTypeException(std::string message) : Exception("SessionPropertyTypeError",
-			message)
+		CameraNotFoundException(std::string camera_name) : Exception("CameraNotFoundError",
+			"could not find camera with matching name: "
+				+ camera_name)
 		{
 		}
 	};

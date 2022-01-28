@@ -5,65 +5,40 @@
 #include <boost/program_options.hpp>
 
 #include <indiemotion/server.hpp>
-#include <indiemotion/session.hpp>
 #include <indiemotion/logging.hpp>
+#include <indiemotion/context.hpp>
+#include <indiemotion/delegates.hpp>
+#include <indiemotion/options.hpp>
 
 using namespace indiemotion;
 namespace progopts = boost::program_options;
 
+struct ContextDelegate: public SessionDelegate, SceneDelegate, MotionDelegate
+{
 
-struct DebugApp: public Application {
-
-	logging::Logger logger;
-
-	DebugApp() {
-    	logger = logging::get_logger("com.indiemotion.idmserver");
+	void session_updated(Context ctx) override
+	{
 	}
 
-	std::vector<Camera> cameras {
-        Camera("camera1"),
-        Camera("camera2"),
-        Camera("camera3"),
-    };
-
-    std::optional<Camera> active_camera;
-
-    std::vector<Camera> get_available_cameras() override {
-        return cameras;
-    }
-
-    std::optional<Camera> get_camera_by_name(std::string name) override {
-        for (auto &cam: cameras)
-        {
-            if (cam.name == name) {
-                return cam;
-            }
-        }
-        return {};
-    }
-
-    void did_set_active_camera(Camera camera) override {
-        logger->info("Active Camera Updated: {}", camera.name);
-		active_camera = camera;
-
-    }
-    void did_set_motion_mode(MotionMode m) override {
-        logger->info("Motion Mode Did Update: {}", m);
-    }
-    void did_receive_motion_update(MotionXForm m) override {
-		logger->info("MotionXForm: {}", m.description());
+	void scene_updated(Context ctx) override
+	{
 	}
 
-    void will_shutdown_session() override {
-        logger->info("SessionCon is shutting down");
-    }
-    void will_start_session() override {
-        logger->info("SessionCon is starting");
-    }
-    void did_start_session() override {
-        logger->info("SessionCon is started");
-    }
+	void motion_updated(Context ctx) override
+	{
+	}
+
+	std::vector<Camera> get_scene_cameras() override
+	{
+		return std::vector<Camera>();
+	}
+
+	void on_shutdown(Context ctx) override
+	{
+	}
+
 };
+
 
 /**
  * Command Line Options
@@ -111,17 +86,25 @@ int main(int argc, const char **argv) {
         << "see the docs for more information.\n\n"
         << "Starting Server: 0.0.0.0:" << options->port << "\n\n";
 
-    ServerOptions server_options;
+	auto delegate = std::make_shared<ContextDelegate>();
+	DelegateInfo delegate_info;
+	delegate_info.session = delegate;
+	delegate_info.scene = delegate;
+	delegate_info.motion = delegate;
+
+    Options server_options;
     server_options.address = "0.0.0.0";
     server_options.port = options->port;
+	server_options.delegate_info = delegate_info;
+
+	server_options.on_connect = [&]() {};
+	server_options.on_disconnect = [&]() {};
 
     auto server = Server(server_options);
     std::thread thread{[&server]() {
-        server.start([](std::shared_ptr<SessionCon> controller) {
-            auto delegate = std::make_shared<DebugApp>();
-			controller->set_application(std::move(delegate));
-        });
+        server.start();
     }};
+
     thread.join();
     return 0;
 }

@@ -48,7 +48,7 @@ struct DebugApp: public idm::Application {
 };
 
 // Within some function/class
-    ServerOptions server_options;
+    Options server_options;
     server_options.address = "0.0.0.0";
     server_options.port = 7766;
     

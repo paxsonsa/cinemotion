@@ -1,8 +1,6 @@
 #pragma once
 #include <indiemotion/common.hpp>
-#include <indiemotion/services/motion_service.hpp>
-#include <indiemotion/services/scene_service.hpp>
-#include <indiemotion/contexts/context.hpp>
+#include <indiemotion/delegate/session.hpp>
 
 namespace indiemotion
 {
@@ -11,11 +9,17 @@ namespace indiemotion
 	{
 		std::shared_ptr<Context> ctx;
 
-		SessionService(std::shared_ptr<Context> ctx, std::shared_ptr<SessionContext::Delegate> delegate)
+		SessionService(std::shared_ptr<Context> ctx, std::shared_ptr<SessionDelegate> delegate)
 			: ctx(ctx), _delegate(delegate)
 		{
-			ctx->session = std::make_shared<SessionContext>();
+			ctx->session = SessionContext::create();
 		}
+
+		void initialize()
+		{
+			update();
+		}
+
 
 		/**
          * Initialize the SessionCon
@@ -24,10 +28,10 @@ namespace indiemotion
          * to sure the delegate and managers are ready for operations.
          *
          */
-		void initialize(std::string name)
+		void process(const Payloads::SessionInfo& info)
 		{
-			ctx->session->name = name;
-			ctx->session->initialized = true;
+			ctx->session.name = info.session_name();
+			ctx->session.initialized = true;
 			update();
 		}
 
@@ -36,25 +40,23 @@ namespace indiemotion
 		 */
 		void shutdown()
 		{
-			ctx->session->shutdown = true;
-			ctx->session->initialized = false;
+			ctx->session.shutdown = true;
+			ctx->session.initialized = false;
 			if (_delegate)
 			{
-				auto view = ContextView(ctx);
-				_delegate->on_shutdown(view);
+				_delegate->on_shutdown(*ctx);
 			}
 			update();
 		}
 
 	private:
-		std::shared_ptr<SessionContext::Delegate> _delegate;
+		std::shared_ptr<SessionDelegate> _delegate;
 
 		void update()
 		{
 			if (_delegate)
 			{
-				auto view = ContextView(ctx);
-				_delegate->session_updated(view);
+				_delegate->session_updated(*ctx);
 			}
 		}
 	};

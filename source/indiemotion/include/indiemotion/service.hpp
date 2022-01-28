@@ -2,15 +2,16 @@
 #include <indiemotion/common.hpp>
 #include <indiemotion/logging.hpp>
 #include <indiemotion/net/message.hpp>
-#include <indiemotion/net/dispatch.hpp>
+#include <indiemotion/context.hpp>
+#include <indiemotion/delegates.hpp>
 #include <indiemotion/services/session_service.hpp>
 #include <indiemotion/services/scene_service.hpp>
 #include <indiemotion/services/motion_service.hpp>
 
 namespace indiemotion
 {
-	Message make_message_from(std::shared_ptr<SceneContext const> const& ctx);
-	Message make_message_from(std::shared_ptr<MotionContext const> const& ctx);
+	Message make_message_from(const SceneContext& ctx);
+	Message make_message_from(const MotionContext& ctx);
 
 	struct Service
 	{
@@ -38,22 +39,25 @@ namespace indiemotion
 			return "1.0";
 		}
 
-		void init_session_service(std::shared_ptr<SessionContext::Delegate> delegate)
+		void init_session_service(std::shared_ptr<SessionDelegate> delegate)
 		{
 			_logger->info("initializing session service.");
 			_session_service = std::make_shared<SessionService>(ctx, delegate);
+			_session_service->initialize();
 		}
 
-		void init_scene_service(std::shared_ptr<SceneContext::Delegate> delegate)
+		void init_scene_service(std::shared_ptr<SceneDelegate> delegate)
 		{
 			_logger->info("initializing scene service.");
 			_scene_service = std::make_shared<SceneService>(ctx, delegate);
+			_scene_service->initialize();
 		}
 
-		void init_motion_service(std::shared_ptr<MotionContext::Delegate> delegate)
+		void init_motion_service(std::shared_ptr<MotionDelegate> delegate)
 		{
 			_logger->info("initializing motion service.");
 			_motion_service = std::make_shared<MotionService>(ctx, delegate);
+			_motion_service->initialize();
 		}
 
 		void process_message(const Message&& message)
@@ -82,6 +86,7 @@ namespace indiemotion
 			try
 			{
 				callback(std::move(message));
+				return;
 			}
 			catch (const Exception& err)
 			{
@@ -114,14 +119,12 @@ namespace indiemotion
 
 		void _send_current_scene_info()
 		{
-			assert(ctx->scene && "The scene context should be initialized before attemptting to send it.");
 			auto message = make_message_from(ctx->scene);
 			_dispatcher->dispatch(std::move(message));
 		}
 
 		void _send_current_motion_info()
 		{
-			assert(ctx->motion && "The motion context should be initialized before attemptting to send it.");
 			auto message = make_message_from(ctx->motion);
 			_dispatcher->dispatch(std::move(message));
 		}
@@ -134,8 +137,7 @@ namespace indiemotion
 				_logger->error("API Version is not supported: {}", session_info.api_version());
 				throw APIVersionNotSupportedException();
 			}
-			_session_service->initialize(session_info.session_name());
-
+			_session_service->process(session_info);
 			_send_current_scene_info();
 			_send_current_motion_info();
 		}
@@ -158,31 +160,31 @@ namespace indiemotion
 		}
 	};
 
-	Message make_message_from(std::shared_ptr<SceneContext const> const& ctx)
+	Message make_message_from(const SceneContext& ctx)
 	{
 		auto m = net_make_message();
 		auto scene_info = m.mutable_scene_info();
 
-		for (auto src_cam: ctx->cameras)
+		for (auto src_cam: ctx.cameras)
 		{
 			auto cam = scene_info->add_cameras();
 			cam->set_name(src_cam.name);
 		}
 
-		if (ctx->active_camera_name.has_value())
+		if (ctx.active_camera_name.has_value())
 		{
-			scene_info->set_active_camera_name(ctx->active_camera_name.value());
+			scene_info->set_active_camera_name(ctx.active_camera_name.value());
 		}
 
 		return m;
 	}
 
-	Message make_message_from(std::shared_ptr<MotionContext const> const& ctx)
+	Message make_message_from(const MotionContext& ctx)
 	{
 		auto m = net_make_message();
 		auto motion_info = m.mutable_motion_info();
 
-		switch(ctx->status)
+		switch(ctx.status)
 		{
 		case MotionStatus::Idle:
 			motion_info->set_status(Payloads::MotionInfo_Status_Idle);

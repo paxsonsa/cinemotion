@@ -1,34 +1,41 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
+#include <indiemotion/net/dispatch.hpp>
 #include <indiemotion/service.hpp>
 
 using namespace indiemotion;
 
-struct DummyDelegate : public SessionContext::Delegate, SceneContext::Delegate, MotionContext::Delegate
+struct DummyDelegate : public SessionDelegate, SceneDelegate, MotionDelegate
 {
 	SessionContext session_ctx;
 	SceneContext scene_ctx;
 	MotionContext motion_ctx;
 
 	bool on_shutdown_called = false;
+	bool get_scene_cameras_called = false;
 
 	std::vector<Camera> get_scene_cameras() override
 	{
-		return std::vector<Camera>();
+		get_scene_cameras_called = true;
+		return std::vector<Camera>
+		{
+			Camera{"cam1"},
+			Camera{"cam2"}
+		};
 	}
-	void scene_updated(const ContextView& ctx) override
+	void scene_updated(Context ctx) override
 	{
-		scene_ctx = *(ctx.scene());
+		scene_ctx = ctx.scene;
 	}
-	void session_updated(const ContextView& ctx) override
+	void session_updated(Context ctx) override
 	{
-		session_ctx = *(ctx.session());
+		session_ctx = ctx.session;
 	}
-	void motion_updated(const ContextView& ctx) override
+	void motion_updated(Context ctx) override
 	{
-		motion_ctx = *(ctx.motion());
+		motion_ctx = ctx.motion;
 	}
-	void on_shutdown(const ContextView& ctx) override
+	void on_shutdown(Context ctx) override
 	{
 		on_shutdown_called = true;
 	}
@@ -60,20 +67,20 @@ public:
 protected:
 	void makeInitialized()
 	{
-		service.ctx->session->initialized = true;
-		service.ctx->session->name = "some_session";
+		service.ctx->session.initialized = true;
+		service.ctx->session.name = "some_session";
 	}
 
 	void makeActive()
 	{
 		makeInitialized();
-		service.ctx->scene->active_camera_name = "cam1";
+		service.ctx->scene.active_camera_name = "cam1";
 	}
 
 	void makeLive()
 	{
 		makeActive();
-		service.ctx->motion->status = MotionStatus::Live;
+		service.ctx->motion.status = MotionStatus::Live;
 	}
 };
 
@@ -94,6 +101,7 @@ TEST_SUITE("Basic Service Lifecycle")
 		{
 			auto m = dispatcher->messages[0];
 			REQUIRE(m.has_scene_info());
+			REQUIRE(delegate->get_scene_cameras_called);
 		}
 		{
 			auto m = dispatcher->messages[1];
@@ -128,7 +136,7 @@ TEST_SUITE("Basic Service Lifecycle")
 
 		SUBCASE("the active camera context should be updated")
 		{
-			REQUIRE(service.ctx->scene->active_camera_name == "cam1");
+			REQUIRE(service.ctx->scene.active_camera_name == "cam1");
 		}
 
 		SUBCASE("the delegate scene context should be updated")
@@ -148,7 +156,7 @@ TEST_SUITE("Basic Service Lifecycle")
 
 		SUBCASE("the motion status in the motion context should be updated")
 		{
-			REQUIRE(service.ctx->motion->status == MotionStatus::Live);
+			REQUIRE(service.ctx->motion.status == MotionStatus::Live);
 		}
 		SUBCASE("the motion context delegate should be invoked with the new status")
 		{
@@ -180,16 +188,16 @@ TEST_SUITE("Basic Service Lifecycle")
 
 		SUBCASE("the motion status in the motion context should be unchanged")
 		{
-			REQUIRE(service.ctx->motion->status == MotionStatus::Live);
+			REQUIRE(service.ctx->motion.status == MotionStatus::Live);
 		}
 		SUBCASE("the motion xform should update in the context and emitted to the delegate")
 		{
-			REQUIRE(service.ctx->motion->current_xform.translation.x == 1.0);
-			REQUIRE(service.ctx->motion->current_xform.translation.y == 2.0);
-			REQUIRE(service.ctx->motion->current_xform.translation.z == 3.0);
-			REQUIRE(service.ctx->motion->current_xform.orientation.x == 4.0);
-			REQUIRE(service.ctx->motion->current_xform.orientation.y == 5.0);
-			REQUIRE(service.ctx->motion->current_xform.orientation.z == 6.0);
+			REQUIRE(service.ctx->motion.current_xform.translation.x == 1.0);
+			REQUIRE(service.ctx->motion.current_xform.translation.y == 2.0);
+			REQUIRE(service.ctx->motion.current_xform.translation.z == 3.0);
+			REQUIRE(service.ctx->motion.current_xform.orientation.x == 4.0);
+			REQUIRE(service.ctx->motion.current_xform.orientation.y == 5.0);
+			REQUIRE(service.ctx->motion.current_xform.orientation.z == 6.0);
 
 			REQUIRE(delegate->motion_ctx.current_xform.translation.x == 1.0);
 			REQUIRE(delegate->motion_ctx.current_xform.translation.y == 2.0);
@@ -208,7 +216,7 @@ TEST_SUITE("Basic Service Lifecycle")
 
 			SUBCASE("the motion status in the motion context should be updated")
 			{
-				REQUIRE(service.ctx->motion->status == MotionStatus::Idle);
+				REQUIRE(service.ctx->motion.status == MotionStatus::Idle);
 			}
 			SUBCASE("the motion context delegate should be invoked with the new status")
 			{
@@ -217,12 +225,12 @@ TEST_SUITE("Basic Service Lifecycle")
 
 			SUBCASE("the current xform should be reset")
 			{
-				REQUIRE(service.ctx->motion->current_xform.translation.x == 0.0);
-				REQUIRE(service.ctx->motion->current_xform.translation.y == 0.0);
-				REQUIRE(service.ctx->motion->current_xform.translation.z == 0.0);
-				REQUIRE(service.ctx->motion->current_xform.orientation.x == 0.0);
-				REQUIRE(service.ctx->motion->current_xform.orientation.y == 0.0);
-				REQUIRE(service.ctx->motion->current_xform.orientation.z == 0.0);
+				REQUIRE(service.ctx->motion.current_xform.translation.x == 0.0);
+				REQUIRE(service.ctx->motion.current_xform.translation.y == 0.0);
+				REQUIRE(service.ctx->motion.current_xform.translation.z == 0.0);
+				REQUIRE(service.ctx->motion.current_xform.orientation.x == 0.0);
+				REQUIRE(service.ctx->motion.current_xform.orientation.y == 0.0);
+				REQUIRE(service.ctx->motion.current_xform.orientation.z == 0.0);
 
 				REQUIRE(delegate->motion_ctx.current_xform.translation.x == 0.0);
 				REQUIRE(delegate->motion_ctx.current_xform.translation.y == 0.0);
@@ -242,8 +250,8 @@ TEST_SUITE("Basic Service Lifecycle")
 
 		SUBCASE("the session initialization and shutdown flags should be flipped")
 		{
-			REQUIRE_FALSE(service.ctx->session->initialized);
-			REQUIRE(service.ctx->session->shutdown);
+			REQUIRE_FALSE(service.ctx->session.initialized);
+			REQUIRE(service.ctx->session.shutdown);
 		}
 
 		SUBCASE("the session context should be emitted to the delegate")
@@ -264,12 +272,12 @@ SCENARIO("Making a message from SceneInfo")
 {
 	GIVEN("A SceneContext")
 	{
-		auto ctx = std::make_shared<SceneContext>();
-		ctx->active_camera_name = "cam1";
-		ctx->cameras.push_back(
+		auto ctx = SceneContext();
+		ctx.active_camera_name = "cam1";
+		ctx.cameras.push_back(
 			Camera("cam1")
 		);
-		ctx->cameras.push_back(
+		ctx.cameras.push_back(
 			Camera("cam2")
 		);
 
@@ -293,8 +301,8 @@ SCENARIO("Making a message from MotionInfo")
 	GIVEN("A MotionContext")
 	{
 		auto ctx = MotionContext::create();
-		ctx->status = MotionStatus::Idle;
-		ctx->current_xform = MotionXForm::create(1,2,3,4,5,6);
+		ctx.status = MotionStatus::Idle;
+		ctx.current_xform = MotionXForm::create(1,2,3,4,5,6);
 
 		WHEN("A message is generate from the context")
 		{

@@ -1,21 +1,24 @@
 #pragma once
 #include <indiemotion/errors.hpp>
+#include <indiemotion/net/message.hpp>
 #include <indiemotion/motion/status.hpp>
 #include <indiemotion/motion/xform.hpp>
-#include <indiemotion/net/message.hpp>
-#include <indiemotion/contexts/context.hpp>
+#include <indiemotion/delegate/motion.hpp>
 
 namespace indiemotion
 {
 
 	struct MotionService
 	{
-		MotionService(std::shared_ptr<Context> ctx, std::shared_ptr<MotionContext::Delegate> delegate)
+		MotionService(std::shared_ptr<Context> ctx, std::shared_ptr<MotionDelegate> delegate)
 			: _ctx(ctx), _delegate(delegate)
 		{
-			_ctx->motion = std::make_shared<MotionContext>();
+			_ctx->motion = MotionContext::create();
 			update();
 		}
+
+		void initialize()
+		{}
 
 		void process(const Payloads::MotionInfo& info)
 		{
@@ -42,13 +45,13 @@ namespace indiemotion
 				in_xform.orientation().y(),
 				in_xform.orientation().z()
 			);
-			_ctx->motion->current_xform = xform;
+			_ctx->motion.current_xform = xform;
 		}
 
 		void reset_xform()
 		{
 			auto xform = MotionXForm::zero();
-			_ctx->motion->current_xform = xform;
+			_ctx->motion.current_xform = xform;
 		}
 		MotionStatus translate_status(const Payloads::MotionInfo& info) const
 		{
@@ -72,28 +75,28 @@ namespace indiemotion
 
 		MotionStatus status() const noexcept
 		{
-			return _ctx->motion->status;
+			return _ctx->motion.status;
 		}
 
 		MotionStatus status(MotionStatus status)
 		{
-			if (!scene_is_active_camera_set(_ctx->view()))
+			if (!scene_is_active_camera_set(*_ctx))
 			{
 				throw ActiveCameraNotSetException();
 			}
-			_ctx->motion->status = status;
+			_ctx->motion.status = status;
 			return status;
 		}
 
 	private:
 		std::shared_ptr<Context> _ctx;
-		std::shared_ptr<MotionContext::Delegate> _delegate;
+		std::shared_ptr<MotionDelegate> _delegate;
 
 		void update()
 		{
 			if (_delegate)
 			{
-				_delegate->motion_updated(_ctx->view());
+				_delegate->motion_updated(*_ctx);
 			}
 		}
 	};
