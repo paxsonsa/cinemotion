@@ -5,10 +5,6 @@
 #include <boost/program_options.hpp>
 
 #include <indiemotion/server.hpp>
-#include <indiemotion/logging.hpp>
-#include <indiemotion/context.hpp>
-#include <indiemotion/delegates.hpp>
-#include <indiemotion/options.hpp>
 
 using namespace indiemotion;
 namespace progopts = boost::program_options;
