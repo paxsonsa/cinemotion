@@ -85,6 +85,12 @@ namespace indiemotion
 					shared_from_this()));
 		}
 
+		void disconnect()
+		{
+			_options.on_disconnect();
+			_io_context.stop();
+		}
+
 	private:
 		/**
 		 * Start the accepting of websocket communications.
@@ -160,6 +166,7 @@ namespace indiemotion
 		 */
 		void do_read()
 		{
+			_logger->trace("Connection::do_read");
 			_websocket.async_read(
 				_read_buffer,
 				beast::bind_front_handler(
@@ -182,31 +189,29 @@ namespace indiemotion
 		 */
 		void on_read(beast::error_code err, std::size_t bytes_transferred)
 		{
+			_logger->trace("Connection::on_read()");
 			boost::ignore_unused(bytes_transferred);
 
 			if (err)
 			{
 				if (err == boost::asio::error::operation_aborted)
 				{
-					_logger->error(fmt::format("Connection::on_read: op aborted - {}", err.message()));
+					_logger->error(fmt::format("Connection::on_read [op aborted] - {}", err.message()));
+				}
+				else if (err == boost::asio::error::timed_out)
+				{
+					_logger->error("Connection::on_read [timed out]");
 				}
 				else if (err == websocket::error::closed)
 				{
-					_logger->error(fmt::format("Connection::on_read: close - {}", err.message()));
-
+					_logger->error(fmt::format("Connection::on_read [closed] - {}", err.message()));
 				}
 				else
 				{
 					_logger->error(fmt::format("Connection::on_read: {}", err.message()));
 				}
-				_logger->error("connection error, shutting down session and stopping server");
 
-				// TODO - Figure out bug when multiple connections are made why the second shutdown crashes
-				Message m;
-				m.mutable_shutdown_session();
-				_service->process_message(std::move(m));
-
-				_options.on_disconnect();
+				disconnect();
 				return;
 			}
 
@@ -215,12 +220,11 @@ namespace indiemotion
 			os << boost::beast::buffers_to_string(_read_buffer.data());
 			Message message;
 			text = os.str();
-			_logger->trace("payload: {}", text);
 			message.ParseFromString(text);
 
 			std::string msg_str;
 			google::protobuf::util::MessageToJsonString(message, &msg_str);
-			_logger->trace("description: {}", msg_str);
+			_logger->trace("incoming message: {}", msg_str);
 			_read_buffer.consume(_read_buffer.size());
 
 			_service->process_message(std::move(message));

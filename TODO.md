@@ -1,8 +1,8 @@
 # TDOD Notes
-- Process Throws as "Errors in Repsonse too"
+- Python API
+  - How will we handle the threaded server and callbacks?
+  - https://pythonextensionpatterns.readthedocs.io/en/latest/thread_safety.html
 - Handle Error Messages
-- Make Server Generation more declarative
-  - Server(callbacks)
 - InputDevice
   - Interaction from Controller to Service/InputDevice
 - Reset/Set Origin

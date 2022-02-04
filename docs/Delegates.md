@@ -1,4 +1,8 @@
 # SessionCon Controller Delegates
+
+### NOTE: OUT OF DATE
+
+
 The `indiemotion::Application` is the core interface for hooking into your DCC. 
 The header file `indiemotion/session/delegate.hpp` contains the most detailed and up-to-date documentation
 about the different members to the class.

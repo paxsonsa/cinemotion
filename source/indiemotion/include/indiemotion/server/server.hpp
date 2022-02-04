@@ -52,20 +52,26 @@ namespace indiemotion
 			case DisconnectBehavior::RestartAlways:
 				while (!_stopped)
 				{
+					if (_io_context.stopped()) {
+						_io_context.restart();
+					}
 					listen();
 					_io_context.run();
 				}
 				break;
 
 			case DisconnectBehavior::Terminate:
+				_logger->trace("start listening single-shot");
 				listen();
 				_io_context.run();
 				break;
 			}
+			_logger->info("server shutting down.");
 		}
 
 		void init_listen()
 		{
+			_logger->trace("Server::init_listen()");
 			beast::error_code ec;
 			auto const address = asio::ip::make_address(_options.address);
 			auto const port = _options.port;
@@ -117,6 +123,7 @@ namespace indiemotion
          * @param callbacks A set of callbacks that will be invoked during a connections lifecycle.
          */
 		void listen() {
+			_logger->trace("Server::listen()");
 			_acceptor.async_accept(
 				asio::make_strand(_io_context),
 				beast::bind_front_handler(
@@ -133,12 +140,15 @@ namespace indiemotion
 		* @param socket
 		*/
 		void on_accept(beast::error_code ec, tcp::socket socket) {
+			_logger->trace("on_accept()");
 			if (ec) {
 				_logger->error("encountered error accepting connection, continuing to listen: {}", ec.message());
 				listen();
 			} else {
+				_logger->info("accepting a connection");
 				std::make_shared<Connection>(_io_context, std::move(socket), _options)->start();
 			}
+			_logger->trace("exit on_accept()");
 		}
 
 	};

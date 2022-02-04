@@ -5,7 +5,7 @@
 
 namespace indiemotion
 {
-	enum DisconnectBehavior
+	enum class DisconnectBehavior
 	{
 		/// Always restart the listener and server when a session disconnects
 		RestartAlways,

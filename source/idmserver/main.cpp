@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include <chrono>
 
 #include <boost/program_options.hpp>
 
@@ -11,6 +12,11 @@ namespace progopts = boost::program_options;
 
 struct ContextDelegate: public SessionDelegate, SceneDelegate, MotionDelegate
 {
+	long _last_time;
+	int running_frame_count = 0;
+	int current_frame_count = 60;
+
+	ContextDelegate(): _last_time(std::chrono::high_resolution_clock::now().time_since_epoch().count() / 1000000) {}
 
 	void session_updated(Context ctx) override
 	{
@@ -22,15 +28,36 @@ struct ContextDelegate: public SessionDelegate, SceneDelegate, MotionDelegate
 
 	void motion_updated(Context ctx) override
 	{
+		std::cout << "motion_update:"
+			<< " sps: " << poll()
+			<< " tx: " << ctx.motion.current_xform.translation.x
+			<< " ty: " << ctx.motion.current_xform.translation.y
+			<< " tz: " << ctx.motion.current_xform.translation.z
+			<< std::endl;
 	}
 
 	std::vector<Camera> get_scene_cameras() override
 	{
-		return std::vector<Camera>();
+		return std::vector<Camera>{
+			Camera("cam1"),
+			Camera("cam2")
+		};
 	}
 
 	void on_shutdown(Context ctx) override
 	{
+	}
+
+	int poll()
+	{
+		auto time = std::chrono::high_resolution_clock::now().time_since_epoch().count() / 1000000;
+		if ((time - _last_time) >= 1000) {
+			_last_time = std::move(time);
+			current_frame_count = running_frame_count;
+			running_frame_count = 0;
+		}
+		running_frame_count += 1;
+		return current_frame_count;
 	}
 
 };
@@ -92,13 +119,14 @@ int main(int argc, const char **argv) {
     server_options.address = "0.0.0.0";
     server_options.port = options->port;
 	server_options.delegate_info = delegate_info;
+	server_options.disconnect_behavior = DisconnectBehavior::RestartAlways;
 
 	server_options.on_connect = [&]() {};
 	server_options.on_disconnect = [&]() {};
 
-    auto server = Server(server_options);
+    auto server = std::make_shared<Server>(server_options);
     std::thread thread{[&server]() {
-        server.start();
+        server->start();
     }};
 
     thread.join();
