@@ -1,8 +1,9 @@
 use serde_derive::{Deserialize, Serialize};
+use crate::Object;
 
-use crate::metadata::HasMetadata;
-
-use super::{Tick, Tock};
+#[cfg(test)]
+#[path = "./message_test.rs"]
+mod message_test;
 
 /// Defines the api version for the type of object being loaded
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
@@ -27,38 +28,32 @@ impl From<Message> for ApiVersion {
     }
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub struct Message {
+    pub header: Header,
+    
+    #[serde(flatten)]
+    pub payload: Payload,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+pub struct Header {
+    /// The client id that the message is originating from.
+    pub source: String,
+
+    /// An optional destination for the message to be targeting
+    pub destination: Option<String>,
+
+    /// The source client time in UTC milliseconds since epoch
+    pub source_time_ms: u64,
+}
+
 /// A message is the main data unit of the API
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
-#[serde(tag = "kind")]
-pub enum Message {
-    Tick(Tick),
-    Tock(Tock)
-}
-
-impl HasMetadata for Message {
-    fn metadata(&self) -> crate::metadata::Metadata {
-        match self {
-            Self::Tick(t) => t.metadata(),
-            Self::Tock(t) => t.metadata(),
-        }
-    }
-
-    fn metadata_mut(&mut self) -> &mut crate::metadata::Metadata {
-        match self {
-            Self::Tick(t) => t.metadata_mut(),
-            Self::Tock(t) => t.metadata_mut(),
-        }
-    }
-}
-
-impl From<Tick> for Message {
-    fn from(source: Tick) -> Self {
-        Self::Tick(source)
-    }
-}
-
-impl From<Tock> for Message {
-    fn from(source: Tock) -> Self {
-        Self::Tock(source)
-    }
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "payload")]
+pub enum Payload {
+    Single(Object),
+    Multi(Vec<Object>),
 }
