@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use tracing;
-use tracing_subscriber;
+
+
 
 fn main() -> Result<()> {
     let opt = Opt::parse();
@@ -15,7 +15,7 @@ fn main() -> Result<()> {
     std::process::exit(code);
 }
 
-async fn run(option: Opt) -> Result<i32> {
+async fn run(_option: Opt) -> Result<i32> {
     Ok(0)
 }
 
