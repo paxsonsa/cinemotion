@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use uuid::Uuid;
 
-use crate::{AttrName, Attribute, SessionState};
+use crate::{async_trait, AttrName, Attribute, SessionState};
 
 #[derive(Debug, Clone)]
 pub enum ClientRole {
@@ -11,27 +11,44 @@ pub enum ClientRole {
     Renderer
 }
 
-#[derive(Debug)]
-pub struct Client {
+#[derive(Debug, Clone)]
+pub struct ClientMetadata {
     pub id: Uuid,
     pub name: String,
-    pub role: ClientRole,
+    pub role: ClientRole
+}
+
+impl ClientMetadata {
+    /// Create a new ClientMetadata instance with random ID
+    pub fn new(name: String, role: ClientRole) -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            name,
+            role
+        }
+    }
+}
+
+
+
+#[derive(Debug)]
+pub struct Client {
+    pub meta: ClientMetadata,
     pub relay: Box<dyn ClientRelay>
 }
 
 impl Client {
     pub fn new<>(name: String, role: ClientRole, relay: Box<dyn ClientRelay>) -> Self {
         Self {
-            id: Uuid::new_v4(),
-            name,
-            role,
+            meta: ClientMetadata::new( name, role),
             relay
         }
     }
 }
 
-pub trait ClientRelay: std::fmt::Debug {
-    fn report_client_update(&self, clients: &HashMap<Uuid, Client>);
-    fn report_attribute_updates(&self, attributes: &HashMap<AttrName, Attribute>);
-    fn report_session_update(&self, state: &SessionState);
+#[async_trait]
+pub trait ClientRelay: std::fmt::Debug + Send + Sync {
+    async fn report_client_update(&self, clients: &HashMap<Uuid, ClientMetadata>);
+    async fn report_attribute_updates(&self, attributes: &HashMap<AttrName, Attribute>);
+    async fn report_session_update(&self, state: &SessionState);
 }

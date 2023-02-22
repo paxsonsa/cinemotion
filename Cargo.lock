@@ -592,6 +592,7 @@ dependencies = [
 name = "indiemotion-api"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "chrono",
  "rstest",
  "serde",
