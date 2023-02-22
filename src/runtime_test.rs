@@ -1,6 +1,3 @@
-
-
-
 use super::*;
 
 #[derive(Clone)]
@@ -81,7 +78,7 @@ async fn test_adding_client_to_runtime_when_recording_fails() {
     assert!(
         matches!(
             runtime.add_client(client).await,
-            Err(crate::Error::InvalidRecordingOperation(_))
+            Err(crate::Error::SessionMustBeIdle(_))
         ),
         "Adding client to runtime when recording should fail"
     );
