@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
+use api::Property;
 use uuid::Uuid;
 
 use crate::api;
@@ -156,9 +157,20 @@ where
             _ => {}
         }
         self.clients.remove(&id);
-        // TODO Handle when last Controller is removed.
-        // - Needs to kill the main loop.
-        // - Remove Properties namespace to that client.
+
+        // Clear all properties associated with the client.
+        let properties: Vec<Property>;
+        {
+            let mut engine = self.engine.lock().unwrap();
+            while let Some(property) = engine.properties().first() {
+                if property.id().namespace == id.to_string() {
+                    engine.remove_property(property.id());
+                }
+            }
+            properties = engine.properties();
+        }
+
+        self.report_property_update(&properties).await;
         self.report_client_update().await;
         Ok(())
     }
@@ -241,8 +253,20 @@ where
     pub async fn add_property(&mut self, id: api::ProperyID, default_value: api::PropertyValue) {
         let prop = api::Property::new_with_id(id, default_value);
         // TODO Check Session Mode, Deny when Recording.
+        let mut properties = vec![];
         if let Ok(mut engine) = self.engine.lock() {
             engine.add_property(prop);
+            properties = engine.properties();
+        }
+
+        self.report_property_update(&properties).await;
+    }
+
+    pub async fn remove_property(&mut self, id: api::ProperyID) {
+        let mut properties = vec![];
+        if let Ok(mut engine) = self.engine.lock() {
+            engine.remove_property(&id);
+            properties = engine.properties();
         }
     }
 
@@ -266,10 +290,23 @@ where
         }
         Ok(())
     }
+
+    async fn report_property_update(&self, properties: &Vec<Property>) {
+        if let Some(observer) = &self.observer {
+            observer.visit_property_update(properties).await;
+        }
+    }
 }
 
+/// An observer for the runtime operations
 #[async_trait::async_trait]
 pub trait MotionRuntimeObserver {
+    /// Called when the client list is updated.
     async fn visit_client_update(&self, clients: &Vec<api::ClientMetadata>);
+
+    /// Called when the session state is updated.
     async fn visit_session_update(&self, state: &api::SessionState);
+
+    /// Called when a property is updated.
+    async fn visit_property_update(&self, properties: &Vec<api::Property>);
 }

@@ -24,11 +24,19 @@ impl Engine {
         boxed::Box::new(Self::new())
     }
 
+    pub fn properties(&self) -> Vec<api::Property> {
+        self.property_table.values().cloned().collect()
+    }
+
     /// Add a property to the engine.
     ///
     /// If the property already exists, it will be overwritten.
     pub fn add_property(&mut self, property: api::Property) {
         self.property_table.insert(property.id().clone(), property);
+    }
+
+    pub fn remove_property(&mut self, id: &api::ProperyID) {
+        self.property_table.remove(id);
     }
 
     pub fn append_property_update(
@@ -51,15 +59,15 @@ impl Engine {
         Ok(())
     }
 
-    pub fn step(&mut self) -> Result<HashMap<api::ProperyID, api::Property>> {
-        let mut updates = self.pending_properties_updates.drain(..);
+    pub fn step(&mut self) -> Result<HashMap<api::ProperyID, api::PropertyValue>> {
+        let updates = self.pending_properties_updates.drain(..);
         let mut updated_properties = HashMap::new();
-        while let Some((id, value)) = updates.next() {
+        for (id, value) in updates {
             let Some(property) = self.property_table.get_mut(&id) else {
                 continue;
             };
             property.set_value(value)?;
-            updated_properties.insert(id, property.clone());
+            updated_properties.insert(id, property.value().clone());
         }
 
         Ok(updated_properties)

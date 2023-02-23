@@ -10,8 +10,8 @@ pub struct Property {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct ProperyID {
-    namespace: String,
-    name: String,
+    pub namespace: String,
+    pub name: String,
 }
 
 impl Display for ProperyID {

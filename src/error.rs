@@ -9,14 +9,8 @@ pub enum Error {
     #[error("Runtime loop failed: {0}")]
     RuntimeLoopFailed(&'static str),
 
-    #[error("Property not found: {0}")]
-    PropertyNotFound(api::ProperyID),
-
     #[error("Property update error: property={0} msg={1}")]
     PropertyUpdateError(api::ProperyID, &'static str),
-
-    #[error("Engine iteration error: {0}")]
-    EngineIterationError(&'static str),
 
     #[error("error from tokio: {0}")]
     TokioError(#[from] tokio::io::Error),

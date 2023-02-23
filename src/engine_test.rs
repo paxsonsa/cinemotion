@@ -1,4 +1,4 @@
-use rstest;
+
 
 use super::*;
 
@@ -14,7 +14,7 @@ async fn test_engine_properties() {
     let prop_id = property.id().clone();
     let other_id = api::ProperyID::try_from("other.name").expect("Failed to create ProperyID");
 
-    engine.add_property(property.clone());
+    engine.add_property(property);
     assert_eq!(
         engine.property_table.len(),
         1,
@@ -49,7 +49,7 @@ async fn test_engine_properties() {
     assert_eq!(engine.pending_properties_updates.len(), 0);
 
     assert_eq!(
-        property_values.get(&prop_id).unwrap().value(),
+        property_values.get(&prop_id).unwrap(),
         &api::PropertyValue::Int(3)
     );
 }

@@ -1,16 +1,19 @@
+
+
 use super::*;
 
-#[derive(Clone)]
 struct MockRuntimeObserver {
     client_update_handler: Option<fn(&Vec<api::ClientMetadata>)>,
     session_update_handler: Option<fn(&api::SessionState)>,
+    property_update_handler: Option<fn(&Vec<api::Property>)>,
 }
 
 impl MockRuntimeObserver {
-    fn new() -> Self {
+    fn new() -> MockRuntimeObserver {
         Self {
             client_update_handler: None,
             session_update_handler: None,
+            property_update_handler: None,
         }
     }
 
@@ -21,6 +24,11 @@ impl MockRuntimeObserver {
 
     fn with_session_update_handler(&mut self, handler: fn(&api::SessionState)) -> &mut Self {
         self.session_update_handler = Some(handler);
+        self
+    }
+
+    fn with_property_update(&mut self, handler: fn(&Vec<api::Property>)) -> &mut Self {
+        self.property_update_handler = Some(handler);
         self
     }
 }
@@ -38,15 +46,20 @@ impl MotionRuntimeObserver for MockRuntimeObserver {
             func(state);
         }
     }
+
+    async fn visit_property_update(&self, properties: &Vec<api::Property>) {
+        if let Some(func) = self.property_update_handler {
+            func(properties);
+        }
+    }
 }
 
 #[tokio::test]
 async fn test_adding_removing_client_to_runtime() {
-    let observer = MockRuntimeObserver::new()
-        .with_client_update_handler(|clients| {
-            assert!(clients.len() == 1 || clients.is_empty());
-        })
-        .to_owned();
+    let mut observer = MockRuntimeObserver::new();
+    observer.with_client_update_handler(|clients| {
+        assert!(clients.len() == 1 || clients.is_empty());
+    });
     let mut runtime = MotionRuntime::new(observer);
 
     let client = api::ClientMetadata::new("Test Client".to_string(), api::ClientRole::Controller);
@@ -138,11 +151,10 @@ async fn test_updating_mode() {
 
 #[tokio::test]
 async fn test_updating_mode_triggers_observer() {
-    let observer = MockRuntimeObserver::new()
-        .with_session_update_handler(|state| {
-            assert_eq!(state.mode, api::SessionMode::Live);
-        })
-        .to_owned();
+    let mut observer = MockRuntimeObserver::new();
+    observer.with_session_update_handler(|state| {
+        assert_eq!(state.mode, api::SessionMode::Live);
+    });
     let mut runtime = MotionRuntime::new(observer);
 
     assert_eq!(runtime.state.mode, api::SessionMode::Idle);
