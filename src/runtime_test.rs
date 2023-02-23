@@ -26,7 +26,7 @@ impl MockRuntimeObserver {
 }
 
 #[async_trait::async_trait]
-impl RuntimeObserver for MockRuntimeObserver {
+impl MotionRuntimeObserver for MockRuntimeObserver {
     async fn visit_client_update(&self, clients: &Vec<api::ClientMetadata>) {
         if let Some(func) = self.client_update_handler {
             func(clients);
@@ -47,7 +47,7 @@ async fn test_adding_removing_client_to_runtime() {
             assert!(clients.len() == 1 || clients.is_empty());
         })
         .to_owned();
-    let mut runtime = Runtime::new(observer);
+    let mut runtime = MotionRuntime::new(observer);
 
     let client = api::ClientMetadata::new("Test Client".to_string(), api::ClientRole::Controller);
 
@@ -68,7 +68,7 @@ async fn test_adding_removing_client_to_runtime() {
 #[tokio::test]
 async fn test_adding_client_to_runtime_when_recording_fails() {
     let observer = MockRuntimeObserver::new();
-    let mut runtime = Runtime::new(observer);
+    let mut runtime = MotionRuntime::new(observer);
     runtime
         .update_mode(api::SessionMode::Recording)
         .await
@@ -78,7 +78,7 @@ async fn test_adding_client_to_runtime_when_recording_fails() {
     assert!(
         matches!(
             runtime.add_client(client).await,
-            Err(crate::Error::SessionMustBeIdle(_))
+            Err(crate::Error::InvalidRecordingOperation(_))
         ),
         "Adding client to runtime when recording should fail"
     );
@@ -88,7 +88,7 @@ async fn test_adding_client_to_runtime_when_recording_fails() {
 #[tokio::test]
 async fn test_remove_client_to_runtime_when_recording() {
     let observer = MockRuntimeObserver::new();
-    let mut runtime = Runtime::new(observer);
+    let mut runtime = MotionRuntime::new(observer);
     let client = api::ClientMetadata::new("Test Client".to_string(), api::ClientRole::Controller);
     runtime
         .add_client(client.clone())
@@ -110,7 +110,7 @@ async fn test_remove_client_to_runtime_when_recording() {
 #[tokio::test]
 async fn test_updating_mode() {
     let observer = MockRuntimeObserver::new();
-    let mut runtime = Runtime::new(observer);
+    let mut runtime = MotionRuntime::new(observer);
 
     assert_eq!(runtime.state.mode, api::SessionMode::Idle);
     runtime
@@ -143,7 +143,7 @@ async fn test_updating_mode_triggers_observer() {
             assert_eq!(state.mode, api::SessionMode::Live);
         })
         .to_owned();
-    let mut runtime = Runtime::new(observer);
+    let mut runtime = MotionRuntime::new(observer);
 
     assert_eq!(runtime.state.mode, api::SessionMode::Idle);
     runtime

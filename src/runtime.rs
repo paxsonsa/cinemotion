@@ -14,7 +14,7 @@ mod runtime_test;
 /// A runtime loop is a task that runs in the background and executes a tick handler at a given
 /// interval. The tick handler is responsible for updating the engine state and notifying the
 /// runtime of engine property updates.
-struct RuntimeLoop {
+struct MotionRuntimeLoop {
     /// The engine instance that is being updated by the runtime loop.
     engine: Arc<Mutex<Box<Engine>>>,
 
@@ -25,7 +25,7 @@ struct RuntimeLoop {
     shutdown_channel: Option<tokio::sync::broadcast::Sender<()>>,
 }
 
-impl RuntimeLoop {
+impl MotionRuntimeLoop {
     /// Create a new RuntimeLoop instance with the given engine.
     fn new(engine: Arc<Mutex<Box<Engine>>>) -> Self {
         Self {
@@ -79,17 +79,17 @@ impl RuntimeLoop {
 /// A runtime is responsible for managing all the state of the session and engine.
 /// It is the coordinator between the different system controllers and should be used
 /// for interacting with the session.
-pub struct Runtime<O: RuntimeObserver> {
+pub struct MotionRuntime<O: MotionRuntimeObserver> {
     state: api::SessionState,
     observer: Option<O>,
     clients: HashMap<Uuid, api::ClientMetadata>,
     engine: Arc<Mutex<Box<Engine>>>,
-    main_loop: Option<RuntimeLoop>,
+    main_loop: Option<MotionRuntimeLoop>,
 }
 
-impl<O> Default for Runtime<O>
+impl<O> Default for MotionRuntime<O>
 where
-    O: RuntimeObserver + 'static + Send + Sync,
+    O: MotionRuntimeObserver + 'static + Send + Sync,
 {
     fn default() -> Self {
         Self {
@@ -102,9 +102,9 @@ where
     }
 }
 
-impl<O> Runtime<O>
+impl<O> MotionRuntime<O>
 where
-    O: RuntimeObserver + 'static + Send + Sync,
+    O: MotionRuntimeObserver + 'static + Send + Sync,
 {
     /// Create a new Runtime instance with the given observer.
     pub fn new(observer: O) -> Self {
@@ -193,7 +193,7 @@ where
                 Some(_) => {}
                 None => {
                     let engine_mtx = self.engine.clone();
-                    let mut main_loop = RuntimeLoop::new(engine_mtx);
+                    let mut main_loop = MotionRuntimeLoop::new(engine_mtx);
                     let mut interval =
                         tokio::time::interval(std::time::Duration::from_secs_f64(1.0 / 60.0));
                     interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
@@ -221,8 +221,8 @@ where
 
                 // TODO: Reset Engine State.
                 main_loop.stop().await?;
-                // let mut engine = self.engine.lock().unwrap();
-                // engine.reset();
+                let mut engine = self.engine.lock().unwrap();
+                engine.reset();
             }
             _ => {}
         }
@@ -255,16 +255,21 @@ where
     /// Internal Engine errors are propogatd to the caller is the property id is not found or the property
     /// value mismatches the property value type defined.
     ///
-    pub async fn update_property(&mut self, id: api::ProperyID, value: api::PropertyValue) {
+    pub async fn update_property(
+        &mut self,
+        id: api::ProperyID,
+        value: api::PropertyValue,
+    ) -> Result<()> {
         // TODO Check Session Mode, Ignore when not recording/live.
         if let Ok(mut engine) = self.engine.lock() {
-            engine.append_property_update(id, value);
+            engine.append_property_update(id, value)?;
         }
+        Ok(())
     }
 }
 
 #[async_trait::async_trait]
-pub trait RuntimeObserver {
+pub trait MotionRuntimeObserver {
     async fn visit_client_update(&self, clients: &Vec<api::ClientMetadata>);
     async fn visit_session_update(&self, state: &api::SessionState);
 }

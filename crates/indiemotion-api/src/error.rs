@@ -6,7 +6,10 @@ pub enum Error {
     AttributeTypeMismatch,
 
     #[error("Property type mismatch")]
-    PropertyTypeMismatch
+    PropertyTypeMismatch,
+
+    #[error("Property ID is invalid: {0}")]
+    InvalidProperyID(String),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
