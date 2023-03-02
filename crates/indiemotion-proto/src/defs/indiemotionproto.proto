@@ -1,0 +1,69 @@
+syntax = "proto3";
+package com.indiemotion;
+
+service IndieMotionService {
+    rpc ServerInfo(ServerInfoRequest) returns (ServerInfoResponse) ;
+    rpc ConnectAs(ConnectAsRequest) returns (stream ConnectAsResponse);
+    // rpc RegisterProperties(stream Property) returns (AckResponse);
+    // rpc StartPropertyStream(stream PropertySample) returns (AckResponse);
+    // rpc StartRecording(StartRecordingRequest) returns (AckResponse);
+    // rpc StopRecording(StopRecordingRequest) returns (AckResponse);
+}
+
+message ServerInfoRequest {}
+
+message ServerInfoResponse {
+    string version = 1;
+    string name = 2;
+    map<string, ClientInfo> clients = 3;
+}
+
+message ConnectAsRequest {
+    ClientInfo client_info = 1;
+}
+
+message ConnectAsResponse {}
+
+enum ClientRole {
+    PrimaryController = 0;
+    SecondaryController = 1;
+    Observer = 2;
+    Renderer = 3;
+}
+
+message ClientInfo {
+    string id = 1;
+    string name = 2;
+    string version = 3;
+    ClientRole role = 4;
+}
+
+message StateUpdate {}
+
+message Property {
+    string namespace = 1;
+    string name = 2;
+    oneof default_value {
+        float float_value = 10;
+        int64 int_value = 11;
+        bool bool_value = 12;
+    }
+    
+}
+
+message PropertySample {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message AckResponse {}
+
+message StartRecordingRequest {
+    string client_id = 1;
+    string track_name = 2;
+}
+
+message StopRecordingRequest {
+    string client_id = 1;
+}

@@ -6,16 +6,22 @@ use crate::{async_trait, AttrName, Attribute, SessionState};
 
 #[derive(Debug, Clone)]
 pub enum ClientRole {
-    Controller,
-    Viewer,
-    Renderer
+    PrimaryController,
+    SecondaryController,
+    Observer,
+    Renderer,
+}
+impl Default for ClientRole {
+    fn default() -> Self {
+        Self::PrimaryController
+    }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ClientMetadata {
     pub id: Uuid,
     pub name: String,
-    pub role: ClientRole
+    pub role: ClientRole,
 }
 
 impl ClientMetadata {
@@ -24,31 +30,30 @@ impl ClientMetadata {
         Self {
             id: Uuid::new_v4(),
             name,
-            role
+            role,
         }
     }
 }
 
-
-
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct Client {
     pub meta: ClientMetadata,
-    pub relay: Box<dyn ClientRelay>
+    pub relay: Option<Box<dyn ClientRelay>>,
 }
 
 impl Client {
-    pub fn new<>(name: String, role: ClientRole, relay: Box<dyn ClientRelay>) -> Self {
+    pub fn new(name: String, role: ClientRole) -> Self {
         Self {
-            meta: ClientMetadata::new( name, role),
-            relay
+            meta: ClientMetadata::new(name, role),
+            relay: None,
         }
+    }
+
+    pub fn with_relay(mut self, relay: Box<dyn ClientRelay>) -> Self {
+        self.relay = Some(relay);
+        self
     }
 }
 
 #[async_trait]
-pub trait ClientRelay: std::fmt::Debug + Send + Sync {
-    async fn report_client_update(&self, clients: &HashMap<Uuid, ClientMetadata>);
-    async fn report_attribute_updates(&self, attributes: &HashMap<AttrName, Attribute>);
-    async fn report_session_update(&self, state: &SessionState);
-}
+pub trait ClientRelay: std::fmt::Debug + Send + Sync {}

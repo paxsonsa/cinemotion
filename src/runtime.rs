@@ -1,7 +1,9 @@
+use futures::Future;
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
-use api::Property;
+use api::{Property, PropertyValue, ProperyID};
 use uuid::Uuid;
 
 use crate::api;
@@ -15,6 +17,7 @@ mod runtime_test;
 /// A runtime loop is a task that runs in the background and executes a tick handler at a given
 /// interval. The tick handler is responsible for updating the engine state and notifying the
 /// runtime of engine property updates.
+#[derive(Debug)]
 struct MotionRuntimeLoop {
     /// The engine instance that is being updated by the runtime loop.
     engine: Arc<Mutex<Box<Engine>>>,
@@ -40,11 +43,7 @@ impl MotionRuntimeLoop {
     ///
     /// The runtime loop will continue to execute until either the tick
     /// handler fails or the `stop()` method is called.
-    fn start(
-        &mut self,
-        interval: tokio::time::Interval,
-        tick_handler: fn(&Arc<Mutex<Box<Engine>>>),
-    ) {
+    fn start(&mut self, interval: tokio::time::Interval) {
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::broadcast::channel::<()>(1);
         self.shutdown_channel = Some(shutdown_tx);
         let engine_mtx = self.engine.clone();
@@ -53,7 +52,15 @@ impl MotionRuntimeLoop {
             loop {
                 tokio::select! {
                     _ = interval.tick() => {
-                        tick_handler(&engine_mtx);
+                        let mut engine = engine_mtx.lock().await;
+                        match engine.step().await {
+                            Ok(_) => {
+                                // TODO: Report Property Updates to clients.
+                            }
+                            Err(e) => {
+                                println!("Error: {}", e);
+                            }
+                        }
                     }
                     _ = shutdown_rx.recv() => {
                         break;
@@ -80,9 +87,10 @@ impl MotionRuntimeLoop {
 /// A runtime is responsible for managing all the state of the session and engine.
 /// It is the coordinator between the different system controllers and should be used
 /// for interacting with the session.
+#[derive(Debug)]
 pub struct MotionRuntime<O: MotionRuntimeObserver> {
     state: api::SessionState,
-    observer: Option<O>,
+    observer: Option<Arc<Mutex<O>>>,
     clients: HashMap<Uuid, api::ClientMetadata>,
     engine: Arc<Mutex<Box<Engine>>>,
     main_loop: Option<MotionRuntimeLoop>,
@@ -108,7 +116,7 @@ where
     O: MotionRuntimeObserver + 'static + Send + Sync,
 {
     /// Create a new Runtime instance with the given observer.
-    pub fn new(observer: O) -> Self {
+    pub fn new(observer: Arc<Mutex<O>>) -> Self {
         Self {
             state: api::SessionState::default(),
             observer: Some(observer),
@@ -118,8 +126,12 @@ where
         }
     }
 
+    pub fn clients(&self) -> HashMap<Uuid, api::ClientMetadata> {
+        self.clients.clone()
+    }
+
     /// Set the observer for the runtime.
-    pub fn with_observer(&mut self, observer: O) -> &mut Self {
+    pub fn with_observer(&mut self, observer: Arc<Mutex<O>>) -> &mut Self {
         self.observer = Some(observer);
         self
     }
@@ -161,7 +173,7 @@ where
         // Clear all properties associated with the client.
         let properties: Vec<Property>;
         {
-            let mut engine = self.engine.lock().unwrap();
+            let mut engine = self.engine.lock().await;
             while let Some(property) = engine.properties().first() {
                 if property.id().namespace == id.to_string() {
                     engine.remove_property(property.id());
@@ -178,9 +190,14 @@ where
     /// Reports a client list update to the observer.
     async fn report_client_update(&self) {
         let clients = self.clients.values().map(|v| v.to_owned()).collect();
-        if let Some(observer) = &self.observer {
-            observer.visit_client_update(&clients).await;
-        }
+        let Some(observer_mutex) = &self.observer else {
+            return;
+        };
+        observer_mutex
+            .lock()
+            .await
+            .visit_client_update(&clients)
+            .await;
     }
 
     /// Update the current session mode.
@@ -209,17 +226,7 @@ where
                     let mut interval =
                         tokio::time::interval(std::time::Duration::from_secs_f64(1.0 / 60.0));
                     interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
-                    main_loop.start(interval, move |mtx| {
-                        let mut engine = mtx.lock().unwrap();
-                        match engine.step() {
-                            Ok(_) => {
-                                // TODO: Report Property Updates to clients.
-                            }
-                            Err(e) => {
-                                println!("Error: {}", e);
-                            }
-                        }
-                    });
+                    main_loop.start(interval);
                     self.main_loop = Some(main_loop);
                 }
             },
@@ -231,16 +238,19 @@ where
                     );
                 };
 
-                // TODO: Reset Engine State.
                 main_loop.stop().await?;
-                let mut engine = self.engine.lock().unwrap();
+                let mut engine = self.engine.lock().await;
                 engine.reset();
             }
             _ => {}
         }
 
         if let Some(observer) = &self.observer {
-            observer.visit_session_update(&self.state).await;
+            observer
+                .lock()
+                .await
+                .visit_session_update(&self.state)
+                .await;
         }
         Ok(())
     }
@@ -254,29 +264,27 @@ where
         let prop = api::Property::new_with_id(id, default_value);
         // TODO Check Session Mode, Deny when Recording.
         let mut properties = vec![];
-        if let Ok(mut engine) = self.engine.lock() {
-            engine.add_property(prop);
-            properties = engine.properties();
-        }
+        let mut engine = self.engine.lock().await;
+        engine.add_property(prop);
+        properties = engine.properties();
 
         self.report_property_update(&properties).await;
     }
 
     pub async fn remove_property(&mut self, id: api::ProperyID) {
         let mut properties = vec![];
-        if let Ok(mut engine) = self.engine.lock() {
-            engine.remove_property(&id);
-            properties = engine.properties();
-        }
+        let mut engine = self.engine.lock().await;
+        engine.remove_property(&id);
+        properties = engine.properties();
     }
 
     /// Update the value of a property.
     ///
-    /// The given property value is updated for the given property id. When the session mode is
+    /// The given property value is updated for the given property id. When the session mode is not
     /// `api::SessionMode::Idle`, the property value is update but upon the next reversion to `api::SessionMode::Idle`
     /// state, the property value will be reset to the default value.
     ///
-    /// Internal Engine errors are propogatd to the caller is the property id is not found or the property
+    /// Internal Engine errors are propogated to the caller if the property id is not found or the property
     /// value mismatches the property value type defined.
     ///
     pub async fn update_property(
@@ -285,15 +293,18 @@ where
         value: api::PropertyValue,
     ) -> Result<()> {
         // TODO Check Session Mode, Ignore when not recording/live.
-        if let Ok(mut engine) = self.engine.lock() {
-            engine.append_property_update(id, value)?;
-        }
+        let mut engine = self.engine.lock().await;
+        engine.append_property_update(id, value).await?;
         Ok(())
     }
 
     async fn report_property_update(&self, properties: &Vec<Property>) {
         if let Some(observer) = &self.observer {
-            observer.visit_property_update(properties).await;
+            observer
+                .lock()
+                .await
+                .visit_property_update(properties)
+                .await;
         }
     }
 }

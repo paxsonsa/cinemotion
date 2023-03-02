@@ -1,5 +1,3 @@
-
-
 use super::*;
 
 struct MockRuntimeObserver {
@@ -60,9 +58,13 @@ async fn test_adding_removing_client_to_runtime() {
     observer.with_client_update_handler(|clients| {
         assert!(clients.len() == 1 || clients.is_empty());
     });
+    let observer = Arc::new(Mutex::new(observer));
     let mut runtime = MotionRuntime::new(observer);
 
-    let client = api::ClientMetadata::new("Test Client".to_string(), api::ClientRole::Controller);
+    let client = api::ClientMetadata::new(
+        "Test Client".to_string(),
+        api::ClientRole::PrimaryController,
+    );
 
     runtime
         .add_client(client.clone())
@@ -81,13 +83,17 @@ async fn test_adding_removing_client_to_runtime() {
 #[tokio::test]
 async fn test_adding_client_to_runtime_when_recording_fails() {
     let observer = MockRuntimeObserver::new();
+    let observer = Arc::new(Mutex::new(observer));
     let mut runtime = MotionRuntime::new(observer);
     runtime
         .update_mode(api::SessionMode::Recording)
         .await
         .expect("Failed to update runtime mode");
 
-    let client = api::ClientMetadata::new("Test Client".to_string(), api::ClientRole::Controller);
+    let client = api::ClientMetadata::new(
+        "Test Client".to_string(),
+        api::ClientRole::PrimaryController,
+    );
     assert!(
         matches!(
             runtime.add_client(client).await,
@@ -101,8 +107,12 @@ async fn test_adding_client_to_runtime_when_recording_fails() {
 #[tokio::test]
 async fn test_remove_client_to_runtime_when_recording() {
     let observer = MockRuntimeObserver::new();
+    let observer = Arc::new(Mutex::new(observer));
     let mut runtime = MotionRuntime::new(observer);
-    let client = api::ClientMetadata::new("Test Client".to_string(), api::ClientRole::Controller);
+    let client = api::ClientMetadata::new(
+        "Test Client".to_string(),
+        api::ClientRole::PrimaryController,
+    );
     runtime
         .add_client(client.clone())
         .await
@@ -123,6 +133,7 @@ async fn test_remove_client_to_runtime_when_recording() {
 #[tokio::test]
 async fn test_updating_mode() {
     let observer = MockRuntimeObserver::new();
+    let observer = Arc::new(Mutex::new(observer));
     let mut runtime = MotionRuntime::new(observer);
 
     assert_eq!(runtime.state.mode, api::SessionMode::Idle);
@@ -155,6 +166,7 @@ async fn test_updating_mode_triggers_observer() {
     observer.with_session_update_handler(|state| {
         assert_eq!(state.mode, api::SessionMode::Live);
     });
+    let observer = Arc::new(Mutex::new(observer));
     let mut runtime = MotionRuntime::new(observer);
 
     assert_eq!(runtime.state.mode, api::SessionMode::Idle);

@@ -1,6 +1,8 @@
 use std::{boxed, collections::HashMap};
 
 use crate::{api, Error, Result};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[cfg(test)]
 #[path = "./engine_test.rs"]
@@ -9,14 +11,14 @@ mod engine_test;
 #[derive(Debug)]
 pub struct Engine {
     property_table: HashMap<api::ProperyID, api::Property>,
-    pending_properties_updates: Vec<(api::ProperyID, api::PropertyValue)>,
+    update_queue: Arc<Mutex<Vec<(api::ProperyID, api::PropertyValue)>>>,
 }
 
 impl Engine {
     pub fn new() -> Self {
         Self {
             property_table: HashMap::new(),
-            pending_properties_updates: Vec::new(),
+            update_queue: Default::default(),
         }
     }
 
@@ -39,7 +41,7 @@ impl Engine {
         self.property_table.remove(id);
     }
 
-    pub fn append_property_update(
+    pub async fn append_property_update(
         &mut self,
         id: api::ProperyID,
         value: api::PropertyValue,
@@ -55,12 +57,14 @@ impl Engine {
             ));
         }
 
-        self.pending_properties_updates.push((id, value));
+        self.update_queue.lock().await.push((id, value));
         Ok(())
     }
 
-    pub fn step(&mut self) -> Result<HashMap<api::ProperyID, api::PropertyValue>> {
-        let updates = self.pending_properties_updates.drain(..);
+    pub async fn step(&mut self) -> Result<HashMap<api::ProperyID, api::PropertyValue>> {
+        let mut queue = self.update_queue.lock().await;
+        let updates: Vec<(api::ProperyID, api::PropertyValue)> = queue.drain(..).collect();
+        drop(queue);
         let mut updated_properties = HashMap::new();
         for (id, value) in updates {
             let Some(property) = self.property_table.get_mut(&id) else {
@@ -77,6 +81,6 @@ impl Engine {
         for (_, property) in self.property_table.iter_mut() {
             property.reset_value();
         }
-        self.pending_properties_updates.drain(..);
+        self.update_queue = Default::default();
     }
 }

@@ -11,19 +11,20 @@ impl SessionMode {
             (SessionMode::Idle, SessionMode::Idle) => true,
             (SessionMode::Live, SessionMode::Live) => true,
             (SessionMode::Recording, SessionMode::Recording) => true,
-            _ => false
+            _ => false,
         }
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SessionState {
-    pub mode: SessionMode
+    pub mode: SessionMode,
 }
 
 impl Default for SessionState {
     fn default() -> Self {
         Self {
-            mode: SessionMode::Idle
+            mode: SessionMode::Idle,
         }
     }
 }
