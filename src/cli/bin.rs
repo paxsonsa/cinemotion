@@ -3,8 +3,18 @@ use clap::{arg, Args, Parser};
 use indiemotion::ServerBuilder;
 use tokio::signal::unix::{signal, SignalKind};
 
+/**
+ * TODO
+ * - Create sucommands for server and client
+ * - Client should be interactive for starting and stopping motion sessions.
+ * - Add Properties to the server
+ * - Remove Properties
+ * - Send State Updates
+ * - Starting Stream Motion
+ */
+
 fn main() -> Result<()> {
-    let mut opt = Opt::parse();
+    let opt = Opt::parse();
     configure_logging(opt.verbose, opt.log_time);
     // args::configure_logging(opts.verbose - opts.quiet, opts.log_time);
     let rt = tokio::runtime::Builder::new_multi_thread()
