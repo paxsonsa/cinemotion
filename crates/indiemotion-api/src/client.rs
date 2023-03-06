@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
 use uuid::Uuid;
 
-use crate::{async_trait, AttrName, Attribute, SessionState};
+use crate::async_trait;
 
 #[derive(Debug, Clone)]
 pub enum ClientRole {

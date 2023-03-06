@@ -2,13 +2,14 @@
 name = "indiemotion"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 
 [lib]
 path = "src/lib.rs"
 
 [[bin]]
-name = "inmotion"
-path = "src/cli/bin.rs"
+name = "indiemotion"
+path = "src/cli/indiemotion.rs"
 
 
 [workspace]
@@ -24,6 +25,7 @@ clap = { version = "3.1.6", features = ["derive"] }
 futures = "0.3.25"
 indiemotion-api = { path = "crates/indiemotion-api"}
 indiemotion-proto = { path = "crates/indiemotion-proto"}
+indiemotion-repl = { path = "crates/indiemotion-repl"}
 serde_derive = "1.0.151"
 serde_json = "1.0.91"
 thiserror = "1.0.38"

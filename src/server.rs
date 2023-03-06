@@ -1,82 +1,93 @@
 use clap::Args;
+use futures::stream::FuturesUnordered;
 use futures::Future;
-use std::sync::Arc;
-use tokio::sync::Mutex;
+use futures::StreamExt;
+use std::pin::Pin;
 
-use tonic::transport;
-use tower_http::trace::TraceLayer;
+use crate::async_trait;
+use crate::components;
+use crate::Result;
 
-use crate::proto;
-use crate::service::IndieMotionService;
+/// Represents a component of the server
+#[async_trait]
+pub trait Component: Future<Output = ()> {
+    /// The name of this component for use in identification and debugging
+    fn name(&self) -> &'static str;
 
-#[derive(Default, Debug, Clone, Args)]
+    /// Trigger a shutdown of this component
+    async fn shutdown(&self);
+}
+
+/// Constructor helper for creating a new server
 pub struct ServerBuilder {
-    /// The local socket address on which to serve the grpc endpoint
-    #[clap(long = "server.bind-address")]
-    bind_address: Option<std::net::SocketAddr>,
+    /// Public name to advertise for this server.
+    name: String,
+
+    grpc_service: Option<components::grpc::GrpcServiceBuilder>,
 }
 
 impl ServerBuilder {
-    pub async fn build(&self) -> crate::Result<Server> {
-        let client_manager = Arc::new(Mutex::new(crate::client::ClientManager::default()));
-        let runtime = crate::runtime::MotionRuntime::new(client_manager.clone());
-        let service = IndieMotionService::new(client_manager, Arc::new(Mutex::new(runtime)));
+    pub async fn build(&mut self) -> crate::Result<Server> {
+        let mut server = Server {
+            components: Vec::new(),
+        };
 
-        let grpc_bind_address = self
-            .bind_address
-            .clone()
-            .unwrap_or_else(|| ([0, 0, 0, 0], 7737).into());
+        if let Some(grpc_service) = self.grpc_service.take() {
+            let grpc_service = grpc_service.build().await?;
+            server.components.push(Box::pin(grpc_service));
+        }
+        Ok(server)
+    }
 
-        let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
-        let socket = tokio::net::TcpListener::bind(&grpc_bind_address).await?;
-        let grpc_bound = socket.local_addr().ok().unwrap();
+    /// Change the server name
+    pub fn with_grpc_service(mut self, config: components::grpc::GrpcServiceBuilder) -> Self {
+        self.grpc_service = Some(config);
+        self
+    }
 
-        tracing::info!("grpc service listening on {:?}", grpc_bound);
-        let future = transport::Server::builder()
-            .layer(TraceLayer::new_for_grpc())
-            // https://docs.rs/tower-http/latest/tower_http/trace/index.html
-            .add_service(proto::indie_motion_service_server::IndieMotionServiceServer::new(service))
-            .serve_with_incoming_shutdown(
-                tokio_stream::wrappers::TcpListenerStream::new(socket),
-                async move {
-                    let _ = shutdown_rx.recv().await;
-                    tracing::debug!("received shutdown signal for grpc server...");
-                },
-            );
-
-        Ok(Server {
-            future: tokio::task::spawn(future),
-            shutdown_tx,
-        })
+    /// Enable the grpc service component with the given configuration
+    pub fn with_name(mut self, name: String) -> Self {
+        self.name = name;
+        self
     }
 }
 
 pub struct Server {
-    future: tokio::task::JoinHandle<std::result::Result<(), tonic::transport::Error>>,
-    shutdown_tx: tokio::sync::mpsc::Sender<()>,
+    /// Represents a component of the server
+    components: Vec<Pin<Box<dyn Component>>>,
+    // future: tokio::task::JoinHandle<std::result::Result<(), tonic::transport::Error>>,
+    // shutdown_tx: tokio::sync::mpsc::Sender<()>,
 }
 
 impl Server {
-    pub async fn serve_with_shutdown(
-        &mut self,
-        shutdown: impl Future<Output = ()>,
-    ) -> crate::Result<()> {
+    /// Create a builder instance to configure and create a new server.
+    pub fn builder() -> ServerBuilder {
+        ServerBuilder {
+            name: "indiemotion".to_string(),
+            grpc_service: None,
+        }
+    }
+
+    pub async fn serve_with_shutdown(&mut self, shutdown: impl Future<Output = ()>) -> Result<()> {
+        let mut components: FuturesUnordered<Pin<Box<dyn Component>>> =
+            self.components.drain(..).collect();
+
         tracing::debug!("server is running");
         tokio::select! {
-            _ = &mut self.future => {
-                tracing::error!("service shutdown...");
+            _ = components.next() => {
+                tracing::error!("one or more components exited, shutting down...");
             },
             _ = shutdown => {
                 tracing::info!("server shutdown signal received...");
-                self.shutdown().await?;
             }
         }
 
-        Ok(())
-    }
+        for component in components.iter() {
+            component.shutdown().await;
+        }
+        tracing::info!("waiting for the remaining components to shut down...");
+        while components.next().await.is_some() {}
 
-    pub async fn shutdown(&mut self) -> crate::Result<()> {
-        let _ = self.shutdown_tx.send(()).await;
         Ok(())
     }
 }
