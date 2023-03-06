@@ -2,7 +2,10 @@ use anyhow::{Context, Result};
 use clap::Parser;
 
 mod client;
+mod error;
 mod server;
+
+use error::{CLIResult, Error};
 
 /// Software development, distribution, and management
 #[derive(Parser)]

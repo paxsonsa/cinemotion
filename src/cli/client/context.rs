@@ -1,6 +1,7 @@
-use anyhow::{Error, Result};
 use indiemotion_proto as proto;
 use tonic::transport::Uri;
+
+use crate::{CLIResult, Error};
 
 pub struct ContextBuilder {
     addr: Option<Uri>,
@@ -12,7 +13,7 @@ impl ContextBuilder {
         self
     }
 
-    pub async fn build(self) -> Result<Context, Error> {
+    pub(crate) async fn build(self) -> Result<Context, Error> {
         let mut ctx = Context {
             address: self.addr.clone(),
             client: None,
@@ -38,7 +39,7 @@ impl Context {
         ContextBuilder { addr: None }
     }
 
-    pub async fn connect(&mut self) -> Result<()> {
+    pub(crate) async fn connect(&mut self) -> CLIResult<()> {
         let address = self.address.clone().unwrap_or_else(|| {
             let uri = format!("http://127.0.0.1:{}", indiemotion::DEFAULT_GRPC_PORT);
             let uri: Uri = uri.parse().unwrap();
@@ -53,7 +54,7 @@ impl Context {
         {
             Ok(client) => Some(client),
             Err(err) => {
-                tracing::error!("Failed to connect to server: {}", err);
+                tracing::error!("Failed to connect to server {}: {}", address, err);
                 None
             }
         };
