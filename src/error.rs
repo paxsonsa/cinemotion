@@ -9,6 +9,9 @@ pub enum Error {
     #[error("Runtime loop failed: {0}")]
     RuntimeLoopFailed(&'static str),
 
+    #[error("Invalid Runtime: {0}")]
+    InvalidRuntime(&'static str),
+
     #[error("Property update error: property={0} msg={1}")]
     PropertyUpdateError(api::ProperyID, &'static str),
 

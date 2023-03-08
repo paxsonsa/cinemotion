@@ -1,5 +1,7 @@
+use indiemotion_api as api;
 use indiemotion_proto as proto;
 use tonic::transport::Uri;
+use uuid::Uuid;
 
 use crate::{CLIResult, Error};
 
@@ -15,8 +17,12 @@ impl ContextBuilder {
 
     pub(crate) async fn build(self) -> Result<Context, Error> {
         let mut ctx = Context {
+            uid: Uuid::new_v4(),
+            name: hostname::get().unwrap().to_string_lossy().to_string(),
+            role: api::ClientRole::PrimaryController,
             address: self.addr.clone(),
             client: None,
+            main_loop: None,
         };
 
         if ctx.address.is_some() {
@@ -28,10 +34,14 @@ impl ContextBuilder {
 }
 
 pub struct Context {
+    pub uid: Uuid,
+    pub name: String,
+    pub role: api::ClientRole,
     pub address: Option<Uri>,
     pub client: Option<
         proto::indie_motion_service_client::IndieMotionServiceClient<tonic::transport::Channel>,
     >,
+    pub main_loop: Option<tokio::task::JoinHandle<()>>,
 }
 
 impl Context {

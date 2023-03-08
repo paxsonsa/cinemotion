@@ -1,6 +1,7 @@
-use uuid::Uuid;
-
 use crate::async_trait;
+use crate::Error;
+use indiemotion_proto as proto;
+use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub enum ClientRole {
@@ -12,6 +13,59 @@ pub enum ClientRole {
 impl Default for ClientRole {
     fn default() -> Self {
         Self::PrimaryController
+    }
+}
+
+impl From<proto::ClientRole> for ClientRole {
+    fn from(value: proto::ClientRole) -> Self {
+        match value {
+            proto::ClientRole::PrimaryController => Self::PrimaryController,
+            proto::ClientRole::SecondaryController => Self::SecondaryController,
+            proto::ClientRole::Observer => Self::Observer,
+            proto::ClientRole::Renderer => Self::Renderer,
+        }
+    }
+}
+
+impl From<i32> for ClientRole {
+    fn from(value: i32) -> Self {
+        proto::ClientRole::from_i32(value).unwrap().into()
+    }
+}
+
+impl TryFrom<String> for ClientRole {
+    type Error = Error;
+
+    fn try_from(value: String) -> std::result::Result<Self, Self::Error> {
+        match value.as_str() {
+            "primary-controller" | "primary" => Ok(Self::PrimaryController),
+            "secondary-controller" | "secondary" => Ok(Self::SecondaryController),
+            "observer" => Ok(Self::Observer),
+            "renderer" => Ok(Self::Renderer),
+            _ => Err(Error::InvalidClientRole(value.to_string())),
+        }
+    }
+}
+
+impl Into<String> for ClientRole {
+    fn into(self) -> String {
+        match self {
+            Self::PrimaryController => "primary-controller".to_string(),
+            Self::SecondaryController => "secondary-controller".to_string(),
+            Self::Observer => "observer".to_string(),
+            Self::Renderer => "renderer".to_string(),
+        }
+    }
+}
+
+impl Into<proto::ClientRole> for ClientRole {
+    fn into(self) -> proto::ClientRole {
+        match self {
+            Self::PrimaryController => proto::ClientRole::PrimaryController,
+            Self::SecondaryController => proto::ClientRole::SecondaryController,
+            Self::Observer => proto::ClientRole::Observer,
+            Self::Renderer => proto::ClientRole::Renderer,
+        }
     }
 }
 
@@ -29,6 +83,16 @@ impl ClientMetadata {
             id: Uuid::new_v4(),
             name,
             role,
+        }
+    }
+}
+
+impl From<proto::ClientInfo> for ClientMetadata {
+    fn from(info: proto::ClientInfo) -> Self {
+        Self {
+            id: Uuid::parse_str(&info.id).unwrap(),
+            name: info.name,
+            role: info.role.into(),
         }
     }
 }

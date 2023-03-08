@@ -10,6 +10,9 @@ pub enum Error {
 
     #[error("Property ID is invalid: {0}")]
     InvalidProperyID(String),
+
+    #[error("Invalid client role: {0}")]
+    InvalidClientRole(String),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

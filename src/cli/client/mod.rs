@@ -35,6 +35,9 @@ impl Client {
         let info_handler = Box::new(repl::Info {});
         let quit_handler = Box::new(repl::Quit {});
         let connect_handler = Box::new(repl::Connect {});
+        let name_handler = Box::new(repl::Name {});
+        let role_handler = Box::new(repl::Role {});
+
         let mut repl = Repl::new(ctx)
             .with_name("IndieMotion Debug Client")
             .with_version(format!("v{}", indiemotion::VERSION).as_str())
@@ -53,6 +56,15 @@ impl Client {
             .add_command(
                 Command::new("info", info_handler)
                     .with_help("Print info about the server."),
+            )
+            .add_command(
+                Command::new("name", name_handler)
+                    .with_help("Set or print the name of the session.")
+                    .with_parameter(Parameter::new("name"))?,
+            ).add_command(
+                Command::new("role", role_handler)
+                    .with_help("Set or print the client role. (Valid roles are: 'primary', 'secondary', 'observer')")
+                    .with_parameter(Parameter::new("role"))?,
             );
 
         match repl.run().await {

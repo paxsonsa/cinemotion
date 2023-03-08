@@ -7,6 +7,7 @@ use tonic::transport;
 use tower_http::trace::TraceLayer;
 
 use crate::async_trait;
+use crate::runtime::{DefaultCommand, DefaultRuntime};
 use crate::server::Component;
 use crate::service;
 use crate::Result;
@@ -33,15 +34,14 @@ impl GrpcServiceBuilder {
             .take()
             .unwrap_or_else(|| ([0, 0, 0, 0], crate::DEFAULT_GRPC_PORT).into());
 
-        let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
+        let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel::<()>(1);
         let socket = tokio::net::TcpListener::bind(&grpc_bind_address).await?;
         let grpc_bound = socket.local_addr().ok();
 
-        tracing::info!("Establishing motion runtime");
-        let client_manager = Arc::new(Mutex::new(crate::client::ClientManager::default()));
-        let runtime = crate::runtime::MotionRuntime::new(client_manager.clone());
-        let service =
-            service::IndieMotionService::new(client_manager, Arc::new(Mutex::new(runtime)));
+        tracing::info!("establishing runtime");
+        let (runtime_handle, runtime_shutdown) =
+            crate::runtime::new_runtime::<DefaultCommand, DefaultCommand, DefaultRuntime>().await?;
+        let service = service::IndieMotionService::new(runtime_handle);
 
         tracing::info!("grpc service listening on {:?}", grpc_bound);
         let future = transport::Server::builder()
@@ -55,6 +55,8 @@ impl GrpcServiceBuilder {
                 async move {
                     let _ = shutdown_rx.recv().await;
                     tracing::debug!("received shutdown signal for grpc server...");
+                    let _ = runtime_shutdown.send(()).await;
+                    tracing::info!("shutdown grpc server...");
                 },
             );
 

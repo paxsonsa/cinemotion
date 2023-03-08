@@ -15,7 +15,7 @@ fn default_error_handler<Context, E: std::fmt::Display>(
     error: E,
     _repl: &Repl<Context, E>,
 ) -> Result<()> {
-    eprintln!("{}", error);
+    eprintln!("{}", Paint::red(error));
     Ok(())
 }
 

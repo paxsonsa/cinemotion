@@ -34,7 +34,6 @@ enum ClientRole {
 message ClientInfo {
     string id = 1;
     string name = 2;
-    string version = 3;
     ClientRole role = 4;
 }
 
