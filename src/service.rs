@@ -13,14 +13,12 @@ use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
-type DefaultHandler = runtime::Handle<runtime::DefaultCommand, runtime::DefaultCommand>;
-
 pub struct IndieMotionService {
-    runtime: DefaultHandler,
+    runtime: runtime::Handle,
 }
 
 impl IndieMotionService {
-    pub fn new(runtime: DefaultHandler) -> Self {
+    pub fn new(runtime: runtime::Handle) -> Self {
         Self { runtime }
     }
 }

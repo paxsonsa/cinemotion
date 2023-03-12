@@ -7,7 +7,7 @@ use tonic::transport;
 use tower_http::trace::TraceLayer;
 
 use crate::async_trait;
-use crate::runtime::{DefaultCommand, DefaultRuntime};
+use crate::runtime::Runtime;
 use crate::server::Component;
 use crate::service;
 use crate::Result;
@@ -39,8 +39,7 @@ impl GrpcServiceBuilder {
         let grpc_bound = socket.local_addr().ok();
 
         tracing::info!("establishing runtime");
-        let (runtime_handle, runtime_shutdown) =
-            crate::runtime::new_runtime::<DefaultCommand, DefaultCommand, DefaultRuntime>().await?;
+        let (runtime_handle, runtime_shutdown) = crate::runtime::new_runtime().await?;
         let service = service::IndieMotionService::new(runtime_handle);
 
         tracing::info!("grpc service listening on {:?}", grpc_bound);

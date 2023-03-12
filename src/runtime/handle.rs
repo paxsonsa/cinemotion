@@ -1,5 +1,4 @@
 use api::{Property, PropertyValue, ProperyID};
-use clap::Command;
 use std::fmt::Debug;
 use std::sync::Arc;
 use uuid::Uuid;
@@ -7,40 +6,30 @@ use uuid::Uuid;
 use crate::api;
 use crate::{Error, Result};
 
-use super::CommandBuilder;
+use super::Command;
 use super::CommandHandle;
-use super::CommandType;
 use super::ContextUpdate;
 
 // #[cfg(test)]
 // #[path = "./runtime_test.rs"]
 // mod runtime_test;
 
-pub struct Handle<CType, CBuilder>
-where
-    CType: CommandType,
-{
+pub struct Handle {
     main_loop: tokio::task::JoinHandle<()>,
-    cmd_channel: tokio::sync::mpsc::Sender<CommandHandle<CType>>,
+    cmd_channel: tokio::sync::mpsc::Sender<CommandHandle>,
     update_channel: Arc<tokio::sync::broadcast::Sender<ContextUpdate>>,
-    _phantom: std::marker::PhantomData<CBuilder>,
 }
 
-impl<CType, CBuilder> Handle<CType, CBuilder>
-where
-    CType: CommandType,
-    CBuilder: CommandBuilder<Command = CType>,
-{
+impl Handle {
     pub fn new(
         main_loop: tokio::task::JoinHandle<()>,
-        cmd_channel: tokio::sync::mpsc::Sender<CommandHandle<CType>>,
+        cmd_channel: tokio::sync::mpsc::Sender<CommandHandle>,
         update_channel: Arc<tokio::sync::broadcast::Sender<ContextUpdate>>,
     ) -> Self {
         Self {
             main_loop,
             cmd_channel,
             update_channel,
-            _phantom: std::marker::PhantomData,
         }
     }
 
@@ -48,7 +37,7 @@ where
         let update_rx = self.update_channel.subscribe();
         let handle = ClientHandle::new(client.id.clone(), update_rx);
 
-        let (cmd, resp) = CBuilder::new_connect_as(client).await;
+        let (cmd, resp) = Command::new_connect_as(client).await;
         self.cmd_channel.send(cmd).await.unwrap(); //FIXME: handle error
 
         match resp.await.unwrap() {

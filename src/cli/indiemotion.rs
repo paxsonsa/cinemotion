@@ -33,11 +33,14 @@ enum Command {
     Client(client::Client),
 }
 
+// TODO: Remove Generics from Runtime Configuration....too confusing
+// TODO: Connect to Server and Add Client to Context
 // TODO: Add Properties to the server
 // TODO: Remove Properties
 // TODO: Send State Updates
 // TODO: Starting Stream Motion
 // TODO: Client should be interactive for starting and stopping motion sessions.
+// TODO: Handle Client Disconnects
 
 impl Command {
     pub fn run(&self) -> Result<i32> {

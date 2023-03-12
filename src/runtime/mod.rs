@@ -5,35 +5,31 @@ mod runtime;
 mod visitor;
 
 use crate::Result;
-pub use command::{CommandBuilder, CommandHandle, CommandResult, CommandType};
+pub use command::{Command, CommandHandle, CommandResult};
 pub use context::{Context, ContextChannel, ContextUpdate};
 pub use handle::Handle;
-pub use runtime::{DefaultCommand, DefaultRuntime};
+pub use runtime::Runtime;
 use visitor::RuntimeVisitor;
 
-struct RuntimeBuilder<CType, Visitor>
-where
-    CType: CommandType,
-    Visitor: RuntimeVisitor<CType> + Default + Send + 'static,
-{
-    _phantom: std::marker::PhantomData<(CType, Visitor)>,
-}
+struct RuntimeBuilder {}
 
-impl<CType, Visitor> RuntimeBuilder<CType, Visitor>
-where
-    CType: CommandType + CommandBuilder<Command = CType>,
-    Visitor: RuntimeVisitor<CType> + Default + Send + 'static,
-{
-    pub fn build_visitor(&self) -> Box<Visitor> {
+impl RuntimeBuilder {
+    pub fn build_visitor<Visitor>(&self) -> Box<Visitor>
+    where
+        Visitor: RuntimeVisitor + Default,
+    {
         Box::new(Default::default())
     }
 
-    pub async fn build(
+    pub async fn build<Visitor>(
         self,
         mut visitor: Box<Visitor>,
         mut shutdown_rx: tokio::sync::mpsc::Receiver<()>,
-    ) -> Result<Handle<CType, CType>> {
-        let (tx, mut rx) = tokio::sync::mpsc::channel::<CommandHandle<CType>>(1024);
+    ) -> Result<Handle>
+    where
+        Visitor: RuntimeVisitor + Send + 'static,
+    {
+        let (tx, mut rx) = tokio::sync::mpsc::channel::<CommandHandle>(1024);
 
         let update_channel = visitor.subscribe().await;
         let main_loop = tokio::spawn(async move {
@@ -77,17 +73,10 @@ where
     }
 }
 
-pub async fn new_runtime<CType, CBuilder, Visitor>(
-) -> Result<(Handle<CType, CType>, tokio::sync::mpsc::Sender<()>)>
-where
-    CType: CommandType + CommandBuilder<Command = CType>,
-    Visitor: RuntimeVisitor<CType> + Default + Send + 'static,
-{
-    let builder = RuntimeBuilder::<CType, Visitor> {
-        _phantom: std::marker::PhantomData,
-    };
+pub async fn new_runtime() -> Result<(Handle, tokio::sync::mpsc::Sender<()>)> {
+    let builder = RuntimeBuilder {};
     let (shutdown_tx, shutdown_rx) = tokio::sync::mpsc::channel::<()>(1);
-    let visitor = builder.build_visitor();
+    let visitor = builder.build_visitor::<Runtime>();
     let handle = builder.build(visitor, shutdown_rx).await?;
     Ok((handle, shutdown_tx))
 }
