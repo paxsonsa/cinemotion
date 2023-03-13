@@ -2,12 +2,23 @@ syntax = "proto3";
 package com.indiemotion;
 
 service IndieMotionService {
+    rpc Ping(PingRequest) returns (PingResponse);
     rpc ServerInfo(ServerInfoRequest) returns (ServerInfoResponse) ;
     rpc ConnectAs(ConnectAsRequest) returns (stream ConnectAsResponse);
     // rpc RegisterProperties(stream Property) returns (AckResponse);
     // rpc StartPropertyStream(stream PropertySample) returns (AckResponse);
     // rpc StartRecording(StartRecordingRequest) returns (AckResponse);
     // rpc StopRecording(StopRecordingRequest) returns (AckResponse);
+}
+
+message PingRequest {
+    int64 timestamp = 1;
+}
+
+message PingResponse {
+    int64 client_timestamp = 1;
+    int64 server_timestamp = 2;
+    int64 runtime_timestamp = 3;
 }
 
 message ServerInfoRequest {}

@@ -7,6 +7,7 @@ pub enum ContextUpdate {
     Session,
     Property,
     Trigger,
+    Ping,
 }
 
 pub struct ContextChannel {

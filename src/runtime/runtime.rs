@@ -29,6 +29,17 @@ impl Default for Runtime {
 impl RuntimeVisitor for Runtime {
     async fn visit_command(&mut self, context: &mut Context, command: Command) -> Result<()> {
         tracing::info!("Incoming command: {:?}", command);
+
+        match command {
+            Command::Ping(tx) => {
+                let _ = tx.send(chrono::Utc::now().timestamp_millis());
+            }
+            Command::ConnectAs(client) => {
+                tracing::info!("connecting client: {:?}", client);
+            }
+        }
+
+        let _ = self.update_channel.send(ContextUpdate::Ping);
         Ok(())
     }
 

@@ -103,6 +103,45 @@ impl indiemotion_repl::CommandHandler for Quit {
     }
 }
 
+pub(crate) struct Ping;
+
+#[async_trait::async_trait]
+impl indiemotion_repl::CommandHandler for Ping {
+    type Context = context::Context;
+    type Error = Error;
+
+    async fn handle(
+        &mut self,
+        _args: HashMap<String, Value>,
+        ctx: &mut Self::Context,
+    ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+        check_connection(ctx)?;
+
+        let timestamp = chrono::Utc::now().timestamp_millis();
+
+        let request = proto::PingRequest { timestamp };
+        match ctx.client.as_mut().unwrap().ping(request).await {
+            Ok(response) => {
+                // let timestamp = chrono::Utc::now().timestamp_millis();
+                let response = response.into_inner();
+                let timestamp = response.client_timestamp;
+                let server_ts = response.server_timestamp;
+                let runtime_ts = response.runtime_timestamp;
+                Ok(CommandResult::Continue(Some(format!(
+                    "server: {}ms   runtime: {}ms    roundtrip: {}ms",
+                    (server_ts - timestamp),
+                    (runtime_ts - timestamp),
+                    (runtime_ts - timestamp) * 2
+                ))))
+            }
+            Err(err) => {
+                tracing::error!("Failed to ping: {}", err);
+                Err(Error::CommandFailed(format!("failed to ping: {:?}", err)))
+            }
+        }
+    }
+}
+
 pub(crate) struct Connect;
 
 #[async_trait::async_trait]
@@ -137,12 +176,11 @@ impl indiemotion_repl::CommandHandler for Connect {
                         println!("Event: {:?}", event);
                     }
                 }));
-                println!("Connected to server");
+                Ok(CommandResult::Continue(Some("connected".to_string())))
             }
-            Err(err) => {
-                tracing::error!("Failed to connect: {}", err);
-            }
+            Err(_) => Ok(CommandResult::Continue(Some(
+                "failed to connect".to_string(),
+            ))),
         }
-        Ok(CommandResult::Continue(Some("Connect".to_string())))
     }
 }

@@ -34,7 +34,6 @@ impl Client {
 
         let info_handler = Box::new(repl::Info {});
         let quit_handler = Box::new(repl::Quit {});
-        let connect_handler = Box::new(repl::Connect {});
         let name_handler = Box::new(repl::Name {});
         let role_handler = Box::new(repl::Role {});
 
@@ -49,9 +48,14 @@ impl Client {
                     .with_help("Quit the client session."),
             )
             .add_command(
-                Command::new("connect", connect_handler)
+                Command::new("connect", Box::new(repl::Connect {}))
                     .with_parameter(Parameter::new("address"))?
                     .with_help("Connect to a server instance."),
+            )
+            .add_command(
+                Command::new("ping", Box::new(repl::Ping {}))
+                    .with_parameter(Parameter::new("address"))?
+                    .with_help("Ping the server instance."),
             )
             .add_command(
                 Command::new("info", info_handler)

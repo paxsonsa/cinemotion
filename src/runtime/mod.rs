@@ -36,10 +36,14 @@ impl RuntimeBuilder {
             let mut context = Context {};
             loop {
                 tokio::select! {
+
+                    // Listen for shutdown signal
                     _ = shutdown_rx.recv() => {
                         tracing::info!("runtime received shutdown signal");
                         break;
                     }
+
+                    // Listen for new commands
                     item = rx.recv() => match item {
                         Some(handle) => {
                             tracing::debug!("received command: {:?}", handle);

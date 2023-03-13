@@ -3,26 +3,22 @@ use std::fmt::Debug;
 
 pub type CommandResult = tokio::sync::oneshot::Receiver<Result<()>>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum Command {
-    Ping,
+    Ping(tokio::sync::oneshot::Sender<i64>),
     ConnectAs(api::ClientMetadata),
 }
 
 impl std::fmt::Display for Command {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Command::Ping => write!(f, "Ping()"),
+            Command::Ping(_) => write!(f, "Ping()"),
             Command::ConnectAs(client) => write!(f, "ConnectAs({:?})", client),
         }
     }
 }
 
 impl Command {
-    pub async fn new_ping() -> (CommandHandle, CommandResult) {
-        CommandHandle::new(Command::Ping)
-    }
-
     pub async fn new_connect_as(client: api::ClientMetadata) -> (CommandHandle, CommandResult) {
         CommandHandle::new(Command::ConnectAs(client))
     }
