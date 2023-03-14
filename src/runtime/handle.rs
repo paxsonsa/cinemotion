@@ -10,14 +10,16 @@ use crate::{Error, Result};
 
 use super::Command;
 use super::CommandHandle;
+use super::Context;
 use super::ContextUpdate;
+use super::RuntimeVisitor;
 
 // #[cfg(test)]
 // #[path = "./runtime_test.rs"]
 // mod runtime_test;
 
 pub struct Handle {
-    main_loop: tokio::task::JoinHandle<()>,
+    _main_loop: tokio::task::JoinHandle<()>,
     cmd_channel: tokio::sync::mpsc::Sender<CommandHandle>,
     update_channel: Arc<tokio::sync::broadcast::Sender<ContextUpdate>>,
 }
@@ -30,14 +32,60 @@ impl Handle {
         Ok(resp)
     }
 
-    pub fn new(
-        main_loop: tokio::task::JoinHandle<()>,
-        cmd_channel: tokio::sync::mpsc::Sender<CommandHandle>,
-        update_channel: Arc<tokio::sync::broadcast::Sender<ContextUpdate>>,
-    ) -> Self {
+    pub async fn new<Visitor>(
+        mut visitor: Box<Visitor>,
+        mut shutdown_rx: tokio::sync::mpsc::Receiver<()>,
+    ) -> Self
+    where
+        Visitor: RuntimeVisitor + Send + 'static,
+    {
+        let (tx, mut rx) = tokio::sync::mpsc::channel::<CommandHandle>(1024);
+
+        let update_channel = visitor.subscribe().await;
+        let main_loop = tokio::spawn(async move {
+            let mut context = Context {};
+            loop {
+                tokio::select! {
+
+                    // Listen for shutdown signal
+                    _ = shutdown_rx.recv() => {
+                        tracing::info!("runtime received shutdown signal");
+                        break;
+                    }
+
+                    // Listen for new commands
+                    item = rx.recv() => match item {
+                        Some(handle) => {
+                            tracing::debug!("received command: {:?}", handle);
+
+                            let (command, reply) = handle.decompose();
+                            match visitor.visit_command(&mut context, command).await {
+                                Ok(_) => {
+                                    tracing::debug!("command processed successfully");
+                                    if let Err(err) = reply.send(Ok(())) {
+                                        tracing::error!("reply channel closed while sending reply: {:?}", err);
+                                    }
+                                }
+                                Err(e) => {
+                                    tracing::error!("error while processing command: {:?}", e);
+                                    if let Err(err) = reply.send(Err(e)) {
+                                        tracing::error!("reply channel closed while sending reply: {:?}", err);
+                                    }
+                                }
+                            };
+                        }
+                        None => {
+                            tracing::info!("command channel closed");
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
         Self {
-            main_loop,
-            cmd_channel,
+            _main_loop: main_loop,
+            cmd_channel: tx,
             update_channel,
         }
     }
@@ -82,26 +130,6 @@ impl ClientHandle {
         update_rx: tokio::sync::broadcast::Receiver<ContextUpdate>,
     ) -> Self {
         let stream = tokio_stream::wrappers::BroadcastStream::new(update_rx);
-        // let task = tokio::spawn(async move {
-        //     loop {
-        //         tokio::select! {
-        //             result = update_rx.recv() => match result {
-        //                 Ok(update) => {
-        //                     tracing::debug!(?id, ?update, "sending update to client");
-        //                     if let Err(_) = out_tx.send(update).await {
-        //                         tracing::error!(?id, "client disconnected");
-        //                         break;
-        //                     }
-        //                 }
-        //                 Err(_) => {
-        //                     tracing::error!(?id, "runtime channel closed, closing client");
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     tracing::debug!(?id, "client task finished")
-        // });
 
         Self {
             id,
