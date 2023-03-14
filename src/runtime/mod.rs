@@ -6,7 +6,7 @@ mod visitor;
 
 use crate::Result;
 pub use command::{Command, CommandHandle, CommandResult};
-pub use context::{Context, ContextChannel, ContextUpdate};
+pub use context::{Context, ContextUpdate};
 pub use handle::Handle;
 pub use runtime::Runtime;
 use visitor::RuntimeVisitor;

@@ -85,7 +85,11 @@ impl Server {
             component.shutdown().await;
         }
         tracing::info!("waiting for the remaining components to shut down...");
-        while components.next().await.is_some() {}
+        while tokio::time::timeout(tokio::time::Duration::from_secs(3), components.next())
+            .await
+            .unwrap_or_default()
+            .is_some()
+        {}
 
         Ok(())
     }

@@ -7,6 +7,7 @@ pub type CommandResult = tokio::sync::oneshot::Receiver<Result<()>>;
 pub enum Command {
     Ping(tokio::sync::oneshot::Sender<i64>),
     ConnectAs(api::ClientMetadata),
+    Disconnect(api::ClientID),
 }
 
 impl std::fmt::Display for Command {
@@ -14,15 +15,11 @@ impl std::fmt::Display for Command {
         match self {
             Command::Ping(_) => write!(f, "Ping()"),
             Command::ConnectAs(client) => write!(f, "ConnectAs({:?})", client),
+            Command::Disconnect(id) => write!(f, "Disconnect({:?})", id),
         }
     }
 }
 
-impl Command {
-    pub async fn new_connect_as(client: api::ClientMetadata) -> (CommandHandle, CommandResult) {
-        CommandHandle::new(Command::ConnectAs(client))
-    }
-}
 #[derive(Debug)]
 pub struct CommandHandle {
     pub command: Command,

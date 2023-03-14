@@ -5,6 +5,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
 pub enum Error {
+    #[error("client error occurred: {0}")]
+    ClientError(String),
+
     #[error("Invalid operation while recording: {0}")]
     InvalidRecordingOperation(&'static str),
 
@@ -36,6 +39,8 @@ pub enum Error {
 impl Into<tonic::Status> for Error {
     fn into(self) -> tonic::Status {
         match self {
+            Error::ClientError(_) => tonic::Status::invalid_argument(format!("{}", self)),
+            Error::RuntimeError(_) => tonic::Status::internal(format!("{}", self)),
             Error::InvalidRecordingOperation(_) => {
                 tonic::Status::failed_precondition(format!("{}", self))
             }

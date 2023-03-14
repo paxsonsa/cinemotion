@@ -1,4 +1,3 @@
-mod client;
 pub mod components;
 mod engine;
 mod error;

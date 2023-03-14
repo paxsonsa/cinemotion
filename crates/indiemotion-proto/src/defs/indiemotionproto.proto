@@ -4,7 +4,8 @@ package com.indiemotion;
 service IndieMotionService {
     rpc Ping(PingRequest) returns (PingResponse);
     rpc ServerInfo(ServerInfoRequest) returns (ServerInfoResponse) ;
-    rpc ConnectAs(ConnectAsRequest) returns (stream ConnectAsResponse);
+    rpc ConnectAs(ConnectAsRequest) returns (stream ContextUpdate
+);
     // rpc RegisterProperties(stream Property) returns (AckResponse);
     // rpc StartPropertyStream(stream PropertySample) returns (AckResponse);
     // rpc StartRecording(StartRecordingRequest) returns (AckResponse);
@@ -33,7 +34,15 @@ message ConnectAsRequest {
     ClientInfo client_info = 1;
 }
 
-message ConnectAsResponse {}
+message ContextUpdate {
+    oneof update_kind {
+        ClientUpdate client = 1;
+    }
+}
+
+message ClientUpdate {
+    repeated ClientInfo clients = 1;
+}
 
 enum ClientRole {
     PrimaryController = 0;

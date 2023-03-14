@@ -1,6 +1,8 @@
 use crate::async_trait;
 use crate::Error;
 use indiemotion_proto as proto;
+use std::convert::Into;
+use std::fmt::Display;
 use uuid::Uuid;
 
 #[derive(Debug, Clone)]
@@ -69,9 +71,36 @@ impl Into<proto::ClientRole> for ClientRole {
     }
 }
 
+impl Into<i32> for ClientRole {
+    fn into(self) -> i32 {
+        Into::<proto::ClientRole>::into(self).into()
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ClientID(Uuid);
+
+impl Default for ClientID {
+    fn default() -> Self {
+        Self(Uuid::new_v4())
+    }
+}
+
+impl From<String> for ClientID {
+    fn from(value: String) -> Self {
+        Self(Uuid::parse_str(&value).unwrap())
+    }
+}
+
+impl Display for ClientID {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "clientid({})", self.0.to_string())
+    }
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct ClientMetadata {
-    pub id: Uuid,
+    pub id: ClientID,
     pub name: String,
     pub role: ClientRole,
 }
@@ -80,7 +109,7 @@ impl ClientMetadata {
     /// Create a new ClientMetadata instance with random ID
     pub fn new(name: String, role: ClientRole) -> Self {
         Self {
-            id: Uuid::new_v4(),
+            id: ClientID(Uuid::new_v4()),
             name,
             role,
         }
@@ -90,9 +119,19 @@ impl ClientMetadata {
 impl From<proto::ClientInfo> for ClientMetadata {
     fn from(info: proto::ClientInfo) -> Self {
         Self {
-            id: Uuid::parse_str(&info.id).unwrap(),
+            id: info.id.into(),
             name: info.name,
             role: info.role.into(),
+        }
+    }
+}
+
+impl Into<proto::ClientInfo> for ClientMetadata {
+    fn into(self) -> proto::ClientInfo {
+        proto::ClientInfo {
+            id: self.id.0.to_string(),
+            name: self.name,
+            role: self.role.into(),
         }
     }
 }

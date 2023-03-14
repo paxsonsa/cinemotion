@@ -52,7 +52,7 @@ impl proto::indie_motion_service_server::IndieMotionService for IndieMotionServi
     }
 
     type ConnectAsStream =
-        Pin<Box<dyn Stream<Item = std::result::Result<proto::ConnectAsResponse, Status>> + Send>>;
+        Pin<Box<dyn Stream<Item = std::result::Result<proto::ContextUpdate, Status>> + Send>>;
 
     async fn connect_as(
         &self,
@@ -63,69 +63,24 @@ impl proto::indie_motion_service_server::IndieMotionService for IndieMotionServi
         let Some(client_info) = request.client_info else {
             return Err(Status::invalid_argument("client_info is required"));
         };
-        let stream = self
-            .runtime
-            .connect_as(client_info.into())
-            .await
-            .unwrap()
-            .filter_map(|item| match item {
-                Ok(_) => {
-                    tracing::info!("sending update to client");
-                    Some(Ok(proto::ConnectAsResponse {}))
+        let stream = match self.runtime.connect_as(client_info.into()).await {
+            Ok(stream) => stream,
+            Err(err) => return Err(err.into()),
+        };
+
+        let stream = stream.filter_map(|result| match result {
+            Ok(item) => {
+                tracing::info!("sending update to client");
+                let item: proto::ContextUpdate = item.into();
+                Some(Ok(item))
+            }
+            Err(error) => match error {
+                BroadcastStreamRecvError::Lagged(_) => {
+                    tracing::warn!("client lagged");
+                    None
                 }
-                Err(error) => match error {
-                    BroadcastStreamRecvError::Lagged(_) => {
-                        tracing::warn!("client lagged");
-                        None
-                    }
-                    _ => {
-                        tracing::error!("unknown error occured while updating client");
-                        None
-                    }
-                },
-            });
-
-        //FIXME: handle error
-
-        // if let Some(_) = client_manager.get(uid) {
-        //     return Err(Status::already_exists("client already exists"));
-        // }
-
-        // let Some(role) = proto::ClientRole::from_i32(client_info.role) else {
-        //     return Err(Status::invalid_argument("invalid client role"));
-        // };
-        // drop(client_manager);
-
-        // println!("openning channel");
-        // let (tx, rx) = mpsc::channel(128);
-
-        // let client = api::Client {
-        //     meta: meta.clone(),
-        //     relay: None, // TODO: Remove Relay
-        // };
-
-        // println!("updating runtime");
-        // let mut runtime = self.runtime.lock().await;
-        // println!("adding client");
-        // {
-        //     let mut client_manager = self.client_manager.lock().await;
-        //     client_manager.add(client);
-        // }
-        // println!("updating runtime clients");
-        // if let Err(err) = runtime.add_client(meta).await {
-        //     let err = match err {
-        //         crate::Error::InvalidRecordingOperation(e) => Err(Status::failed_precondition(e)),
-        //         _ => Err(Status::internal(err.to_string())),
-        //     };
-        //     {
-        //         let mut client_manager = self.client_manager.lock().await;
-        //         client_manager.remove(uid);
-        //     }
-        //     return err;
-        // }
-        // println!("creating stream");
-        // let stream = ReceiverStream::new(rx).map(|_: StateUpdate| Ok(proto::ConnectAsResponse {}));
-        // println!("done.");
+            },
+        });
         Ok(Response::new(Box::pin(stream) as Self::ConnectAsStream))
         // Err(tonic::Status::unimplemented("not implemented"))
     }

@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use std::ops::Deref;
 use std::pin::Pin;
 use std::sync::Arc;
-use uuid::Uuid;
+use tracing_futures::Instrument;
 
 use crate::api;
 use crate::{Error, Result};
@@ -47,7 +47,7 @@ impl Handle {
 
         let update_channel = visitor.subscribe().await;
         let main_loop = tokio::spawn(async move {
-            let mut context = Context {};
+            let mut context = Context::default();
             loop {
                 tokio::select! {
 
@@ -63,7 +63,8 @@ impl Handle {
                             tracing::debug!("received command: {:?}", handle);
 
                             let (command, reply) = handle.decompose();
-                            match visitor.visit_command(&mut context, command).await {
+
+                            match visitor.visit_command(&mut context, command).instrument(tracing::trace_span!("runtime")).await {
                                 Ok(_) => {
                                     tracing::debug!("command processed successfully");
                                     if let Err(err) = reply.send(Ok(())) {
@@ -108,35 +109,44 @@ impl Handle {
     /// Connect a client to the runtime and return a handle to the client.
     pub async fn connect_as(&self, client: api::ClientMetadata) -> Result<ClientHandle> {
         let update_rx = self.update_channel.subscribe();
-        let handle = ClientHandle::new(client.id.clone(), self.cmd_channel.clone(), update_rx);
+        let mut handle = ClientHandle::new(client.id.clone(), self.cmd_channel.clone(), update_rx);
         let resp = self.send(Command::ConnectAs(client)).await?;
 
         match resp.await.unwrap() {
             Ok(_) => Ok(handle),
-            Err(e) => Err(e),
+            Err(err) => match err {
+                Error::ClientError(_) => {
+                    handle.close_on_drop = false;
+                    Err(err)
+                }
+                _ => Err(err),
+            },
         }
     }
 }
 
 #[derive(Debug)]
 pub struct ClientHandle {
-    pub id: Uuid,
+    pub id: api::ClientID,
     pub inner: tokio_stream::wrappers::BroadcastStream<ContextUpdate>,
     pub cmd_tx: tokio::sync::mpsc::Sender<CommandHandle>,
+    pub close_on_drop: bool,
 }
 
 impl ClientHandle {
     pub fn new(
-        id: Uuid,
+        id: api::ClientID,
         cmd_tx: tokio::sync::mpsc::Sender<CommandHandle>,
         update_rx: tokio::sync::broadcast::Receiver<ContextUpdate>,
     ) -> Self {
+        tracing::warn!("Client handle has connect: {}", id);
         let stream = tokio_stream::wrappers::BroadcastStream::new(update_rx);
 
         Self {
             id,
             inner: stream,
             cmd_tx,
+            close_on_drop: true,
         }
     }
 }
@@ -169,9 +179,11 @@ impl Deref for ClientHandle {
 
 impl Drop for ClientHandle {
     fn drop(&mut self) {
-        tracing::warn!("Client has disconnected: {}", self.id);
-        // TODO: handle disconnect;
-        // let (cmd, _) = CommandHandle::new(Command::Disconnect(self.id));
-        // self.cmd_tx.blocking_send(cmd);
+        if self.close_on_drop {
+            tracing::warn!("Client handle has disconnected: {}", self.id);
+            let _ = self
+                .cmd_tx
+                .try_send(CommandHandle::new(Command::Disconnect(self.id.clone())).0);
+        }
     }
 }
