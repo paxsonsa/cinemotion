@@ -94,6 +94,7 @@ impl Handle {
         }
     }
 
+    /// Send a ping command to the runtime and return the current timestamp
     pub async fn ping(&self) -> Result<i64> {
         let (tx, rx) = tokio::sync::oneshot::channel();
         let resp = self.send(Command::Ping(tx)).await.unwrap();
@@ -104,6 +105,7 @@ impl Handle {
         Ok(rx.await.unwrap())
     }
 
+    /// Connect a client to the runtime and return a handle to the client.
     pub async fn connect_as(&self, client: api::ClientMetadata) -> Result<ClientHandle> {
         let update_rx = self.update_channel.subscribe();
         let handle = ClientHandle::new(client.id.clone(), self.cmd_channel.clone(), update_rx);
