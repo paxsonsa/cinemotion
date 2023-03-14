@@ -27,7 +27,11 @@ pub struct Handle {
 impl Handle {
     async fn send(&self, command: Command) -> Result<tokio::sync::oneshot::Receiver<Result<()>>> {
         let (cmd, resp) = CommandHandle::new(command);
-        self.cmd_channel.send(cmd).await.unwrap(); //FIXME: handle error
+        if let Err(_) = self.cmd_channel.send(cmd).await {
+            return Err(Error::RuntimeError(
+                "failed to send command to runtime. channel closed",
+            ));
+        }
 
         Ok(resp)
     }
@@ -95,7 +99,6 @@ impl Handle {
         let resp = self.send(Command::Ping(tx)).await.unwrap();
 
         if let Err(_) = resp.await {
-            // TODO: Handle error
             return Err(Error::InternalError("Failed to ping"));
         }
         Ok(rx.await.unwrap())
@@ -104,12 +107,9 @@ impl Handle {
     pub async fn connect_as(&self, client: api::ClientMetadata) -> Result<ClientHandle> {
         let update_rx = self.update_channel.subscribe();
         let handle = ClientHandle::new(client.id.clone(), self.cmd_channel.clone(), update_rx);
-
-        let (cmd, resp) = CommandHandle::new(Command::ConnectAs(client));
-        self.cmd_channel.send(cmd).await.unwrap(); //FIXME: handle error
+        let resp = self.send(Command::ConnectAs(client)).await?;
 
         match resp.await.unwrap() {
-            // FIXME Handle Error
             Ok(_) => Ok(handle),
             Err(e) => Err(e),
         }
