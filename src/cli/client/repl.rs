@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use super::context;
 use crate::Error;
-use indiemotion_api as api;
+
 use indiemotion_proto as proto;
 
 fn check_connection(ctx: &context::Context) -> std::result::Result<(), Error> {

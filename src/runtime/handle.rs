@@ -1,4 +1,3 @@
-use api::{Property, PropertyValue, ProperyID};
 use std::fmt::Debug;
 use std::ops::Deref;
 use std::pin::Pin;
@@ -27,7 +26,7 @@ pub struct Handle {
 impl Handle {
     async fn send(&self, command: Command) -> Result<tokio::sync::oneshot::Receiver<Result<()>>> {
         let (cmd, resp) = CommandHandle::new(command);
-        if let Err(_) = self.cmd_channel.send(cmd).await {
+        if (self.cmd_channel.send(cmd).await).is_err() {
             return Err(Error::RuntimeError(
                 "failed to send command to runtime. channel closed",
             ));
@@ -100,7 +99,7 @@ impl Handle {
         let (tx, rx) = tokio::sync::oneshot::channel();
         let resp = self.send(Command::Ping(tx)).await.unwrap();
 
-        if let Err(_) = resp.await {
+        if (resp.await).is_err() {
             return Err(Error::InternalError("Failed to ping"));
         }
         Ok(rx.await.unwrap())

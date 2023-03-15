@@ -26,12 +26,11 @@ impl DefaultEngine {
             tracing::error!("client already connected: {}", client.id.clone());
             return Err(Error::ClientError("client already connected".to_string()));
         }
-        ctx.clients.insert(client.id.clone(), client.clone());
+        ctx.clients.insert(client.id.clone(), client);
 
         let clients = ctx
             .clients
-            .values()
-            .map(|client| client.clone())
+            .values().cloned()
             .collect::<Vec<_>>();
 
         self.update_channel
@@ -48,8 +47,7 @@ impl DefaultEngine {
 
         let clients = ctx
             .clients
-            .values()
-            .map(|client| client.clone())
+            .values().cloned()
             .collect::<Vec<_>>();
 
         self.update_channel
@@ -67,7 +65,7 @@ impl Default for DefaultEngine {
 
 #[async_trait::async_trait]
 impl Engine for DefaultEngine {
-    async fn tick(&mut self, context: &mut Context) -> Result<()> {
+    async fn tick(&mut self, _context: &mut Context) -> Result<()> {
         Ok(())
     }
     async fn process(&mut self, context: &mut Context, command: Command) -> Result<()> {

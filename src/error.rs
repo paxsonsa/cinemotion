@@ -36,21 +36,21 @@ pub enum Error {
     TokioError(#[from] tokio::io::Error),
 }
 
-impl Into<tonic::Status> for Error {
-    fn into(self) -> tonic::Status {
-        match self {
-            Error::ClientError(_) => tonic::Status::invalid_argument(format!("{}", self)),
-            Error::RuntimeError(_) => tonic::Status::internal(format!("{}", self)),
+impl From<Error> for tonic::Status {
+    fn from(value: Error) -> Self {
+        match value {
+            Error::ClientError(_) => tonic::Status::invalid_argument(format!("{}", value)),
+            Error::RuntimeError(_) => tonic::Status::internal(format!("{}", value)),
             Error::InvalidRecordingOperation(_) => {
-                tonic::Status::failed_precondition(format!("{}", self))
+                tonic::Status::failed_precondition(format!("{}", value))
             }
-            Error::RuntimeLoopFailed(_) => tonic::Status::failed_precondition(format!("{}", self)),
+            Error::RuntimeLoopFailed(_) => tonic::Status::failed_precondition(format!("{}", value)),
             Error::PropertyUpdateError(_, msg) => tonic::Status::failed_precondition(msg),
-            Error::InternalError(_) => tonic::Status::internal(format!("{}", self)),
-            Error::APIError(_) => tonic::Status::internal(format!("{}", self)),
-            Error::TonicTransport(_) => self.into(),
-            Error::Tonic(_) => self.into(),
-            Error::TokioError(_) => self.into(),
+            Error::InternalError(_) => tonic::Status::internal(format!("{}", value)),
+            Error::APIError(_) => tonic::Status::internal(format!("{}", value)),
+            Error::TonicTransport(_) => value.into(),
+            Error::Tonic(_) => value.into(),
+            Error::TokioError(_) => value.into(),
         }
     }
 }

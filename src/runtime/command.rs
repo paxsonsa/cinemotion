@@ -1,8 +1,6 @@
 use crate::{api, Result};
 use std::fmt::Debug;
 
-pub type CommandResult = tokio::sync::oneshot::Receiver<Result<()>>;
-
 #[derive(Debug)]
 pub enum Command {
     Ping(tokio::sync::oneshot::Sender<i64>),

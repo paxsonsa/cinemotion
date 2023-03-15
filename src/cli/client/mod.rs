@@ -1,8 +1,8 @@
 use anyhow::Result;
 use clap::Args;
 
-use indiemotion_repl::{Command, CommandResult, Parameter, Repl, Value};
-use std::{collections::HashMap, fmt::Display};
+use indiemotion_repl::{Command, Parameter, Repl};
+use std::fmt::Display;
 use tonic::transport::Uri;
 
 mod context;
