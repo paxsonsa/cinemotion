@@ -33,14 +33,29 @@ enum Command {
     Client(client::Client),
 }
 
-// TODO: Remove Generics from Runtime Configuration....too confusing
-// TODO: Connect to Server and Add Client to Context
-// TODO: Add Properties to the server
-// TODO: Remove Properties
-// TODO: Send State Updates
+// FIXME: Add Entity Creation
+//        - ECS system for managing objects in the scene.
+//        - Add Components to the Entity. When a controller creates a new entity
+//          it should be able to add components to it as seperate rpc calls.
+// Components:
+// - associated with an entity id.
+// - components are a discrete set of data types like vectors, floats, integers, or bool
+// - an entity can have a number of named components which will be updated each frame.
+
+/*
+EntityID - A composite type with a unique id and a name.
+EntityComponent - An enum describe the component types.
+EntityComponent - A mapping
+ */
+
+// TODO: Default Properties
+// TODO: Add Property
+// TODO: Remove Propertu (except globals)
+// TODO: Set Property Mapping
+// TODO: TUI Status Line for Client
+// TODO: Send Mode Updates
 // TODO: Starting Stream Motion
 // TODO: Client should be interactive for starting and stopping motion sessions.
-// TODO: Handle Client Disconnects
 
 impl Command {
     pub fn run(&self) -> Result<i32> {

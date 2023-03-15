@@ -4,7 +4,7 @@ use std::pin::Pin;
 use tokio_stream::wrappers::errors::BroadcastStreamRecvError;
 use tokio_stream::StreamExt;
 
-use crate::{api, proto, runtime};
+use crate::{api, engine, proto, runtime};
 use tonic::{Request, Response, Status};
 
 pub struct IndieMotionService {

@@ -1,16 +1,14 @@
 use clap::Args;
 use std::pin::Pin;
-use std::sync::Arc;
-use tokio::sync::Mutex;
 
 use tonic::transport;
 use tower_http::trace::TraceLayer;
 
 use crate::async_trait;
-use crate::runtime::Runtime;
 use crate::server::Component;
 use crate::service;
 use crate::Result;
+use crate::{engine, runtime};
 
 #[derive(Default, Clone, Args)]
 pub struct GrpcServiceBuilder {
@@ -39,7 +37,7 @@ impl GrpcServiceBuilder {
         let grpc_bound = socket.local_addr().ok();
 
         tracing::info!("establishing runtime");
-        let (runtime_handle, runtime_shutdown) = crate::runtime::new_runtime().await?;
+        let (runtime_handle, runtime_shutdown) = new_runtime().await?;
         let service = service::IndieMotionService::new(runtime_handle);
 
         tracing::info!("grpc service listening on {:?}", grpc_bound);
@@ -115,4 +113,11 @@ impl futures::Future for GrpcService {
             }
         }
     }
+}
+
+pub async fn new_runtime() -> crate::Result<(runtime::Handle, tokio::sync::mpsc::Sender<()>)> {
+    let (shutdown_tx, shutdown_rx) = tokio::sync::mpsc::channel::<()>(1);
+    let visitor = Box::new(engine::DefaultEngine::default());
+    let handle = runtime::Handle::new(visitor, shutdown_rx).await;
+    Ok((handle, shutdown_tx))
 }

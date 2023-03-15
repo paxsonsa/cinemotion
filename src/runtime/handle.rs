@@ -12,7 +12,7 @@ use super::Command;
 use super::CommandHandle;
 use super::Context;
 use super::ContextUpdate;
-use super::RuntimeVisitor;
+use super::Engine;
 
 // #[cfg(test)]
 // #[path = "./runtime_test.rs"]
@@ -41,7 +41,7 @@ impl Handle {
         mut shutdown_rx: tokio::sync::mpsc::Receiver<()>,
     ) -> Self
     where
-        Visitor: RuntimeVisitor + Send + 'static,
+        Visitor: Engine + Send + 'static,
     {
         let (tx, mut rx) = tokio::sync::mpsc::channel::<CommandHandle>(1024);
 
@@ -64,7 +64,7 @@ impl Handle {
 
                             let (command, reply) = handle.decompose();
 
-                            match visitor.visit_command(&mut context, command).instrument(tracing::trace_span!("runtime")).await {
+                            match visitor.process(&mut context, command).instrument(tracing::trace_span!("runtime")).await {
                                 Ok(_) => {
                                     tracing::debug!("command processed successfully");
                                     if let Err(err) = reply.send(Ok(())) {

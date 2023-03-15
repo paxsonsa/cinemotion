@@ -1,11 +1,11 @@
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct AttributeID {
+pub struct ComponentID {
     pub id: u32,
     pub name: String,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Attribute {
+pub enum Component {
     String(String),
     Integer(i32),
     Float(f64),

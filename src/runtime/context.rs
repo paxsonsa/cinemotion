@@ -4,12 +4,16 @@ use std::collections::HashMap;
 #[derive(Debug)]
 pub struct Context {
     pub clients: HashMap<api::ClientID, api::ClientMetadata>,
+    pub entity_count: usize,
+    pub entities: Vec<api::Entity>,
 }
 
 impl Default for Context {
     fn default() -> Self {
         Self {
             clients: HashMap::new(),
+            entity_count: 0,
+            entities: Vec::new(),
         }
     }
 }
@@ -17,10 +21,7 @@ impl Default for Context {
 #[derive(Debug, Clone)]
 pub enum ContextUpdate {
     Client(Vec<api::ClientMetadata>),
-    // Session,
-    // Property,
-    // Trigger,
-    // Ping,
+    Entity(api::Entity),
 }
 
 impl Into<proto::ContextUpdate> for ContextUpdate {
@@ -33,6 +34,7 @@ impl Into<proto::ContextUpdate> for ContextUpdate {
                     },
                 )),
             },
+            Self::Entity(_) => todo!(),
         }
     }
 }

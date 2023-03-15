@@ -1,86 +1,89 @@
-use std::{boxed, collections::HashMap};
-
-use crate::{api, Error, Result};
 use std::sync::Arc;
-use tokio::sync::Mutex;
 
-#[cfg(test)]
-#[path = "./engine_test.rs"]
-mod engine_test;
+use crate::runtime::Command;
+use crate::runtime::Context;
+use crate::runtime::ContextUpdate;
+use crate::runtime::Engine;
+use crate::{api, Error, Result};
 
-#[derive(Debug)]
-pub struct Engine {
-    property_table: HashMap<api::ProperyID, api::Property>,
-    update_queue: Arc<Mutex<Vec<(api::ProperyID, api::PropertyValue)>>>,
+pub struct DefaultEngine {
+    update_channel: Arc<tokio::sync::broadcast::Sender<ContextUpdate>>,
 }
 
-impl Engine {
-    pub fn new() -> Self {
+impl DefaultEngine {
+    fn new() -> Self {
         Self {
-            property_table: HashMap::new(),
-            update_queue: Default::default(),
+            update_channel: Arc::new(tokio::sync::broadcast::channel(1024).0),
         }
     }
 
-    pub fn boxed() -> boxed::Box<Self> {
-        boxed::Box::new(Self::new())
-    }
-
-    pub fn properties(&self) -> Vec<api::Property> {
-        self.property_table.values().cloned().collect()
-    }
-
-    /// Add a property to the engine.
-    ///
-    /// If the property already exists, it will be overwritten.
-    pub fn add_property(&mut self, property: api::Property) {
-        self.property_table.insert(property.id().clone(), property);
-    }
-
-    pub fn remove_property(&mut self, id: &api::ProperyID) {
-        self.property_table.remove(id);
-    }
-
-    pub async fn append_property_update(
+    async fn handle_connect(
         &mut self,
-        id: api::ProperyID,
-        value: api::PropertyValue,
+        ctx: &mut Context,
+        client: api::ClientMetadata,
     ) -> Result<()> {
-        let Some(property) = self.property_table.get(&id) else {
-            return Err(Error::PropertyUpdateError(id, "property not found"));
-        };
-
-        if !property.value().is_compatible(&value) {
-            return Err(Error::PropertyUpdateError(
-                id,
-                "attempted to change value type",
-            ));
+        if let Some(client) = ctx.clients.get(&client.id) {
+            tracing::error!("client already connected: {}", client.id.clone());
+            return Err(Error::ClientError("client already connected".to_string()));
         }
+        ctx.clients.insert(client.id.clone(), client.clone());
 
-        self.update_queue.lock().await.push((id, value));
+        let clients = ctx
+            .clients
+            .values()
+            .map(|client| client.clone())
+            .collect::<Vec<_>>();
+
+        self.update_channel
+            .send(ContextUpdate::Client(clients))
+            .unwrap();
+
         Ok(())
     }
 
-    pub async fn step(&mut self) -> Result<HashMap<api::ProperyID, api::PropertyValue>> {
-        let mut queue = self.update_queue.lock().await;
-        let updates: Vec<(api::ProperyID, api::PropertyValue)> = queue.drain(..).collect();
-        drop(queue);
-        let mut updated_properties = HashMap::new();
-        for (id, value) in updates {
-            let Some(property) = self.property_table.get_mut(&id) else {
-                continue;
-            };
-            property.set_value(value)?;
-            updated_properties.insert(id, property.value().clone());
-        }
+    async fn handle_disconnect(&mut self, ctx: &mut Context, id: api::ClientID) -> Result<()> {
+        tracing::info!("connecting client: {}", id);
+        // TODO: ensure mode is updated.
+        ctx.clients.remove(&id);
 
-        Ok(updated_properties)
+        let clients = ctx
+            .clients
+            .values()
+            .map(|client| client.clone())
+            .collect::<Vec<_>>();
+
+        self.update_channel
+            .send(ContextUpdate::Client(clients))
+            .unwrap();
+        Ok(())
+    }
+}
+
+impl Default for DefaultEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[async_trait::async_trait]
+impl Engine for DefaultEngine {
+    async fn tick(&mut self, context: &mut Context) -> Result<()> {
+        Ok(())
+    }
+    async fn process(&mut self, context: &mut Context, command: Command) -> Result<()> {
+        tracing::info!("Incoming command: {:?}", command);
+
+        match command {
+            Command::Ping(tx) => {
+                let _ = tx.send(chrono::Utc::now().timestamp_millis());
+                Ok(())
+            }
+            Command::ConnectAs(client) => self.handle_connect(context, client).await,
+            Command::Disconnect(client_id) => self.handle_disconnect(context, client_id).await,
+        }
     }
 
-    pub fn reset(&mut self) {
-        for (_, property) in self.property_table.iter_mut() {
-            property.reset_value();
-        }
-        self.update_queue = Default::default();
+    async fn subscribe(&self) -> Arc<tokio::sync::broadcast::Sender<ContextUpdate>> {
+        self.update_channel.clone()
     }
 }
