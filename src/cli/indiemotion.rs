@@ -50,7 +50,6 @@ enum Command {
 
 // TODO - Scenes.
 
-
  */
 // TODO: Send Mode Updates
 // TODO: Starting Stream Motion
