@@ -33,26 +33,25 @@ enum Command {
     Client(client::Client),
 }
 
-// FIXME: Add Entity Creation
-//        - ECS system for managing objects in the scene.
-//        - Add Components to the Entity. When a controller creates a new entity
-//          it should be able to add components to it as seperate rpc calls.
-// Components:
-// - associated with an entity id.
-// - components are a discrete set of data types like vectors, floats, integers, or bool
-// - an entity can have a number of named components which will be updated each frame.
+/* TODO: TUI for Client
+   * - Add Input Line to TUI
+       - Integrate with Rustyline using stdin.
+       - Ensure History is working.
+   * - Add Log and Command Output to TUI
+   *    - Ensure rustyline help output is working.
+*/
+/* TODO Entity Resources
+- Add Entity.
+- Remove Entity.
+- Add Component to entity.
+- Remove Component from entity.
+- Add Entity Client Map.
+- Remove Entity Client Map.
 
-/*
-EntityID - A composite type with a unique id and a name.
-EntityComponent - An enum describe the component types.
-EntityComponent - A mapping
+// TODO - Scenes.
+
+
  */
-
-// TODO: Default Properties
-// TODO: Add Property
-// TODO: Remove Propertu (except globals)
-// TODO: Set Property Mapping
-// TODO: TUI Status Line for Client
 // TODO: Send Mode Updates
 // TODO: Starting Stream Motion
 // TODO: Client should be interactive for starting and stopping motion sessions.
