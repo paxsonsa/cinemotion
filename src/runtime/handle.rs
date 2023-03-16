@@ -53,8 +53,10 @@ impl Handle {
                 tokio::select! {
                     // Listen for engine tick
                     _ = interval.tick() => {
-                        tracing::debug!("tick");
                         engine.tick(&mut context).instrument(tracing::trace_span!("engine")).await?;
+
+                        // Ok to ignore the result here as the broadcast channel might not have
+                        // any subscribers but the engine should still tick.
                         let _ = event_tx.send(Event::Context(context.clone()));
                     }
 
