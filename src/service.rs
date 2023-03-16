@@ -70,7 +70,6 @@ impl proto::indie_motion_service_server::IndieMotionService for IndieMotionServi
 
         let stream = stream.filter_map(|result| match result {
             Ok(item) => {
-                tracing::info!("sending update to client");
                 let item: proto::Event = item.into();
                 Some(Ok(item))
             }
