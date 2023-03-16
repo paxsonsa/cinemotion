@@ -55,7 +55,7 @@ impl Handle {
                     _ = interval.tick() => {
                         tracing::debug!("tick");
                         engine.tick(&mut context).instrument(tracing::trace_span!("engine")).await?;
-                        event_tx.send(Event::Context(context.clone())).unwrap();
+                        let _ = event_tx.send(Event::Context(context.clone()));
                     }
 
                     // Listen for shutdown signal
