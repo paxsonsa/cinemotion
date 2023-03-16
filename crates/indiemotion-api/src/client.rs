@@ -136,6 +136,16 @@ impl Into<proto::ClientInfo> for ClientMetadata {
     }
 }
 
+impl Into<proto::ClientInfo> for &ClientMetadata {
+    fn into(self) -> proto::ClientInfo {
+        proto::ClientInfo {
+            id: self.id.0.to_string(),
+            name: self.name.clone(),
+            role: self.role.clone().into(),
+        }
+    }
+}
+
 #[derive(Default, Debug)]
 pub struct Client {
     pub meta: ClientMetadata,

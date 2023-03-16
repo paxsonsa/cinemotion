@@ -117,7 +117,7 @@ impl futures::Future for GrpcService {
 
 pub async fn new_runtime() -> crate::Result<(runtime::Handle, tokio::sync::mpsc::Sender<()>)> {
     let (shutdown_tx, shutdown_rx) = tokio::sync::mpsc::channel::<()>(1);
-    let visitor = Box::<engine::DefaultEngine>::default();
+    let visitor = Box::<engine::Engine>::default();
     let handle = runtime::Handle::new(visitor, shutdown_rx).await;
     Ok((handle, shutdown_tx))
 }

@@ -10,17 +10,17 @@ use crate::{Error, Result};
 use super::Command;
 use super::CommandHandle;
 use super::Context;
-use super::ContextUpdate;
-use super::Engine;
+use super::Event;
+use super::Integrator;
 
 // #[cfg(test)]
 // #[path = "./runtime_test.rs"]
 // mod runtime_test;
 
 pub struct Handle {
-    _main_loop: tokio::task::JoinHandle<()>,
+    _main_loop: tokio::task::JoinHandle<Result<()>>,
     cmd_channel: tokio::sync::mpsc::Sender<CommandHandle>,
-    update_channel: Arc<tokio::sync::broadcast::Sender<ContextUpdate>>,
+    event_chan: Arc<tokio::sync::broadcast::Sender<Event>>,
 }
 
 impl Handle {
@@ -35,20 +35,28 @@ impl Handle {
         Ok(resp)
     }
 
-    pub async fn new<Visitor>(
-        mut visitor: Box<Visitor>,
+    pub async fn new<E>(
+        mut engine: Box<E>,
         mut shutdown_rx: tokio::sync::mpsc::Receiver<()>,
     ) -> Self
     where
-        Visitor: Engine + Send + 'static,
+        E: Integrator + Send + 'static,
     {
-        let (tx, mut rx) = tokio::sync::mpsc::channel::<CommandHandle>(1024);
-
-        let update_channel = visitor.subscribe().await;
+        let (cmd_tx, mut cmd_rx) = tokio::sync::mpsc::channel::<CommandHandle>(1024);
+        let event_tx = Arc::new(tokio::sync::broadcast::channel(1024).0);
+        let event_chan = event_tx.clone();
+        let mut interval = tokio::time::interval(std::time::Duration::from_micros(16666));
+        interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
         let main_loop = tokio::spawn(async move {
             let mut context = Context::default();
             loop {
                 tokio::select! {
+                    // Listen for engine tick
+                    _ = interval.tick() => {
+                        tracing::debug!("tick");
+                        engine.tick(&mut context).instrument(tracing::trace_span!("engine")).await?;
+                        event_tx.send(Event::Context(context.clone())).unwrap();
+                    }
 
                     // Listen for shutdown signal
                     _ = shutdown_rx.recv() => {
@@ -57,13 +65,13 @@ impl Handle {
                     }
 
                     // Listen for new commands
-                    item = rx.recv() => match item {
+                    item = cmd_rx.recv() => match item {
                         Some(handle) => {
                             tracing::debug!("received command: {:?}", handle);
 
                             let (command, reply) = handle.decompose();
 
-                            match visitor.process(&mut context, command).instrument(tracing::trace_span!("runtime")).await {
+                            match engine.process(&mut context, command).instrument(tracing::trace_span!("runtime")).await {
                                 Ok(_) => {
                                     tracing::debug!("command processed successfully");
                                     if let Err(err) = reply.send(Ok(())) {
@@ -85,12 +93,13 @@ impl Handle {
                     }
                 }
             }
+            Ok(())
         });
 
         Self {
             _main_loop: main_loop,
-            cmd_channel: tx,
-            update_channel,
+            cmd_channel: cmd_tx,
+            event_chan,
         }
     }
 
@@ -107,8 +116,8 @@ impl Handle {
 
     /// Connect a client to the runtime and return a handle to the client.
     pub async fn connect_as(&self, client: api::ClientMetadata) -> Result<ClientHandle> {
-        let update_rx = self.update_channel.subscribe();
-        let mut handle = ClientHandle::new(client.id.clone(), self.cmd_channel.clone(), update_rx);
+        let event_rx = self.event_chan.subscribe();
+        let mut handle = ClientHandle::new(client.id.clone(), self.cmd_channel.clone(), event_rx);
         let resp = self.send(Command::ConnectAs(client)).await?;
 
         match resp.await.unwrap() {
@@ -127,7 +136,7 @@ impl Handle {
 #[derive(Debug)]
 pub struct ClientHandle {
     pub id: api::ClientID,
-    pub inner: tokio_stream::wrappers::BroadcastStream<ContextUpdate>,
+    pub inner: tokio_stream::wrappers::BroadcastStream<Event>,
     pub cmd_tx: tokio::sync::mpsc::Sender<CommandHandle>,
     pub close_on_drop: bool,
 }
@@ -136,7 +145,7 @@ impl ClientHandle {
     pub fn new(
         id: api::ClientID,
         cmd_tx: tokio::sync::mpsc::Sender<CommandHandle>,
-        update_rx: tokio::sync::broadcast::Receiver<ContextUpdate>,
+        update_rx: tokio::sync::broadcast::Receiver<Event>,
     ) -> Self {
         tracing::warn!("Client handle has connect: {}", id);
         let stream = tokio_stream::wrappers::BroadcastStream::new(update_rx);
@@ -151,10 +160,8 @@ impl ClientHandle {
 }
 
 impl tokio_stream::Stream for ClientHandle {
-    type Item = std::result::Result<
-        ContextUpdate,
-        tokio_stream::wrappers::errors::BroadcastStreamRecvError,
-    >;
+    type Item =
+        std::result::Result<Event, tokio_stream::wrappers::errors::BroadcastStreamRecvError>;
 
     fn poll_next(
         mut self: std::pin::Pin<&mut Self>,
@@ -169,7 +176,7 @@ impl tokio_stream::Stream for ClientHandle {
 }
 
 impl Deref for ClientHandle {
-    type Target = tokio_stream::wrappers::BroadcastStream<ContextUpdate>;
+    type Target = tokio_stream::wrappers::BroadcastStream<Event>;
 
     fn deref(&self) -> &Self::Target {
         &self.inner

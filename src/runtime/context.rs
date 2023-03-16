@@ -1,7 +1,7 @@
 use crate::{api, proto};
 use std::collections::HashMap;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Context {
     pub clients: HashMap<api::ClientID, api::ClientMetadata>,
     pub entity_count: usize,
@@ -9,22 +9,21 @@ pub struct Context {
 }
 
 #[derive(Debug, Clone)]
-pub enum ContextUpdate {
-    Client(Vec<api::ClientMetadata>),
-    Entity(api::Entity),
+pub enum Event {
+    Context(Context),
 }
 
-impl From<ContextUpdate> for proto::ContextUpdate {
-    fn from(value: ContextUpdate) -> proto::ContextUpdate {
+impl From<Event> for proto::Event {
+    fn from(value: Event) -> proto::Event {
         match value {
-            ContextUpdate::Client(clients) => proto::ContextUpdate {
-                update_kind: Some(proto::context_update::UpdateKind::Client(
-                    proto::ClientUpdate {
-                        clients: clients.iter().map(|c| c.clone().into()).collect(),
-                    },
-                )),
-            },
-            ContextUpdate::Entity(_) => todo!(),
+            Event::Context(ctx) => {
+                let mut context = proto::Context::default();
+                context.clients = ctx.clients.values().map(|client| client.into()).collect();
+                context.entities = ctx.entities.iter().map(|e| e.into()).collect();
+                proto::Event {
+                    event: Some(proto::event::Event::ContextUpdate(context)),
+                }
+            }
         }
     }
 }

@@ -52,7 +52,7 @@ impl proto::indie_motion_service_server::IndieMotionService for IndieMotionServi
     }
 
     type ConnectAsStream =
-        Pin<Box<dyn Stream<Item = std::result::Result<proto::ContextUpdate, Status>> + Send>>;
+        Pin<Box<dyn Stream<Item = std::result::Result<proto::Event, Status>> + Send>>;
 
     async fn connect_as(
         &self,
@@ -71,7 +71,7 @@ impl proto::indie_motion_service_server::IndieMotionService for IndieMotionServi
         let stream = stream.filter_map(|result| match result {
             Ok(item) => {
                 tracing::info!("sending update to client");
-                let item: proto::ContextUpdate = item.into();
+                let item: proto::Event = item.into();
                 Some(Ok(item))
             }
             Err(error) => match error {
