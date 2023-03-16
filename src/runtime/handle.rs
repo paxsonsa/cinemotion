@@ -13,10 +13,6 @@ use super::Context;
 use super::Event;
 use super::Integrator;
 
-// #[cfg(test)]
-// #[path = "./runtime_test.rs"]
-// mod runtime_test;
-
 pub struct Handle {
     _main_loop: tokio::task::JoinHandle<Result<()>>,
     cmd_channel: tokio::sync::mpsc::Sender<CommandHandle>,
