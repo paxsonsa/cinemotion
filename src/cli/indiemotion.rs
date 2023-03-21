@@ -35,10 +35,11 @@ enum Command {
 
 /* TODO: TUI for Client
    * - Add Input Line to TUI
+       - Integrate repl for input.
        - Integrate with Rustyline using stdin.
        - Ensure History is working.
    * - Add Log and Command Output to TUI
-   *    - Ensure rustyline help output is working.
+   *    - Hide it by default. Show it on a keyboard shortcut.
 */
 /* TODO Entity Resources
 - Add Entity.

@@ -18,6 +18,8 @@ members = [
 ]
 
 [dependencies]
+tui = "0.19"
+crossterm = "0.25"
 anyhow = "1.0"
 async-trait = "0.1.66"
 chrono = "0.4.24"
