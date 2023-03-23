@@ -815,6 +815,7 @@ dependencies = [
  "indiemotion-api",
  "indiemotion-proto",
  "indiemotion-repl",
+ "regex",
  "rstest",
  "serde_derive",
  "serde_json",

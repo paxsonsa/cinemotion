@@ -5,6 +5,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::io;
 use tui::{
@@ -16,7 +17,7 @@ use tui::{
 };
 // use unicode_width::UnicodeWidthStr;
 
-use indiemotion_repl::{Command, Parameter, Repl};
+// use indiemotion_repl::{Command, Parameter, Repl};
 use std::fmt::Display;
 use tonic::transport::Uri;
 
@@ -38,7 +39,8 @@ impl Client {
     pub async fn run(&self) -> Result<i32> {
         let mut state = UIState::default();
         let mut terminal = init()?;
-        let result = run_app(&mut terminal, &mut state).await;
+        let mut repl = repl::Repl::new();
+        let result = run_app(&mut terminal, &mut repl, &mut state).await;
         let _ = shutdown(&mut terminal)?;
 
         if let Err(err) = result {
@@ -57,7 +59,11 @@ fn init() -> Result<Terminal<CrosstermBackend<std::io::Stdout>>> {
     Ok(Terminal::new(backend)?)
 }
 
-async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) -> Result<()> {
+async fn run_app<B: Backend>(
+    terminal: &mut Terminal<B>,
+    repl: &mut repl::Repl,
+    state: &mut UIState,
+) -> Result<()> {
     loop {
         terminal.draw(|f| ui::window::render(f, state))?;
 
@@ -77,7 +83,7 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) ->
 
             match state.mode {
                 state::UIMode::Console => {
-                    if let InputResult::Stop = handle_console_input(state, &key).await? {
+                    if let InputResult::Stop = handle_console_input(state, repl, &key).await? {
                         return Ok(());
                     }
                 }
@@ -101,7 +107,11 @@ enum InputResult {
     Stop,
 }
 
-async fn handle_console_input(state: &mut UIState, key: &event::KeyEvent) -> Result<InputResult> {
+async fn handle_console_input(
+    state: &mut UIState,
+    repl: &mut repl::Repl,
+    key: &event::KeyEvent,
+) -> Result<InputResult> {
     match (key.code, key.modifiers) {
         (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
             state.console.clear_input();
@@ -123,12 +133,16 @@ async fn handle_console_input(state: &mut UIState, key: &event::KeyEvent) -> Res
                 "clear" => {
                     state.console.messages.clear();
                 }
-                _ => {
-                    // let mut repl = Repl::new();
-                    // let command = repl.parse(input).unwrap();
-                    // let result = repl.execute(command).unwrap();
-                    // state.console.push_result(result);
-                }
+                input => match repl.readline(input.to_string()).await {
+                    Ok(output) => {
+                        if !output.is_empty() {
+                            state.console.messages.push(output);
+                        }
+                    }
+                    Err(err) => {
+                        state.console.messages.push(format!("Error: {}", err));
+                    }
+                },
             }
             state.console.clear_input();
         }
