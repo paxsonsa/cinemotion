@@ -827,6 +827,7 @@ dependencies = [
  "tracing-futures",
  "tracing-subscriber",
  "tui",
+ "unicode-width",
  "uuid",
  "warp",
 ]
