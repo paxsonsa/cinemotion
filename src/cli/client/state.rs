@@ -32,7 +32,6 @@ impl ConsoleState {
     pub fn push_history(&mut self) {
         self.messages.push(self.cur_input.clone());
         self.history.push(self.cur_input.clone());
-        self.cur_input.clear();
         self.history_index = self.history.len();
     }
 

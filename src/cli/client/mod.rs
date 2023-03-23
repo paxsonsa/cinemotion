@@ -27,15 +27,6 @@ mod ui;
 
 use state::UIState;
 
-/// Example using Repl with a custom prompt
-struct Prompt;
-
-impl Display for Prompt {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, ">>> ")
-    }
-}
-
 #[derive(Args, Debug)]
 pub struct Client {
     /// The address and port to connect to the server on.
@@ -71,18 +62,9 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) ->
         terminal.draw(|f| ui::window::render(f, state))?;
 
         if let Event::Key(key) = event::read()? {
-            match (key.code, key.modifiers) {
-                (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
-                    state.console.clear_input();
-                }
-                (KeyCode::Char('d'), KeyModifiers::CONTROL) => {
+            match (&key.code, &key.modifiers) {
+                (KeyCode::Char('d'), &KeyModifiers::CONTROL) => {
                     return Ok(());
-                }
-                (KeyCode::Char(c), KeyModifiers::SHIFT | KeyModifiers::NONE) => {
-                    state.console.input(c);
-                }
-                (KeyCode::Backspace, KeyModifiers::NONE) => {
-                    state.console.backspace();
                 }
                 (KeyCode::Tab, _) => {
                     state.mode = state.mode.cycle();
@@ -90,20 +72,83 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) ->
                 (KeyCode::BackTab, _) => {
                     state.mode = state.mode.cycle_back();
                 }
-                (KeyCode::Enter, KeyModifiers::NONE) => {
-                    state.console.push_history();
-                    state.console.clear_input();
+                (_, _) => {}
+            };
+
+            match state.mode {
+                state::UIMode::Console => {
+                    if let InputResult::Stop = handle_console_input(state, &key).await? {
+                        return Ok(());
+                    }
                 }
-                (KeyCode::Up, KeyModifiers::NONE) => {
-                    state.console.history_up();
+                state::UIMode::Outliner => {
+                    if let InputResult::Stop = handle_outliner_input(state, &key).await? {
+                        return Ok(());
+                    }
                 }
-                (KeyCode::Down, KeyModifiers::NONE) => {
-                    state.console.history_down();
+                state::UIMode::Log => {
+                    if let InputResult::Stop = handle_log_input(state, &key).await? {
+                        return Ok(());
+                    }
                 }
-                _ => {}
             }
         }
     }
+}
+
+enum InputResult {
+    Handled,
+    Stop,
+}
+
+async fn handle_console_input(state: &mut UIState, key: &event::KeyEvent) -> Result<InputResult> {
+    match (key.code, key.modifiers) {
+        (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
+            state.console.clear_input();
+        }
+        (KeyCode::Char(c), KeyModifiers::SHIFT | KeyModifiers::NONE) => {
+            state.console.input(c);
+        }
+        (KeyCode::Backspace, KeyModifiers::NONE) => {
+            state.console.backspace();
+        }
+        (KeyCode::Enter, KeyModifiers::NONE) => {
+            state.console.push_history();
+            let input = state.console.cur_input.clone();
+            let input = input.trim();
+            match input {
+                "quit" => {
+                    return Ok(InputResult::Stop);
+                }
+                "clear" => {
+                    state.console.messages.clear();
+                }
+                _ => {
+                    // let mut repl = Repl::new();
+                    // let command = repl.parse(input).unwrap();
+                    // let result = repl.execute(command).unwrap();
+                    // state.console.push_result(result);
+                }
+            }
+            state.console.clear_input();
+        }
+        (KeyCode::Up, KeyModifiers::NONE) => {
+            state.console.history_up();
+        }
+        (KeyCode::Down, KeyModifiers::NONE) => {
+            state.console.history_down();
+        }
+        _ => {}
+    }
+    Ok(InputResult::Handled)
+}
+
+async fn handle_outliner_input(state: &mut UIState, key: &event::KeyEvent) -> Result<InputResult> {
+    Ok(InputResult::Handled)
+}
+
+async fn handle_log_input(state: &mut UIState, key: &event::KeyEvent) -> Result<InputResult> {
+    Ok(InputResult::Handled)
 }
 
 fn shutdown(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result<()> {

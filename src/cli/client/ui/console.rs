@@ -7,6 +7,8 @@ use tui::{
     Frame,
 };
 
+use unicode_width::UnicodeWidthStr;
+
 use super::super::state::*;
 
 pub fn render<B: Backend>(
@@ -47,11 +49,20 @@ pub fn render<B: Backend>(
         .start_corner(layout::Corner::BottomLeft);
     frame.render_widget(list, sections[0]);
 
-    let cur_input = format!("> {}", input);
-    let input = Paragraph::new(cur_input).style(
+    let cur_input = format!(">>> {}", input);
+    let input = Paragraph::new(cur_input.clone()).style(
         Style::default()
             .fg(Color::White)
             .add_modifier(Modifier::BOLD),
     );
     frame.render_widget(input, sections[1]);
+
+    if let UIMode::Console = ctx {
+        frame.set_cursor(
+            // Put cursor past the end of the input text
+            sections[1].x + cur_input.width() as u16,
+            // Move one line down, from the border to the input line
+            sections[1].y,
+        )
+    }
 }
