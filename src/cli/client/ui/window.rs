@@ -47,13 +47,7 @@ pub fn render<B: Backend>(frame: &mut Frame<B>, app: &mut UIState) {
     let log = sections[0];
     let console = sections[1];
 
-    super::console::render(
-        &app.mode,
-        &app.console.cur_input,
-        &app.console.messages,
-        frame,
-        console,
-    );
+    super::console::render(&app.mode, &app.console, frame, console);
 
     let style = match app.mode {
         UIMode::Log => Style::default().fg(Color::Blue),

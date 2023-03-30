@@ -1,4 +1,5 @@
 use crate::error::*;
+use crate::BlockOutput;
 use crate::Parameter;
 use yansi::Paint;
 
@@ -67,11 +68,11 @@ impl HelpContext {
 /// Trait to be used if you want your own custom Help output
 pub trait HelpViewer {
     /// Called when the plain `help` command is called with no arguments
-    fn help_general(&self, context: &HelpContext) -> Result<()>;
+    fn help_general(&self, context: &HelpContext) -> Result<BlockOutput>;
 
     /// Called when the `help` command is called with a command argument (i.e., `help foo`).
     /// Note that you won't have to handle an unknown command - it'll be handled in the caller
-    fn help_command(&self, entry: &HelpEntry) -> Result<()>;
+    fn help_command(&self, entry: &HelpEntry) -> Result<BlockOutput>;
 }
 
 /// Default [HelpViewer](trait.HelpViewer.html)
@@ -84,53 +85,53 @@ impl DefaultHelpViewer {
 }
 
 impl HelpViewer for DefaultHelpViewer {
-    fn help_general(&self, context: &HelpContext) -> Result<()> {
-        self.print_help_header(context);
+    fn help_general(&self, context: &HelpContext) -> Result<BlockOutput> {
+        let mut block = BlockOutput::default();
+        self.help_header(&mut block, context);
         for entry in &context.help_entries {
-            print!("{}", entry.command);
+            block.add_line(format!("{}", entry.command));
             if entry.summary.is_some() {
-                print!(" - {}", entry.summary.as_ref().unwrap());
+                block.append(format!(" - {}", entry.summary.as_ref().unwrap()));
             }
-            println!();
         }
-
-        Ok(())
+        Ok(block)
     }
 
-    fn help_command(&self, entry: &HelpEntry) -> Result<()> {
+    fn help_command(&self, entry: &HelpEntry) -> Result<BlockOutput> {
+        let mut block = BlockOutput::default();
         if entry.summary.is_some() {
-            println!("{}: {}", entry.command, entry.summary.as_ref().unwrap());
+            block.add_line(format!("{}\n", entry.summary.as_ref().unwrap()));
         } else {
-            println!("{}:", entry.command);
+            block.add_line("No summary.".to_string());
         }
-        println!("Usage:");
-        print!("\t{}", entry.command);
+        block.add_line("".to_string());
+        block.add_line(format!("USAGE:"));
+        block.add_line(format!("     {}", entry.command));
         for param in &entry.parameters {
             if param.1 {
-                print!(" {}", param.0);
+                block.append(format!(" {}", param.0));
             } else {
-                print!(" [{}]", param.0);
+                block.append(format!(" [{}]", param.0));
             }
         }
-        println!();
 
-        Ok(())
+        Ok(block)
     }
 }
 
 impl DefaultHelpViewer {
-    fn print_help_header(&self, context: &HelpContext) {
+    fn help_header(&self, block: &mut BlockOutput, context: &HelpContext) {
         let header = format!(
             "{} {}: {}",
             context.app_name, context.app_version, context.app_purpose
         );
         let underline = Paint::new(
-            std::iter::repeat(" ")
+            std::iter::repeat("-")
                 .take(header.len())
                 .collect::<String>(),
-        )
-        .strikethrough();
-        println!("{}", header);
-        println!("{}", underline);
+        );
+
+        block.add_line(format!("{}", header));
+        block.add_line(format!("{}", underline));
     }
 }

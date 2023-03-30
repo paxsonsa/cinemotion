@@ -1,162 +1,188 @@
 use crate::error::*;
 use crate::help::{DefaultHelpViewer, HelpContext, HelpEntry, HelpViewer};
-use crate::Value;
-use crate::{Command, CommandResult, Parameter};
-use rustyline::completion;
-use rustyline_derive::{Helper, Highlighter, Hinter, Validator};
-use std::boxed::Box;
+use crate::Result;
+use crate::{BlockOutput, Command, CommandResult, Parameter, Value};
 use std::collections::HashMap;
 use std::fmt::Display;
-use yansi::Paint;
 
-type ErrorHandler<Context, E> = fn(error: E, repl: &Repl<Context, E>) -> Result<()>;
-
-fn default_error_handler<Context, E: std::fmt::Display>(
-    error: E,
-    _repl: &Repl<Context, E>,
-) -> Result<()> {
-    eprintln!("{}", Paint::red(error));
-    Ok(())
-}
-
-enum ReplState {
-    Continue,
+pub enum ReplResult {
+    Output(BlockOutput),
     Stop,
 }
 
-/// Main REPL struct
-pub struct Repl<Context, E: std::fmt::Display> {
+impl ReplResult {
+    fn empty() -> Self {
+        Self::Output(BlockOutput::default())
+    }
+}
+
+pub struct CommandBlock {
+    pub command: String,
+    pub output: BlockOutput,
+}
+
+impl CommandBlock {
+    fn output(command: String, output: BlockOutput) -> Self {
+        Self { command, output }
+    }
+
+    fn err(command: String, err: String) -> Self {
+        Self {
+            command,
+            output: BlockOutput {
+                lines: vec![format!("Error: {}", err)],
+            },
+        }
+    }
+}
+
+pub struct Repl<Context, E: Display> {
     name: String,
     version: String,
     description: String,
-    prompt: Box<dyn Display>,
-    custom_prompt: bool,
-    commands: HashMap<String, Command<Context, E>>,
+    input_buf: String,
+    output: Vec<CommandBlock>,
     context: Context,
+    commands: HashMap<String, Command<Context, E>>,
+    history: Vec<String>,
+    history_index: usize,
     help_context: Option<HelpContext>,
     help_viewer: Box<dyn HelpViewer>,
-    error_handler: ErrorHandler<Context, E>,
-    use_completion: bool,
 }
 
 impl<Context, E> Repl<Context, E>
 where
     E: Display + From<Error>,
 {
-    /// Create a new Repl with the given context's initial value.
-    pub fn new(context: Context) -> Self {
-        let name = String::new();
-
+    pub fn new(name: String, version: String, description: String, context: Context) -> Self {
         Self {
-            name: name.clone(),
-            version: String::new(),
-            description: String::new(),
-            prompt: Box::new(Paint::green(format!("{}> ", name)).bold()),
-            custom_prompt: false,
-            commands: HashMap::new(),
+            name,
+            version,
+            description,
+            input_buf: String::new(),
+            output: Vec::new(),
             context,
+            commands: HashMap::new(),
+            history: Vec::new(),
+            history_index: 0,
             help_context: None,
             help_viewer: Box::new(DefaultHelpViewer::new()),
-            error_handler: default_error_handler,
-            use_completion: false,
         }
     }
 
-    /// Give your Repl a name. This is used in the help summary for the Repl.
-    pub fn with_name(mut self, name: &str) -> Self {
-        self.name = name.to_string();
-        if !self.custom_prompt {
-            self.prompt = Box::new(Paint::green(format!("{}> ", name)).bold());
+    pub fn current_input(&self) -> &str {
+        &self.input_buf
+    }
+
+    pub fn push(&mut self, input: char) {
+        self.input_buf.push(input);
+    }
+
+    pub fn pop(&mut self) {
+        self.input_buf.pop();
+    }
+
+    pub fn clear_input(&mut self) {
+        self.input_buf.clear();
+        self.history_index = self.history.len();
+    }
+
+    pub fn history_up(&mut self) {
+        if self.history_index == 0 {
+            self.input_buf = self.history[self.history_index].clone();
+            return;
+        }
+        self.history_index = self.history_index - 1;
+        self.input_buf = self.history[self.history_index].clone();
+    }
+
+    pub fn history_down(&mut self) {
+        let index = self.history_index + 1;
+        if index >= self.history.len() {
+            self.history_index = self.history.len();
+            self.input_buf.clear();
+            return;
         }
 
-        self
+        self.history_index = index;
+        self.input_buf = self.history[self.history_index].clone();
     }
 
-    /// Give your Repl a version. This is used in the help summary for the Repl.
-    pub fn with_version(mut self, version: &str) -> Self {
-        self.version = version.to_string();
+    pub async fn process_input(&mut self) -> Result<()> {
+        if self.help_context.is_none() {
+            self.construct_help_context();
+        }
 
-        self
+        let trimmed = self.input_buf.trim().to_string();
+        self.history.push(trimmed.to_string());
+        self.clear_input();
+
+        if !trimmed.is_empty() {
+            let r = regex::Regex::new(r#"("[^"\n]+"|[\S]+)"#).unwrap();
+            let args = r
+                .captures_iter(&trimmed)
+                .map(|a| a[0].to_string().replace("\"", ""))
+                .collect::<Vec<String>>();
+            let mut args = args.iter().fold(vec![], |mut state, a| {
+                state.push(a.as_str());
+                state
+            });
+            let command: String = args.drain(..1).collect();
+
+            match self.handle_command(&command, &args).await {
+                Ok(ReplResult::Output(block)) => {
+                    self.output.push(CommandBlock::output(trimmed, block))
+                }
+                Ok(ReplResult::Stop) => return Err(Error::Stopped),
+                Err(err) => self
+                    .output
+                    .push(CommandBlock::err(trimmed, err.to_string())),
+            }
+        }
+        Ok(())
     }
 
-    /// Give your Repl a description. This is used in the help summary for the Repl.
-    pub fn with_description(mut self, description: &str) -> Self {
-        self.description = description.to_string();
-
-        self
-    }
-
-    /// Give your Repl a custom prompt. The default prompt is the Repl name, followed by
-    /// a `>`, all in green, followed by a space.
-    pub fn with_prompt(mut self, prompt: &'static dyn Display) -> Self {
-        self.prompt = Box::new(prompt);
-        self.custom_prompt = true;
-
-        self
-    }
-
-    /// Pass in a custom help viewer
-    pub fn with_help_viewer<V: 'static + HelpViewer>(mut self, help_viewer: V) -> Self {
-        self.help_viewer = Box::new(help_viewer);
-
-        self
-    }
-
-    /// Pass in a custom error handler. This is really only for testing - the default
-    /// error handler simply prints the error to stderr and then returns
-    pub fn with_error_handler(mut self, handler: ErrorHandler<Context, E>) -> Self {
-        self.error_handler = handler;
-
-        self
-    }
-
-    /// Set whether to use command completion when tab is hit. Defaults to false.
-    pub fn use_completion(mut self, value: bool) -> Self {
-        self.use_completion = value;
-
-        self
-    }
-
-    /// Add a command to your REPL
-    pub fn add_command(mut self, command: Command<Context, E>) -> Self {
+    pub fn with_command(mut self, command: Command<Context, E>) -> Self {
         self.commands.insert(command.name.clone(), command);
-
         self
     }
 
-    async fn handle_command(
+    pub fn output(&self) -> &Vec<CommandBlock> {
+        &self.output
+    }
+
+    pub async fn handle_command(
         &mut self,
         command: &str,
         args: &[&str],
-    ) -> core::result::Result<ReplState, E> {
+    ) -> core::result::Result<ReplResult, E> {
         match self.commands.get_mut(command) {
             Some(definition) => {
                 let validated = validate_arguments(&command, &definition.parameters, args)?;
                 match (definition.handler.handle(validated, &mut self.context)).await {
                     Ok(result) => match result {
-                        CommandResult::Continue(Some(value)) => println!("{}", value),
-                        CommandResult::Continue(None) => (),
-                        CommandResult::Stop => return Ok(ReplState::Stop),
+                        CommandResult::Output(Some(value)) => Ok(ReplResult::Output(value)),
+                        CommandResult::Output(None) => Ok(ReplResult::empty()),
+                        CommandResult::Stop => Ok(ReplResult::Stop),
                     },
-                    Err(error) => return Err(error.into()),
-                };
+                    Err(error) => Err(error.into()),
+                }
             }
             None => {
                 if command == "help" {
-                    self.show_help(args)?;
+                    return Ok(ReplResult::Output(self.show_help(args)?));
                 } else {
                     return Err(Error::UnknownCommand(command.to_string()).into());
                 }
             }
         }
-
-        Ok(ReplState::Continue)
     }
 
-    fn show_help(&self, args: &[&str]) -> Result<()> {
+    fn show_help(&self, args: &[&str]) -> Result<BlockOutput> {
         if args.is_empty() {
-            self.help_viewer
-                .help_general(&self.help_context.as_ref().unwrap())?;
+            return Ok(self
+                .help_viewer
+                .help_general(&self.help_context.as_ref().unwrap())?);
         } else {
             let entry_opt = self
                 .help_context
@@ -165,32 +191,14 @@ where
                 .help_entries
                 .iter()
                 .find(|entry| entry.command == args[0]);
-            match entry_opt {
-                Some(entry) => {
-                    self.help_viewer.help_command(&entry)?;
-                }
-                None => eprintln!("Help not found for command '{}'", args[0]),
+            return match entry_opt {
+                Some(entry) => Ok(self.help_viewer.help_command(&entry)?),
+                None => Ok(BlockOutput::error(format!(
+                    "Help not found for command '{}'",
+                    args[0]
+                ))),
             };
         }
-        Ok(())
-    }
-
-    async fn process_line(&mut self, line: String) -> core::result::Result<ReplState, E> {
-        let trimmed = line.trim();
-        if !trimmed.is_empty() {
-            let r = regex::Regex::new(r#"("[^"\n]+"|[\S]+)"#).unwrap();
-            let args = r
-                .captures_iter(trimmed)
-                .map(|a| a[0].to_string().replace("\"", ""))
-                .collect::<Vec<String>>();
-            let mut args = args.iter().fold(vec![], |mut state, a| {
-                state.push(a.as_str());
-                state
-            });
-            let command: String = args.drain(..1).collect();
-            return self.handle_command(&command, &args).await;
-        }
-        return Ok(ReplState::Continue);
     }
 
     fn construct_help_context(&mut self) {
@@ -212,65 +220,6 @@ where
             &self.description,
             help_entries,
         ));
-    }
-
-    fn create_helper(&mut self) -> Helper {
-        let mut helper = Helper::new();
-        if self.use_completion {
-            for name in self.commands.keys() {
-                helper.add_command(name.to_string());
-            }
-        }
-
-        helper
-    }
-
-    pub async fn run(&mut self) -> Result<()> {
-        self.construct_help_context();
-        let mut editor: rustyline::Editor<Helper> = rustyline::Editor::new();
-        let helper = Some(self.create_helper());
-        editor.set_helper(helper);
-        println!("Welcome to {} {}", self.name, self.version);
-        let mut eof = false;
-        while !eof {
-            self.handle_line(&mut editor, &mut eof).await?;
-        }
-
-        Ok(())
-    }
-
-    async fn handle_line(
-        &mut self,
-        editor: &mut rustyline::Editor<Helper>,
-        eof: &mut bool,
-    ) -> Result<()> {
-        match editor.readline(&format!("{}", self.prompt)) {
-            Ok(line) => {
-                editor.add_history_entry(line.clone());
-
-                match self.process_line(line).await {
-                    Ok(ReplState::Continue) => (),
-                    Ok(ReplState::Stop) => {
-                        *eof = true;
-                        return Ok(());
-                    }
-                    Err(error) => {
-                        (self.error_handler)(error, self)?;
-                    }
-                }
-                *eof = false;
-                Ok(())
-            }
-            Err(rustyline::error::ReadlineError::Eof) => {
-                *eof = true;
-                Ok(())
-            }
-            Err(error) => {
-                eprintln!("Error reading line: {}", error);
-                *eof = false;
-                Ok(())
-            }
-        }
     }
 }
 
@@ -302,41 +251,181 @@ fn validate_arguments(
     Ok(validated)
 }
 
-// rustyline Helper struct
-// Currently just does command completion with <tab>, if
-// use_completion() is set on the REPL
-#[derive(Clone, Helper, Hinter, Highlighter, Validator)]
-struct Helper {
-    commands: Vec<String>,
-}
+// fn check_connection(ctx: &context::Context) -> std::result::Result<(), Error> {
+//     if ctx.client.is_none() {
+//         Err(Error::NoConnection)
+//     } else {
+//         Ok(())
+//     }
+// }
 
-impl Helper {
-    fn new() -> Self {
-        Self { commands: vec![] }
-    }
+// pub(crate) struct Name;
 
-    fn add_command(&mut self, command: String) {
-        self.commands.push(command);
-    }
-}
+// #[async_trait::async_trait]
+// impl indiemotion_repl::CommandHandler for Name {
+//     type Context = context::Context;
+//     type Error = Error;
 
-impl completion::Completer for Helper {
-    type Candidate = String;
+//     async fn handle(
+//         &mut self,
+//         args: HashMap<String, Value>,
+//         ctx: &mut Self::Context,
+//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+//         if let Some(name) = args.get("name") {
+//             ctx.name = name.convert()?;
+//         }
+//         Ok(CommandResult::Continue(Some(ctx.name.clone())))
+//     }
+// }
 
-    fn complete(
-        &self,
-        line: &str,
-        _pos: usize,
-        _ctx: &rustyline::Context<'_>,
-    ) -> rustyline::Result<(usize, Vec<Self::Candidate>)> {
-        // Complete based on whether the current line is a substring
-        // of one of the set commands
-        let ret: Vec<Self::Candidate> = self
-            .commands
-            .iter()
-            .filter(|cmd| cmd.contains(line))
-            .map(|s| s.to_string())
-            .collect();
-        Ok((0, ret))
-    }
-}
+// pub(crate) struct Role;
+
+// #[async_trait::async_trait]
+// impl indiemotion_repl::CommandHandler for Role {
+//     type Context = context::Context;
+//     type Error = Error;
+
+//     async fn handle(
+//         &mut self,
+//         args: HashMap<String, Value>,
+//         ctx: &mut Self::Context,
+//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+//         if let Some(role) = args.get("role") {
+//             let s: String = role.convert()?;
+//             ctx.role = s.try_into()?;
+//         }
+//         Ok(CommandResult::Continue(Some(ctx.role.clone().into())))
+//     }
+// }
+
+// pub(crate) struct Info;
+
+// #[async_trait::async_trait]
+// impl indiemotion_repl::CommandHandler for Info {
+//     type Context = context::Context;
+//     type Error = Error;
+
+//     async fn handle(
+//         &mut self,
+//         _args: HashMap<String, Value>,
+//         ctx: &mut Self::Context,
+//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+//         check_connection(ctx)?;
+
+//         let request = proto::ServerInfoRequest {};
+//         match ctx.client.as_mut().unwrap().server_info(request).await {
+//             Ok(response) => {
+//                 let response = response.into_inner();
+//                 println!("Server Info:");
+//                 println!("  Name: {}", response.name);
+//                 println!("  Version: {}", response.version);
+//                 println!("  Clients:");
+//                 for (name, client) in response.clients.iter() {
+//                     println!("- {}:{}", name, client.role);
+//                 }
+//             }
+//             Err(err) => {
+//                 tracing::error!("Failed to get server info: {}", err);
+//             }
+//         }
+//         Ok(CommandResult::Continue(None))
+//     }
+// }
+
+// pub(crate) struct Quit;
+
+// #[async_trait::async_trait]
+// impl indiemotion_repl::CommandHandler for Quit {
+//     type Context = context::Context;
+//     type Error = Error;
+
+//     async fn handle(
+//         &mut self,
+//         _args: HashMap<String, Value>,
+//         _ctx: &mut Self::Context,
+//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+//         Ok(CommandResult::Stop)
+//     }
+// }
+
+// pub(crate) struct Ping;
+
+// #[async_trait::async_trait]
+// impl indiemotion_repl::CommandHandler for Ping {
+//     type Context = context::Context;
+//     type Error = Error;
+
+//     async fn handle(
+//         &mut self,
+//         _args: HashMap<String, Value>,
+//         ctx: &mut Self::Context,
+//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+//         check_connection(ctx)?;
+
+//         let timestamp = chrono::Utc::now().timestamp_millis();
+
+//         let request = proto::PingRequest { timestamp };
+//         match ctx.client.as_mut().unwrap().ping(request).await {
+//             Ok(response) => {
+//                 // let timestamp = chrono::Utc::now().timestamp_millis();
+//                 let response = response.into_inner();
+//                 let timestamp = response.client_timestamp;
+//                 let server_ts = response.server_timestamp;
+//                 let runtime_ts = response.runtime_timestamp;
+//                 Ok(CommandResult::Continue(Some(format!(
+//                     "server: {}ms   runtime: {}ms    roundtrip: {}ms",
+//                     (server_ts - timestamp),
+//                     (runtime_ts - timestamp),
+//                     (runtime_ts - timestamp) * 2
+//                 ))))
+//             }
+//             Err(err) => {
+//                 tracing::error!("Failed to ping: {}", err);
+//                 Err(Error::CommandFailed(format!("failed to ping: {:?}", err)))
+//             }
+//         }
+//     }
+// }
+
+// pub(crate) struct Connect;
+
+// #[async_trait::async_trait]
+// impl indiemotion_repl::CommandHandler for Connect {
+//     type Context = context::Context;
+//     type Error = Error;
+
+//     async fn handle(
+//         &mut self,
+//         _args: HashMap<String, Value>,
+//         ctx: &mut Self::Context,
+//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+//         ctx.connect().await?;
+
+//         let info = proto::ClientInfo {
+//             id: ctx.uid.clone().to_string(),
+//             name: ctx.name.clone(),
+//             role: Into::<proto::ClientRole>::into(ctx.role.clone()).into(),
+//         };
+
+//         let req = proto::ConnectAsRequest {
+//             client_info: Some(info),
+//         };
+
+//         println!("Connecting to server...");
+//         match ctx.client.as_mut().unwrap().connect_as(req).await {
+//             Ok(response) => {
+//                 println!("Establishing loop...");
+//                 let mut stream = response.into_inner();
+//                 ctx.main_loop = Some(tokio::spawn(async move {
+//                     while let Some(event) = stream.message().await.unwrap() {
+//                         println!("Event: {:?}", event);
+//                     }
+//                 }));
+//                 Ok(CommandResult::Continue(Some("connected".to_string())))
+//             }
+//             Err(_) => Ok(CommandResult::Continue(Some(
+//                 "failed to connect".to_string(),
+//             ))),
+//         }
+//     }
+// }

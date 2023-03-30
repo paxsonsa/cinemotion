@@ -228,7 +228,7 @@ mod parameter;
 mod repl;
 mod value;
 
-pub use command::{Command, CommandHandler, CommandResult};
+pub use command::{BlockOutput, Command, CommandHandler, CommandResult};
 pub use error::{Error, Result};
 #[doc(inline)]
 pub use help::{HelpContext, HelpEntry, HelpViewer};

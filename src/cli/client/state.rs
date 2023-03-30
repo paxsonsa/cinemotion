@@ -1,59 +1,46 @@
 use std::fmt::Debug;
 
-#[derive(Debug, Default)]
+use super::repl;
+
+#[derive(Debug)]
 pub struct UIState {
     pub mode: UIMode,
     pub console: ConsoleState,
 }
 
-#[derive(Debug, Default)]
 pub struct ConsoleState {
-    pub cur_input: String,
-    pub messages: Vec<String>,
-    pub history: Vec<String>,
-    pub history_index: usize,
+    pub repl: repl::Repl,
+}
+
+impl std::fmt::Debug for ConsoleState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ConsoleState").finish()
+    }
 }
 
 impl ConsoleState {
+    pub fn with_repl(repl: repl::Repl) -> Self {
+        ConsoleState { repl }
+    }
+
     pub fn input(&mut self, ch: char) {
-        self.history_index = self.history.len();
-        self.cur_input.push(ch);
+        self.repl.push(ch);
     }
 
     pub fn backspace(&mut self) {
-        self.cur_input.pop();
+        self.repl.pop();
     }
 
     pub fn clear_input(&mut self) {
-        self.history_index = self.history.len();
-        self.cur_input.clear();
-    }
-
-    pub fn push_history(&mut self) {
-        self.messages.push(self.cur_input.clone());
-        self.history.push(self.cur_input.clone());
-        self.history_index = self.history.len();
+        self.repl.clear_input();
     }
 
     pub fn history_up(&mut self) {
-        if self.history_index == 0 {
-            self.cur_input = self.history[self.history_index].clone();
-            return;
-        }
-        self.history_index = self.history_index - 1;
-        self.cur_input = self.history[self.history_index].clone();
+        self.repl.history_up();
     }
 
     pub fn history_down(&mut self) {
-        let index = self.history_index + 1;
-        if index >= self.history.len() {
-            self.history_index = self.history.len();
-            self.cur_input.clear();
-            return;
-        }
-
-        self.history_index = index;
-        self.cur_input = self.history[self.history_index].clone();
+        self.repl.history_down();
     }
 }
 

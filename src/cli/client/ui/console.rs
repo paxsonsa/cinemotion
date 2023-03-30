@@ -2,7 +2,7 @@ use tui::{
     backend::Backend,
     layout::{self, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
-    text::{Span, Spans},
+    text::{Span, Spans, Text},
     widgets::{Block, BorderType, Borders, List, ListItem, Paragraph},
     Frame,
 };
@@ -11,13 +11,7 @@ use unicode_width::UnicodeWidthStr;
 
 use super::super::state::*;
 
-pub fn render<B: Backend>(
-    ctx: &UIMode,
-    input: &String,
-    messages: &Vec<String>,
-    frame: &mut Frame<B>,
-    area: Rect,
-) {
+pub fn render<B: Backend>(ctx: &UIMode, console: &ConsoleState, frame: &mut Frame<B>, area: Rect) {
     let style = match ctx {
         UIMode::Console => Style::default().fg(Color::Blue),
         _ => Style::default(),
@@ -36,20 +30,36 @@ pub fn render<B: Backend>(
         .constraints([Constraint::Min(1), Constraint::Length(1)].as_ref())
         .split(area);
 
+    let messages = &console
+        .repl
+        .output()
+        .iter()
+        .map(|block| {
+            let mut lines = vec![Text::styled(
+                block.command.clone(),
+                Style::default()
+                    .add_modifier(Modifier::BOLD)
+                    .fg(Color::White),
+            )];
+            lines.extend(block.output.lines.iter().map(|s| {
+                Text::styled(format!(" {}", s.clone()), Style::default().fg(Color::Gray))
+            }));
+            lines
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+
     let items: Vec<_> = messages
         .iter()
         .rev()
-        .map(|m| {
-            let content = vec![Spans::from(Span::raw(format!("{}", m)))];
-            ListItem::new(content)
-        })
+        .map(|content| ListItem::new(content.to_owned()))
         .collect();
     let list = List::new(items)
         .block(Block::default())
         .start_corner(layout::Corner::BottomLeft);
     frame.render_widget(list, sections[0]);
 
-    let cur_input = format!(">>> {}", input);
+    let cur_input = format!(">>> {}", console.repl.current_input());
     let input = Paragraph::new(cur_input.clone()).style(
         Style::default()
             .fg(Color::White)

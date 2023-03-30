@@ -1,9 +1,9 @@
 use thiserror::Error;
 
-pub(crate) type CLIResult<T> = std::result::Result<T, crate::Error>;
+pub type CLIResult<T> = std::result::Result<T, crate::Error>;
 
 #[derive(Error, Debug)]
-pub(crate) enum Error {
+pub enum Error {
     #[error("Must be connected to a server to use this command.")]
     NoConnection,
 

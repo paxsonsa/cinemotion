@@ -6,8 +6,32 @@ use std::fmt;
 use std::collections::HashMap;
 
 pub enum CommandResult {
-    Continue(Option<String>),
+    Output(Option<BlockOutput>),
     Stop,
+}
+
+#[derive(Default)]
+pub struct BlockOutput {
+    pub lines: Vec<String>,
+}
+
+impl BlockOutput {
+    pub fn error(err: String) -> Self {
+        Self {
+            lines: vec![format!("Error: {}", err)],
+        }
+    }
+
+    pub fn add_line(&mut self, line: String) {
+        self.lines.push(line);
+    }
+
+    pub fn append(&mut self, string: String) {
+        match self.lines.last_mut() {
+            Some(line) => line.push_str(string.as_str()),
+            None => self.add_line(string),
+        }
+    }
 }
 
 /// Command Handler

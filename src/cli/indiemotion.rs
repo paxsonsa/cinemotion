@@ -35,7 +35,6 @@ enum Command {
 
 /* TODO: TUI for Client
    * - Add Input Line to TUI
-       - Integrate repl for input.
        - Integrate help command and command parsing.
        - Ensure History is working.
    - Add Top Status Line for Connection Status

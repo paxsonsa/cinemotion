@@ -1,6 +1,7 @@
 [package]
 name = "indiemotion"
 version = "0.1.0"
+description = "A CLI for IndieMotion"
 edition = "2021"
 license = "MIT"
 

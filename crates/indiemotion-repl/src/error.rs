@@ -30,7 +30,7 @@ pub enum Error {
     ParseFloatError(num::ParseFloatError),
 
     /// Stopping the REPL
-    Stop,
+    Stopped,
 
     /// Command not found
     UnknownCommand(String),
@@ -57,7 +57,7 @@ impl fmt::Display for Error {
                 "Error: Command '{}' can have no more than {} arguments",
                 command, nargs,
             ),
-            Error::Stop => write!(f, "closing."),
+            Error::Stopped => write!(f, "closing."),
             Error::ParseBoolError(error) => write!(f, "Error: {}", error,),
             Error::ParseFloatError(error) => write!(f, "Error: {}", error,),
             Error::ParseIntError(error) => write!(f, "Error: {}", error,),
