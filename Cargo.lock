@@ -395,6 +395,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c34f04666d835ff5d62e058c3995147c06f42fe86ff053337632bca83e42702d"
 
 [[package]]
+name = "errno"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f639046355ee4f37944e44f60642c6f3a7efa3cf6b78c78a0d989a8ce6c396a1"
+dependencies = [
+ "errno-dragonfly",
+ "libc",
+ "winapi",
+]
+
+[[package]]
+name = "errno-dragonfly"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aa68f1b12764fab894d2755d2518754e71b4fd80ecfb822714a1206c2aab39bf"
+dependencies = [
+ "cc",
+ "libc",
+]
+
+[[package]]
 name = "error-code"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -415,12 +436,13 @@ dependencies = [
 
 [[package]]
 name = "fd-lock"
-version = "2.0.0"
+version = "3.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0010f02effd88c702318c5dde0463206be67495d0b4d906ba7c0a8f166cc7f06"
+checksum = "28c0190ff0bd3b28bfdd4d0cf9f92faa12880fb0b8ae2054723dd6c76a4efd42"
 dependencies = [
- "libc",
- "winapi",
+ "cfg-if",
+ "rustix",
+ "windows-sys",
 ]
 
 [[package]]
@@ -842,6 +864,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "io-lifetimes"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e7d6c6f8c91b4b9ed43484ad1a938e393caf35960fce7f82a040497207bd8e9e"
+dependencies = [
+ "libc",
+ "windows-sys",
+]
+
+[[package]]
 name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -885,6 +917,12 @@ checksum = "ecd207c9c713c34f95a097a5b029ac2ce6010530c7b49d7fea24d977dede04f5"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "linux-raw-sys"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f051f77a7c8e6957c0696eac88f26b0117e54f52d3fc682ab19397a8812846a4"
 
 [[package]]
 name = "lock_api"
@@ -1004,18 +1042,6 @@ dependencies = [
 
 [[package]]
 name = "nix"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa9b4819da1bc61c0ea48b63b7bc8604064dd43013e7cc325df098d49cd7c18a"
-dependencies = [
- "bitflags",
- "cc",
- "cfg-if",
- "libc",
-]
-
-[[package]]
-name = "nix"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c3728fec49d363a50a8828a190b379a446cc5cf085c06259bbbeb34447e4ec7"
@@ -1025,6 +1051,18 @@ dependencies = [
  "cfg-if",
  "libc",
  "memoffset",
+]
+
+[[package]]
+name = "nix"
+version = "0.26.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfdda3d196821d6af13126e40375cdf7da646a96114af134d5f417a9a1dc8e1a"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "libc",
+ "static_assertions",
 ]
 
 [[package]]
@@ -1405,6 +1443,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustix"
+version = "0.36.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4fdebc4b395b7fbb9ab11e462e20ed9051e7b16e42d24042c776eca0ac81b03"
+dependencies = [
+ "bitflags",
+ "errno",
+ "io-lifetimes",
+ "libc",
+ "linux-raw-sys",
+ "windows-sys",
+]
+
+[[package]]
 name = "rustls-pemfile"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1421,9 +1473,9 @@ checksum = "5583e89e108996506031660fe09baa5011b9dd0341b89029313006d1fb508d70"
 
 [[package]]
 name = "rustyline"
-version = "8.2.0"
+version = "11.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbd4eaf7a7738f76c98e4f0395253ae853be3eb018f7b0bb57fe1b6c17e31874"
+checksum = "5dfc8644681285d1fb67a467fb3021bfea306b99b4146b166a1fe3ada965eece"
 dependencies = [
  "bitflags",
  "cfg-if",
@@ -1433,10 +1485,9 @@ dependencies = [
  "libc",
  "log",
  "memchr",
- "nix 0.20.0",
+ "nix 0.26.2",
  "radix_trie",
  "scopeguard",
- "smallvec",
  "unicode-segmentation",
  "unicode-width",
  "utf8parse",
@@ -1593,6 +1644,12 @@ dependencies = [
  "libc",
  "winapi",
 ]
+
+[[package]]
+name = "static_assertions"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "str-buf"
