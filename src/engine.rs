@@ -21,14 +21,17 @@ impl Engine {
         }
         ctx.clients.insert(client.id.clone(), client);
         let clients = ctx.clients.values().cloned().collect::<Vec<_>>();
+        tracing::debug!("ctx: {:?}", ctx);
         Ok(())
     }
 
     async fn handle_disconnect(&mut self, ctx: &mut Context, id: api::ClientID) -> Result<()> {
-        tracing::info!("connecting client: {}", id);
+        tracing::warn!("disconnecting client: {}", id);
         // TODO: ensure mode is updated.
         ctx.clients.remove(&id);
         let clients = ctx.clients.values().cloned().collect::<Vec<_>>();
+        tracing::debug!("ctx: {:?}", ctx);
+
         Ok(())
     }
 }

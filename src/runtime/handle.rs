@@ -73,13 +73,13 @@ impl Handle {
                                 Ok(_) => {
                                     tracing::debug!("command processed successfully");
                                     if let Err(err) = reply.send(Ok(())) {
-                                        tracing::error!("reply channel closed while sending reply: {:?}", err);
+                                        tracing::error!("reply channel closed while sending process reply: {:?}", err);
                                     }
                                 }
                                 Err(e) => {
                                     tracing::error!("error while processing command: {:?}", e);
                                     if let Err(err) = reply.send(Err(e)) {
-                                        tracing::error!("reply channel closed while sending reply: {:?}", err);
+                                        tracing::error!("reply channel closed while sending error reply: {:?}", err);
                                     }
                                 }
                             };
@@ -185,9 +185,15 @@ impl Drop for ClientHandle {
     fn drop(&mut self) {
         if self.close_on_drop {
             tracing::warn!("Client handle has disconnected: {}", self.id);
-            let _ = self
+            let res = self
                 .cmd_tx
                 .try_send(CommandHandle::new(Command::Disconnect(self.id.clone())).0);
+
+            if let Err(err) = &res {
+                tracing::error!("Error while disconnection client: {:?}", err);
+            }
         }
+
+        tracing::debug!("Client handle dropped: {}", self.id);
     }
 }
