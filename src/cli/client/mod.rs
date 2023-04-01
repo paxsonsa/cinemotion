@@ -58,39 +58,49 @@ fn init() -> Result<Terminal<CrosstermBackend<std::io::Stdout>>> {
 async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) -> Result<()> {
     loop {
         // TODO: Add Render Tick and Ticks for UI Controllers.
-        terminal.draw(|f| ui::window::render(f, state))?;
+        let mut ui_tick = tokio::time::interval(tokio::time::Duration::from_micros(16_670));
+        ui_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
 
-        if let Event::Key(key) = event::read()? {
-            match (&key.code, &key.modifiers) {
-                (KeyCode::Char('d'), &KeyModifiers::CONTROL) => {
-                    return Ok(());
-                }
-                (KeyCode::Tab, _) => {
-                    state.mode = state.mode.cycle();
-                }
-                (KeyCode::BackTab, _) => {
-                    state.mode = state.mode.cycle_back();
-                }
-                (_, _) => {}
-            };
+        let mut ctrl_tick = tokio::time::interval(tokio::time::Duration::from_micros(16_670));
+        ctrl_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
 
-            match state.mode {
-                state::UIMode::Console => {
-                    if let InputResult::Stop = handle_console_input(state, &key).await? {
-                        return Ok(());
-                    }
-                }
-                state::UIMode::Outliner => {
-                    if let InputResult::Stop = handle_outliner_input(state, &key).await? {
-                        return Ok(());
-                    }
-                }
-                state::UIMode::Log => {
-                    if let InputResult::Stop = handle_log_input(state, &key).await? {
-                        return Ok(());
+        tokio::select! {
+            _ = ui_tick.tick() => {
+                terminal.draw(|f| ui::window::render(f, state))?;
+                if let Event::Key(key) = event::read()? {
+                    match (&key.code, &key.modifiers) {
+                        (KeyCode::Char('d'), &KeyModifiers::CONTROL) => {
+                            return Ok(());
+                        }
+                        (KeyCode::Tab, _) => {
+                            state.mode = state.mode.cycle();
+                        }
+                        (KeyCode::BackTab, _) => {
+                            state.mode = state.mode.cycle_back();
+                        }
+                        (_, _) => {}
+                    };
+
+                    match state.mode {
+                        state::UIMode::Console => {
+                            if let InputResult::Stop = handle_console_input(state, &key).await? {
+                                return Ok(());
+                            }
+                        }
+                        state::UIMode::Outliner => {
+                            if let InputResult::Stop = handle_outliner_input(state, &key).await? {
+                                return Ok(());
+                            }
+                        }
+                        state::UIMode::Log => {
+                            if let InputResult::Stop = handle_log_input(state, &key).await? {
+                                return Ok(());
+                            }
+                        }
                     }
                 }
             }
+            _ = ctrl_tick.tick() => {}
         }
     }
 }

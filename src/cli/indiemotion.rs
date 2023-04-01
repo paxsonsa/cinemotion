@@ -34,11 +34,11 @@ enum Command {
 }
 
 /* TODO: TUI for Client
-   * - Add Input Line to TUI
-       - Integrate help command and command parsing.
-       - Ensure History is working.
-   - Add Top Status Line for Connection Status
-   - Add Connect Command
+    - Add Info Command
+    - Add Connect Command
+    - Add Top Status Line for Connection Status
+    - Add Ping Command
+
 */
 /* TODO Entity Resources
 - Add Entity.

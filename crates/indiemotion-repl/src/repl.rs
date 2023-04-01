@@ -1,37 +1,37 @@
 use crate::error::*;
 use crate::help::{DefaultHelpViewer, HelpContext, HelpEntry, HelpViewer};
 use crate::Result;
-use crate::{BlockOutput, Command, CommandResult, Parameter, Value};
+use crate::{BlockOutput, Command, CommandOutput, CommandResult, Parameter, Value};
 use std::collections::HashMap;
 use std::fmt::Display;
 
 pub enum ReplResult {
-    Output(BlockOutput),
+    Output(CommandOutput),
     Stop,
 }
 
 impl ReplResult {
     fn empty() -> Self {
-        Self::Output(BlockOutput::default())
+        Self::Output(CommandOutput::Empty)
     }
 }
 
 pub struct CommandBlock {
     pub command: String,
-    pub output: BlockOutput,
+    pub output: CommandOutput,
 }
 
 impl CommandBlock {
-    fn output(command: String, output: BlockOutput) -> Self {
+    fn output(command: String, output: CommandOutput) -> Self {
         Self { command, output }
     }
 
     fn err(command: String, err: String) -> Self {
         Self {
             command,
-            output: BlockOutput {
+            output: CommandOutput::Error(BlockOutput {
                 lines: vec![format!("Error: {}", err)],
-            },
+            }),
         }
     }
 }
@@ -161,20 +161,24 @@ where
                 let validated = validate_arguments(&command, &definition.parameters, args)?;
                 match (definition.handler.handle(validated, &mut self.context)).await {
                     Ok(result) => match result {
-                        CommandResult::Output(Some(value)) => Ok(ReplResult::Output(value)),
-                        CommandResult::Output(None) => Ok(ReplResult::empty()),
+                        CommandResult::Output(output) => Ok(ReplResult::Output(output)),
                         CommandResult::Stop => Ok(ReplResult::Stop),
                     },
-                    Err(error) => Err(error.into()),
+                    Err(error) => Ok(ReplResult::Output(CommandOutput::Error(BlockOutput {
+                        lines: vec![format!("Error: {}", error)],
+                    }))),
                 }
             }
-            None => {
-                if command == "help" {
-                    return Ok(ReplResult::Output(self.show_help(args)?));
-                } else {
-                    return Err(Error::UnknownCommand(command.to_string()).into());
+            None => match command {
+                "help" => Ok(ReplResult::Output(CommandOutput::Info(
+                    self.show_help(args)?,
+                ))),
+                "clear" => {
+                    self.output.clear();
+                    Ok(ReplResult::empty())
                 }
-            }
+                _ => Err(Error::UnknownCommand(command.to_string()).into()),
+            },
         }
     }
 
@@ -251,33 +255,6 @@ fn validate_arguments(
     Ok(validated)
 }
 
-// fn check_connection(ctx: &context::Context) -> std::result::Result<(), Error> {
-//     if ctx.client.is_none() {
-//         Err(Error::NoConnection)
-//     } else {
-//         Ok(())
-//     }
-// }
-
-// pub(crate) struct Name;
-
-// #[async_trait::async_trait]
-// impl indiemotion_repl::CommandHandler for Name {
-//     type Context = context::Context;
-//     type Error = Error;
-
-//     async fn handle(
-//         &mut self,
-//         args: HashMap<String, Value>,
-//         ctx: &mut Self::Context,
-//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
-//         if let Some(name) = args.get("name") {
-//             ctx.name = name.convert()?;
-//         }
-//         Ok(CommandResult::Continue(Some(ctx.name.clone())))
-//     }
-// }
-
 // pub(crate) struct Role;
 
 // #[async_trait::async_trait]
@@ -295,40 +272,6 @@ fn validate_arguments(
 //             ctx.role = s.try_into()?;
 //         }
 //         Ok(CommandResult::Continue(Some(ctx.role.clone().into())))
-//     }
-// }
-
-// pub(crate) struct Info;
-
-// #[async_trait::async_trait]
-// impl indiemotion_repl::CommandHandler for Info {
-//     type Context = context::Context;
-//     type Error = Error;
-
-//     async fn handle(
-//         &mut self,
-//         _args: HashMap<String, Value>,
-//         ctx: &mut Self::Context,
-//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
-//         check_connection(ctx)?;
-
-//         let request = proto::ServerInfoRequest {};
-//         match ctx.client.as_mut().unwrap().server_info(request).await {
-//             Ok(response) => {
-//                 let response = response.into_inner();
-//                 println!("Server Info:");
-//                 println!("  Name: {}", response.name);
-//                 println!("  Version: {}", response.version);
-//                 println!("  Clients:");
-//                 for (name, client) in response.clients.iter() {
-//                     println!("- {}:{}", name, client.role);
-//                 }
-//             }
-//             Err(err) => {
-//                 tracing::error!("Failed to get server info: {}", err);
-//             }
-//         }
-//         Ok(CommandResult::Continue(None))
 //     }
 // }
 

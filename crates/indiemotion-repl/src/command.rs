@@ -6,8 +6,14 @@ use std::fmt;
 use std::collections::HashMap;
 
 pub enum CommandResult {
-    Output(Option<BlockOutput>),
+    Output(CommandOutput),
     Stop,
+}
+
+pub enum CommandOutput {
+    Info(BlockOutput),
+    Error(BlockOutput),
+    Empty,
 }
 
 #[derive(Default)]
@@ -22,8 +28,8 @@ impl BlockOutput {
         }
     }
 
-    pub fn add_line(&mut self, line: String) {
-        self.lines.push(line);
+    pub fn add_line(&mut self, line: impl Into<String>) {
+        self.lines.push(line.into());
     }
 
     pub fn append(&mut self, string: String) {

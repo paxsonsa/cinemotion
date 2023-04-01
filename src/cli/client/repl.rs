@@ -3,6 +3,8 @@ use crate::Error;
 use indiemotion_repl::*;
 use std::collections::HashMap;
 
+use indiemotion_proto as proto;
+
 pub type Repl = indiemotion_repl::Repl<Context, crate::Error>;
 
 pub fn build(context: Context) -> Repl {
@@ -13,6 +15,8 @@ pub fn build(context: Context) -> Repl {
         context,
     );
     repl = repl.with_command(Name::command());
+    repl = repl.with_command(Quit::command());
+    repl = repl.with_command(Info::command());
 
     // repl.add_command("name", Name);
     // repl.add_command("role", Role);
@@ -26,6 +30,14 @@ pub fn build(context: Context) -> Repl {
     // repl.add_command("stop", Stop);
     // repl.add_command("exit", Exit);
     repl
+}
+
+fn check_connection(ctx: &Context) -> std::result::Result<(), Error> {
+    if ctx.client.is_none() {
+        Err(Error::NoConnection)
+    } else {
+        Ok(())
+    }
 }
 
 struct Name;
@@ -52,8 +64,73 @@ impl indiemotion_repl::CommandHandler for Name {
         if let Some(name) = args.get("name") {
             ctx.name = name.convert()?;
         }
-        Ok(CommandResult::Output(Some(BlockOutput {
+        Ok(CommandResult::Output(CommandOutput::Info(BlockOutput {
             lines: vec![ctx.name.clone()],
         })))
+    }
+}
+
+struct Quit;
+
+impl Quit {
+    fn command() -> Command<Context, crate::Error> {
+        Command::new("quit", Box::new(Self)).with_help("quit the application.")
+    }
+}
+
+#[async_trait::async_trait]
+impl indiemotion_repl::CommandHandler for Quit {
+    type Context = Context;
+    type Error = Error;
+
+    async fn handle(
+        &mut self,
+        _args: HashMap<String, Value>,
+        _ctx: &mut Self::Context,
+    ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+        Ok(CommandResult::Stop)
+    }
+}
+
+/// Command for extracting the information from a server.
+pub(crate) struct Info;
+
+impl Info {
+    fn command() -> Command<Context, crate::Error> {
+        Command::new("info", Box::new(Self))
+            .with_help("request info from the connected server or specified addr.")
+    }
+}
+
+#[async_trait::async_trait]
+impl indiemotion_repl::CommandHandler for Info {
+    type Context = Context;
+    type Error = Error;
+
+    async fn handle(
+        &mut self,
+        _args: HashMap<String, Value>,
+        ctx: &mut Self::Context,
+    ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+        check_connection(ctx)?;
+        let request = proto::ServerInfoRequest {};
+        match ctx.client.as_mut().unwrap().server_info(request).await {
+            Ok(response) => {
+                let response = response.into_inner();
+                let mut block = BlockOutput::default();
+                block.add_line("Server Info:");
+                block.add_line(format!("  Name: {}", response.name));
+                block.add_line(format!("  Version: {}", response.version));
+                block.add_line(format!("  Clients:"));
+                for (name, client) in response.clients.iter() {
+                    block.add_line(format!("- {}:{}", name, client.role));
+                }
+                Ok(CommandResult::Output(CommandOutput::Info(block)))
+            }
+            Err(err) => Err(Error::CommandFailed(format!(
+                "Failed to get server info: {}",
+                err
+            ))),
+        }
     }
 }

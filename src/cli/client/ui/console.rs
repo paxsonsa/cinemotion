@@ -1,3 +1,4 @@
+use indiemotion_repl::CommandOutput;
 use tui::{
     backend::Backend,
     layout::{self, Constraint, Direction, Layout, Rect},
@@ -35,15 +36,26 @@ pub fn render<B: Backend>(ctx: &UIMode, console: &ConsoleState, frame: &mut Fram
         .output()
         .iter()
         .map(|block| {
+            let (msg, style) = match &block.output {
+                CommandOutput::Info(output) => {
+                    (output.lines.clone(), Style::default().fg(Color::Green))
+                }
+                CommandOutput::Error(output) => {
+                    (output.lines.clone(), Style::default().fg(Color::Red))
+                }
+                CommandOutput::Empty => (vec![], Style::default().fg(Color::Gray)),
+            };
+
             let mut lines = vec![Text::styled(
                 block.command.clone(),
                 Style::default()
                     .add_modifier(Modifier::BOLD)
                     .fg(Color::White),
             )];
-            lines.extend(block.output.lines.iter().map(|s| {
-                Text::styled(format!(" {}", s.clone()), Style::default().fg(Color::Gray))
-            }));
+            lines.extend(
+                msg.iter()
+                    .map(|s| Text::styled(format!(" {}", s.clone()), style)),
+            );
             lines
         })
         .flatten()
