@@ -275,22 +275,6 @@ fn validate_arguments(
 //     }
 // }
 
-// pub(crate) struct Quit;
-
-// #[async_trait::async_trait]
-// impl indiemotion_repl::CommandHandler for Quit {
-//     type Context = context::Context;
-//     type Error = Error;
-
-//     async fn handle(
-//         &mut self,
-//         _args: HashMap<String, Value>,
-//         _ctx: &mut Self::Context,
-//     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
-//         Ok(CommandResult::Stop)
-//     }
-// }
-
 // pub(crate) struct Ping;
 
 // #[async_trait::async_trait]

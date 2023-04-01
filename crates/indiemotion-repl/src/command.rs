@@ -15,6 +15,15 @@ pub enum CommandOutput {
     Error(BlockOutput),
     Empty,
 }
+impl CommandOutput {
+    pub fn info(str: impl Into<String>) -> Self {
+        Self::Info(BlockOutput::string(str))
+    }
+
+    pub fn error(str: impl Into<String>) -> Self {
+        Self::Error(BlockOutput::error(str.into()))
+    }
+}
 
 #[derive(Default)]
 pub struct BlockOutput {
@@ -22,6 +31,12 @@ pub struct BlockOutput {
 }
 
 impl BlockOutput {
+    pub fn string(str: impl Into<String>) -> Self {
+        Self {
+            lines: vec![format!("{}", str.into())],
+        }
+    }
+
     pub fn error(err: String) -> Self {
         Self {
             lines: vec![format!("Error: {}", err)],

@@ -17,6 +17,7 @@ pub fn build(context: Context) -> Repl {
     repl = repl.with_command(Name::command());
     repl = repl.with_command(Quit::command());
     repl = repl.with_command(Info::command());
+    repl = repl.with_command(Connect::command());
 
     // repl.add_command("name", Name);
     // repl.add_command("role", Role);
@@ -89,6 +90,58 @@ impl indiemotion_repl::CommandHandler for Quit {
         _ctx: &mut Self::Context,
     ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
         Ok(CommandResult::Stop)
+    }
+}
+
+pub(crate) struct Connect;
+
+impl Connect {
+    fn command() -> Command<Context, crate::Error> {
+        Command::new("connect", Box::new(Self)).with_help("connect to the specified addr")
+    }
+}
+
+#[async_trait::async_trait]
+impl indiemotion_repl::CommandHandler for Connect {
+    type Context = Context;
+    type Error = Error;
+
+    async fn handle(
+        &mut self,
+        _args: HashMap<String, Value>,
+        ctx: &mut Self::Context,
+    ) -> std::result::Result<indiemotion_repl::CommandResult, Error> {
+        ctx.connect().await?;
+
+        let info = proto::ClientInfo {
+            id: ctx.uid.clone().to_string(),
+            name: ctx.name.clone(),
+            role: Into::<proto::ClientRole>::into(ctx.role.clone()).into(),
+        };
+
+        let req = proto::ConnectAsRequest {
+            client_info: Some(info),
+        };
+
+        println!("Connecting to server...");
+        match ctx.client.as_mut().unwrap().connect_as(req).await {
+            Ok(response) => {
+                //TODO Write to log bus
+                // println!("Establishing loop...");
+                let mut stream = response.into_inner();
+                ctx.main_loop = Some(tokio::spawn(async move {
+                    while let Some(_event) = stream.message().await.unwrap() {
+                        // TODO: Write to log bus.
+                    }
+                }));
+                Ok(CommandResult::Output(CommandOutput::info(
+                    "connected".to_string(),
+                )))
+            }
+            Err(_) => Ok(CommandResult::Output(CommandOutput::error(
+                "failed to connect".to_string(),
+            ))),
+        }
     }
 }
 
