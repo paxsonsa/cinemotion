@@ -88,6 +88,10 @@ where
     }
 
     pub fn history_up(&mut self) {
+        if self.history.is_empty() {
+            return;
+        }
+
         if self.history_index == 0 {
             self.input_buf = self.history[self.history_index].clone();
             return;
