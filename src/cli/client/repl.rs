@@ -178,6 +178,7 @@ impl indiemotion_repl::CommandHandler for Info {
                 for (name, client) in response.clients.iter() {
                     block.add_line(format!("- {}:{}", name, client.role));
                 }
+                block.add_line(format!("  ctx: {:?}", response));
                 Ok(CommandResult::Output(CommandOutput::Info(block)))
             }
             Err(err) => Err(Error::CommandFailed(format!(

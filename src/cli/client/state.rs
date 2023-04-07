@@ -1,4 +1,7 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
+use std::sync::Arc;
+use tokio::sync::RwLock;
+use tracing_subscriber::Layer;
 
 use super::repl;
 
@@ -6,6 +9,7 @@ use super::repl;
 pub struct UIState {
     pub mode: UIMode,
     pub console: ConsoleState,
+    pub log_buffer: Arc<RwLock<LogBuffer>>,
 }
 
 pub struct ConsoleState {
@@ -81,5 +85,45 @@ impl Debug for UIMode {
             UIMode::Outliner => write!(f, "Outliner"),
             UIMode::Log => write!(f, "Log"),
         }
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct LogBuffer {
+    pub lines: Vec<String>,
+}
+
+impl LogBuffer {
+    pub fn push(&mut self, event: impl Display) {
+        // TODO: limit the number of lines to prevent memory explosion
+        self.lines.push(format!("{}", event));
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct LogLayer {
+    pub buffer: Arc<RwLock<LogBuffer>>,
+}
+
+impl<S> Layer<S> for LogLayer
+where
+    S: tracing::Subscriber,
+{
+    fn on_event(
+        &self,
+        event: &tracing::Event<'_>,
+        _ctx: tracing_subscriber::layer::Context<'_, S>,
+    ) {
+        // TODO: Visit fields and log them
+        let mut msg = format!(
+            "{:?} target={:?} name={:?} fields=",
+            event.metadata().level(),
+            event.metadata().target(),
+            event.metadata().name()
+        );
+        for field in event.fields() {
+            msg += &format!("{},", field.name());
+        }
+        self.buffer.blocking_write().push(msg);
     }
 }

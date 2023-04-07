@@ -6,8 +6,11 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use std::io;
+use std::sync::Arc;
 use std::{borrow::BorrowMut, fmt::Debug};
+use tokio::sync::RwLock;
 use tonic::transport::Uri;
+use tracing_subscriber::{registry::LookupSpan, Layer};
 use tui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
@@ -18,13 +21,16 @@ mod repl;
 mod state;
 mod ui;
 
-use state::UIState;
+use state::{LogBuffer, UIState};
 
 #[derive(Args, Debug)]
 pub struct Client {
     /// The address and port to connect to the server on.
     #[clap(long = "addr")]
     address: Option<Uri>,
+
+    #[clap(skip)]
+    log_buffer: Arc<RwLock<LogBuffer>>,
 }
 
 impl Client {
@@ -34,6 +40,7 @@ impl Client {
         let mut state = UIState {
             mode: state::UIMode::Console,
             console: state::ConsoleState::with_repl(repl::build(ctx)),
+            log_buffer: self.log_buffer.clone(),
         };
         let mut terminal = init()?;
         let result = run_app(&mut terminal, &mut state).await;
@@ -44,6 +51,19 @@ impl Client {
         }
 
         Ok(0)
+    }
+
+    pub fn logging_layer<S>(&self) -> Box<dyn Layer<S> + Send + Sync + 'static>
+    where
+        S: tracing::Subscriber,
+        for<'a> S: LookupSpan<'a>,
+        for<'a> S:,
+    {
+        let layer = Box::new(state::LogLayer {
+            buffer: self.log_buffer.clone(),
+        });
+
+        Box::new(layer)
     }
 }
 
@@ -57,7 +77,6 @@ fn init() -> Result<Terminal<CrosstermBackend<std::io::Stdout>>> {
 
 async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) -> Result<()> {
     loop {
-        // TODO: Add Render Tick and Ticks for UI Controllers.
         let mut ui_tick = tokio::time::interval(tokio::time::Duration::from_micros(16_670));
         ui_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
 
