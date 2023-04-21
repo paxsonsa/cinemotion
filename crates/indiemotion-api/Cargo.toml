@@ -17,4 +17,4 @@ async-trait = "0.1.60"
 indiemotion-proto = { path = "../indiemotion-proto"}
 
 [dev-dependencies]
-rstest = "0.16.0"
+rstest = "0.17.0"
