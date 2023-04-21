@@ -10,7 +10,7 @@ mod test_lib;
 
 pub struct ChannelBuffer<T>
 where
-    T: Send + Sync + 'static,
+    T: Clone + Send + Sync + 'static,
 {
     buffer: Arc<Mutex<vec_deque::VecDeque<T>>>,
     collector: JoinHandle<()>,
@@ -18,7 +18,7 @@ where
 
 impl<T> ChannelBuffer<T>
 where
-    T: Send + Sync + 'static,
+    T: Clone + Send + Sync + 'static,
 {
     pub fn new(mut channel_rx: mpsc::Receiver<T>, capacity: usize) -> Self {
         let buffer = Arc::new(Mutex::new(vec_deque::VecDeque::with_capacity(capacity)));
@@ -40,11 +40,15 @@ where
     pub async fn flush(&mut self) -> Vec<T> {
         self.buffer.lock().await.drain(..).collect()
     }
+
+    pub async fn clone(&mut self) -> Vec<T> {
+        self.buffer.lock().await.iter().cloned().collect()
+    }
 }
 
 impl<T> Drop for ChannelBuffer<T>
 where
-    T: Send + Sync + 'static,
+    T: Clone + Send + Sync + 'static,
 {
     fn drop(&mut self) {
         self.collector.abort();

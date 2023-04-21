@@ -13,6 +13,7 @@ pub struct Server {
 
 impl Server {
     pub async fn run(&self) -> Result<i32> {
+        configure_logging();
         tracing::debug!("Building server...");
         let mut builder = indiemotion::server::Server::builder();
         builder = builder.with_grpc_service(self.grpc_service.clone());
@@ -49,4 +50,19 @@ impl Server {
             Ok(0)
         }
     }
+}
+
+fn configure_logging() {
+    use tracing_subscriber::layer::SubscriberExt;
+    let config = std::env::var("INDIEMOTION_LOG").unwrap();
+    let env_filter = tracing_subscriber::filter::EnvFilter::from(config);
+    let registry = tracing_subscriber::Registry::default().with(env_filter);
+
+    let layer = Box::new(
+        tracing_subscriber::fmt::layer()
+            .with_writer(std::io::stderr)
+            .with_target(false)
+            .without_time(),
+    );
+    tracing::subscriber::set_global_default(registry.with(layer)).unwrap();
 }

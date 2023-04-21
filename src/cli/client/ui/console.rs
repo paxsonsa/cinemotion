@@ -61,7 +61,7 @@ pub fn render<B: Backend>(ctx: &UIMode, console: &ConsoleState, frame: &mut Fram
         .flatten()
         .collect::<Vec<_>>();
 
-    let items: Vec<_> = messages
+    let items: Vec<ListItem> = messages
         .iter()
         .rev()
         .map(|content| ListItem::new(content.to_owned()))

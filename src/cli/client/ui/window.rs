@@ -48,17 +48,7 @@ pub fn render<B: Backend>(frame: &mut Frame<B>, app: &mut UIState) {
     let console = sections[1];
 
     super::console::render(&app.mode, &app.console, frame, console);
-
-    let style = match app.mode {
-        UIMode::Log => Style::default().fg(Color::Blue),
-        _ => Style::default(),
-    };
-    let block = Block::default()
-        .title(" Log ")
-        .borders(Borders::ALL)
-        .border_type(BorderType::Rounded)
-        .style(style);
-    frame.render_widget(block, log);
+    super::log::render(&app.mode, &mut app.log, frame, log);
 
     let style = match app.mode {
         UIMode::Outliner => Style::default().fg(Color::Blue),

@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use tracing_subscriber::Layer;
+use tracing_subscriber::{EnvFilter, Layer, Registry};
 
 mod client;
 mod error;
@@ -37,10 +37,10 @@ enum Command {
 /* TODO: TUI for Client
 
     - TODO: Add Log View
-        - Create log view that displays log events from a custom tracing layer
-        - Create a log field visitor so we can access and display log values.
+        - Create a log field visitor so we can access and display log
                 ref: https://burgers.io/custom-logging-in-rust-using-tracing
-
+        - Fix Log View to be clipped and align.
+        - Add Input to change log level.
     - Add Info Command
     - Add Connect Command
     - Add Top Status Line for Connection Status
@@ -63,51 +63,7 @@ enum Command {
 // TODO: Client should be interactive for starting and stopping motion sessions.
 
 impl Command {
-    pub fn configure_logging(&self, verbosity: i32) {
-        let base_config = match verbosity {
-            n if n <= -3 => String::new(),
-            -2 => "indiemotion=error".to_string(),
-            -1 => "indiemotion=warn".to_string(),
-            0 => {
-                std::env::var("INDIEMOTION_LOG").unwrap_or_else(|_| "indiemotion=info".to_string())
-            }
-            1 => "indiemotion=debug".to_string(),
-            2 => "indiemotion=trace".to_string(),
-            _ => "trace".to_string(),
-        };
-
-        // the RUST_LOG variable will always override the current settings
-        let config = match std::env::var("RUST_LOG") {
-            Ok(tail) => format!("{},{}", base_config, tail),
-            Err(_) => base_config,
-        };
-
-        println!("Logging config: {}", config);
-        std::env::set_var("INDIEMOTION_LOG", &config);
-        use tracing_subscriber::layer::SubscriberExt;
-        let env_filter = tracing_subscriber::filter::EnvFilter::from(config);
-        let registry = tracing_subscriber::Registry::default().with(env_filter);
-
-        let layer = match self {
-            Self::Version => None,
-            Self::Server(_cmd) => None,
-            Self::Client(cmd) => Some(cmd.logging_layer()),
-        }
-        .unwrap_or_else(|| {
-            Box::new(
-                tracing_subscriber::fmt::layer()
-                    .with_writer(std::io::stderr)
-                    .with_target(false)
-                    .without_time(),
-            )
-        });
-
-        tracing::subscriber::set_global_default(registry.with(layer)).unwrap();
-    }
-
-    pub fn run(&self, opts: &Opt) -> Result<i32> {
-        self.configure_logging(opts.verbose - opts.quiet);
-
+    pub fn run(&self) -> Result<i32> {
         let rt = tokio::runtime::Builder::new_multi_thread()
             .enable_all()
             .build()
@@ -129,7 +85,26 @@ impl Command {
 
 fn main() -> Result<()> {
     let opts = Opt::parse();
-    // configure_logging(opts.verbose - opts.quiet);
-    let code = opts.command.run(&opts)?;
+    let config = compute_log_config(opts.verbose - opts.quiet);
+    std::env::set_var("INDIEMOTION_LOG", config);
+    let code = opts.command.run()?;
     std::process::exit(code);
+}
+
+pub fn compute_log_config(verbosity: i32) -> String {
+    let base_config = match verbosity {
+        n if n <= -3 => String::new(),
+        -2 => "indiemotion=error".to_string(),
+        -1 => "indiemotion=warn".to_string(),
+        0 => std::env::var("INDIEMOTION_LOG").unwrap_or_else(|_| "indiemotion=info".to_string()),
+        1 => "indiemotion=debug".to_string(),
+        2 => "indiemotion=trace".to_string(),
+        _ => "trace".to_string(),
+    };
+
+    // the RUST_LOG variable will always override the current settings
+    match std::env::var("RUST_LOG") {
+        Ok(tail) => format!("{},{}", base_config, tail),
+        Err(_) => base_config,
+    }
 }

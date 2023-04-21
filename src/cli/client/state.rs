@@ -1,6 +1,6 @@
-use std::fmt::{Debug, Display};
-use std::sync::Arc;
-use tokio::sync::RwLock;
+use std::fmt;
+use std::fmt::Debug;
+use tokio::sync::mpsc;
 use tracing_subscriber::Layer;
 
 use super::repl;
@@ -9,7 +9,7 @@ use super::repl;
 pub struct UIState {
     pub mode: UIMode,
     pub console: ConsoleState,
-    pub log_buffer: Arc<RwLock<LogBuffer>>,
+    pub log: LogState,
 }
 
 pub struct ConsoleState {
@@ -45,6 +45,29 @@ impl ConsoleState {
 
     pub fn history_down(&mut self) {
         self.repl.history_down();
+    }
+}
+
+pub struct LogState {
+    buffer: channel_buf::ChannelBuffer<String>,
+    pub entries: Vec<String>,
+}
+
+impl fmt::Debug for LogState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("LogState").finish()
+    }
+}
+impl LogState {
+    pub fn new(buffer: channel_buf::ChannelBuffer<String>) -> Self {
+        LogState {
+            buffer,
+            entries: vec![],
+        }
+    }
+
+    pub async fn update(&mut self) {
+        self.entries.extend(self.buffer.flush().await);
     }
 }
 
@@ -88,21 +111,15 @@ impl Debug for UIMode {
     }
 }
 
-#[derive(Debug, Default)]
-pub struct LogBuffer {
-    pub lines: Vec<String>,
-}
-
-impl LogBuffer {
-    pub fn push(&mut self, event: impl Display) {
-        // TODO: limit the number of lines to prevent memory explosion
-        self.lines.push(format!("{}", event));
-    }
-}
-
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct LogLayer {
-    pub buffer: Arc<RwLock<LogBuffer>>,
+    channel: mpsc::Sender<String>,
+}
+
+impl LogLayer {
+    pub fn new(channel: mpsc::Sender<String>) -> Self {
+        LogLayer { channel }
+    }
 }
 
 impl<S> Layer<S> for LogLayer
@@ -124,6 +141,7 @@ where
         for field in event.fields() {
             msg += &format!("{},", field.name());
         }
-        self.buffer.blocking_write().push(msg);
+
+        self.channel.try_send(msg).unwrap();
     }
 }

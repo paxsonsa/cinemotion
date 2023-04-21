@@ -5,12 +5,10 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use std::io;
-use std::sync::Arc;
 use std::{borrow::BorrowMut, fmt::Debug};
-use tokio::sync::RwLock;
+use std::{io, time::Duration};
+use tokio::sync::mpsc;
 use tonic::transport::Uri;
-use tracing_subscriber::{registry::LookupSpan, Layer};
 use tui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
@@ -21,26 +19,27 @@ mod repl;
 mod state;
 mod ui;
 
-use state::{LogBuffer, UIState};
+use state::UIState;
 
 #[derive(Args, Debug)]
 pub struct Client {
     /// The address and port to connect to the server on.
     #[clap(long = "addr")]
     address: Option<Uri>,
-
-    #[clap(skip)]
-    log_buffer: Arc<RwLock<LogBuffer>>,
 }
 
 impl Client {
     pub async fn run(&self) -> Result<i32> {
+        let (log_tx, log_rx) = mpsc::channel(1024);
+        let log_buffer = channel_buf::ChannelBuffer::new(log_rx, 1024);
+        self.configure_logging(log_tx);
+
         let ctx = context::Context::builder().build().await?;
 
         let mut state = UIState {
             mode: state::UIMode::Console,
             console: state::ConsoleState::with_repl(repl::build(ctx)),
-            log_buffer: self.log_buffer.clone(),
+            log: state::LogState::new(log_buffer),
         };
         let mut terminal = init()?;
         let result = run_app(&mut terminal, &mut state).await;
@@ -53,17 +52,15 @@ impl Client {
         Ok(0)
     }
 
-    pub fn logging_layer<S>(&self) -> Box<dyn Layer<S> + Send + Sync + 'static>
-    where
-        S: tracing::Subscriber,
-        for<'a> S: LookupSpan<'a>,
-        for<'a> S:,
-    {
-        let layer = Box::new(state::LogLayer {
-            buffer: self.log_buffer.clone(),
-        });
+    fn configure_logging(&self, tx: mpsc::Sender<String>) {
+        let config = std::env::var("INDIEMOTION_LOG").unwrap();
+        use tracing_subscriber::layer::SubscriberExt;
+        let env_filter = tracing_subscriber::filter::EnvFilter::from(config);
+        let registry = tracing_subscriber::Registry::default().with(env_filter);
 
-        Box::new(layer)
+        let layer = Box::new(state::LogLayer::new(tx));
+
+        tracing::subscriber::set_global_default(registry.with(layer)).unwrap();
     }
 }
 
@@ -76,6 +73,7 @@ fn init() -> Result<Terminal<CrosstermBackend<std::io::Stdout>>> {
 }
 
 async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) -> Result<()> {
+    // TODO: Process incoming control state into UIState.
     loop {
         let mut ui_tick = tokio::time::interval(tokio::time::Duration::from_micros(16_670));
         ui_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
@@ -85,41 +83,49 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, state: &mut UIState) ->
 
         tokio::select! {
             _ = ui_tick.tick() => {
-                terminal.draw(|f| ui::window::render(f, state))?;
-                if let Event::Key(key) = event::read()? {
-                    match (&key.code, &key.modifiers) {
-                        (KeyCode::Char('d'), &KeyModifiers::CONTROL) => {
-                            return Ok(());
-                        }
-                        (KeyCode::Tab, _) => {
-                            state.mode = state.mode.cycle();
-                        }
-                        (KeyCode::BackTab, _) => {
-                            state.mode = state.mode.cycle_back();
-                        }
-                        (_, _) => {}
-                    };
 
-                    match state.mode {
-                        state::UIMode::Console => {
-                            if let InputResult::Stop = handle_console_input(state, &key).await? {
+                tracing::error!("tick tick tock");
+                state.log.update().await;
+                terminal.draw(|f| ui::window::render(f, state))?;
+
+                if event::poll(Duration::from_millis(2))? {
+                    if let Event::Key(key) = event::read()? {
+                        match (&key.code, &key.modifiers) {
+                            (KeyCode::Char('d'), &KeyModifiers::CONTROL) => {
                                 return Ok(());
                             }
-                        }
-                        state::UIMode::Outliner => {
-                            if let InputResult::Stop = handle_outliner_input(state, &key).await? {
-                                return Ok(());
+                            (KeyCode::Tab, _) => {
+                                state.mode = state.mode.cycle();
                             }
-                        }
-                        state::UIMode::Log => {
-                            if let InputResult::Stop = handle_log_input(state, &key).await? {
-                                return Ok(());
+                            (KeyCode::BackTab, _) => {
+                                state.mode = state.mode.cycle_back();
+                            }
+                            (_, _) => {}
+                        };
+
+                        match state.mode {
+                            state::UIMode::Console => {
+                                if let InputResult::Stop = handle_console_input(state, &key).await? {
+                                    return Ok(());
+                                }
+                            }
+                            state::UIMode::Outliner => {
+                                if let InputResult::Stop = handle_outliner_input(state, &key).await? {
+                                    return Ok(());
+                                }
+                            }
+                            state::UIMode::Log => {
+                                if let InputResult::Stop = handle_log_input(state, &key).await? {
+                                    return Ok(());
+                                }
                             }
                         }
                     }
-                }
             }
-            _ = ctrl_tick.tick() => {}
+            }
+            _ = ctrl_tick.tick() => {
+                tracing::info!("tick tick tock");
+            }
         }
     }
 }

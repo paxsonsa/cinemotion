@@ -182,10 +182,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "channel_buf"
+name = "channel-buf"
 version = "0.1.0"
 dependencies = [
- "rstest",
+ "rstest 0.16.0",
  "tokio",
 ]
 
@@ -815,6 +815,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
+ "channel-buf",
  "chrono",
  "clap 3.2.23",
  "crossterm",
@@ -824,7 +825,7 @@ dependencies = [
  "indiemotion-proto",
  "indiemotion-repl",
  "regex",
- "rstest",
+ "rstest 0.17.0",
  "serde_derive",
  "serde_json",
  "thiserror",
@@ -848,7 +849,7 @@ dependencies = [
  "async-trait",
  "chrono",
  "indiemotion-proto",
- "rstest",
+ "rstest 0.17.0",
  "serde",
  "serde_derive",
  "serde_json",
@@ -1424,14 +1425,40 @@ dependencies = [
 
 [[package]]
 name = "rstest"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b07f2d176c472198ec1e6551dc7da28f1c089652f66a7b722676c2238ebc0edf"
+dependencies = [
+ "futures",
+ "futures-timer",
+ "rstest_macros 0.16.0",
+ "rustc_version",
+]
+
+[[package]]
+name = "rstest"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "de1bb486a691878cd320c2f0d319ba91eeaa2e894066d8b5f8f117c000e9d962"
 dependencies = [
  "futures",
  "futures-timer",
- "rstest_macros",
+ "rstest_macros 0.17.0",
  "rustc_version",
+]
+
+[[package]]
+name = "rstest_macros"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7229b505ae0706e64f37ffc54a9c163e11022a6636d58fe1f3f52018257ff9f7"
+dependencies = [
+ "cfg-if",
+ "proc-macro2",
+ "quote",
+ "rustc_version",
+ "syn 1.0.107",
+ "unicode-ident",
 ]
 
 [[package]]
