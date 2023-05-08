@@ -5,8 +5,6 @@ mod client;
 mod error;
 mod server;
 
-use error::{Error};
-
 /// Software development, distribution, and management
 #[derive(Parser)]
 #[clap(about, author)]
