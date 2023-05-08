@@ -5,7 +5,7 @@ mod client;
 mod error;
 mod server;
 
-use error::{CLIResult, Error};
+use error::{Error};
 
 /// Software development, distribution, and management
 #[derive(Parser)]

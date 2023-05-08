@@ -20,7 +20,7 @@ impl Engine {
             return Err(Error::ClientError("client already connected".to_string()));
         }
         ctx.clients.insert(client.id.clone(), client);
-        let clients = ctx.clients.values().cloned().collect::<Vec<_>>();
+        let _clients = ctx.clients.values().cloned().collect::<Vec<_>>();
         Ok(())
     }
 
@@ -28,7 +28,7 @@ impl Engine {
         tracing::info!("connecting client: {}", id);
         // TODO: ensure mode is updated.
         ctx.clients.remove(&id);
-        let clients = ctx.clients.values().cloned().collect::<Vec<_>>();
+        let _clients = ctx.clients.values().cloned().collect::<Vec<_>>();
         Ok(())
     }
 }
