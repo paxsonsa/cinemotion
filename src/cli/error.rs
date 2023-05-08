@@ -12,15 +12,6 @@ pub(crate) enum Error {
 
     #[error("An error occurred while interacting with the API.")]
     Api(indiemotion_api::Error),
-
-    #[error("{0}")]
-    Repl(indiemotion_repl::Error),
-}
-
-impl From<indiemotion_repl::Error> for Error {
-    fn from(error: indiemotion_repl::Error) -> Self {
-        Error::Repl(error)
-    }
 }
 
 impl From<indiemotion_api::Error> for Error {
