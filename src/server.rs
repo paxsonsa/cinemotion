@@ -21,8 +21,7 @@ pub trait Component: Future<Output = ()> {
 pub struct ServerBuilder {
     /// Public name to advertise for this server.
     name: String,
-
-    grpc_service: Option<components::grpc::GrpcServiceBuilder>,
+    web_service: Option<components::websocket::WebsocketServiceBuilder>,
 }
 
 impl ServerBuilder {
@@ -31,18 +30,33 @@ impl ServerBuilder {
             components: Vec::new(),
         };
 
-        if let Some(grpc_service) = self.grpc_service.take() {
-            let grpc_service = grpc_service.build().await?;
-            server.components.push(Box::pin(grpc_service));
+        // TODO make RWLock Gateway
+        // let engine = Engine::new();
+        // let command_queue = engine.command_queue();
+        // let event_queue = engine.event_queue();
+        // let clients = ClientManager::new(command_queue, event_queue);
+
+        if let Some(mut web_service) = self.web_service.take() {
+            let web_service = web_service.build().await?;
+            server.components.push(Box::pin(web_service));
         }
+
         Ok(server)
     }
 
-    /// Change the server name
-    pub fn with_grpc_service(mut self, config: components::grpc::GrpcServiceBuilder) -> Self {
-        self.grpc_service = Some(config);
+    pub fn with_websocket_service(
+        mut self,
+        config: components::websocket::WebsocketServiceBuilder,
+    ) -> Self {
+        self.web_service = Some(config);
         self
     }
+
+    /// Change the server name
+    // pub fn with_grpc_service(mut self, config: components::grpc::GrpcServiceBuilder) -> Self {
+    //     self.grpc_service = Some(config);
+    //     self
+    // }
 
     /// Enable the grpc service component with the given configuration
     pub fn with_name(mut self, name: String) -> Self {
@@ -63,7 +77,7 @@ impl Server {
     pub fn builder() -> ServerBuilder {
         ServerBuilder {
             name: "indiemotion".to_string(),
-            grpc_service: None,
+            web_service: None,
         }
     }
 

@@ -8,16 +8,13 @@ pub struct Server {
     pub server_name: String,
 
     #[clap(flatten)]
-    pub grpc_service: indiemotion::components::grpc::GrpcServiceBuilder,
+    pub web_service: indiemotion::components::websocket::WebsocketServiceBuilder,
 }
 
 impl Server {
     pub async fn run(&self) -> Result<i32> {
         tracing::debug!("Building server...");
         let mut builder = indiemotion::server::Server::builder();
-        builder = builder.with_grpc_service(self.grpc_service.clone());
-        builder = builder.with_name(self.server_name.clone());
-
         let mut server = builder.build().await?;
         let (shutdown_send, shutdown) = tokio::sync::oneshot::channel();
         let server_future = server.serve_with_shutdown(async move {

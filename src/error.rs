@@ -17,14 +17,13 @@ pub enum Error {
     #[error("Runtime error: {0}")]
     RuntimeError(&'static str),
 
-    #[error("Property update error: property={0} msg={1}")]
-    PropertyUpdateError(api::ProperyID, &'static str),
-
+    // #[error("Property update error: property={0} msg={1}")]
+    // PropertyUpdateError(api::ProperyID, &'static str),
     #[error("internal error: {0}")]
     InternalError(&'static str),
 
-    #[error("error from api: {0}")]
-    APIError(#[from] api::Error),
+    // #[error("error from api: {0}")]
+    // APIError(#[from] api::Error),
 
     // #[error(transparent)]
     // IO(#[from] std::io::Error),
@@ -45,9 +44,7 @@ impl From<Error> for tonic::Status {
                 tonic::Status::failed_precondition(format!("{}", value))
             }
             Error::RuntimeLoopFailed(_) => tonic::Status::failed_precondition(format!("{}", value)),
-            Error::PropertyUpdateError(_, msg) => tonic::Status::failed_precondition(msg),
             Error::InternalError(_) => tonic::Status::internal(format!("{}", value)),
-            Error::APIError(_) => tonic::Status::internal(format!("{}", value)),
             Error::TonicTransport(_) => value.into(),
             Error::Tonic(_) => value.into(),
             Error::TokioError(_) => value.into(),
