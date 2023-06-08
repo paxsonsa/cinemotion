@@ -1,4 +1,4 @@
-use crate::{api, Error, Result};
+use crate::{Result};
 
 pub struct EngineController {
     state_tx: tokio::sync::mpsc::UnboundedSender<String>,

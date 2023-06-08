@@ -2,7 +2,7 @@ use futures::stream::FuturesUnordered;
 use futures::Future;
 use futures::StreamExt;
 use std::pin::Pin;
-use tonic::client;
+
 
 use crate::services;
 use crate::Result;
@@ -25,7 +25,7 @@ impl ServerBuilder {
         let engine_command_channel = tokio::sync::mpsc::unbounded_channel();
         let state_channel = tokio::sync::mpsc::unbounded_channel();
 
-        if let Some(mut engine_service) = self.engine_service.take() {
+        if let Some(engine_service) = self.engine_service.take() {
             let engine_service = engine_service
                 .with_command_rx(engine_command_channel.1)
                 .with_state_tx(state_channel.0)
@@ -35,7 +35,7 @@ impl ServerBuilder {
             server.components.push(Box::pin(engine_service));
         }
 
-        let Some(mut client_service) = self.client_service.take() else {
+        let Some(client_service) = self.client_service.take() else {
             todo!();
         };
         let client_service = client_service
@@ -50,7 +50,7 @@ impl ServerBuilder {
 
         server.components.push(Box::pin(client_service));
 
-        if let Some(mut web_service) = self.web_service.take() {
+        if let Some(web_service) = self.web_service.take() {
             let web_service = web_service.with_client_proxy(client_proxy).build().await?;
             tracing::info!("Web Service Initialized");
             server.components.push(Box::pin(web_service));
