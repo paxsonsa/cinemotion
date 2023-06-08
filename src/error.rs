@@ -8,6 +8,9 @@ pub enum Error {
     #[error("client error occurred: {0}")]
     ClientError(String),
 
+    #[error("client not found: {0}")]
+    ClientNotFound(u32),
+
     #[error("Invalid operation while recording: {0}")]
     InvalidRecordingOperation(&'static str),
 
@@ -33,21 +36,4 @@ pub enum Error {
     Tonic(#[from] tonic::Status),
     #[error(transparent)]
     TokioError(#[from] tokio::io::Error),
-}
-
-impl From<Error> for tonic::Status {
-    fn from(value: Error) -> Self {
-        match value {
-            Error::ClientError(_) => tonic::Status::invalid_argument(format!("{}", value)),
-            Error::RuntimeError(_) => tonic::Status::internal(format!("{}", value)),
-            Error::InvalidRecordingOperation(_) => {
-                tonic::Status::failed_precondition(format!("{}", value))
-            }
-            Error::RuntimeLoopFailed(_) => tonic::Status::failed_precondition(format!("{}", value)),
-            Error::InternalError(_) => tonic::Status::internal(format!("{}", value)),
-            Error::TonicTransport(_) => value.into(),
-            Error::Tonic(_) => value.into(),
-            Error::TokioError(_) => value.into(),
-        }
-    }
 }

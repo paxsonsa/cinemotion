@@ -8,13 +8,22 @@ pub struct Server {
     pub server_name: String,
 
     #[clap(flatten)]
-    pub web_service: indiemotion::components::websocket::WebsocketServiceBuilder,
+    pub web_service: indiemotion::services::websocket::WebsocketServiceBuilder,
 }
 
 impl Server {
     pub async fn run(&self) -> Result<i32> {
         tracing::debug!("Building server...");
         let mut builder = indiemotion::server::Server::builder();
+
+        let engine_builder = indiemotion::services::EngineService::builder();
+        builder = builder.with_engine_service(engine_builder);
+
+        let relay_builder = indiemotion::services::ClientService::builder();
+        builder = builder.with_client_service(relay_builder);
+
+        builder = builder.with_websocket_service(self.web_service.clone());
+
         let mut server = builder.build().await?;
         let (shutdown_send, shutdown) = tokio::sync::oneshot::channel();
         let server_future = server.serve_with_shutdown(async move {

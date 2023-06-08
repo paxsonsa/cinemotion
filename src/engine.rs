@@ -1,59 +1,69 @@
-use crate::runtime::Command;
-use crate::runtime::Context;
-use crate::runtime::Integrator;
 use crate::{api, Error, Result};
 
-pub struct Engine {}
-
-impl Engine {
-    fn new() -> Self {
-        Self {}
-    }
-
-    async fn handle_connect(
-        &mut self,
-        ctx: &mut Context,
-        client: api::ClientMetadata,
-    ) -> Result<()> {
-        if let Some(client) = ctx.clients.get(&client.id) {
-            tracing::error!("client already connected: {}", client.id.clone());
-            return Err(Error::ClientError("client already connected".to_string()));
-        }
-        ctx.clients.insert(client.id.clone(), client);
-        let _clients = ctx.clients.values().cloned().collect::<Vec<_>>();
-        Ok(())
-    }
-
-    async fn handle_disconnect(&mut self, ctx: &mut Context, id: api::ClientID) -> Result<()> {
-        tracing::info!("connecting client: {}", id);
-        // TODO: ensure mode is updated.
-        ctx.clients.remove(&id);
-        let _clients = ctx.clients.values().cloned().collect::<Vec<_>>();
-        Ok(())
-    }
+pub struct EngineController {
+    state_tx: tokio::sync::mpsc::UnboundedSender<String>,
+    command_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+    shutdown_rx: tokio::sync::mpsc::Receiver<()>,
 }
 
-impl Default for Engine {
-    fn default() -> Self {
-        Self::new()
+impl EngineController {
+    pub fn builder() -> EngineControllerBuilder {
+        EngineControllerBuilder::new()
     }
-}
 
-#[async_trait::async_trait]
-impl Integrator for Engine {
-    async fn tick(&mut self, _context: &mut Context) -> Result<()> {
-        Ok(())
-    }
-    async fn process(&mut self, context: &mut Context, command: Command) -> Result<()> {
-        tracing::info!("Incoming command: {:?}", command);
-
-        match command {
-            Command::Ping(tx) => {
-                let _ = tx.send(chrono::Utc::now().timestamp_millis());
-                Ok(())
+    pub async fn run(&mut self) -> Result<()> {
+        tracing::info!("starting engine...");
+        let mut interval = tokio::time::interval(tokio::time::Duration::from_millis(12));
+        interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+        loop {
+            tokio::select! {
+                _ = self.shutdown_rx.recv() => {
+                    tracing::debug!("engine controller received shutdown, shutting down...");
+                    break;
+                },
+                command = self.command_rx.recv() => {
+                    tracing::info!("engine controller received command: {:?}", command);
+                }
+                _ = interval.tick() => {},
             }
-            Command::ConnectAs(client) => self.handle_connect(context, client).await,
-            Command::Disconnect(client_id) => self.handle_disconnect(context, client_id).await,
         }
+
+        Ok(())
+    }
+}
+
+#[derive(Default)]
+pub struct EngineControllerBuilder {
+    command_rx: Option<tokio::sync::mpsc::UnboundedReceiver<String>>,
+    state_tx: Option<tokio::sync::mpsc::UnboundedSender<String>>,
+    shutdown_rx: Option<tokio::sync::mpsc::Receiver<()>>,
+}
+
+impl EngineControllerBuilder {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn build(self) -> EngineController {
+        EngineController {
+            state_tx: self.state_tx.unwrap(),
+            command_rx: self.command_rx.unwrap(),
+            shutdown_rx: self.shutdown_rx.unwrap(),
+        }
+    }
+
+    pub fn with_command_rx(mut self, rx: tokio::sync::mpsc::UnboundedReceiver<String>) -> Self {
+        self.command_rx = Some(rx);
+        self
+    }
+
+    pub fn with_state_tx(mut self, tx: tokio::sync::mpsc::UnboundedSender<String>) -> Self {
+        self.state_tx = Some(tx);
+        self
+    }
+
+    pub fn with_shutdown_rx(mut self, tx: tokio::sync::mpsc::Receiver<()>) -> Self {
+        self.shutdown_rx = Some(tx);
+        self
     }
 }
