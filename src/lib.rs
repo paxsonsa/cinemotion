@@ -1,8 +1,8 @@
 mod clients;
+pub mod component;
 mod engine;
 pub mod error;
 pub mod server;
-pub mod services;
 mod sync;
 
 pub static VERSION: &str = "0.1.0";

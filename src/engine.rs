@@ -1,4 +1,4 @@
-use crate::{Result};
+use crate::Result;
 
 pub struct EngineController {
     state_tx: tokio::sync::mpsc::UnboundedSender<String>,
@@ -30,6 +30,11 @@ impl EngineController {
 
         Ok(())
     }
+}
+
+pub struct EngineProxy {
+    command_tx: tokio::sync::mpsc::UnboundedSender<String>,
+    state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
 }
 
 #[derive(Default)]

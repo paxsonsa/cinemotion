@@ -7,8 +7,8 @@ pub struct Server {
     #[clap(long = "name", default_value = "indiemotion")]
     pub server_name: String,
 
-    #[clap(flatten)]
-    pub web_service: indiemotion::services::websocket::WebsocketServiceBuilder,
+    #[clap(long = "server.bind-address")]
+    server_bind_address: Option<std::net::SocketAddr>,
 }
 
 impl Server {
@@ -16,12 +16,17 @@ impl Server {
         tracing::debug!("Building server...");
         let mut builder = indiemotion::server::Server::builder();
 
-        let engine_builder = indiemotion::services::EngineService::builder();
+        let engine_builder = indiemotion::component::EngineComponent::builder();
         builder = builder.with_engine_service(engine_builder);
 
-        let relay_builder = indiemotion::services::ClientService::builder();
+        let relay_builder = indiemotion::component::ClientComponent::builder();
         builder = builder.with_client_service(relay_builder);
 
+        let websocket_builder = indiemotion::component::websocket::WebsocketComponent::builder();
+        websocket_builder.with_server_bind_address(
+            self.server_bind_address
+                .unwrap_or_else(|| ([0, 0, 0, 0], indiemotion::DEFAULT_WEB_PORT).into()),
+        );
         builder = builder.with_websocket_service(self.web_service.clone());
 
         let mut server = builder.build().await?;

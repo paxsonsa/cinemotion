@@ -1,18 +1,18 @@
-use super::Service;
+use super::Component;
 use crate::async_trait;
 use crate::clients;
 use crate::Result;
 use std::pin::Pin;
 
-pub struct ClientService {
+pub struct ClientComponent {
     proxy_channel: clients::ProxyCommandsTx,
     future: tokio::task::JoinHandle<std::result::Result<(), crate::Error>>,
     shutdown_tx: tokio::sync::mpsc::Sender<()>,
 }
 
-impl ClientService {
-    pub fn builder() -> ClientServiceBuilder {
-        ClientServiceBuilder::new()
+impl ClientComponent {
+    pub fn builder() -> ClientComponentBuilder {
+        ClientComponentBuilder::new()
     }
 
     pub fn build_proxy(&self) -> crate::clients::ClientRelayProxy {
@@ -21,7 +21,7 @@ impl ClientService {
 }
 
 #[async_trait]
-impl Service for ClientService {
+impl Component for ClientComponent {
     fn name(&self) -> &'static str {
         "client"
     }
@@ -34,7 +34,7 @@ impl Service for ClientService {
     }
 }
 
-impl futures::Future for ClientService {
+impl futures::Future for ClientComponent {
     type Output = ();
 
     fn poll(
@@ -62,17 +62,17 @@ impl futures::Future for ClientService {
 }
 
 #[derive(Default)]
-pub struct ClientServiceBuilder {
+pub struct ClientComponentBuilder {
     command_tx: Option<tokio::sync::mpsc::UnboundedSender<String>>,
     state_rx: Option<tokio::sync::mpsc::UnboundedReceiver<String>>,
 }
 
-impl ClientServiceBuilder {
+impl ClientComponentBuilder {
     pub fn new() -> Self {
         Default::default()
     }
 
-    pub async fn build(self) -> Result<ClientService> {
+    pub async fn build(self) -> Result<ClientComponent> {
         let shutdown_channel = tokio::sync::mpsc::channel(1);
         let proxy_channel = crate::clients::proxy_channel();
 
@@ -83,7 +83,7 @@ impl ClientServiceBuilder {
             .with_shutdown_rx(shutdown_channel.1)
             .build();
 
-        Ok(ClientService {
+        Ok(ClientComponent {
             proxy_channel: proxy_channel.0,
             future: tokio::task::spawn(async move {
                 relay.run().await?;

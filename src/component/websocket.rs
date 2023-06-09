@@ -6,24 +6,74 @@ use warp::{
     Filter,
 };
 
-use super::Service;
+use super::Component;
 use crate::api;
 use crate::async_trait;
 use crate::clients::{Client, ClientRelayProxy};
 use crate::Result;
 
+pub struct WebsocketComponent {
+    future: tokio::task::JoinHandle<std::result::Result<(), crate::Error>>,
+    shutdown_tx: tokio::sync::mpsc::Sender<()>,
+}
+
+impl WebsocketComponent {
+    pub fn builder() -> WebsocketComponentBuilder {
+        WebsocketComponentBuilder::default()
+    }
+}
+
+#[async_trait]
+impl Component for WebsocketComponent {
+    fn name(&self) -> &'static str {
+        "websocket"
+    }
+
+    async fn shutdown(&self) {
+        // the error case here is that we are already stopped because
+        // the receiver end of the channel has closed, which is ok
+        let _ = self.shutdown_tx.send(()).await;
+    }
+}
+
+impl futures::Future for WebsocketComponent {
+    type Output = ();
+
+    fn poll(
+        mut self: Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+        use std::task::Poll::*;
+
+        match Pin::new(&mut self.future).poll(cx) {
+            Pending => Pending,
+            Ready(Ok(Ok(_))) => {
+                tracing::info!(name = %self.name(), "component exited");
+                Ready(())
+            }
+            Ready(Ok(Err(err))) => {
+                tracing::info!(%err, name = %self.name(), "component failed");
+                Ready(())
+            }
+            Ready(Err(err)) => {
+                tracing::error!(%err, name=%self.name(), "component panic'd");
+                Ready(())
+            }
+        }
+    }
+}
+
 #[derive(Default, Debug, Clone, Args)]
-pub struct WebsocketServiceBuilder {
+pub struct WebsocketComponentBuilder {
     /// The local socket address on which to serve the grpc endpoint
-    #[clap(long = "server.bind-address")]
     server_bind_address: Option<std::net::SocketAddr>,
 
-    #[clap(skip)]
+    /// The client proxy to use when working with clients.
     client_proxy: Option<ClientRelayProxy>,
 }
 
-impl WebsocketServiceBuilder {
-    pub async fn build(self) -> Result<WebsocketService> {
+impl WebsocketComponentBuilder {
+    pub async fn build(self) -> Result<WebsocketComponent> {
         let addr = self
             .server_bind_address
             .unwrap_or_else(|| ([0, 0, 0, 0], crate::DEFAULT_WEB_PORT).into());
@@ -55,66 +105,20 @@ impl WebsocketServiceBuilder {
             }
         });
 
-        Ok(WebsocketService {
+        Ok(WebsocketComponent {
             future,
             shutdown_tx,
         })
     }
 
+    pub fn with_server_bind_address(mut self, addr: std::net::SocketAddr) -> Self {
+        self.server_bind_address = Some(addr);
+        self
+    }
+
     pub fn with_client_proxy(mut self, client_proxy: ClientRelayProxy) -> Self {
         self.client_proxy = Some(client_proxy);
         self
-    }
-}
-
-pub struct WebsocketService {
-    future: tokio::task::JoinHandle<std::result::Result<(), crate::Error>>,
-    shutdown_tx: tokio::sync::mpsc::Sender<()>,
-}
-
-impl WebsocketService {
-    pub fn builder() -> WebsocketServiceBuilder {
-        WebsocketServiceBuilder::default()
-    }
-}
-
-#[async_trait]
-impl Service for WebsocketService {
-    fn name(&self) -> &'static str {
-        "websocket"
-    }
-
-    async fn shutdown(&self) {
-        // the error case here is that we are already stopped because
-        // the receiver end of the channel has closed, which is ok
-        let _ = self.shutdown_tx.send(()).await;
-    }
-}
-
-impl futures::Future for WebsocketService {
-    type Output = ();
-
-    fn poll(
-        mut self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<Self::Output> {
-        use std::task::Poll::*;
-
-        match Pin::new(&mut self.future).poll(cx) {
-            Pending => Pending,
-            Ready(Ok(Ok(_))) => {
-                tracing::info!(name = %self.name(), "component exited");
-                Ready(())
-            }
-            Ready(Ok(Err(err))) => {
-                tracing::info!(%err, name = %self.name(), "component failed");
-                Ready(())
-            }
-            Ready(Err(err)) => {
-                tracing::error!(%err, name=%self.name(), "component panic'd");
-                Ready(())
-            }
-        }
     }
 }
 

@@ -12,9 +12,9 @@ pub fn proxy_channel() -> (ProxyCommandsTx, ProxyCommandsRx) {
 pub struct ClientRelayController {
     // TODO - Turn Command TX in EngineProxy
     command_tx: tokio::sync::mpsc::UnboundedSender<String>,
+    state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
     command_rx: crate::clients::ProxyCommandsRx,
     shutdown_rx: tokio::sync::mpsc::Receiver<()>,
-    state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
     clients: HashMap<u32, Client>,
     next_handle: u32,
 }

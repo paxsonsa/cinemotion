@@ -3,7 +3,7 @@ use futures::Future;
 
 /// Represents a component of the server
 #[async_trait]
-pub trait Service: Future<Output = ()> {
+pub trait Component: Future<Output = ()> {
     /// The name of this component for use in identification and debugging
     fn name(&self) -> &'static str;
 

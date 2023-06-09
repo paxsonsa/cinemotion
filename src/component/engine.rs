@@ -1,21 +1,21 @@
-use super::Service;
+use super::Component;
 use crate::async_trait;
 use crate::Result;
 use std::pin::Pin;
 
-pub struct EngineService {
+pub struct EngineComponent {
     future: tokio::task::JoinHandle<std::result::Result<(), crate::Error>>,
     shutdown_tx: tokio::sync::mpsc::Sender<()>,
 }
 
-impl EngineService {
-    pub fn builder() -> EngineServiceBuilder {
-        EngineServiceBuilder::new()
+impl EngineComponent {
+    pub fn builder() -> EngineComponentBuilder {
+        EngineComponentBuilder::new()
     }
 }
 
 #[async_trait]
-impl Service for EngineService {
+impl Component for EngineComponent {
     fn name(&self) -> &'static str {
         "engine"
     }
@@ -28,7 +28,7 @@ impl Service for EngineService {
     }
 }
 
-impl futures::Future for EngineService {
+impl futures::Future for EngineComponent {
     type Output = ();
 
     fn poll(
@@ -56,12 +56,12 @@ impl futures::Future for EngineService {
 }
 
 #[derive(Default)]
-pub struct EngineServiceBuilder {
+pub struct EngineComponentBuilder {
     command_rx: Option<tokio::sync::mpsc::UnboundedReceiver<String>>,
     state_tx: Option<tokio::sync::mpsc::UnboundedSender<String>>,
 }
 
-impl EngineServiceBuilder {
+impl EngineComponentBuilder {
     pub fn new() -> Self {
         Default::default()
     }
@@ -76,7 +76,7 @@ impl EngineServiceBuilder {
         self
     }
 
-    pub async fn build(self) -> Result<EngineService> {
+    pub async fn build(self) -> Result<EngineComponent> {
         let shutdown_channel = tokio::sync::mpsc::channel(1);
 
         let mut controller = crate::engine::EngineController::builder()
@@ -85,7 +85,7 @@ impl EngineServiceBuilder {
             .with_shutdown_rx(shutdown_channel.1)
             .build();
 
-        Ok(EngineService {
+        Ok(EngineComponent {
             future: tokio::task::spawn(async move {
                 controller.run().await?;
                 Ok(())
