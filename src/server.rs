@@ -1,6 +1,7 @@
 use futures::stream::FuturesUnordered;
 use futures::Future;
 use futures::StreamExt;
+use indiemotion_api::command;
 use std::pin::Pin;
 
 use crate::component;
@@ -10,7 +11,7 @@ use crate::Result;
 pub struct ServerBuilder {
     /// Public name to advertise for this server.
     name: String,
-    engine_service: Option<component::EngineComponentBuilder>,
+    engine_builder: Option<component::EngineComponentBuilder>,
     client_service: Option<component::ClientComponentBuilder>,
     web_service: Option<component::WebsocketComponentBuilder>,
 }
@@ -24,24 +25,22 @@ impl ServerBuilder {
         let engine_command_channel = tokio::sync::mpsc::unbounded_channel();
         let state_channel = tokio::sync::mpsc::unbounded_channel();
 
-        if let Some(engine_service) = self.engine_service.take() {
-            let engine_service = engine_service
-                .with_command_rx(engine_command_channel.1)
-                .with_state_tx(state_channel.0)
-                .build()
-                .await?;
-            tracing::info!("Engine Service Initialized");
-            server.components.push(Box::pin(engine_service));
-        }
+        let Some(engine_service) = self.engine_builder.take() else {
+            panic!("Engine Service not configured")
+        };
+        let (engine_component, engine_service) = engine_service
+            .with_command_rx(engine_command_channel.1)
+            .with_state_tx(state_channel.0)
+            .build()
+            .await?;
+        tracing::info!("Engine Service Initialized");
+        server.components.push(Box::pin(engine_component));
 
         let Some(client_service) = self.client_service.take() else {
             todo!();
         };
         let client_service = client_service
-            // Engine Command Queue
-            .with_command_tx(engine_command_channel.0)
-            // Engine State Updates Queue
-            .with_state_rx(state_channel.1)
+            .with_engine_service(engine_service)
             .build()
             .await?;
         let client_proxy = client_service.build_proxy();
@@ -64,7 +63,7 @@ impl ServerBuilder {
     }
 
     pub fn with_engine_service(mut self, config: component::EngineComponentBuilder) -> Self {
-        self.engine_service = Some(config);
+        self.engine_builder = Some(config);
         self
     }
 
@@ -93,7 +92,7 @@ impl Server {
         ServerBuilder {
             name: "indiemotion".to_string(),
             web_service: None,
-            engine_service: None,
+            engine_builder: None,
             client_service: None,
         }
     }

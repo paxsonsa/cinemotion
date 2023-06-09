@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::sync;
+use crate::{engine, sync};
 use crate::{Error, Result};
 
 pub type ProxyCommandsTx = tokio::sync::mpsc::UnboundedSender<Command>;
@@ -10,9 +10,7 @@ pub fn proxy_channel() -> (ProxyCommandsTx, ProxyCommandsRx) {
 }
 
 pub struct ClientManager {
-    // TODO - Turn Command TX in EngineProxy
-    command_tx: tokio::sync::mpsc::UnboundedSender<String>,
-    state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+    engine: engine::Service,
     command_rx: crate::clients::ProxyCommandsRx,
     shutdown_rx: tokio::sync::mpsc::Receiver<()>,
     clients: HashMap<u32, Client>,
@@ -21,14 +19,12 @@ pub struct ClientManager {
 
 impl ClientManager {
     pub fn new(
-        command_tx: tokio::sync::mpsc::UnboundedSender<String>,
-        state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+        engine: engine::Service,
         command_rx: crate::clients::ProxyCommandsRx,
         shutdown_rx: tokio::sync::mpsc::Receiver<()>,
     ) -> Self {
         Self {
-            command_tx,
-            state_rx,
+            engine,
             command_rx,
             shutdown_rx,
             clients: HashMap::new(),
@@ -58,7 +54,7 @@ impl ClientManager {
                         }
                     }
                 },
-                state = self.state_rx.recv() => {
+                state = self.engine.recv_state_update() => {
                     tracing::info!("client relay controller received state update: {:?}", state);
                 },
                 _ = self.shutdown_rx.recv() => {
@@ -119,11 +115,11 @@ pub enum Command {
 }
 
 #[derive(Debug, Clone)]
-pub struct ClientManagerProxy {
+pub struct ClientService {
     command_tx: tokio::sync::mpsc::UnboundedSender<Command>,
 }
 
-impl ClientManagerProxy {
+impl ClientService {
     pub fn new(command_tx: tokio::sync::mpsc::UnboundedSender<Command>) -> Self {
         Self { command_tx }
     }

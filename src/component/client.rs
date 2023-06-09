@@ -15,8 +15,8 @@ impl ClientComponent {
         ClientComponentBuilder::new()
     }
 
-    pub fn build_proxy(&self) -> crate::clients::ClientManagerProxy {
-        crate::clients::ClientManagerProxy::new(self.proxy_channel.clone())
+    pub fn build_proxy(&self) -> crate::clients::ClientService {
+        crate::clients::ClientService::new(self.proxy_channel.clone())
     }
 }
 
@@ -63,8 +63,7 @@ impl futures::Future for ClientComponent {
 
 #[derive(Default)]
 pub struct ClientComponentBuilder {
-    command_tx: Option<tokio::sync::mpsc::UnboundedSender<String>>,
-    state_rx: Option<tokio::sync::mpsc::UnboundedReceiver<String>>,
+    engine_service: Option<crate::engine::Service>,
 }
 
 impl ClientComponentBuilder {
@@ -77,8 +76,7 @@ impl ClientComponentBuilder {
         let proxy_channel = crate::clients::proxy_channel();
 
         let mut relay = crate::clients::ClientManager::new(
-            self.command_tx.unwrap(),
-            self.state_rx.unwrap(),
+            self.engine_service.unwrap(),
             proxy_channel.1,
             shutdown_channel.1,
         );
@@ -93,13 +91,8 @@ impl ClientComponentBuilder {
         })
     }
 
-    pub fn with_command_tx(mut self, tx: tokio::sync::mpsc::UnboundedSender<String>) -> Self {
-        self.command_tx = Some(tx);
-        self
-    }
-
-    pub fn with_state_rx(mut self, rx: tokio::sync::mpsc::UnboundedReceiver<String>) -> Self {
-        self.state_rx = Some(rx);
+    pub fn with_engine_service(mut self, service: crate::engine::Service) -> Self {
+        self.engine_service = Some(service);
         self
     }
 }

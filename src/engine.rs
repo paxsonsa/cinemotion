@@ -1,20 +1,14 @@
-use crate::Result;
+use crate::{Error, Result};
 
 pub struct EngineController {
-    state_tx: tokio::sync::mpsc::UnboundedSender<String>,
-    command_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+    transport: ServiceTransport,
     shutdown_rx: tokio::sync::mpsc::Receiver<()>,
 }
 
 impl EngineController {
-    pub fn new(
-        state_tx: tokio::sync::mpsc::UnboundedSender<String>,
-        command_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
-        shutdown_rx: tokio::sync::mpsc::Receiver<()>,
-    ) -> Self {
+    pub fn new(transport: ServiceTransport, shutdown_rx: tokio::sync::mpsc::Receiver<()>) -> Self {
         Self {
-            state_tx,
-            command_rx,
+            transport,
             shutdown_rx,
         }
     }
@@ -29,10 +23,12 @@ impl EngineController {
                     tracing::debug!("engine controller received shutdown, shutting down...");
                     break;
                 },
-                command = self.command_rx.recv() => {
+                command = self.transport.recv_command() => {
                     tracing::info!("engine controller received command: {:?}", command);
                 }
-                _ = interval.tick() => {},
+                _ = interval.tick() => {
+                    self.transport.send_state_update("hello".to_string()).await?;
+                },
             }
         }
 
@@ -40,7 +36,47 @@ impl EngineController {
     }
 }
 
-pub struct EngineProxy {
-    command_tx: tokio::sync::mpsc::UnboundedSender<String>,
+pub struct Service {
     state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+    command_tx: tokio::sync::mpsc::UnboundedSender<String>,
+}
+
+impl Service {
+    pub fn new() -> (Self, ServiceTransport) {
+        let (state_tx, state_rx) = tokio::sync::mpsc::unbounded_channel();
+        let (command_tx, command_rx) = tokio::sync::mpsc::unbounded_channel();
+
+        (
+            Self {
+                state_rx,
+                command_tx,
+            },
+            ServiceTransport {
+                state_tx,
+                command_rx,
+            },
+        )
+    }
+
+    pub async fn recv_state_update(&mut self) -> Option<String> {
+        self.state_rx.recv().await
+    }
+}
+
+pub struct ServiceTransport {
+    state_tx: tokio::sync::mpsc::UnboundedSender<String>,
+    command_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+}
+
+impl ServiceTransport {
+    pub async fn recv_command(&mut self) -> Option<String> {
+        self.command_rx.recv().await
+    }
+
+    pub async fn send_state_update(&mut self, state: String) -> Result<()> {
+        self.state_tx
+            .send(state)
+            .map_err(|_| Error::TransportError("failed to send state update"))?;
+        Ok(())
+    }
 }

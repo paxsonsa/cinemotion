@@ -24,6 +24,9 @@ pub enum Error {
     #[error("internal error: {0}")]
     InternalError(&'static str),
 
+    #[error("transport error: {0}")]
+    TransportError(&'static str),
+
     // #[error("error from api: {0}")]
     // APIError(#[from] api::Error),
 
