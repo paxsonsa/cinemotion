@@ -16,14 +16,14 @@ impl Server {
         tracing::debug!("Building server...");
         let mut builder = indiemotion::server::Server::builder();
 
-        let engine_builder = indiemotion::component::EngineComponent::builder();
+        let engine_builder = indiemotion::components::EngineComponent::builder();
         builder = builder.with_engine_service(engine_builder);
 
-        let relay_builder = indiemotion::component::ClientComponent::builder();
+        let relay_builder = indiemotion::components::ClientComponent::builder();
         builder = builder.with_client_service(relay_builder);
 
         let mut websocket_builder =
-            indiemotion::component::websocket::WebsocketComponent::builder();
+            indiemotion::components::websocket::WebsocketComponent::builder();
         websocket_builder = websocket_builder.with_server_bind_address(
             self.server_bind_address
                 .unwrap_or_else(|| ([0, 0, 0, 0], indiemotion::DEFAULT_WEB_PORT).into()),

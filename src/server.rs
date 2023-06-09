@@ -3,16 +3,16 @@ use futures::Future;
 use futures::StreamExt;
 use std::pin::Pin;
 
-use crate::component;
+use crate::components;
 use crate::Result;
 
 /// Constructor helper for creating a new server
 pub struct ServerBuilder {
     /// Public name to advertise for this server.
     name: String,
-    engine_builder: Option<component::EngineComponentBuilder>,
-    client_service: Option<component::ClientComponentBuilder>,
-    web_service: Option<component::WebsocketComponentBuilder>,
+    engine_builder: Option<components::EngineComponentBuilder>,
+    client_service: Option<components::ClientComponentBuilder>,
+    web_service: Option<components::WebsocketComponentBuilder>,
 }
 
 impl ServerBuilder {
@@ -56,17 +56,17 @@ impl ServerBuilder {
         Ok(server)
     }
 
-    pub fn with_client_service(mut self, config: component::ClientComponentBuilder) -> Self {
+    pub fn with_client_service(mut self, config: components::ClientComponentBuilder) -> Self {
         self.client_service = Some(config);
         self
     }
 
-    pub fn with_engine_service(mut self, config: component::EngineComponentBuilder) -> Self {
+    pub fn with_engine_service(mut self, config: components::EngineComponentBuilder) -> Self {
         self.engine_builder = Some(config);
         self
     }
 
-    pub fn with_websocket_service(mut self, config: component::WebsocketComponentBuilder) -> Self {
+    pub fn with_websocket_service(mut self, config: components::WebsocketComponentBuilder) -> Self {
         self.web_service = Some(config);
         self
     }
@@ -80,7 +80,7 @@ impl ServerBuilder {
 
 pub struct Server {
     /// Represents a component of the server
-    components: Vec<Pin<Box<dyn component::Component>>>,
+    components: Vec<Pin<Box<dyn components::Component>>>,
     // future: tokio::task::JoinHandle<std::result::Result<(), tonic::transport::Error>>,
     // shutdown_tx: tokio::sync::mpsc::Sender<()>,
 }
@@ -97,7 +97,7 @@ impl Server {
     }
 
     pub async fn serve_with_shutdown(&mut self, shutdown: impl Future<Output = ()>) -> Result<()> {
-        let mut components: FuturesUnordered<Pin<Box<dyn component::Component>>> =
+        let mut components: FuturesUnordered<Pin<Box<dyn components::Component>>> =
             self.components.drain(..).collect();
 
         tracing::info!("server is running");

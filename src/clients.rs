@@ -38,7 +38,6 @@ impl ClientManager {
         loop {
             tokio::select! {
                 command = self.command_rx.recv() => {
-
                     let command = match command {
                         Some(command) => command,
                         None => {
@@ -54,7 +53,7 @@ impl ClientManager {
                     }
                 },
                 state = self.engine.recv_state_update() => {
-                    tracing::info!("client relay controller received state update: {:?}", state);
+                    // TODO Broadcast to clients.
                 },
                 _ = self.shutdown_rx.recv() => {
                     tracing::debug!("client relay controller received shutdown, shutting down...");
@@ -95,14 +94,17 @@ impl ClientManager {
 
     async fn receive_from(&mut self, handle: u32, command: api::Command) -> Result<()> {
         tracing::info!("receive_from({}, {:?}", handle, command);
-        let client = match self.clients.get_mut(&handle) {
+        let _ = match self.clients.get_mut(&handle) {
             Some(client) => client,
             None => {
                 tracing::error!("client not found for handle: {}", handle);
                 return Err(Error::ClientNotFound(handle));
             }
         };
-        client.send(api::State {}).await?;
+
+        self.engine.enqueue_command(command).await?;
+
+        // client.send(api::State {}).await?;
         Ok(())
     }
 

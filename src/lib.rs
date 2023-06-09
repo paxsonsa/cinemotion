@@ -1,5 +1,5 @@
 mod clients;
-pub mod component;
+pub mod components;
 mod engine;
 pub mod error;
 pub mod server;
