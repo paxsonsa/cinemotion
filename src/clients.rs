@@ -52,7 +52,7 @@ impl ClientManager {
                         }
                     }
                 },
-                state = self.engine.recv_state_update() => {
+                _state = self.engine.recv_state_update() => {
                     // TODO Broadcast to clients.
                 },
                 _ = self.shutdown_rx.recv() => {
