@@ -1,21 +1,9 @@
-use std::marker::PhantomData;
+use serde_derive::{Deserialize, Serialize};
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "command", rename_all = "lowercase")]
 pub enum Command {
-    Ping,
-}
-
-pub struct JSONProtocol {}
-
-pub struct Encoder<P> {
-    _p: PhantomData<P>,
-}
-
-impl Encoder<JSONProtocol> {
-    pub fn encode(command: Command) -> Result<String, crate::Error> {
-        Ok("".to_string())
-    }
-
-    pub fn decode(message: &str) -> Result<String, crate::Error> {
-        Ok(message.to_string())
-    }
+    Empty,
+    // Client,
+    //
 }

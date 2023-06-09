@@ -1,7 +1,6 @@
 use futures::stream::FuturesUnordered;
 use futures::Future;
 use futures::StreamExt;
-use indiemotion_api::command;
 use std::pin::Pin;
 
 use crate::component;

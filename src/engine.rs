@@ -27,7 +27,7 @@ impl EngineController {
                     tracing::info!("engine controller received command: {:?}", command);
                 }
                 _ = interval.tick() => {
-                    self.transport.send_state_update("hello".to_string()).await?;
+                    // self.transport.send_state_update("hello".to_string()).await?;
                 },
             }
         }

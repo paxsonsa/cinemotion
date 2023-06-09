@@ -1,10 +1,7 @@
-use clap::Args;
+use futures::stream::SplitSink;
 use futures::{SinkExt, StreamExt};
 use std::pin::Pin;
-use warp::{
-    ws::{Message, WebSocket},
-    Filter,
-};
+use warp::{ws, ws::WebSocket, Filter};
 
 use super::Component;
 use crate::api;
@@ -122,65 +119,110 @@ impl WebsocketComponentBuilder {
     }
 }
 
-async fn connect(ws: WebSocket, client_relay: ClientService) {
+async fn connect(ws: WebSocket, client_service: ClientService) {
     let (mut ws_tx, mut ws_rx) = ws.split();
-    let mut update_channel = tokio::sync::mpsc::unbounded_channel();
+    let mut state_channel = tokio::sync::mpsc::unbounded_channel();
 
-    let client = Client::new(update_channel.0.clone());
-    let handle = match client_relay.register_client(client).await {
+    let client = Client::new(state_channel.0.clone());
+    let handle = match client_service.connect(client).await {
         Ok(handle) => handle,
-        Err(e) => {
-            tracing::error!("client registration error: {}", e);
-            // TODO: Send Error to Client
+        Err(err) => {
+            tracing::error!("client registration failed: {}", err);
+            handle_error(
+                api::Error::UnexpectedError(format!("client registration failed {:#}", err)),
+                &mut ws_tx,
+            )
+            .await;
             return;
         }
     };
+    tracing::info!("client connected: {}", handle);
 
     loop {
         tokio::select! {
             Some(msg) = ws_rx.next() => {
-                // TODO Handle bad message processing.
-                let _ = match msg {
-                    Ok(msg) => {
-                        tracing::info!("websocket msg: {:?}", msg);
-
-                        let message = match msg.to_str() {
-                            Ok(v) => v,
-                            Err(_) => return,
-                        };
-
-                        match api::command::Encoder::<api::command::JSONProtocol>::decode(message) {
-                            Ok(command) => client_relay.receive_from(handle, command).await,
-                            Err(e) => {
-                                tracing::error!("message decoding error error: {}", e);
-                                todo!("add error conversion in JSON");
-                            }
-                        }
-                    },
-                    Err(e) => {
-                        tracing::error!("websocket error: {}", e);
+                let msg = match msg {
+                    Ok(m) => m,
+                    Err(err) => {
+                        tracing::error!("websocket error: {}", err);
+                        let _ = client_service.disconnect(handle).await;
                         break;
                     }
                 };
-            },
-            Some(update) = update_channel.1.recv() => {
 
-                match ws_tx.send(Message::text(update)).await {
+                if msg.is_close() {
+                    let _ = client_service.disconnect(handle).await;
+                    break;
+                }
+
+                if let Err(err) = handle_message(handle, &msg, &client_service).await {
+                    handle_error(err, &mut ws_tx).await;
+                }
+            },
+            Some(state) = state_channel.1.recv() => {
+                let msg =
+                    api::message::Encoding::<api::message::JSONProtocol>::encode(api::Message::State(state))
+                    .unwrap();
+                match ws_tx.send(ws::Message::text(msg)).await {
                     Ok(_) => (),
                     Err(e) => {
                         tracing::error!("websocket error: {}", e);
+                        let _ = client_service.disconnect(handle).await;
                         break;
                     }
                 }
-
-                // match api::command::Encoder::<api::command::JSONProtocol>::encode(update) {
-                //     Ok(update) => ws_tx.send(update).await,
-                //     Err(e) => {
-                //         tracing::error!("message decoding error error: {}", e);
-                //         todo!("add error conversion in JSON");
-                //     }
-                // }
             }
+        }
+    }
+    tracing::info!("closing connection: {}", handle);
+}
+
+async fn handle_error(err: api::Error, websocket: &mut SplitSink<WebSocket, ws::Message>) {
+    let msg =
+        api::message::Encoding::<api::message::JSONProtocol>::encode(api::Message::Error(err))
+            .unwrap();
+    match websocket.send(ws::Message::text(msg)).await {
+        Ok(_) => (),
+        Err(e) => {
+            tracing::error!("websocket error: {}", e);
+        }
+    }
+}
+
+async fn handle_message(
+    handle: u32,
+    msg: &ws::Message,
+    client_relay: &ClientService,
+) -> api::Result<()> {
+    tracing::info!("websocket msg: {:?}", msg);
+    let message = match msg.to_str() {
+        Ok(v) => v,
+        Err(_) => return Ok(()),
+    };
+
+    match api::message::Encoding::<api::message::JSONProtocol>::decode(message) {
+        Ok(msg) => {
+            let api::Message::Command(command) = msg else {
+                        tracing::info!("client {} sent invalid message type.", handle);
+                        return Err(api::Error::BadMessage("clients can only send command type messages".to_string()));
+                    };
+
+            if let Err(err) = client_relay.receive_from(handle, command).await {
+                tracing::error!(
+                    "client {} command processing failed: {}, message: {}",
+                    handle,
+                    err,
+                    message
+                );
+                return Err(api::Error::BadMessage(
+                    "clients can only send command type messages".to_string(),
+                ));
+            }
+            Ok(())
+        }
+        Err(err) => {
+            tracing::error!(?err, message, "message decoding error occured");
+            Err(err)
         }
     }
 }
