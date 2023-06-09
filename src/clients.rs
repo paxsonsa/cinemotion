@@ -119,11 +119,11 @@ pub enum Command {
 }
 
 #[derive(Debug, Clone)]
-pub struct ClientRelayProxy {
+pub struct ClientManagerProxy {
     command_tx: tokio::sync::mpsc::UnboundedSender<Command>,
 }
 
-impl ClientRelayProxy {
+impl ClientManagerProxy {
     pub fn new(command_tx: tokio::sync::mpsc::UnboundedSender<Command>) -> Self {
         Self { command_tx }
     }

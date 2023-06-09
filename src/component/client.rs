@@ -15,8 +15,8 @@ impl ClientComponent {
         ClientComponentBuilder::new()
     }
 
-    pub fn build_proxy(&self) -> crate::clients::ClientRelayProxy {
-        crate::clients::ClientRelayProxy::new(self.proxy_channel.clone())
+    pub fn build_proxy(&self) -> crate::clients::ClientManagerProxy {
+        crate::clients::ClientManagerProxy::new(self.proxy_channel.clone())
     }
 }
 

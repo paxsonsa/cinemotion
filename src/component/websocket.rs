@@ -8,7 +8,7 @@ use warp::{
 
 use super::Component;
 use crate::api;
-use crate::clients::{Client, ClientRelayProxy};
+use crate::clients::{Client, ClientManagerProxy};
 use crate::Result;
 use async_trait::async_trait;
 
@@ -69,7 +69,7 @@ pub struct WebsocketComponentBuilder {
     server_bind_address: Option<std::net::SocketAddr>,
 
     /// The client proxy to use when working with clients.
-    client_proxy: Option<ClientRelayProxy>,
+    client_proxy: Option<ClientManagerProxy>,
 }
 
 impl WebsocketComponentBuilder {
@@ -85,7 +85,7 @@ impl WebsocketComponentBuilder {
         let router = warp::path("connect")
             .and(warp::ws())
             .and(warp::any().map(move || client_proxy.clone()))
-            .map(|ws: warp::ws::Ws, proxy: ClientRelayProxy| {
+            .map(|ws: warp::ws::Ws, proxy: ClientManagerProxy| {
                 ws.on_upgrade(move |socket| connect(socket, proxy))
             });
 
@@ -116,13 +116,13 @@ impl WebsocketComponentBuilder {
         self
     }
 
-    pub fn with_client_proxy(mut self, client_proxy: ClientRelayProxy) -> Self {
+    pub fn with_client_proxy(mut self, client_proxy: ClientManagerProxy) -> Self {
         self.client_proxy = Some(client_proxy);
         self
     }
 }
 
-async fn connect(ws: WebSocket, client_relay: ClientRelayProxy) {
+async fn connect(ws: WebSocket, client_relay: ClientManagerProxy) {
     let (mut ws_tx, mut ws_rx) = ws.split();
     let mut update_channel = tokio::sync::mpsc::unbounded_channel();
 
