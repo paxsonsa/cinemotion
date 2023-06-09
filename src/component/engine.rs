@@ -79,11 +79,11 @@ impl EngineComponentBuilder {
     pub async fn build(self) -> Result<EngineComponent> {
         let shutdown_channel = tokio::sync::mpsc::channel(1);
 
-        let mut controller = crate::engine::EngineController::builder()
-            .with_command_rx(self.command_rx.unwrap())
-            .with_state_tx(self.state_tx.unwrap())
-            .with_shutdown_rx(shutdown_channel.1)
-            .build();
+        let mut controller = crate::engine::EngineController {
+            state_tx: self.state_tx.unwrap(),
+            command_rx: self.command_rx.unwrap(),
+            shutdown_rx: self.shutdown_rx.unwrap(),
+        };
 
         Ok(EngineComponent {
             future: tokio::task::spawn(async move {
