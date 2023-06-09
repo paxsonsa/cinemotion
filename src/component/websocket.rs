@@ -8,9 +8,9 @@ use warp::{
 
 use super::Component;
 use crate::api;
-use crate::async_trait;
 use crate::clients::{Client, ClientRelayProxy};
 use crate::Result;
+use async_trait::async_trait;
 
 pub struct WebsocketComponent {
     future: tokio::task::JoinHandle<std::result::Result<(), crate::Error>>,
@@ -63,7 +63,7 @@ impl futures::Future for WebsocketComponent {
     }
 }
 
-#[derive(Default, Debug, Clone, Args)]
+#[derive(Default)]
 pub struct WebsocketComponentBuilder {
     /// The local socket address on which to serve the grpc endpoint
     server_bind_address: Option<std::net::SocketAddr>,

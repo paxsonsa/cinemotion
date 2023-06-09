@@ -2,8 +2,6 @@ use anyhow::Result;
 use clap::Args;
 
 use std::fmt::Display;
-use tonic::transport::Uri;
-
 /// Example using Repl with a custom prompt
 struct Prompt;
 
@@ -17,7 +15,7 @@ impl Display for Prompt {
 pub struct Client {
     /// The address and port to connect to the server on.
     #[clap(long = "addr")]
-    address: Option<Uri>,
+    address: Option<String>,
 }
 
 impl Client {

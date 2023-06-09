@@ -1,7 +1,7 @@
 use super::Component;
-use crate::async_trait;
 use crate::clients;
 use crate::Result;
+use async_trait::async_trait;
 use std::pin::Pin;
 
 pub struct ClientComponent {
@@ -76,12 +76,12 @@ impl ClientComponentBuilder {
         let shutdown_channel = tokio::sync::mpsc::channel(1);
         let proxy_channel = crate::clients::proxy_channel();
 
-        let mut relay = crate::clients::ClientRelayController::builder()
-            .with_command_rx(proxy_channel.1)
-            .with_command_tx(self.command_tx.unwrap())
-            .with_state_rx(self.state_rx.unwrap())
-            .with_shutdown_rx(shutdown_channel.1)
-            .build();
+        let mut relay = crate::clients::ClientManager::new(
+            self.command_tx.unwrap(),
+            self.state_rx.unwrap(),
+            proxy_channel.1,
+            shutdown_channel.1,
+        );
 
         Ok(ClientComponent {
             proxy_channel: proxy_channel.0,

@@ -1,6 +1,6 @@
 use super::Component;
-use crate::async_trait;
 use crate::Result;
+use async_trait::async_trait;
 use std::pin::Pin;
 
 pub struct EngineComponent {
@@ -79,11 +79,11 @@ impl EngineComponentBuilder {
     pub async fn build(self) -> Result<EngineComponent> {
         let shutdown_channel = tokio::sync::mpsc::channel(1);
 
-        let mut controller = crate::engine::EngineController {
-            state_tx: self.state_tx.unwrap(),
-            command_rx: self.command_rx.unwrap(),
-            shutdown_rx: self.shutdown_rx.unwrap(),
-        };
+        let mut controller = crate::engine::EngineController::new(
+            self.state_tx.unwrap(),
+            self.command_rx.unwrap(),
+            shutdown_channel.1,
+        );
 
         Ok(EngineComponent {
             future: tokio::task::spawn(async move {

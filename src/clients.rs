@@ -9,7 +9,7 @@ pub fn proxy_channel() -> (ProxyCommandsTx, ProxyCommandsRx) {
     tokio::sync::mpsc::unbounded_channel()
 }
 
-pub struct ClientRelayController {
+pub struct ClientManager {
     // TODO - Turn Command TX in EngineProxy
     command_tx: tokio::sync::mpsc::UnboundedSender<String>,
     state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
@@ -19,9 +19,21 @@ pub struct ClientRelayController {
     next_handle: u32,
 }
 
-impl ClientRelayController {
-    pub fn builder() -> ClientRelayBuilder {
-        ClientRelayBuilder::new()
+impl ClientManager {
+    pub fn new(
+        command_tx: tokio::sync::mpsc::UnboundedSender<String>,
+        state_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+        command_rx: crate::clients::ProxyCommandsRx,
+        shutdown_rx: tokio::sync::mpsc::Receiver<()>,
+    ) -> Self {
+        Self {
+            command_tx,
+            state_rx,
+            command_rx,
+            shutdown_rx,
+            clients: HashMap::new(),
+            next_handle: 0,
+        }
     }
 
     pub async fn run(&mut self) -> Result<()> {
@@ -97,51 +109,6 @@ impl ClientRelayController {
         let handle = self.next_handle;
         self.next_handle += 1;
         handle
-    }
-}
-
-#[derive(Default)]
-pub struct ClientRelayBuilder {
-    shutdown_tx: Option<tokio::sync::mpsc::Receiver<()>>,
-    command_rx: Option<crate::clients::ProxyCommandsRx>,
-    command_tx: Option<tokio::sync::mpsc::UnboundedSender<String>>,
-    state_rx: Option<tokio::sync::mpsc::UnboundedReceiver<String>>,
-}
-
-impl ClientRelayBuilder {
-    pub fn new() -> Self {
-        Default::default()
-    }
-
-    pub fn build(self) -> ClientRelayController {
-        ClientRelayController {
-            command_rx: self.command_rx.unwrap(),
-            command_tx: self.command_tx.unwrap(),
-            shutdown_rx: self.shutdown_tx.unwrap(),
-            state_rx: self.state_rx.unwrap(),
-            clients: Default::default(),
-            next_handle: 0,
-        }
-    }
-
-    pub fn with_command_rx(mut self, rx: crate::clients::ProxyCommandsRx) -> Self {
-        self.command_rx = Some(rx);
-        self
-    }
-
-    pub fn with_command_tx(mut self, tx: tokio::sync::mpsc::UnboundedSender<String>) -> Self {
-        self.command_tx = Some(tx);
-        self
-    }
-
-    pub fn with_state_rx(mut self, rx: tokio::sync::mpsc::UnboundedReceiver<String>) -> Self {
-        self.state_rx = Some(rx);
-        self
-    }
-
-    pub fn with_shutdown_rx(mut self, tx: tokio::sync::mpsc::Receiver<()>) -> Self {
-        self.shutdown_tx = Some(tx);
-        self
     }
 }
 

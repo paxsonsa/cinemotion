@@ -7,6 +7,18 @@ pub struct EngineController {
 }
 
 impl EngineController {
+    pub fn new(
+        state_tx: tokio::sync::mpsc::UnboundedSender<String>,
+        command_rx: tokio::sync::mpsc::UnboundedReceiver<String>,
+        shutdown_rx: tokio::sync::mpsc::Receiver<()>,
+    ) -> Self {
+        Self {
+            state_tx,
+            command_rx,
+            shutdown_rx,
+        }
+    }
+
     pub async fn run(&mut self) -> Result<()> {
         tracing::info!("starting engine...");
         let mut interval = tokio::time::interval(tokio::time::Duration::from_millis(12));

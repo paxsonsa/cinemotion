@@ -22,12 +22,13 @@ impl Server {
         let relay_builder = indiemotion::component::ClientComponent::builder();
         builder = builder.with_client_service(relay_builder);
 
-        let websocket_builder = indiemotion::component::websocket::WebsocketComponent::builder();
-        websocket_builder.with_server_bind_address(
+        let mut websocket_builder =
+            indiemotion::component::websocket::WebsocketComponent::builder();
+        websocket_builder = websocket_builder.with_server_bind_address(
             self.server_bind_address
                 .unwrap_or_else(|| ([0, 0, 0, 0], indiemotion::DEFAULT_WEB_PORT).into()),
         );
-        builder = builder.with_websocket_service(self.web_service.clone());
+        builder = builder.with_websocket_service(websocket_builder);
 
         let mut server = builder.build().await?;
         let (shutdown_send, shutdown) = tokio::sync::oneshot::channel();

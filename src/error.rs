@@ -1,4 +1,3 @@
-
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -30,10 +29,6 @@ pub enum Error {
 
     // #[error(transparent)]
     // IO(#[from] std::io::Error),
-    #[error(transparent)]
-    TonicTransport(#[from] tonic::transport::Error),
-    #[error(transparent)]
-    Tonic(#[from] tonic::Status),
     #[error(transparent)]
     TokioError(#[from] tokio::io::Error),
 }

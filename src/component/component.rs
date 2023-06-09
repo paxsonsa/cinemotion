@@ -1,4 +1,4 @@
-use crate::async_trait;
+use async_trait::async_trait;
 use futures::Future;
 
 /// Represents a component of the server
