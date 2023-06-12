@@ -9,7 +9,7 @@ use crate::{Error, Result};
 #[serde(tag = "type", content = "payload")]
 pub enum Message {
     Command(crate::Command),
-    State(crate::State),
+    State(crate::GlobalState),
     Error(crate::Error),
 }
 

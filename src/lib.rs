@@ -1,6 +1,9 @@
 mod clients;
 pub mod components;
 mod engine;
+#[cfg(test)]
+#[path = "./engine_integration_test.rs"]
+mod engine_integration_test;
 pub mod error;
 pub mod server;
 mod sync;

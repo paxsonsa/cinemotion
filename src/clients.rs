@@ -168,15 +168,15 @@ impl ClientService {
 
 #[derive(Debug)]
 pub struct Client {
-    state_channel: tokio::sync::mpsc::UnboundedSender<api::State>,
+    state_channel: tokio::sync::mpsc::UnboundedSender<api::GlobalState>,
 }
 
 impl Client {
-    pub fn new(state_channel: tokio::sync::mpsc::UnboundedSender<api::State>) -> Self {
+    pub fn new(state_channel: tokio::sync::mpsc::UnboundedSender<api::GlobalState>) -> Self {
         Self { state_channel }
     }
 
-    pub async fn send(&mut self, state: api::State) -> Result<()> {
+    pub async fn send(&mut self, state: api::GlobalState) -> Result<()> {
         self.state_channel
             .send(state)
             .map_err(|_| Error::ClientError("failed to send message".to_string()))

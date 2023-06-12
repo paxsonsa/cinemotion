@@ -79,9 +79,11 @@ impl EngineComponentBuilder {
 
     pub async fn build(self) -> Result<(EngineComponent, engine::Service)> {
         let shutdown_channel = tokio::sync::mpsc::channel(1);
+        let tick_control = engine::TickControl::interval(12);
 
         let (service, transport) = engine::Service::new();
-        let mut controller = engine::EngineController::new(transport, shutdown_channel.1);
+        let mut controller =
+            engine::EngineController::new(transport, shutdown_channel.1, tick_control);
 
         Ok((
             EngineComponent {

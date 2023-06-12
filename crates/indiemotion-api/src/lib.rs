@@ -7,9 +7,10 @@ mod error;
 // mod session;
 pub mod command;
 pub mod message;
+pub mod models;
 pub mod state;
 
 pub use command::Command;
 pub use error::{Error, Result};
 pub use message::Message;
-pub use state::State;
+pub use state::GlobalState;
