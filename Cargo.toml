@@ -21,7 +21,7 @@ members = [
 anyhow = "1.0"
 async-trait = "0.1.66"
 chrono = "0.4.24"
-clap = { version = "3.1.6", features = ["derive"] }
+clap = { version = "4.3.3", features = ["derive"] }
 futures = "0.3.28"
 indiemotion-api = { path = "crates/indiemotion-api"}
 serde_derive = "1.0.160"
