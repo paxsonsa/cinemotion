@@ -1,4 +1,5 @@
 mod controller;
+#[allow(clippy::module_inception)]
 mod engine;
 mod service;
 
