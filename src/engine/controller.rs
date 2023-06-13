@@ -63,8 +63,6 @@ impl EngineController {
 
 pub enum TickControlBeahvior {
     Interval(tokio::time::Interval),
-    #[cfg(test)]
-    Channel(tokio::sync::mpsc::Receiver<()>),
 }
 
 pub struct TickControl {
@@ -81,25 +79,10 @@ impl TickControl {
         }
     }
 
-    #[cfg(test)]
-    pub fn channel() -> (Self, tokio::sync::mpsc::Sender<()>) {
-        let (tx, rx) = tokio::sync::mpsc::channel(1);
-        (
-            Self {
-                tick_control: TickControlBeahvior::Channel(rx),
-            },
-            tx,
-        )
-    }
-
     async fn tick(&mut self) {
         match &mut self.tick_control {
             TickControlBeahvior::Interval(ref mut interval) => {
                 interval.tick().await;
-            }
-            #[cfg(test)]
-            TickControlBeahvior::Channel(ref mut channel) => {
-                channel.recv().await;
             }
         }
     }

@@ -1,12 +1,14 @@
+use std::collections::HashMap;
+
 use derive_more::Constructor;
 
 use crate::api;
-use crate::{Error, Result};
+use crate::Result;
 
 #[derive(Constructor, Default)]
 pub struct Engine {
-    pub active_state: api::state::GlobalState,
-    pub previous_state: api::state::GlobalState,
+    pub clients: HashMap<u32, api::models::Client>,
+    pub scene: api::models::SceneGraph,
 }
 
 impl Engine {
@@ -14,15 +16,13 @@ impl Engine {
         match command {
             api::Command::Empty => {}
             api::Command::SetClient(client) => {
-                match self.active_state.clients.get_mut(&client.id) {
+                match self.clients.get_mut(&client.id) {
                     Some(cur) => {
                         // TODO Handle error capture.
                         let _ = cur.update_from(client);
                     }
                     None => {
-                        self.active_state
-                            .clients
-                            .insert(client.id, api::state::ClientState::from(client));
+                        self.clients.insert(client.id, client);
                     }
                 }
             }
@@ -30,8 +30,12 @@ impl Engine {
         Ok(())
     }
 
-    pub async fn tick(&mut self) -> Result<api::state::GlobalState> {
-        self.previous_state = std::mem::take(&mut self.active_state);
-        Ok(self.previous_state.clone())
+    pub async fn tick(&self) -> Result<api::state::GlobalState> {
+        let state = api::GlobalState {
+            clients: self.clients.iter().map(|x| x.1.clone()).collect(),
+            scene: self.scene.clone(),
+        };
+
+        Ok(state)
     }
 }
