@@ -35,9 +35,24 @@ async fn test_basic_runtime() {
         }
     );
 
-    // TODO Add and Test Engine Intial State
-    // TODO Define Default Scene
-    // TODO Add Default Object
+    with_command!(
+        api::Command::SceneObject,
+        api::models::SceneObject {
+            id: None,
+            name: "objectA".to_string(),
+            attributes: vec![],
+        },
+        mut &engine,
+        state,
+        {
+            println!("{:?}", state);
+            assert_eq!(state.scene.objects.len(), 2);
+            assert_eq!(state.scene.objects[1].name, "objectA");
+        }
+    );
+
+    // TODO: Test duplicate scene object name
+    // TODO: Test rewrite of scene object.
 
     // Client Setup
     // TODO Add Scene, Add Scene Object, Add Scene Object Attribute
@@ -55,7 +70,7 @@ async fn test_default_engine_state(engine: &mut Engine) {
     let state = engine.tick().await.unwrap();
     assert_eq!(state.scene.name, "default");
     assert_eq!(state.scene.objects.len(), 1);
-    assert_eq!(state.scene.objects[0].id, 0);
+    assert_eq!(state.scene.objects[0].id, Some(0));
     assert_eq!(state.scene.objects[0].attributes.len(), 3);
     assert_eq!(state.scene.objects[0].attributes[0].name, "translate");
     assert_eq!(state.scene.objects[0].attributes[1].name, "orientation");

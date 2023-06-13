@@ -15,6 +15,11 @@ impl Engine {
     pub async fn apply(&mut self, command: api::Command) -> Result<()> {
         match command {
             api::Command::Empty => {}
+
+            api::Command::SceneObject(object) => {
+                self.scene.objects.push(object);
+            }
+
             api::Command::SetClient(client) => {
                 match self.clients.get_mut(&client.id) {
                     Some(cur) => {

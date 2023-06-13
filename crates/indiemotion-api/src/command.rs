@@ -7,5 +7,5 @@ use crate::models::*;
 pub enum Command {
     Empty,
     SetClient(Client),
-    //
+    SceneObject(SceneObject),
 }

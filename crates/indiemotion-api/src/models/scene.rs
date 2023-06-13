@@ -19,14 +19,16 @@ impl Default for SceneGraph {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SceneObject {
-    pub id: u32,
+    pub id: Option<u32>,
+    pub name: String,
     pub attributes: Vec<Attribute>,
 }
 
 impl Default for SceneObject {
     fn default() -> Self {
         Self {
-            id: 0,
+            id: Some(0),
+            name: "default".to_string(),
             attributes: vec![
                 Attribute::new_vec3("translate"),
                 Attribute::new_vec3("orientation"),
