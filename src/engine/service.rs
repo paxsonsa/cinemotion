@@ -1,53 +1,71 @@
 use crate::api;
 use crate::{Error, Result};
 
+#[derive(Clone)]
+pub struct EngineMessage {
+    pub client: Option<u32>,
+    pub message: api::Message,
+}
+
+#[derive(Debug)]
+pub struct ClientCommand {
+    pub client: u32,
+    pub command: api::Command,
+}
+
 pub struct Service {
-    state_rx: tokio::sync::mpsc::UnboundedReceiver<api::GlobalState>,
-    command_tx: tokio::sync::mpsc::UnboundedSender<api::Command>,
+    message_rx: tokio::sync::mpsc::UnboundedReceiver<EngineMessage>,
+    command_tx: tokio::sync::mpsc::UnboundedSender<ClientCommand>,
 }
 
 impl Service {
     pub fn new() -> (Self, ServiceTransport) {
-        let (state_tx, state_rx) = tokio::sync::mpsc::unbounded_channel();
+        let (message_tx, message_rx) = tokio::sync::mpsc::unbounded_channel();
         let (command_tx, command_rx) = tokio::sync::mpsc::unbounded_channel();
 
         (
             Self {
-                state_rx,
+                message_rx,
                 command_tx,
             },
             ServiceTransport {
-                state_tx,
+                message_tx,
                 command_rx,
             },
         )
     }
 
-    pub async fn enqueue_command(&mut self, command: api::Command) -> Result<()> {
+    pub async fn enqueue_command(&mut self, client: u32, command: api::Command) -> Result<()> {
+        let command = ClientCommand { client, command };
         self.command_tx
             .send(command)
             .map_err(|_| Error::TransportError("failed to enqueue command"))?;
         Ok(())
     }
 
-    pub async fn recv_state_update(&mut self) -> Option<api::GlobalState> {
-        self.state_rx.recv().await
+    pub async fn recv_message(&mut self) -> Option<EngineMessage> {
+        self.message_rx.recv().await
     }
 }
 
 pub struct ServiceTransport {
-    state_tx: tokio::sync::mpsc::UnboundedSender<api::GlobalState>,
-    command_rx: tokio::sync::mpsc::UnboundedReceiver<api::Command>,
+    message_tx: tokio::sync::mpsc::UnboundedSender<EngineMessage>,
+    command_rx: tokio::sync::mpsc::UnboundedReceiver<ClientCommand>,
 }
 
 impl ServiceTransport {
-    pub async fn recv_command(&mut self) -> Option<api::Command> {
+    pub async fn recv_command(&mut self) -> Option<ClientCommand> {
         self.command_rx.recv().await
     }
 
     pub async fn send_state_update(&mut self, state: api::GlobalState) -> Result<()> {
-        self.state_tx
-            .send(state)
+        let message = EngineMessage {
+            client: None,
+            message: api::Message::State(state),
+        };
+
+        self.message_tx
+            .send(message)
             .map_err(|_| Error::TransportError("failed to send state update"))?;
         Ok(())
     }

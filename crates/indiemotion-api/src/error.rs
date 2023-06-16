@@ -1,10 +1,11 @@
 use serde_derive::{Deserialize, Serialize};
 
+use serde_json::error;
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Error, Debug, Serialize, Deserialize)]
+#[derive(Error, Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "error_type", content = "message")]
 pub enum Error {
     #[error("bad message error: {0}")]
@@ -15,4 +16,7 @@ pub enum Error {
 
     #[error("unexpected error occurred: {0}")]
     UnexpectedError(String),
+
+    #[error("invalid scene object: {0}")]
+    InvalidSceneObject(String),
 }

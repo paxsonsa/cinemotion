@@ -121,9 +121,9 @@ impl WebsocketComponentBuilder {
 
 async fn connect(ws: WebSocket, client_service: ClientService) {
     let (mut ws_tx, mut ws_rx) = ws.split();
-    let mut state_channel = tokio::sync::mpsc::unbounded_channel();
+    let mut message_channel = tokio::sync::mpsc::unbounded_channel();
 
-    let client = Client::new(state_channel.0.clone());
+    let client = Client::new(message_channel.0.clone());
     let handle = match client_service.connect(client).await {
         Ok(handle) => handle,
         Err(err) => {
@@ -159,9 +159,9 @@ async fn connect(ws: WebSocket, client_service: ClientService) {
                     handle_error(err, &mut ws_tx).await;
                 }
             },
-            Some(state) = state_channel.1.recv() => {
+            Some(message) = message_channel.1.recv() => {
                 let msg =
-                    api::message::Encoding::<api::message::JSONProtocol>::encode(api::Message::State(state))
+                    api::message::Encoding::<api::message::JSONProtocol>::encode(message)
                     .unwrap();
                 match ws_tx.send(ws::Message::text(msg)).await {
                     Ok(_) => (),
@@ -207,7 +207,7 @@ async fn handle_message(
                         return Err(api::Error::BadMessage("clients can only send command type messages".to_string()));
                     };
 
-            if let Err(err) = client_relay.receive_from(handle, command).await {
+            if let Err(err) = client_relay.send_from(handle, command).await {
                 tracing::error!(
                     "client {} command processing failed: {}, message: {}",
                     handle,

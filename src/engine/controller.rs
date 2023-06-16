@@ -26,7 +26,7 @@ impl EngineController {
     pub async fn run(&mut self) -> Result<()> {
         tracing::info!("starting engine...");
 
-        let mut command_buffer = Vec::<api::Command>::new();
+        let mut command_buffer = Vec::<_>::new();
         let mut engine = Engine::default();
         // TODO: Loop Analyics.
         loop {

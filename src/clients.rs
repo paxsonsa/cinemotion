@@ -52,8 +52,9 @@ impl ClientManager {
                         }
                     }
                 },
-                _state = self.engine.recv_state_update() => {
-                    // TODO Broadcast to clients.
+                Some(message) = self.engine.recv_message() => {
+                    self.broadcast_message(message).await;
+
                 },
                 _ = self.shutdown_rx.recv() => {
                     tracing::debug!("client relay controller received shutdown, shutting down...");
@@ -62,6 +63,40 @@ impl ClientManager {
             }
         }
         Ok(())
+    }
+
+    async fn broadcast_message(&mut self, message: engine::EngineMessage) {
+        if let Some(id) = &message.client {
+            let client = match self.clients.get_mut(id) {
+                Some(client) => client,
+                None => {
+                    tracing::error!("engine message addressed to invalid client: {}", id);
+                    return;
+                }
+            };
+            if client.send(message.message).await.is_err() {
+                tracing::error!(
+                    "client {} channel receive channel closed, removing client.",
+                    id
+                );
+                self.clients.remove(id);
+            }
+        } else {
+            let mut to_remove = Vec::<u32>::new();
+            for (id, client) in self.clients.iter_mut() {
+                if client.send(message.message.clone()).await.is_err() {
+                    tracing::error!(
+                        "client {} channel receive channel closed, removing client.",
+                        id
+                    );
+                    to_remove.push(*id);
+                }
+            }
+
+            for id in to_remove {
+                self.clients.remove(&id);
+            }
+        }
     }
 
     async fn process_command(&mut self, command: Command) -> Result<()> {
@@ -102,9 +137,7 @@ impl ClientManager {
             }
         };
 
-        self.engine.enqueue_command(command).await?;
-
-        // client.send(api::State {}).await?;
+        self.engine.enqueue_command(handle, command).await?;
         Ok(())
     }
 
@@ -154,7 +187,7 @@ impl ClientService {
             .map_err(|_| Error::ClientError("failed to disconnect client".to_string()))?
     }
 
-    pub async fn receive_from(&self, client_handle: u32, command: api::Command) -> Result<()> {
+    pub async fn send_from(&self, client_handle: u32, command: api::Command) -> Result<()> {
         let (tx, result) = sync::result::<()>();
         self.command_tx
             .send(Command::ReceiveFrom(client_handle, command, tx))
@@ -168,17 +201,17 @@ impl ClientService {
 
 #[derive(Debug)]
 pub struct Client {
-    state_channel: tokio::sync::mpsc::UnboundedSender<api::GlobalState>,
+    state_channel: tokio::sync::mpsc::UnboundedSender<api::Message>,
 }
 
 impl Client {
-    pub fn new(state_channel: tokio::sync::mpsc::UnboundedSender<api::GlobalState>) -> Self {
+    pub fn new(state_channel: tokio::sync::mpsc::UnboundedSender<api::Message>) -> Self {
         Self { state_channel }
     }
 
-    pub async fn send(&mut self, state: api::GlobalState) -> Result<()> {
+    pub async fn send(&mut self, message: api::Message) -> Result<()> {
         self.state_channel
-            .send(state)
+            .send(message)
             .map_err(|_| Error::ClientError("failed to send message".to_string()))
     }
 }

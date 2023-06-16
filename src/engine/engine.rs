@@ -12,25 +12,25 @@ pub struct Engine {
 }
 
 impl Engine {
-    pub async fn apply(&mut self, command: api::Command) -> Result<()> {
+    pub async fn apply(&mut self, command: super::ClientCommand) -> Result<()> {
+        let client = command.client;
+        let command = command.command;
+
         match command {
             api::Command::Empty => {}
 
             api::Command::SceneObject(object) => {
-                self.scene.objects.push(object);
+                self.scene.add_object(object).await?;
             }
 
-            api::Command::SetClient(client) => {
-                match self.clients.get_mut(&client.id) {
-                    Some(cur) => {
-                        // TODO Handle error capture.
-                        let _ = cur.update_from(client);
-                    }
-                    None => {
-                        self.clients.insert(client.id, client);
-                    }
+            api::Command::SetClient(client) => match self.clients.get_mut(&client.id) {
+                Some(cur) => {
+                    let _ = cur.update_from(client);
                 }
-            }
+                None => {
+                    self.clients.insert(client.id, client);
+                }
+            },
         }
         Ok(())
     }

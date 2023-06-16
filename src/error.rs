@@ -1,5 +1,7 @@
 use thiserror::Error;
 
+use crate::api;
+
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
@@ -27,8 +29,8 @@ pub enum Error {
     #[error("transport error: {0}")]
     TransportError(&'static str),
 
-    // #[error("error from api: {0}")]
-    // APIError(#[from] api::Error),
+    #[error("api error: {0}")]
+    APIError(#[from] api::Error),
 
     // #[error(transparent)]
     // IO(#[from] std::io::Error),

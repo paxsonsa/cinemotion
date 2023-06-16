@@ -4,7 +4,7 @@ use serde_derive::{Deserialize, Serialize};
 
 use crate::{Error, Result};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "payload")]
 pub enum Message {
@@ -23,15 +23,6 @@ impl TryFrom<String> for Message {
         }
     }
 }
-
-// impl From<String> for Message {
-//     fn from(msg: String) -> Self {
-//         match msg.try_from() {
-//             Ok(msg) => msg,
-//             Err(err) => Message::Error(err),
-//         }
-//     }
-// }
 
 pub struct JSONProtocol {}
 

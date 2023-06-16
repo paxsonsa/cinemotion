@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
 mod client;
 mod error;
@@ -10,13 +10,13 @@ mod server;
 #[clap(about, author)]
 struct Opt {
     /// Make output more verbose
-    #[clap(short, long, global = true, parse(from_occurrences))]
+    #[clap(short, long, global = true, action = ArgAction::Count)]
     verbose: i32,
 
     /// Make output less verbose
     ///
     /// This flag takes precedence over the --verbose flag
-    #[clap(short, long, global = true, parse(from_occurrences))]
+    #[clap(short, long, global = true, action = ArgAction::Count)]
     quiet: i32,
 
     /// The subcommand to run

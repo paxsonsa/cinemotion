@@ -9,4 +9,4 @@ mod engine_test;
 
 pub use controller::{EngineController, TickControl};
 pub use engine::Engine;
-pub use service::{Service, ServiceTransport};
+pub use service::{ClientCommand, EngineMessage, Service, ServiceTransport};
