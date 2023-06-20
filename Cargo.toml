@@ -25,7 +25,7 @@ clap = { version = "4.3.4", features = ["derive"] }
 futures = "0.3.28"
 indiemotion-api = { path = "crates/indiemotion-api"}
 serde_derive = "1.0.160"
-serde_json = "1.0.96"
+serde_json = "1.0.97"
 thiserror = "1.0.40"
 tokio = { version = "1.24.2", features = ["full"] }
 tower-http = { version = "0.4.0", features = ["trace"]}
