@@ -1,5 +1,5 @@
 use crate::api;
-use crate::Result;
+use crate::{Error, Result};
 
 use super::Engine;
 use super::ServiceTransport;
@@ -47,8 +47,15 @@ impl EngineController {
                 _ = self.tick_control.tick() => {
                     let mut buffer = std::mem::take(&mut command_buffer);
                     for command in buffer.drain(..) {
-                        // TODO: Handle errors and send back to client, but continue unless fatal.
-                        engine.apply(command).await?;
+                        let client_id = command.client;
+                        let command = command.command;
+                        if let Err(err) = engine.apply(client_id, command).await {
+                            let err = match err {
+                                Error::APIError(err) => err,
+                                _ => api::Error::InternalError(err.to_string()),
+                            };
+                            self.transport.send_error(client_id, err).await?;
+                        }
                     }
 
                     let state = engine.tick().await?;

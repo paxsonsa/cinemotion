@@ -1,7 +1,11 @@
-mod attribute;
-mod client;
+mod controller;
+mod property;
+mod sample;
 mod scene;
+mod value;
 
-pub use attribute::*;
-pub use client::Client;
+pub use controller::*;
+pub use property::*;
+pub use sample::*;
 pub use scene::*;
+pub use value::*;

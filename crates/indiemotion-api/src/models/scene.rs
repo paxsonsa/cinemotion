@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap, fmt::Display, hash::Hash};
 
 use serde_derive::{Deserialize, Serialize};
 
@@ -6,16 +6,43 @@ use crate::{Error, Result};
 
 use super::*;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct SceneGraph {
-    pub name: String,
-    pub objects: HashMap<u32, SceneObject>,
+#[derive(Debug, Serialize, PartialEq, Eq, Deserialize, Clone)]
+pub struct ObjectName(String);
+
+impl Display for ObjectName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", &self.0)
+    }
 }
 
-impl Default for SceneGraph {
+impl Hash for ObjectName {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.0.hash(state)
+    }
+}
+
+impl From<String> for ObjectName {
+    fn from(name: String) -> Self {
+        Self(name)
+    }
+}
+
+impl From<&str> for ObjectName {
+    fn from(name: &str) -> Self {
+        Self(name.to_string())
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Scene {
+    pub name: String,
+    objects: HashMap<ObjectName, SceneObject>,
+}
+
+impl Default for Scene {
     fn default() -> Self {
         let mut objects = HashMap::new();
-        objects.insert(0, SceneObject::default());
+        objects.insert("default".into(), SceneObject::default());
 
         Self {
             name: "default".to_string(),
@@ -24,30 +51,27 @@ impl Default for SceneGraph {
     }
 }
 
-impl SceneGraph {
-    pub async fn add_object(&mut self, mut obj: SceneObject) -> Result<()> {
-        match obj.id {
-            Some(id) => {
-                if self.objects.get(&id).is_none() {
-                    return Err(Error::InvalidSceneObject(format!(
-                        "object id {} does not exist",
-                        id
-                    )));
-                }
-                *self.objects.get_mut(&id).unwrap() = obj;
-                Ok(())
-            }
+impl Scene {
+    pub fn objects(&self) -> &HashMap<ObjectName, SceneObject> {
+        &self.objects
+    }
+
+    pub fn objects_mut(&mut self) -> &mut HashMap<ObjectName, SceneObject> {
+        &mut self.objects
+    }
+
+    pub fn object(&self, name: ObjectName) -> Option<&SceneObject> {
+        self.objects.get(&name)
+    }
+
+    pub async fn add_object(&mut self, obj: SceneObject) -> Result<()> {
+        match self.object(obj.name.clone()) {
+            Some(_) => Err(Error::InvalidSceneObject(format!(
+                "object named {} already exists",
+                obj.name
+            ))),
             None => {
-                for existing in self.objects.values() {
-                    if obj.name == existing.name {
-                        return Err(Error::InvalidSceneObject(format!(
-                            "object named {} already exists",
-                            obj.name
-                        )));
-                    }
-                }
-                obj.id = Some(self.objects.len().try_into().unwrap());
-                self.objects.insert(obj.id.unwrap(), obj);
+                self.objects.insert(obj.name.clone(), obj);
                 Ok(())
             }
         }
@@ -56,21 +80,46 @@ impl SceneGraph {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SceneObject {
-    pub id: Option<u32>,
-    pub name: String,
-    pub attributes: Vec<Attribute>,
+    name: ObjectName,
+    properties: HashMap<String, ObjectProperty>,
+}
+
+impl SceneObject {
+    pub fn new(name: ObjectName, properties: Vec<ObjectProperty>) -> Self {
+        let properties = properties
+            .into_iter()
+            .map(|x| (x.name().to_string(), x))
+            .collect();
+
+        Self { name, properties }
+    }
+
+    pub fn name(&self) -> &ObjectName {
+        &self.name
+    }
+
+    pub fn properties(&self) -> &HashMap<String, ObjectProperty> {
+        &self.properties
+    }
+
+    pub fn properties_mut(&mut self) -> &mut HashMap<String, ObjectProperty> {
+        &mut self.properties
+    }
+
+    pub fn property(&self, name: &str) -> Option<&ObjectProperty> {
+        self.properties.get(name)
+    }
 }
 
 impl Default for SceneObject {
     fn default() -> Self {
-        Self {
-            id: Some(0),
-            name: "default".to_string(),
-            attributes: vec![
-                Attribute::new_vec3("translate"),
-                Attribute::new_vec3("orientation"),
-                Attribute::new_vec3("velocity"),
+        Self::new(
+            "default".into(),
+            vec![
+                ObjectProperty::new_vec3("translate"),
+                ObjectProperty::new_vec3("orientation"),
+                ObjectProperty::new_vec3("velocity"),
             ],
-        }
+        )
     }
 }

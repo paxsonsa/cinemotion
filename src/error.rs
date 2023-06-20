@@ -23,9 +23,6 @@ pub enum Error {
 
     // #[error("Property update error: property={0} msg={1}")]
     // PropertyUpdateError(api::ProperyID, &'static str),
-    #[error("internal error: {0}")]
-    InternalError(&'static str),
-
     #[error("transport error: {0}")]
     TransportError(&'static str),
 

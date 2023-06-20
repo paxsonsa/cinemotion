@@ -6,6 +6,7 @@ use crate::models::*;
 #[serde(tag = "command", rename_all = "lowercase")]
 pub enum Command {
     Empty,
-    SetClient(Client),
+    Controller(Controller),
     SceneObject(SceneObject),
+    Sample(Sample),
 }

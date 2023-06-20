@@ -3,15 +3,13 @@ use crate::api;
 
 macro_rules! with_command {
     ($command:expr, $model:expr, mut& $engine:ident, $state:ident, $block:block) => {
-        let command = $command($model);
-        let cmd = super::ClientCommand { client: 0, command };
-        $engine.apply(cmd).await.unwrap();
+        let cmd = $command($model);
+        $engine.apply(0, cmd).await.unwrap();
         let $state = $engine.tick().await.unwrap();
         $block
     };
     ($command:expr, $model:expr, mut& $engine:ident) => {{
-        let command = $command($model);
-        let cmd = super::ClientCommand { client: 0, command };
+        let cmd = $command($model);
         $engine.apply(cmd).await.unwrap();
         $engine.tick().await
     }};
@@ -19,9 +17,8 @@ macro_rules! with_command {
 
 macro_rules! apply_command {
     ($command:expr, $model:expr, mut& $engine:ident) => {{
-        let command = $command($model);
-        let cmd = super::ClientCommand { client: 0, command };
-        $engine.apply(cmd).await
+        let cmd = $command($model);
+        $engine.apply(0, cmd).await
     }};
 }
 
@@ -38,40 +35,71 @@ async fn test_basic_runtime() {
     test_default_engine_state(&mut engine).await;
 
     with_command!(
-        api::Command::SetClient,
-        api::models::Client::new(0, "clientA".to_string()),
+        api::Command::Controller,
+        api::models::Controller::new(
+            "controllerA".to_string(),
+            vec![
+                api::models::ControllerProperty::new(
+                    "translate".to_string(),
+                    (0.0, 0.0, 0.0).into(),
+                )
+            ],
+        ),
         mut &engine,
         state,
         {
-            assert_eq!(state.clients.len(), 1);
-            assert_eq!(state.clients[0].id, 0);
-            assert_eq!(state.clients[0].name, "clientA");
+            let con = state.controllers.get("controllerA").expect("the controller should be added after applying the command");
+            con.property("translate").expect("the controller should have a translate property");
         }
     );
 
     with_command!(
         api::Command::SceneObject,
-        api::models::SceneObject {
-            id: None,
-            name: "objectA".to_string(),
-            attributes: vec![],
-        },
+        api::models::SceneObject::new(
+            "objectA".into(),
+            vec![
+                api::models::ObjectProperty::new(
+                    "translate".to_string(),
+                    (0.0, 0.0, 0.0).into(),
+                    Some("controllerA.translate".into()),
+                )
+            ],
+            ),
         mut &engine,
         state,
         {
-            println!("{:?}", state);
-            assert_eq!(state.scene.objects.len(), 2);
-            assert_eq!(state.scene.objects.get(&1).unwrap().name, "objectA");
+            engine.tick().await.unwrap();
+            assert_eq!(state.scene.objects().len(), 3);
+            assert_eq!(state.scene.object("objectA".into()).unwrap().name(), &"objectA".into());
         }
     );
 
-    // TODO: Test rewrite of scene object.
-    // TODO: Add Error Channel for Commands
-    // Commands need client ID for routing
-    // Engine tick should return a result type that includes errors for clients but also continues to send state updates.
+    with_command!(
+        api::Command::Sample,
+        api::models::Sample::new(
+            vec![
+                api::models::SampleProperty {
+                    name: "translate".to_string(),
+                    value: (1.0, 1.0, 1.0).into(),
+                }
+            ],
+        ),
+        mut &engine,
+        state,
+        {
+            let expected: (f64, f64, f64) = (1.0, 1.0, 1.0);
+
+            let obj = state.scene.object("objectA".into()).unwrap();
+            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+
+            let obj = state.scene.object("controllerA".into()).unwrap();
+            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+        }
+    );
 
     // Client Setup
-    // TODO Add Scene, Add Scene Object, Add Scene Object Attribute
     // TODO define client attribute mappings
 
     // Live/Recording Mode
@@ -84,67 +112,15 @@ async fn test_basic_runtime() {
     // Blender/Unity/Unreal Integration (Python)
 }
 
-#[tokio::test]
-async fn test_scene_object_behaviour() {
-    let mut engine = engine!();
-
-    let _ = with_command!(
-        api::Command::SetClient,
-        api::models::Client::new(0, "clientA".to_string()),
-        mut &engine
-    )
-    .expect("setting client failed.");
-
-    let state = with_command!(
-        api::Command::SceneObject,
-        api::models::SceneObject {
-            id: None,
-            name: "objectA".to_string(),
-            attributes: vec![],
-        },
-        mut &engine
-    )
-    .expect("initial scene object should not fail");
-    let id = state.scene.objects.get(&1).unwrap().id;
-
-    let _ = apply_command!(
-        api::Command::SceneObject,
-        api::models::SceneObject {
-            id: None,
-            name: "objectA".to_string(),
-            attributes: vec![],
-        },
-        mut &engine
-    )
-    .expect_err("adding new object with no id and a name should fail.");
-    let _ = engine.tick().await.expect("tick should be fine.");
-
-    let state = with_command!(
-        api::Command::SceneObject,
-        api::models::SceneObject {
-            id,
-            name: "newObjectB".to_string(),
-            attributes: vec![],
-        },
-        mut &engine
-    )
-    .expect("initial scene object should not fail");
-
-    assert_eq!(
-        state.scene.objects.get(&1).unwrap().name,
-        "newObjectB".to_string()
-    );
-}
-
 async fn test_default_engine_state(engine: &mut Engine) {
     let state = engine.tick().await.unwrap();
     assert_eq!(state.scene.name, "default");
-    assert_eq!(state.scene.objects.len(), 1);
+    assert_eq!(state.scene.objects().len(), 1);
 
-    let obj = state.scene.objects.get(&0).unwrap();
-    assert_eq!(obj.id, Some(0));
-    assert_eq!(obj.attributes.len(), 3);
-    assert_eq!(obj.attributes[0].name, "translate");
-    assert_eq!(obj.attributes[1].name, "orientation");
-    assert_eq!(obj.attributes[2].name, "velocity");
+    let obj = state.scene.object("default".into()).unwrap();
+    assert_eq!(obj.name(), &"default".into());
+    assert_eq!(obj.properties().len(), 3);
+    assert!(obj.property("translate").is_some());
+    assert!(obj.property("orientation").is_some());
+    assert!(obj.property("velocity").is_some());
 }

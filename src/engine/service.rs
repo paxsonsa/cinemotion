@@ -58,6 +58,18 @@ impl ServiceTransport {
         self.command_rx.recv().await
     }
 
+    pub async fn send_error(&mut self, client: u32, err: api::Error) -> Result<()> {
+        let message = EngineMessage {
+            client: Some(client),
+            message: api::Message::Error(err),
+        };
+
+        self.message_tx
+            .send(message)
+            .map_err(|_| Error::TransportError("failed to send error"))?;
+        Ok(())
+    }
+
     pub async fn send_state_update(&mut self, state: api::GlobalState) -> Result<()> {
         let message = EngineMessage {
             client: None,

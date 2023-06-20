@@ -1,6 +1,4 @@
 use serde_derive::{Deserialize, Serialize};
-
-use serde_json::error;
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -19,4 +17,10 @@ pub enum Error {
 
     #[error("invalid scene object: {0}")]
     InvalidSceneObject(String),
+
+    #[error("invalid property value: {0}")]
+    InvalidValue(String),
+
+    #[error("internal server error: {0}")]
+    InternalError(String),
 }
