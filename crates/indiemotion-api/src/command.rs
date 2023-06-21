@@ -9,4 +9,5 @@ pub enum Command {
     Controller(Controller),
     SceneObject(SceneObject),
     Sample(Sample),
+    Mode(Mode),
 }

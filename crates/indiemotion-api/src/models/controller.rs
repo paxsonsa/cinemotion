@@ -17,6 +17,10 @@ impl Controller {
         &self.properties
     }
 
+    pub fn properties_mut(&mut self) -> &mut Vec<ControllerProperty> {
+        &mut self.properties
+    }
+
     pub fn property(&self, name: &str) -> Option<&ControllerProperty> {
         self.properties.iter().find(|p| p.name() == name)
     }
@@ -57,5 +61,9 @@ impl ControllerProperty {
 
     pub fn value_mut(&mut self) -> &mut Value {
         &mut self.value
+    }
+
+    pub fn reset(&mut self) {
+        self.value = self.default_value.clone();
     }
 }

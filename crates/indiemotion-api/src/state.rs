@@ -8,4 +8,5 @@ use crate::models::*;
 pub struct GlobalState {
     pub controllers: HashMap<String, Controller>,
     pub scene: Scene,
+    pub mode: Mode,
 }

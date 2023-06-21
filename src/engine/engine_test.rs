@@ -68,9 +68,44 @@ async fn test_basic_runtime() {
         mut &engine,
         state,
         {
-            engine.tick().await.unwrap();
             assert_eq!(state.scene.objects().len(), 3);
             assert_eq!(state.scene.object("objectA".into()).unwrap().name(), &"objectA".into());
+        }
+    );
+    with_command!(
+        api::Command::Sample,
+        api::models::Sample::new(
+            vec![
+                api::models::SampleProperty {
+                    name: "translate".to_string(),
+                    value: (1.0, 1.0, 1.0).into(),
+                }
+            ],
+        ),
+        mut &engine,
+        state,
+        {
+            // Without the mode being set to Live or Recording, the sample should not be applied.
+            engine.tick().await.unwrap();
+            let expected: (f64, f64, f64) = (0.0, 0.0, 0.0);
+
+            let obj = state.scene.object("objectA".into()).unwrap();
+            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+
+            let obj = state.scene.object("controllerA".into()).unwrap();
+            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+        }
+    );
+
+    with_command!(
+        api::Command::Mode,
+        api::models::Mode::Live,
+        mut &engine,
+        state,
+        {
+            assert!(matches!(state.mode, api::models::Mode::Live));
         }
     );
 
@@ -87,6 +122,8 @@ async fn test_basic_runtime() {
         mut &engine,
         state,
         {
+            // The mode being set to Live or Recording, the sample should be applied.
+            engine.tick().await.unwrap();
             let expected: (f64, f64, f64) = (1.0, 1.0, 1.0);
 
             let obj = state.scene.object("objectA".into()).unwrap();
@@ -99,11 +136,28 @@ async fn test_basic_runtime() {
         }
     );
 
-    // Client Setup
-    // TODO define client attribute mappings
+    with_command!(
+        api::Command::Mode,
+        api::models::Mode::Idle,
+        mut &engine,
+        state,
+        {
+            engine.tick().await.expect("the engine should tick without error");
+            assert!(matches!(state.mode, api::models::Mode::Idle));
 
-    // Live/Recording Mode
-    // TODO Add mode change command
+            let expected: (f64, f64, f64) = (0.0, 0.0, 0.0);
+
+            // Should reset to default value.
+            let obj = state.scene.object("objectA".into()).unwrap();
+            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+
+            let obj = state.scene.object("controllerA".into()).unwrap();
+            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+
+        }
+    );
 
     // Event Tracking
     // TODO Add Touch Events
