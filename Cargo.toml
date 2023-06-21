@@ -33,7 +33,6 @@ tokio-stream = { version = "0.1.12", features = ["net", "sync"] }
 tracing = "0.1"
 tracing-futures = "0.2.5"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-uuid = { version = "1.2.2", features = ["serde", "v4"] }
 warp = "0.3.3"
 hostname = "0.3.1"
 derive_more = "0.99.17"
