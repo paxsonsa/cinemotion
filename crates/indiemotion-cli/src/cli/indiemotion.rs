@@ -31,28 +31,6 @@ enum Command {
     Client(client::Client),
 }
 
-/* TODO: TUI for Client
-   * - Add Input Line to TUI
-       - Integrate with Rustyline using stdin.
-       - Ensure History is working.
-   * - Add Log and Command Output to TUI
-   *    - Ensure rustyline help output is working.
-*/
-/* TODO Entity Resources
-- Add Entity.
-- Remove Entity.
-- Add Component to entity.
-- Remove Component from entity.
-- Add Entity Client Map.
-- Remove Entity Client Map.
-
-// TODO - Scenes.
-
- */
-// TODO: Send Mode Updates
-// TODO: Starting Stream Motion
-// TODO: Client should be interactive for starting and stopping motion sessions.
-
 impl Command {
     pub fn run(&self) -> Result<i32> {
         let rt = tokio::runtime::Builder::new_multi_thread()
