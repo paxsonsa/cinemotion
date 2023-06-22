@@ -1,10 +1,15 @@
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 
+#[cfg(test)]
+#[path = "./value_test.rs"]
+mod value_test;
+
 type Vec4 = (f64, f64, f64, f64);
 type Matrix44 = (Vec4, Vec4, Vec4, Vec4);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(untagged)]
 pub enum Value {
     Float(f64),
     Vec3(Vec3),
@@ -32,6 +37,20 @@ impl Value {
                 Ok(())
             }
             _ => Err(Error::InvalidValue("value has different type".into())),
+        }
+    }
+
+    pub fn as_f64(&self) -> Option<&f64> {
+        match self {
+            Self::Float(value) => Some(value),
+            _ => None,
+        }
+    }
+
+    pub fn as_vec3(&self) -> Option<&Vec3> {
+        match self {
+            Self::Vec3(value) => Some(value),
+            _ => None,
         }
     }
 }
