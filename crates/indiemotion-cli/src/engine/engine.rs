@@ -30,7 +30,12 @@ impl Engine {
                 (*Arc::make_mut(&mut self.scene)).add_object(object).await?;
             }
             api::Command::Controller(controller_def) => {
-                // FIXME Only update when not in live mode.
+                if self.motion_mode.is_live() {
+                    return Err(api::Error::BadMessage(
+                        "cannot redefine controllers in live/recording mode".to_string(),
+                    )
+                    .into());
+                }
 
                 if let Some(existing_id) = self.controller_client.get(controller_def.name()) {
                     if existing_id != &client_id {
