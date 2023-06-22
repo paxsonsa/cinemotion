@@ -1,0 +1,46 @@
+use super::*;
+use serde_json;
+
+#[test]
+fn test_scene_object_serde() {
+    let mut obj = SceneObject::default();
+    obj.properties_mut().insert(
+        name!("position"),
+        Property::bind(name!("controllerA"), name!("position"), Value::vec3()),
+    );
+
+    println!("{}", serde_json::to_string_pretty(&obj).unwrap());
+
+    let data = r#"{
+        "name": "default",
+        "properties": {
+          "position": {
+            "value": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "binding": {
+              "namespace": "controllerA",
+              "property": "position"
+            }
+          },
+          "orientation": {
+            "value": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            }
+          },
+          "velocity": {
+            "value": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            }
+          }
+        }
+      }"#;
+
+    let scene_object: SceneObject = serde_json::from_str(data).unwrap();
+}

@@ -1,3 +1,4 @@
+use api::models::Property;
 use api::Name;
 use derive_more::Constructor;
 use std::collections::HashMap;
@@ -99,8 +100,10 @@ impl Engine {
             .for_each(|(_, ref mut obj)| {
                 obj.properties_mut()
                     .iter_mut()
-                    .for_each(|(_, ref mut prop)| {
-                        let Some(binding) = prop.binding() else {
+                    .for_each(|(name, ref mut prop)| {
+
+                        let Property::Bound { value, binding } = prop else {
+                            println!("not bound: {}", name);
                             return;
                         };
 
@@ -108,14 +111,14 @@ impl Engine {
                             return;
                         };
 
-                        let Some(value) = controller.value(&binding.property) else {
+                        let Some(ref_value) = controller.value(&binding.property) else {
                             return;
                         };
 
-                        if let Err(err) = prop.value_mut().update(value) {
+                        if let Err(err) = value.update(ref_value) {
                             tracing::error!(
                                 "error updating property {}: {}",
-                                prop.name().to_string(),
+                                name,
                                 err
                             );
                         }

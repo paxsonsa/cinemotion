@@ -5,9 +5,6 @@ use serde::{Deserialize, Serialize};
 #[path = "./value_test.rs"]
 mod value_test;
 
-type Vec4 = (f64, f64, f64, f64);
-type Matrix44 = (Vec4, Vec4, Vec4, Vec4);
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum Value {
@@ -18,6 +15,10 @@ pub enum Value {
 }
 
 impl Value {
+    pub fn vec3() -> Self {
+        Self::Vec3(Vec3::default())
+    }
+
     pub fn update(&mut self, other: &Self) -> Result<()> {
         match (self, other) {
             (Self::Float(ref mut this), Self::Float(them)) => {
@@ -25,11 +26,11 @@ impl Value {
                 Ok(())
             }
             (Self::Vec3(ref mut this), Self::Vec3(them)) => {
-                *this = them.clone();
+                (this.x, this.y, this.z) = (them.x, them.y, them.z);
                 Ok(())
             }
             (Self::Vec4(ref mut this), Self::Vec4(them)) => {
-                *this = *them;
+                (this.x, this.y, this.z, this.w) = (them.x, them.y, them.z, them.w);
                 Ok(())
             }
             (Self::Matrix44(ref mut this), Self::Matrix44(them)) => {
@@ -97,3 +98,42 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec3 {
         (self.x, self.y, self.z) == *other
     }
 }
+
+#[derive(Debug, Default, Serialize, Deserialize, Clone)]
+pub struct Vec4 {
+    x: f64,
+    y: f64,
+    z: f64,
+    w: f64,
+}
+
+impl From<(f64, f64, f64, f64)> for Vec4 {
+    fn from((x, y, z, w): (f64, f64, f64, f64)) -> Self {
+        Self { x, y, z, w }
+    }
+}
+
+impl From<Vec4> for (f64, f64, f64, f64) {
+    fn from(vec4: Vec4) -> Self {
+        (vec4.x, vec4.y, vec4.z, vec4.w)
+    }
+}
+
+impl std::cmp::PartialEq<(f64, f64, f64, f64)> for Vec4 {
+    fn eq(&self, other: &(f64, f64, f64, f64)) -> bool {
+        (self.x, self.y, self.z, self.w) == *other
+    }
+}
+
+impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec4 {
+    fn eq(&self, other: &(f64, f64, f64)) -> bool {
+        (self.x, self.y, self.z) == *other
+    }
+}
+
+pub type Matrix44 = (
+    (f64, f64, f64, f64),
+    (f64, f64, f64, f64),
+    (f64, f64, f64, f64),
+    (f64, f64, f64, f64),
+);

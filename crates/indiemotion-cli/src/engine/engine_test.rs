@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use api::models::{Property, Value};
+
 use super::*;
 use crate::api;
 use crate::api::name;
@@ -34,7 +38,7 @@ async fn test_basic_runtime() {
             "controllerA".into(),
             vec![
                 api::models::ControllerPropertyDef::new(
-                    name!("translate"),
+                    name!("position"),
                     (0.0, 0.0, 0.0).into(),
                 )
             ],
@@ -43,7 +47,7 @@ async fn test_basic_runtime() {
         state,
         {
             let con = state.controllers.get(&name!("controllerA")).expect("the controller should be added after applying the command");
-            con.value(&name!("translate")).expect("the controller should have a translate property");
+            con.value(&name!("position")).expect("the controller should have a position property");
         }
     );
 
@@ -51,14 +55,12 @@ async fn test_basic_runtime() {
         api::Command::SceneObject,
         api::models::SceneObject::new(
             "objectA".into(),
-            vec![
-                api::models::ObjectProperty::new(
-                    name!("translate"),
-                    (0.0, 0.0, 0.0).into(),
-                    Some("controllerA.translate".into()),
-                )
-            ],
-            ),
+            HashMap::from([
+                (name!("position"), Property::bind(name!("controllerA"), name!("position"), Value::vec3())),
+                (name!("rotate"), Value::vec3().into()),
+                (name!("scale"), Value::vec3().into()),
+            ]),
+        ),
         mut &engine,
         state,
         {
@@ -71,7 +73,7 @@ async fn test_basic_runtime() {
         api::models::Sample::new(
             vec![
                 api::models::SampleProperty {
-                    name: name!("translate"),
+                    name: name!("position"),
                     value: (1.0, 1.0, 1.0).into(),
                 }
             ],
@@ -80,11 +82,10 @@ async fn test_basic_runtime() {
         state,
         {
             // Without the mode being set to Live or Recording, the sample should not be applied.
-            engine.tick().await.unwrap();
             let expected: (f64, f64, f64) = (0.0, 0.0, 0.0);
 
             let obj = state.scene.object(&name!("objectA")).unwrap();
-            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            let vec3 = obj.property(&name!("position")).unwrap().value().as_vec3().unwrap();
             assert_eq!(vec3, expected);
         }
     );
@@ -99,12 +100,14 @@ async fn test_basic_runtime() {
         }
     );
 
+    println!("Sample being applied.");
+
     with_command!(
         api::Command::Sample,
         api::models::Sample::new(
             vec![
                 api::models::SampleProperty {
-                    name: name!("translate"),
+                    name: name!("position"),
                     value: (1.0, 1.0, 1.0).into(),
                 }
             ],
@@ -113,11 +116,11 @@ async fn test_basic_runtime() {
         state,
         {
             // The mode being set to Live or Recording, the sample should be applied.
-            engine.tick().await.unwrap();
+
             let expected: (f64, f64, f64) = (1.0, 1.0, 1.0);
 
             let obj = state.scene.object(&name!("objectA")).unwrap();
-            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            let vec3 = obj.property(&name!("position")).unwrap().value().as_vec3().unwrap();
             assert_eq!(vec3, expected);
         }
     );
@@ -135,7 +138,7 @@ async fn test_basic_runtime() {
 
             // Should reset to default value.
             let obj = state.scene.object(&name!("objectA")).unwrap();
-            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
+            let vec3 = obj.property(&name!("position")).unwrap().value().as_vec3().unwrap();
             assert_eq!(vec3, expected);
 
         }
@@ -161,7 +164,7 @@ async fn test_default_engine_state(engine: &mut Engine) {
     let obj = state.scene.object(&name!("default")).unwrap();
     assert_eq!(obj.name(), &"default".into());
     assert_eq!(obj.properties().len(), 3);
-    assert!(obj.property("translate").is_some());
-    assert!(obj.property("orientation").is_some());
-    assert!(obj.property("velocity").is_some());
+    assert!(obj.property(&name!("position")).is_some());
+    assert!(obj.property(&name!("orientation")).is_some());
+    assert!(obj.property(&name!("velocity")).is_some());
 }

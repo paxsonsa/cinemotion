@@ -2,9 +2,13 @@ use std::{collections::HashMap, fmt::Display, hash::Hash};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Error, Name, Result};
+use crate::{name, Error, Name, Result};
 
 use super::*;
+
+#[cfg(test)]
+#[path = "./scene_test.rs"]
+mod scene_test;
 
 #[derive(Debug, Serialize, PartialEq, Eq, Deserialize, Clone)]
 pub struct ObjectName(String);
@@ -79,18 +83,62 @@ impl Scene {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct PropertyDef {
+    pub name: Name,
+    pub default_value: Value,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct PropertyBinding {
+    pub namespace: Name,
+    pub property: Name,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum Property {
+    Unbound {
+        value: Value,
+    },
+    Bound {
+        value: Value,
+        binding: PropertyBinding,
+    },
+}
+
+impl From<Value> for Property {
+    fn from(value: Value) -> Self {
+        Self::Unbound { value }
+    }
+}
+
+impl Property {
+    pub fn bind(namespace: Name, property: Name, value: Value) -> Self {
+        Self::Bound {
+            value,
+            binding: PropertyBinding {
+                namespace,
+                property,
+            },
+        }
+    }
+
+    pub fn value(&self) -> &Value {
+        match self {
+            Self::Unbound { value } => value,
+            Self::Bound { value, .. } => value,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SceneObject {
     name: Name,
-    properties: HashMap<String, ObjectProperty>,
+    properties: HashMap<Name, Property>,
 }
 
 impl SceneObject {
-    pub fn new(name: Name, properties: Vec<ObjectProperty>) -> Self {
-        let properties = properties
-            .into_iter()
-            .map(|x| (x.name().to_string(), x))
-            .collect();
-
+    pub fn new(name: Name, properties: HashMap<Name, Property>) -> Self {
         Self { name, properties }
     }
 
@@ -98,15 +146,15 @@ impl SceneObject {
         &self.name
     }
 
-    pub fn properties(&self) -> &HashMap<String, ObjectProperty> {
+    pub fn properties(&self) -> &HashMap<Name, Property> {
         &self.properties
     }
 
-    pub fn properties_mut(&mut self) -> &mut HashMap<String, ObjectProperty> {
+    pub fn properties_mut(&mut self) -> &mut HashMap<Name, Property> {
         &mut self.properties
     }
 
-    pub fn property(&self, name: &str) -> Option<&ObjectProperty> {
+    pub fn property(&self, name: &Name) -> Option<&Property> {
         self.properties.get(name)
     }
 }
@@ -115,11 +163,11 @@ impl Default for SceneObject {
     fn default() -> Self {
         Self::new(
             "default".into(),
-            vec![
-                ObjectProperty::new_vec3("translate".into()),
-                ObjectProperty::new_vec3("orientation".into()),
-                ObjectProperty::new_vec3("velocity".into()),
-            ],
+            HashMap::from([
+                (name!("position"), Value::vec3().into()),
+                (name!("orientation"), Value::vec3().into()),
+                (name!("velocity"), Value::vec3().into()),
+            ]),
         )
     }
 }
