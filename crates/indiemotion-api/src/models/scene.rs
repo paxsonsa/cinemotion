@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display, hash::Hash};
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -10,39 +10,20 @@ use super::*;
 #[path = "./scene_test.rs"]
 mod scene_test;
 
-#[derive(Debug, Serialize, PartialEq, Eq, Deserialize, Clone)]
-pub struct ObjectName(String);
-
-impl Display for ObjectName {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", &self.0)
-    }
-}
-
-impl Hash for ObjectName {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.0.hash(state)
-    }
-}
-
-impl From<String> for ObjectName {
-    fn from(name: String) -> Self {
-        Self(name)
-    }
-}
-
-impl From<&str> for ObjectName {
-    fn from(name: &str) -> Self {
-        Self(name.to_string())
-    }
-}
-
+/// Represents the currently loaded scene in the system.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Scene {
+    /// The name of the scene.
     pub name: String,
+
+    /// The objects in the scene.
     objects: HashMap<Name, SceneObject>,
 }
 
+/// Create the default scene.
+///
+/// The default scene contains the default object and is named "default".
+///
 impl Default for Scene {
     fn default() -> Self {
         let mut objects = HashMap::new();
@@ -56,18 +37,25 @@ impl Default for Scene {
 }
 
 impl Scene {
+    /// Get a reference to all the objects in the scene.
     pub fn objects(&self) -> &HashMap<Name, SceneObject> {
         &self.objects
     }
 
+    /// Get a mutable reference to all the objects in the scene.
     pub fn objects_mut(&mut self) -> &mut HashMap<Name, SceneObject> {
         &mut self.objects
     }
 
+    /// Get a reference to the object with the given name.
     pub fn object(&self, name: &Name) -> Option<&SceneObject> {
         self.objects.get(name)
     }
 
+    /// Add a new object to the scene.
+    ///
+    /// This will error with `InvalidSceneObject` if an object with the same name already exists.
+    ///
     pub async fn add_object(&mut self, obj: SceneObject) -> Result<()> {
         match self.object(&obj.name) {
             Some(_) => Err(Error::InvalidSceneObject(format!(
@@ -82,83 +70,52 @@ impl Scene {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PropertyDef {
-    pub name: Name,
-    pub default_value: Value,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PropertyBinding {
-    pub namespace: Name,
-    pub property: Name,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(untagged)]
-pub enum Property {
-    Unbound {
-        value: Value,
-    },
-    Bound {
-        value: Value,
-        binding: PropertyBinding,
-    },
-}
-
-impl From<Value> for Property {
-    fn from(value: Value) -> Self {
-        Self::Unbound { value }
-    }
-}
-
-impl Property {
-    pub fn bind(namespace: Name, property: Name, value: Value) -> Self {
-        Self::Bound {
-            value,
-            binding: PropertyBinding {
-                namespace,
-                property,
-            },
-        }
-    }
-
-    pub fn value(&self) -> &Value {
-        match self {
-            Self::Unbound { value } => value,
-            Self::Bound { value, .. } => value,
-        }
-    }
-}
-
+/// Represents an object in the scene graph that can be animated but the controllers.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SceneObject {
+    /// A unique name for the scene object.
     name: Name,
-    properties: HashMap<Name, Property>,
+    /// A map of property names and property states.
+    properties: HashMap<Name, PropertyState>,
 }
 
 impl SceneObject {
-    pub fn new(name: Name, properties: HashMap<Name, Property>) -> Self {
+    /// Create a new scene object with the given name and properties.
+    pub fn new(name: Name, properties: HashMap<Name, PropertyState>) -> Self {
         Self { name, properties }
     }
 
+    /// Get the name of the scene object.
     pub fn name(&self) -> &Name {
         &self.name
     }
 
-    pub fn properties(&self) -> &HashMap<Name, Property> {
+    /// Get the properties of the scene object.
+    pub fn properties(&self) -> &HashMap<Name, PropertyState> {
         &self.properties
     }
 
-    pub fn properties_mut(&mut self) -> &mut HashMap<Name, Property> {
+    /// Get the mutable properties of the scene object.
+    pub fn properties_mut(&mut self) -> &mut HashMap<Name, PropertyState> {
         &mut self.properties
     }
 
-    pub fn property(&self, name: &Name) -> Option<&Property> {
+    /// Get the property state for the given property name.
+    pub fn property(&self, name: &Name) -> Option<&PropertyState> {
         self.properties.get(name)
     }
 }
 
+/// A default scene object with default properties and name.
+///
+/// Defined Properties:
+///     position: vec3
+///     orientation: vec3
+///     velocity: vec3
+///
+/// The default scene object is automagically added to the scene when the engine is initialized.
+/// this should not be used.
+///
 impl Default for SceneObject {
     fn default() -> Self {
         Self::new(

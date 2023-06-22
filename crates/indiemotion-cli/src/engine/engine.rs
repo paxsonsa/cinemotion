@@ -1,4 +1,4 @@
-use api::models::Property;
+use api::models::PropertyState;
 use api::Name;
 use derive_more::Constructor;
 use std::collections::HashMap;
@@ -102,8 +102,7 @@ impl Engine {
                     .iter_mut()
                     .for_each(|(name, ref mut prop)| {
 
-                        let Property::Bound { value, binding } = prop else {
-                            println!("not bound: {}", name);
+                        let PropertyState::Bound { value, binding } = prop else {
                             return;
                         };
 

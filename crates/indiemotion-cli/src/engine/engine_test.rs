@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use api::models::{Property, Value};
+use api::models::{PropertyState, Value};
 
 use super::*;
 use crate::api;
@@ -56,7 +56,7 @@ async fn test_basic_runtime() {
         api::models::SceneObject::new(
             "objectA".into(),
             HashMap::from([
-                (name!("position"), Property::bind(name!("controllerA"), name!("position"), Value::vec3())),
+                (name!("position"), PropertyState::bind(name!("controllerA"), name!("position"), Value::vec3())),
                 (name!("rotate"), Value::vec3().into()),
                 (name!("scale"), Value::vec3().into()),
             ]),

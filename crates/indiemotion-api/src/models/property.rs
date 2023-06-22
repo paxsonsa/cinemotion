@@ -3,76 +3,81 @@ use serde::{Deserialize, Serialize};
 use crate::Name;
 
 use super::value::*;
-
+/// A generic defintion for a property.
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ObjectProperty {
-    name: Name,
-    value: Value,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    binding: Option<PropertyBinding>,
+pub struct PropertyDef {
+    /// The name of the property.
+    pub name: Name,
+
+    /// The default value to use when idle and the type the property is.
+    pub default_value: Value,
 }
 
-impl ObjectProperty {
-    pub fn new(name: Name, value: Value, binding: Option<PropertyBinding>) -> Self {
-        Self {
-            name,
-            value,
-            binding,
-        }
-    }
-
-    pub fn new_vec3(name: Name) -> Self {
-        Self {
-            name,
-            value: (0.0, 0.0, 0.0).into(),
-            binding: None,
-        }
-    }
-
-    pub fn as_vec3(&self) -> Option<&Vec3> {
-        match &self.value {
-            Value::Vec3(vec3) => Some(vec3),
-            _ => None,
-        }
-    }
-
-    pub fn name(&self) -> &Name {
-        &self.name
-    }
-
-    pub fn binding(&self) -> Option<&PropertyBinding> {
-        self.binding.as_ref()
-    }
-
-    pub fn value(&self) -> &Value {
-        &self.value
-    }
-
-    pub fn value_mut(&mut self) -> &mut Value {
-        &mut self.value
-    }
-}
-
+/// A helper struct for representing a property binding address.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PropertyBinding {
+    /// The namespace of the controller that has the property.
     pub namespace: Name,
+    /// The name of the property on the controller to use as
+    /// reference for the property's value..
     pub property: Name,
 }
 
-impl From<&str> for PropertyBinding {
-    fn from(address: &str) -> Self {
-        let mut parts = address.splitn(2, '.');
-        let namespace = parts.next().unwrap_or("").to_string();
-        let id = parts.next().unwrap_or("").to_string();
-        Self {
-            namespace: namespace.into(),
-            property: id.into(),
-        }
+/// Represents the property state for a specific property of a scene object.
+///
+/// The property state can either be unbound, meaning the property not attached
+/// to a controller, or bound, meaning the property is attached to a controller property.
+///
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum PropertyState {
+    /// An unbound property does not reference a controller property for updates.
+    Unbound {
+        /// The current value of the property.
+        value: Value,
+    },
+
+    /// A bound property references a controller property for updates.
+    Bound {
+        /// The current value of the property.
+        value: Value,
+
+        /// The binding for the property to use.
+        binding: PropertyBinding,
+    },
+}
+
+impl From<Value> for PropertyState {
+    fn from(value: Value) -> Self {
+        Self::Unbound { value }
     }
 }
 
-impl From<String> for PropertyBinding {
-    fn from(address: String) -> Self {
-        address.as_str().into()
+impl PropertyState {
+    /// Create new property state bound to the given namespace and property.
+    pub fn bind(namespace: Name, property: Name, value: Value) -> Self {
+        Self::Bound {
+            value,
+            binding: PropertyBinding {
+                namespace,
+                property,
+            },
+        }
+    }
+
+    /// Return the underlying value regardless of the state.
+    pub fn value(&self) -> &Value {
+        match self {
+            Self::Unbound { value } => value,
+            Self::Bound { value, .. } => value,
+        }
+    }
+
+    /// Return whether the property is bound to a controller property.
+    pub fn has_binding(&self) -> bool {
+        match self {
+            Self::Unbound { .. } => false,
+            Self::Bound { .. } => true,
+        }
     }
 }

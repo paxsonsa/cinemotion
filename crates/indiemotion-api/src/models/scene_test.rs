@@ -6,7 +6,7 @@ fn test_scene_object_serde() {
     let mut obj = SceneObject::default();
     obj.properties_mut().insert(
         name!("position"),
-        Property::bind(name!("controllerA"), name!("position"), Value::vec3()),
+        PropertyState::bind(name!("controllerA"), name!("position"), Value::vec3()),
     );
 
     println!("{}", serde_json::to_string_pretty(&obj).unwrap());
