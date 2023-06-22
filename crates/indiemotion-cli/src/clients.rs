@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use crate::api;
 use crate::{engine, sync};
@@ -74,7 +75,8 @@ impl ClientManager {
                     return;
                 }
             };
-            if client.send(message.message).await.is_err() {
+
+            if client.send(message.message.clone()).await.is_err() {
                 tracing::error!(
                     "client {} channel receive channel closed, removing client.",
                     id
@@ -201,15 +203,15 @@ impl ClientService {
 
 #[derive(Debug)]
 pub struct Client {
-    state_channel: tokio::sync::mpsc::UnboundedSender<api::Message>,
+    state_channel: tokio::sync::mpsc::UnboundedSender<Arc<api::Message>>,
 }
 
 impl Client {
-    pub fn new(state_channel: tokio::sync::mpsc::UnboundedSender<api::Message>) -> Self {
+    pub fn new(state_channel: tokio::sync::mpsc::UnboundedSender<Arc<api::Message>>) -> Self {
         Self { state_channel }
     }
 
-    pub async fn send(&mut self, message: api::Message) -> Result<()> {
+    pub async fn send(&mut self, message: Arc<api::Message>) -> Result<()> {
         self.state_channel
             .send(message)
             .map_err(|_| Error::ClientError("failed to send message".to_string()))

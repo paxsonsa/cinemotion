@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-
-use api::models::ObjectProperty;
+use api::Name;
 use derive_more::Constructor;
+use std::collections::HashMap;
+use std::sync::{Arc, RwLock};
 
 use crate::api;
 use crate::Result;
@@ -9,13 +9,13 @@ use crate::Result;
 #[derive(Constructor, Default)]
 pub struct Engine {
     /// Map of client id to controller.
-    controllers: HashMap<u32, api::models::Controller>,
+    controllers: HashMap<u32, Arc<api::models::ControllerState>>,
 
     // Map of controller name to client id.
-    controller_client: HashMap<String, u32>,
+    controller_client: HashMap<Name, u32>,
 
     /// The motion capture scene.
-    scene: api::models::Scene,
+    scene: Arc<api::models::Scene>,
 
     /// The current motion mode.
     motion_mode: api::models::Mode,
@@ -27,43 +27,41 @@ impl Engine {
             api::Command::Empty => {}
 
             api::Command::SceneObject(object) => {
-                self.scene.add_object(object).await?;
+                (*Arc::make_mut(&mut self.scene)).add_object(object).await?;
             }
-            api::Command::Controller(controller) => {
-                if self.controllers.get_mut(&client_id).is_none() {
-                    let properties: Vec<ObjectProperty> = controller
-                        .properties()
-                        .iter()
-                        .map(|p| {
-                            api::models::ObjectProperty::new(
-                                p.name().to_string(),
-                                p.default_value().clone(),
-                                Some(api::models::PropertyBinding {
-                                    namespace: controller.name().to_string(),
-                                    property: p.name().to_string(),
-                                }),
-                            )
-                        })
-                        .collect();
+            api::Command::Controller(controller_def) => {
+                // FIXME Only update when not in live mode.
 
-                    let object = api::models::SceneObject::new(
-                        controller.name().to_string().into(),
-                        properties,
-                    );
-                    let _ = self.scene.add_object(object).await;
+                if let Some(existing_id) = self.controller_client.get(controller_def.name()) {
+                    if existing_id != &client_id {
+                        return Err(api::Error::BadMessage(format!(
+                            "controller name already exists: '{}'",
+                            controller_def.name()
+                        ))
+                        .into());
+                    }
                 }
                 self.controller_client
-                    .insert(controller.name().to_string(), client_id);
-                self.controllers.insert(client_id, controller);
+                    .insert(controller_def.name().clone(), client_id);
+
+                match self.controllers.get_mut(&client_id) {
+                    Some(existing) => {
+                        (*Arc::make_mut(existing)).redefine(controller_def);
+                    }
+                    None => {
+                        self.controllers.insert(
+                            client_id,
+                            api::models::ControllerState::from(controller_def).into(),
+                        );
+                    }
+                }
             }
 
             api::Command::Mode(mode) => {
                 if mode.is_idle() && self.motion_mode.is_live() {
                     // Reset all controllers to their default values.
                     for controller in self.controllers.values_mut() {
-                        for property in controller.properties_mut() {
-                            property.reset();
-                        }
+                        (*Arc::make_mut(controller)).reset();
                     }
                 }
                 self.motion_mode = mode;
@@ -79,11 +77,9 @@ impl Engine {
                 };
 
                 for property in sample.properties() {
-                    if let Some(prop) = controller.property_mut(&property.name) {
-                        if let Err(err) = prop.value_mut().update(&property.value) {
-                            tracing::error!("error sampling property {}: {}", property.name, err);
-                        }
-                    }
+                    (*Arc::make_mut(controller))
+                        .value_mut(&property.name)
+                        .and_then(|v| v.update(&property.value).ok());
                 }
             }
         }
@@ -92,7 +88,7 @@ impl Engine {
 
     pub async fn tick(&mut self) -> Result<api::state::GlobalState> {
         // Update all object properties from their bindings.
-        self.scene
+        (*Arc::make_mut(&mut self.scene))
             .objects_mut()
             .iter_mut()
             .for_each(|(_, ref mut obj)| {
@@ -107,11 +103,11 @@ impl Engine {
                             return;
                         };
 
-                        let Some(controller_prop) = controller.property(&binding.property) else {
+                        let Some(value) = controller.value(&binding.property) else {
                             return;
                         };
 
-                        if let Err(err) = prop.value_mut().update(controller_prop.value()) {
+                        if let Err(err) = prop.value_mut().update(value) {
                             tracing::error!(
                                 "error updating property {}: {}",
                                 prop.name().to_string(),
@@ -124,8 +120,8 @@ impl Engine {
         let state = api::GlobalState {
             controllers: self
                 .controllers
-                .iter()
-                .map(|x| (x.1.name().to_string(), x.1.clone()))
+                .values()
+                .map(|p| (p.name().clone(), p.clone()))
                 .collect(),
             scene: self.scene.clone(),
             mode: self.motion_mode.clone(),

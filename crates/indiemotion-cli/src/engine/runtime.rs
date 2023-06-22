@@ -4,13 +4,13 @@ use crate::{Error, Result};
 use super::Engine;
 use super::ServiceTransport;
 
-pub struct EngineController {
+pub struct EngineRuntime {
     transport: ServiceTransport,
     shutdown_rx: tokio::sync::mpsc::Receiver<()>,
     tick_control: TickControl,
 }
 
-impl EngineController {
+impl EngineRuntime {
     pub fn new(
         transport: ServiceTransport,
         shutdown_rx: tokio::sync::mpsc::Receiver<()>,

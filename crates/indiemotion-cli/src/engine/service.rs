@@ -1,10 +1,12 @@
+use std::sync::Arc;
+
 use crate::api;
 use crate::{Error, Result};
 
 #[derive(Clone)]
 pub struct EngineMessage {
     pub client: Option<u32>,
-    pub message: api::Message,
+    pub message: Arc<api::Message>,
 }
 
 #[derive(Debug)]
@@ -61,7 +63,7 @@ impl ServiceTransport {
     pub async fn send_error(&mut self, client: u32, err: api::Error) -> Result<()> {
         let message = EngineMessage {
             client: Some(client),
-            message: api::Message::Error(err),
+            message: Arc::new(api::Message::Error(err)),
         };
 
         self.message_tx
@@ -73,7 +75,7 @@ impl ServiceTransport {
     pub async fn send_state_update(&mut self, state: api::GlobalState) -> Result<()> {
         let message = EngineMessage {
             client: None,
-            message: api::Message::State(state),
+            message: Arc::new(api::Message::State(state)),
         };
 
         self.message_tx

@@ -83,7 +83,7 @@ impl EngineComponentBuilder {
 
         let (service, transport) = engine::Service::new();
         let mut controller =
-            engine::EngineController::new(transport, shutdown_channel.1, tick_control);
+            engine::EngineRuntime::new(transport, shutdown_channel.1, tick_control);
 
         Ok((
             EngineComponent {

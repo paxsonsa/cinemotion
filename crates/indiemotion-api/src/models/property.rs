@@ -1,17 +1,19 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
+
+use crate::Name;
 
 use super::value::*;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ObjectProperty {
-    name: String,
+    name: Name,
     value: Value,
     #[serde(skip_serializing_if = "Option::is_none")]
     binding: Option<PropertyBinding>,
 }
 
 impl ObjectProperty {
-    pub fn new(name: String, value: Value, binding: Option<PropertyBinding>) -> Self {
+    pub fn new(name: Name, value: Value, binding: Option<PropertyBinding>) -> Self {
         Self {
             name,
             value,
@@ -19,9 +21,9 @@ impl ObjectProperty {
         }
     }
 
-    pub fn new_vec3(name: &str) -> Self {
+    pub fn new_vec3(name: Name) -> Self {
         Self {
-            name: name.to_string(),
+            name,
             value: (0.0, 0.0, 0.0).into(),
             binding: None,
         }
@@ -34,7 +36,7 @@ impl ObjectProperty {
         }
     }
 
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> &Name {
         &self.name
     }
 
@@ -53,8 +55,8 @@ impl ObjectProperty {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PropertyBinding {
-    pub namespace: String,
-    pub property: String,
+    pub namespace: Name,
+    pub property: Name,
 }
 
 impl From<&str> for PropertyBinding {
@@ -63,8 +65,8 @@ impl From<&str> for PropertyBinding {
         let namespace = parts.next().unwrap_or("").to_string();
         let id = parts.next().unwrap_or("").to_string();
         Self {
-            namespace,
-            property: id,
+            namespace: namespace.into(),
+            property: id.into(),
         }
     }
 }

@@ -1,5 +1,5 @@
 use crate::{Error, Result};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 type Vec4 = (f64, f64, f64, f64);
 type Matrix44 = (Vec4, Vec4, Vec4, Vec4);

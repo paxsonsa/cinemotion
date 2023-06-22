@@ -1,4 +1,4 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 use crate::models::*;
 
@@ -6,7 +6,7 @@ use crate::models::*;
 #[serde(tag = "command", rename_all = "lowercase")]
 pub enum Command {
     Empty,
-    Controller(Controller),
+    Controller(ControllerDef),
     SceneObject(SceneObject),
     Sample(Sample),
     Mode(Mode),

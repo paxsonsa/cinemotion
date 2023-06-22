@@ -1,8 +1,10 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
+
+use crate::Name;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SampleProperty {
-    pub name: String,
+    pub name: Name,
     pub value: super::Value,
 }
 

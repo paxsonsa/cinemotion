@@ -1,8 +1,8 @@
 use std::{collections::HashMap, fmt::Display, hash::Hash};
 
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
-use crate::{Error, Result};
+use crate::{Error, Name, Result};
 
 use super::*;
 
@@ -36,7 +36,7 @@ impl From<&str> for ObjectName {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Scene {
     pub name: String,
-    objects: HashMap<ObjectName, SceneObject>,
+    objects: HashMap<Name, SceneObject>,
 }
 
 impl Default for Scene {
@@ -52,20 +52,20 @@ impl Default for Scene {
 }
 
 impl Scene {
-    pub fn objects(&self) -> &HashMap<ObjectName, SceneObject> {
+    pub fn objects(&self) -> &HashMap<Name, SceneObject> {
         &self.objects
     }
 
-    pub fn objects_mut(&mut self) -> &mut HashMap<ObjectName, SceneObject> {
+    pub fn objects_mut(&mut self) -> &mut HashMap<Name, SceneObject> {
         &mut self.objects
     }
 
-    pub fn object(&self, name: ObjectName) -> Option<&SceneObject> {
-        self.objects.get(&name)
+    pub fn object(&self, name: &Name) -> Option<&SceneObject> {
+        self.objects.get(name)
     }
 
     pub async fn add_object(&mut self, obj: SceneObject) -> Result<()> {
-        match self.object(obj.name.clone()) {
+        match self.object(&obj.name) {
             Some(_) => Err(Error::InvalidSceneObject(format!(
                 "object named {} already exists",
                 obj.name
@@ -80,12 +80,12 @@ impl Scene {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SceneObject {
-    name: ObjectName,
+    name: Name,
     properties: HashMap<String, ObjectProperty>,
 }
 
 impl SceneObject {
-    pub fn new(name: ObjectName, properties: Vec<ObjectProperty>) -> Self {
+    pub fn new(name: Name, properties: Vec<ObjectProperty>) -> Self {
         let properties = properties
             .into_iter()
             .map(|x| (x.name().to_string(), x))
@@ -94,7 +94,7 @@ impl SceneObject {
         Self { name, properties }
     }
 
-    pub fn name(&self) -> &ObjectName {
+    pub fn name(&self) -> &Name {
         &self.name
     }
 
@@ -116,9 +116,9 @@ impl Default for SceneObject {
         Self::new(
             "default".into(),
             vec![
-                ObjectProperty::new_vec3("translate"),
-                ObjectProperty::new_vec3("orientation"),
-                ObjectProperty::new_vec3("velocity"),
+                ObjectProperty::new_vec3("translate".into()),
+                ObjectProperty::new_vec3("orientation".into()),
+                ObjectProperty::new_vec3("velocity".into()),
             ],
         )
     }

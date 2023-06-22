@@ -161,7 +161,7 @@ async fn connect(ws: WebSocket, client_service: ClientService) {
             },
             Some(message) = message_channel.1.recv() => {
                 let msg =
-                    api::message::Encoding::<api::message::JSONProtocol>::encode(message)
+                    api::message::Encoding::<api::message::JSONProtocol>::encode(&message)
                     .unwrap();
                 match ws_tx.send(ws::Message::text(msg)).await {
                     Ok(_) => (),
@@ -179,7 +179,7 @@ async fn connect(ws: WebSocket, client_service: ClientService) {
 
 async fn handle_error(err: api::Error, websocket: &mut SplitSink<WebSocket, ws::Message>) {
     let msg =
-        api::message::Encoding::<api::message::JSONProtocol>::encode(api::Message::Error(err))
+        api::message::Encoding::<api::message::JSONProtocol>::encode(&api::Message::Error(err))
             .unwrap();
     match websocket.send(ws::Message::text(msg)).await {
         Ok(_) => (),

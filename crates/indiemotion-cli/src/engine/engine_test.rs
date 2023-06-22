@@ -1,5 +1,6 @@
 use super::*;
 use crate::api;
+use crate::api::name;
 
 macro_rules! with_command {
     ($command:expr, $model:expr, mut& $engine:ident, $state:ident, $block:block) => {
@@ -36,10 +37,10 @@ async fn test_basic_runtime() {
 
     with_command!(
         api::Command::Controller,
-        api::models::Controller::new(
-            "controllerA".to_string(),
+        api::models::ControllerDef::new(
+            "controllerA".into(),
             vec![
-                api::models::ControllerProperty::new(
+                api::models::ControllerPropertyDef::new(
                     "translate".to_string(),
                     (0.0, 0.0, 0.0).into(),
                 )
@@ -48,8 +49,8 @@ async fn test_basic_runtime() {
         mut &engine,
         state,
         {
-            let con = state.controllers.get("controllerA").expect("the controller should be added after applying the command");
-            con.property("translate").expect("the controller should have a translate property");
+            let con = state.controllers.get(&name!("controllerA")).expect("the controller should be added after applying the command");
+            con.value(&name!("translate")).expect("the controller should have a translate property");
         }
     );
 
@@ -59,7 +60,7 @@ async fn test_basic_runtime() {
             "objectA".into(),
             vec![
                 api::models::ObjectProperty::new(
-                    "translate".to_string(),
+                    name!("translate"),
                     (0.0, 0.0, 0.0).into(),
                     Some("controllerA.translate".into()),
                 )
@@ -68,8 +69,8 @@ async fn test_basic_runtime() {
         mut &engine,
         state,
         {
-            assert_eq!(state.scene.objects().len(), 3);
-            assert_eq!(state.scene.object("objectA".into()).unwrap().name(), &"objectA".into());
+            assert_eq!(state.scene.objects().len(), 2);
+            assert_eq!(state.scene.object(&name!("objectA")).unwrap().name(), &"objectA".into());
         }
     );
     with_command!(
@@ -77,7 +78,7 @@ async fn test_basic_runtime() {
         api::models::Sample::new(
             vec![
                 api::models::SampleProperty {
-                    name: "translate".to_string(),
+                    name: name!("translate"),
                     value: (1.0, 1.0, 1.0).into(),
                 }
             ],
@@ -89,11 +90,7 @@ async fn test_basic_runtime() {
             engine.tick().await.unwrap();
             let expected: (f64, f64, f64) = (0.0, 0.0, 0.0);
 
-            let obj = state.scene.object("objectA".into()).unwrap();
-            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
-            assert_eq!(vec3, expected);
-
-            let obj = state.scene.object("controllerA".into()).unwrap();
+            let obj = state.scene.object(&name!("objectA")).unwrap();
             let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
             assert_eq!(vec3, expected);
         }
@@ -114,7 +111,7 @@ async fn test_basic_runtime() {
         api::models::Sample::new(
             vec![
                 api::models::SampleProperty {
-                    name: "translate".to_string(),
+                    name: name!("translate"),
                     value: (1.0, 1.0, 1.0).into(),
                 }
             ],
@@ -126,11 +123,7 @@ async fn test_basic_runtime() {
             engine.tick().await.unwrap();
             let expected: (f64, f64, f64) = (1.0, 1.0, 1.0);
 
-            let obj = state.scene.object("objectA".into()).unwrap();
-            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
-            assert_eq!(vec3, expected);
-
-            let obj = state.scene.object("controllerA".into()).unwrap();
+            let obj = state.scene.object(&name!("objectA")).unwrap();
             let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
             assert_eq!(vec3, expected);
         }
@@ -148,20 +141,21 @@ async fn test_basic_runtime() {
             let expected: (f64, f64, f64) = (0.0, 0.0, 0.0);
 
             // Should reset to default value.
-            let obj = state.scene.object("objectA".into()).unwrap();
-            let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
-            assert_eq!(vec3, expected);
-
-            let obj = state.scene.object("controllerA".into()).unwrap();
+            let obj = state.scene.object(&name!("objectA")).unwrap();
             let vec3 = obj.property("translate").unwrap().as_vec3().unwrap();
             assert_eq!(vec3, expected);
 
         }
     );
 
+    // TODO Add Object Property Offset
+    // TODO Add ability to bind different property property types to channel.
+
     // Event Tracking
     // TODO Add Touch Events
     // TODO Add Trigger Events
+
+    // TODO Remove places of cloning.
 
     // Blender/Unity/Unreal Integration (Python)
 }
@@ -171,7 +165,7 @@ async fn test_default_engine_state(engine: &mut Engine) {
     assert_eq!(state.scene.name, "default");
     assert_eq!(state.scene.objects().len(), 1);
 
-    let obj = state.scene.object("default".into()).unwrap();
+    let obj = state.scene.object(&name!("default")).unwrap();
     assert_eq!(obj.name(), &"default".into());
     assert_eq!(obj.properties().len(), 3);
     assert!(obj.property("translate").is_some());
