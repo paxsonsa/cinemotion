@@ -16,13 +16,6 @@ macro_rules! with_command {
     }};
 }
 
-macro_rules! apply_command {
-    ($command:expr, $model:expr, mut& $engine:ident) => {{
-        let cmd = $command($model);
-        $engine.apply(0, cmd).await
-    }};
-}
-
 macro_rules! engine {
     () => {{
         engine::Engine::default()
@@ -41,7 +34,7 @@ async fn test_basic_runtime() {
             "controllerA".into(),
             vec![
                 api::models::ControllerPropertyDef::new(
-                    "translate".to_string(),
+                    name!("translate"),
                     (0.0, 0.0, 0.0).into(),
                 )
             ],
@@ -149,13 +142,13 @@ async fn test_basic_runtime() {
     );
 
     // TODO Add Object Property Offset
-    // TODO Add ability to bind different property property types to channel.
+    // TODO Add Controller Property Scale
+    // TODO Add Object Property Effects
+    // -Velocity - Acceleration - Filter
 
     // Event Tracking
     // TODO Add Touch Events
     // TODO Add Trigger Events
-
-    // TODO Remove places of cloning.
 
     // Blender/Unity/Unreal Integration (Python)
 }
