@@ -4,6 +4,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Error, Result};
 
+#[cfg(test)]
+#[path = "./message_test.rs"]
+mod message_test;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "payload")]
@@ -31,8 +35,8 @@ pub struct Encoding<P> {
 }
 
 impl Encoding<JSONProtocol> {
-    pub fn encode(command: &Message) -> Result<String> {
-        serde_json::to_string(command).map_err(|err| Error::MessageEncoding(err.to_string()))
+    pub fn encode(message: &Message) -> Result<String> {
+        serde_json::to_string(message).map_err(|err| Error::MessageEncoding(err.to_string()))
     }
 
     pub fn decode(message: &str) -> Result<Message> {

@@ -6,6 +6,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Error, Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "error_type", content = "message")]
 pub enum Error {
+    #[error("controller error: {0}")]
+    ControllerError(String),
+
     #[error("bad message error: {0}")]
     BadMessage(String),
 
