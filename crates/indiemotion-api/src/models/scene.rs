@@ -121,9 +121,9 @@ impl Default for SceneObject {
         Self::new(
             "default".into(),
             HashMap::from([
-                (name!("position"), Value::vec3().into()),
-                (name!("orientation"), Value::vec3().into()),
-                (name!("velocity"), Value::vec3().into()),
+                (name!("position"), PropertyState::unbound(Value::vec3())),
+                (name!("orientation"), PropertyState::unbound(Value::vec3())),
+                (name!("velocity"), PropertyState::unbound(Value::vec3())),
             ]),
         )
     }

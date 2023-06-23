@@ -3,14 +3,38 @@ use serde::{Deserialize, Serialize};
 use crate::Name;
 
 use super::value::*;
+
+#[cfg(test)]
+#[path = "./property_test.rs"]
+mod property_test;
 /// A generic defintion for a property.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PropertyDef {
     /// The name of the property.
-    pub name: Name,
+    name: Name,
 
     /// The default value to use when idle and the type the property is.
-    pub default_value: Value,
+    default_value: Value,
+}
+
+impl PropertyDef {
+    /// Build a new property definition.
+    pub fn new(name: Name, default_value: Value) -> Self {
+        Self {
+            name,
+            default_value,
+        }
+    }
+
+    /// Get the name of the property.
+    pub fn name(&self) -> &Name {
+        &self.name
+    }
+
+    /// Get the default value of the property.
+    pub fn default_value(&self) -> &Value {
+        &self.default_value
+    }
 }
 
 /// A helper struct for representing a property binding address.
@@ -29,7 +53,7 @@ pub struct PropertyBinding {
 /// to a controller, or bound, meaning the property is attached to a controller property.
 ///
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(untagged)]
+#[serde(untagged, deny_unknown_fields)]
 pub enum PropertyState {
     /// An unbound property does not reference a controller property for updates.
     Unbound {
@@ -47,12 +71,6 @@ pub enum PropertyState {
     },
 }
 
-impl From<Value> for PropertyState {
-    fn from(value: Value) -> Self {
-        Self::Unbound { value }
-    }
-}
-
 impl PropertyState {
     /// Create new property state bound to the given namespace and property.
     pub fn bind(namespace: Name, property: Name, value: Value) -> Self {
@@ -63,6 +81,10 @@ impl PropertyState {
                 property,
             },
         }
+    }
+
+    pub fn unbound(value: Value) -> Self {
+        Self::Unbound { value }
     }
 
     /// Return the underlying value regardless of the state.

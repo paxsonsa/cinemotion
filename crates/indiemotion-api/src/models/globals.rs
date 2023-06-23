@@ -1,6 +1,12 @@
 use serde::{Deserialize, Serialize};
 
+#[cfg(test)]
+#[path = "./globals_test.rs"]
+mod globals_test;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "mode")]
 pub enum Mode {
     Idle,
     Live,

@@ -1,4 +1,4 @@
-use super::Value;
+use super::{PropertyDef, Value};
 use crate::Name;
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
@@ -103,7 +103,7 @@ pub struct ControllerDef {
     name: Name,
 
     /// A list of properties on the controller that will be recorded.
-    properties: Vec<ControllerPropertyDef>,
+    properties: Vec<PropertyDef>,
 }
 
 impl ControllerDef {
@@ -113,12 +113,12 @@ impl ControllerDef {
     }
 
     /// Return the properties on the controller.
-    pub fn properties(&self) -> &Vec<ControllerPropertyDef> {
+    pub fn properties(&self) -> &Vec<PropertyDef> {
         &self.properties
     }
 
     /// Return mutable properties on the controller.
-    pub fn properties_mut(&mut self) -> &mut Vec<ControllerPropertyDef> {
+    pub fn properties_mut(&mut self) -> &mut Vec<PropertyDef> {
         &mut self.properties
     }
 
@@ -126,7 +126,7 @@ impl ControllerDef {
     ///
     /// `None` is returned if the property does not exist.
     ///
-    pub fn property(&self, name: &Name) -> Option<&ControllerPropertyDef> {
+    pub fn property(&self, name: &Name) -> Option<&PropertyDef> {
         self.properties.iter().find(|p| p.name() == name)
     }
 
@@ -134,7 +134,7 @@ impl ControllerDef {
     ///
     /// `None` is returned if the property does not exist.
     ///
-    pub fn property_mut(&mut self, name: &Name) -> Option<&mut ControllerPropertyDef> {
+    pub fn property_mut(&mut self, name: &Name) -> Option<&mut PropertyDef> {
         self.properties.iter_mut().find(|p| p.name() == name)
     }
 }

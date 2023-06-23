@@ -82,10 +82,10 @@ impl Engine {
                     return Err(api::Error::BadMessage("controller must be assigned before sending samples".to_string()).into());
                 };
 
-                for property in sample.properties() {
+                for (name, value) in sample.properties().iter() {
                     (*Arc::make_mut(controller))
-                        .value_mut(&property.name)
-                        .and_then(|v| v.update(&property.value).ok());
+                        .value_mut(name)
+                        .and_then(|v| v.update(value).ok());
                 }
             }
         }

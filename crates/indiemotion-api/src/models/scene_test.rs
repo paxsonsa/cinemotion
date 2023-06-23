@@ -42,5 +42,12 @@ fn test_scene_object_serde() {
         }
       }"#;
 
-    let scene_object: SceneObject = serde_json::from_str(data).unwrap();
+    let _: SceneObject = serde_json::from_str(data).unwrap();
+}
+
+#[test]
+fn test_scene_serde() {
+    let scene = Scene::default();
+    let json = serde_json::to_string_pretty(&scene).unwrap();
+    let _: Scene = serde_json::from_str(&json).unwrap();
 }

@@ -69,8 +69,8 @@ fn test_controller_state_value_updates() {
     let def = ControllerDef::new(
         name!("controllerA"),
         vec![
-            ControllerPropertyDef::new(name!("propertyA"), 10.0.into()),
-            ControllerPropertyDef::new(name!("propertyB"), (0.0, 1.0, 0.0).into()),
+            PropertyDef::new(name!("propertyA"), 10.0.into()),
+            PropertyDef::new(name!("propertyB"), (0.0, 1.0, 0.0).into()),
         ],
     );
 
@@ -144,9 +144,9 @@ fn test_controller_state_value_updates() {
     let def = ControllerDef::new(
         name!("controllerA"),
         vec![
-            ControllerPropertyDef::new(name!("propertyA"), 10.0.into()),
-            ControllerPropertyDef::new(name!("propertyB"), (0.0, 1.0, 0.0).into()),
-            ControllerPropertyDef::new(name!("propertyC"), (0.0, 1.0, 0.0).into()),
+            PropertyDef::new(name!("propertyA"), 10.0.into()),
+            PropertyDef::new(name!("propertyB"), (0.0, 1.0, 0.0).into()),
+            PropertyDef::new(name!("propertyC"), (0.0, 1.0, 0.0).into()),
         ],
     );
     state.redefine(def);

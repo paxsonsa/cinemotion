@@ -4,9 +4,10 @@ use api::models::{PropertyState, Value};
 
 use super::*;
 use crate::api;
+use crate::api::models::*;
 use crate::api::name;
 
-macro_rules! with_command {
+macro_rules! tick {
     ($command:expr, $model:expr, mut& $engine:ident, $state:ident, $block:block) => {
         let cmd = $command($model);
         $engine.apply(0, cmd).await.unwrap();
@@ -32,12 +33,12 @@ async fn test_basic_runtime() {
 
     test_default_engine_state(&mut engine).await;
 
-    with_command!(
+    tick!(
         api::Command::Controller,
         api::models::ControllerDef::new(
             "controllerA".into(),
             vec![
-                api::models::ControllerPropertyDef::new(
+                PropertyDef::new(
                     name!("position"),
                     (0.0, 0.0, 0.0).into(),
                 )
@@ -51,14 +52,14 @@ async fn test_basic_runtime() {
         }
     );
 
-    with_command!(
+    tick!(
         api::Command::SceneObject,
         api::models::SceneObject::new(
             "objectA".into(),
             HashMap::from([
                 (name!("position"), PropertyState::bind(name!("controllerA"), name!("position"), Value::vec3())),
-                (name!("rotate"), Value::vec3().into()),
-                (name!("scale"), Value::vec3().into()),
+                (name!("rotate"), PropertyState::unbound(Value::vec3())),
+                (name!("scale"), PropertyState::unbound(Value::vec3())),
             ]),
         ),
         mut &engine,
@@ -68,15 +69,12 @@ async fn test_basic_runtime() {
             assert_eq!(state.scene.object(&name!("objectA")).unwrap().name(), &"objectA".into());
         }
     );
-    with_command!(
+    tick!(
         api::Command::Sample,
         api::models::Sample::new(
-            vec![
-                api::models::SampleProperty {
-                    name: name!("position"),
-                    value: (1.0, 1.0, 1.0).into(),
-                }
-            ],
+            HashMap::from([
+                (name!("position"), (1.0, 1.0, 1.0).into()),
+            ]),
         ),
         mut &engine,
         state,
@@ -90,7 +88,7 @@ async fn test_basic_runtime() {
         }
     );
 
-    with_command!(
+    tick!(
         api::Command::Mode,
         api::models::Mode::Live,
         mut &engine,
@@ -100,23 +98,17 @@ async fn test_basic_runtime() {
         }
     );
 
-    println!("Sample being applied.");
-
-    with_command!(
+    tick!(
         api::Command::Sample,
         api::models::Sample::new(
-            vec![
-                api::models::SampleProperty {
-                    name: name!("position"),
-                    value: (1.0, 1.0, 1.0).into(),
-                }
-            ],
+            HashMap::from([
+                (name!("position"), (1.0, 1.0, 1.0).into()),
+            ]),
         ),
         mut &engine,
         state,
         {
             // The mode being set to Live or Recording, the sample should be applied.
-
             let expected: (f64, f64, f64) = (1.0, 1.0, 1.0);
 
             let obj = state.scene.object(&name!("objectA")).unwrap();
@@ -125,7 +117,26 @@ async fn test_basic_runtime() {
         }
     );
 
-    with_command!(
+    tick!(
+        api::Command::Sample,
+        api::models::Sample::new(
+            HashMap::from([
+                (name!("position"), 1.0_f64.into()),
+            ]),
+        ),
+        mut &engine,
+        state,
+        {
+            // Send a bad sample should not change the state.
+            let expected: (f64, f64, f64) = (1.0, 1.0, 1.0);
+
+            let obj = state.scene.object(&name!("objectA")).unwrap();
+            let vec3 = obj.property(&name!("position")).unwrap().value().as_vec3().unwrap();
+            assert_eq!(vec3, expected);
+        }
+    );
+
+    tick!(
         api::Command::Mode,
         api::models::Mode::Idle,
         mut &engine,

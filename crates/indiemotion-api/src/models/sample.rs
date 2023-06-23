@@ -1,24 +1,25 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
+use super::Value;
 use crate::Name;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct SampleProperty {
-    pub name: Name,
-    pub value: super::Value,
-}
+#[cfg(test)]
+#[path = "./sample_test.rs"]
+mod sample_test;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Sample {
-    properties: Vec<super::SampleProperty>,
+    properties: HashMap<Name, Value>,
 }
 
 impl Sample {
-    pub fn new(properties: Vec<super::SampleProperty>) -> Self {
+    pub fn new(properties: HashMap<Name, Value>) -> Self {
         Self { properties }
     }
 
-    pub fn properties(&self) -> &Vec<super::SampleProperty> {
+    pub fn properties(&self) -> &HashMap<Name, Value> {
         &self.properties
     }
 }
