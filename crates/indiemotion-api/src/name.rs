@@ -14,18 +14,40 @@ impl Deref for Name {
     }
 }
 
+/// Create a new name from a string.
+///
+/// ```
+/// use indiemotion_api::Name;
+/// let name = "test".to_string();
+/// let name = Name::from(name);
+/// ```
+///
 impl From<String> for Name {
     fn from(s: String) -> Self {
         Self(s.into())
     }
 }
 
+/// Create a new name from a str.
+///
+/// ```
+/// use indiemotion_api::Name;
+/// let name = Name::from("test");
+/// ```
+///
 impl From<&str> for Name {
     fn from(s: &str) -> Self {
         Self(s.into())
     }
 }
 
+/// Create a new name from a string literal.
+///
+/// ```
+/// use indiemotion_api::name;
+/// let name = name!("test");
+/// ```
+///
 #[macro_export]
 macro_rules! name {
     ($name:expr) => {{

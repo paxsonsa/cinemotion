@@ -51,6 +51,15 @@ impl ControllerState {
     ///
     /// All current values are reset to their default values and added/removed.
     ///
+    /// ```
+    /// use indiemotion_api::models::{ControllerDef, ControllerState, PropertyDef, Value};
+    /// let def = ControllerDef::new("test".into(), vec![]);
+    /// let mut state = ControllerState::from(def);
+    ///
+    /// let new_def = ControllerDef::new("test".into(), vec![PropertyDef::new("test".into(), 10.0.into())]);
+    /// state.redefine(new_def);
+    /// ```
+    ///
     pub fn redefine(&mut self, definition: ControllerDef) {
         self.values = definition
             .properties()
@@ -61,6 +70,16 @@ impl ControllerState {
     }
 
     /// Reset all property values to their default values.
+    ///
+    /// ```
+    /// use indiemotion_api::models::{ControllerDef, ControllerState, PropertyDef, Value};
+    /// let def = ControllerDef::new("test".into(), vec![]);
+    /// let mut state = ControllerState::from(def);
+    ///
+    /// state.reset();
+    ///
+    /// ```
+    ///
     pub fn reset(&mut self) {
         self.metadata.properties().iter().for_each(|p| {
             if let Some(value) = self.values.get_mut(p.name()) {
