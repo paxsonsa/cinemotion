@@ -11,13 +11,13 @@ mod server;
 struct Opt {
     /// Make output more verbose
     #[clap(short, long, global = true, action = ArgAction::Count)]
-    verbose: i32,
+    verbose: u8,
 
     /// Make output less verbose
     ///
     /// This flag takes precedence over the --verbose flag
     #[clap(short, long, global = true, action = ArgAction::Count)]
-    quiet: i32,
+    quiet: u8,
 
     /// The subcommand to run
     #[clap(subcommand)]
@@ -54,7 +54,7 @@ impl Command {
 
 fn main() -> Result<()> {
     let opts = Opt::parse();
-    configure_logging(opts.verbose - opts.quiet);
+    configure_logging(i32::from(opts.verbose) - i32::from(opts.quiet));
     let code = opts.command.run()?;
     std::process::exit(code);
 }

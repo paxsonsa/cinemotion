@@ -125,7 +125,11 @@ impl ClientManager {
     }
 
     async fn remove_client(&mut self, handle: u32) -> Result<()> {
-        self.clients.remove(&handle);
+        if self.clients.remove(&handle).is_some() {
+            self.engine
+                .enqueue_command(handle, api::Command::Disconnect)
+                .await?;
+        }
         Ok(())
     }
 

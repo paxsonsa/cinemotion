@@ -57,16 +57,8 @@ impl Scene {
     /// This will error with `InvalidSceneObject` if an object with the same name already exists.
     ///
     pub async fn add_object(&mut self, obj: SceneObject) -> Result<()> {
-        match self.object(&obj.name) {
-            Some(_) => Err(Error::InvalidSceneObject(format!(
-                "object named {} already exists",
-                obj.name
-            ))),
-            None => {
-                self.objects.insert(obj.name.clone(), obj);
-                Ok(())
-            }
-        }
+        let _ = self.objects.insert(obj.name.clone(), obj);
+        Ok(())
     }
 }
 

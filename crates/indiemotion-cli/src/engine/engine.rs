@@ -2,7 +2,7 @@ use api::models::PropertyState;
 use api::Name;
 use derive_more::Constructor;
 use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 
 use crate::api;
 use crate::Result;
@@ -26,6 +26,22 @@ impl Engine {
     pub async fn apply(&mut self, client_id: u32, command: api::Command) -> Result<()> {
         match command {
             api::Command::Empty => {}
+
+            api::Command::Disconnect => {
+                // A disconnection occured, all sampling stops.
+                if self.motion_mode.is_live() {
+                    self.motion_mode = api::models::Mode::Idle;
+                }
+
+                // Default all object values.
+                self.update_scene();
+
+                // Remove the client's controller instance.
+                let Some(controller) = self.controllers.remove(&client_id) else {
+                    return Ok(())
+                };
+                self.controller_client.remove(controller.name());
+            }
 
             api::Command::SceneObject(object) => {
                 (*Arc::make_mut(&mut self.scene)).add_object(object).await?;
@@ -92,8 +108,7 @@ impl Engine {
         Ok(())
     }
 
-    pub async fn tick(&mut self) -> Result<api::state::GlobalState> {
-        // Update all object properties from their bindings.
+    fn update_scene(&mut self) {
         (*Arc::make_mut(&mut self.scene))
             .objects_mut()
             .iter_mut()
@@ -123,6 +138,11 @@ impl Engine {
                         }
                     });
             });
+    }
+
+    pub async fn tick(&mut self) -> Result<api::state::GlobalState> {
+        // Update all object properties from their bindings.
+        self.update_scene();
 
         let state = api::GlobalState {
             controllers: self

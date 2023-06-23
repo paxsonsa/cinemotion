@@ -10,4 +10,5 @@ pub enum Command {
     SceneObject(SceneObject),
     Sample(Sample),
     Mode(Mode),
+    Disconnect,
 }
