@@ -27,6 +27,19 @@ pub enum Message {
     Error(crate::Error),
 }
 
+/// A message can be converted from a string.
+///
+/// ```
+/// use indiemotion_api::{message::Message};
+/// let data = r#"{
+///     "type": "command",
+///     "payload": {
+///         "command": "empty"
+///     }
+/// }"#;
+/// let msg = Message::try_from(data.to_string());
+/// ```
+///
 impl TryFrom<String> for Message {
     type Error = Error;
 
