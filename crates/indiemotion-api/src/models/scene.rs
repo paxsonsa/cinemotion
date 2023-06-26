@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{name, Error, Name, Result};
+use crate::{name, Name, Result};
 
 use super::*;
 

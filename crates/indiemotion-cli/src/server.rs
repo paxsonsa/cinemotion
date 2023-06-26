@@ -10,7 +10,8 @@ use crate::Result;
 pub struct ServerBuilder {
     /// Public name to advertise for this server.
     name: String,
-    engine_builder: Option<components::EngineComponentBuilder>,
+    network_service: Option<components::NetworkComponentBuilder>,
+    engine_service: Option<components::EngineComponentBuilder>,
     client_service: Option<components::ClientComponentBuilder>,
     web_service: Option<components::WebsocketComponentBuilder>,
 }
@@ -21,10 +22,18 @@ impl ServerBuilder {
             components: Vec::new(),
         };
 
+        let network_component = self
+            .network_service
+            .take()
+            .expect("Network Service not configured")
+            .build()
+            .await?;
+        server.components.push(Box::pin(network_component));
+
         let engine_command_channel = tokio::sync::mpsc::unbounded_channel();
         let state_channel = tokio::sync::mpsc::unbounded_channel();
 
-        let Some(engine_service) = self.engine_builder.take() else {
+        let Some(engine_service) = self.engine_service.take() else {
             panic!("Engine Service not configured")
         };
         let (engine_component, engine_service) = engine_service
@@ -56,13 +65,18 @@ impl ServerBuilder {
         Ok(server)
     }
 
+    pub fn with_network_service(mut self, config: components::NetworkComponentBuilder) -> Self {
+        self.network_service = Some(config);
+        self
+    }
+
     pub fn with_client_service(mut self, config: components::ClientComponentBuilder) -> Self {
         self.client_service = Some(config);
         self
     }
 
     pub fn with_engine_service(mut self, config: components::EngineComponentBuilder) -> Self {
-        self.engine_builder = Some(config);
+        self.engine_service = Some(config);
         self
     }
 
@@ -91,7 +105,8 @@ impl Server {
         ServerBuilder {
             name: "indiemotion".to_string(),
             web_service: None,
-            engine_builder: None,
+            network_service: None,
+            engine_service: None,
             client_service: None,
         }
     }

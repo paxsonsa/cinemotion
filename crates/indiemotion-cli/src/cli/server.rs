@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+
 use anyhow::Result;
 use clap::Args;
 use tokio::signal::unix::{signal, SignalKind};
@@ -7,7 +9,7 @@ pub struct Server {
     #[clap(long = "name", default_value = "indiemotion")]
     pub server_name: String,
 
-    #[clap(long = "server.bind-address")]
+    #[clap(long = "address")]
     server_bind_address: Option<std::net::SocketAddr>,
 }
 
@@ -15,6 +17,13 @@ impl Server {
     pub async fn run(&self) -> Result<i32> {
         tracing::debug!("Building server...");
         let mut builder = indiemotion::server::Server::builder();
+        let addr: SocketAddr = self
+            .server_bind_address
+            .unwrap_or_else(|| ([0, 0, 0, 0], indiemotion::DEFAULT_WEB_PORT).into());
+
+        let network =
+            indiemotion::components::NetworkComponent::build(self.server_name.clone(), addr.port());
+        builder = builder.with_network_service(network);
 
         let engine_builder = indiemotion::components::EngineComponent::builder();
         builder = builder.with_engine_service(engine_builder);
@@ -24,10 +33,7 @@ impl Server {
 
         let mut websocket_builder =
             indiemotion::components::websocket::WebsocketComponent::builder();
-        websocket_builder = websocket_builder.with_server_bind_address(
-            self.server_bind_address
-                .unwrap_or_else(|| ([0, 0, 0, 0], indiemotion::DEFAULT_WEB_PORT).into()),
-        );
+        websocket_builder = websocket_builder.with_server_bind_address(addr);
         builder = builder.with_websocket_service(websocket_builder);
 
         let mut server = builder.build().await?;
