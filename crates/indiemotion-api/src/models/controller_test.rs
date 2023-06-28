@@ -4,17 +4,6 @@ use super::*;
 use serde_json;
 
 #[test]
-fn test_controller_property_def_serde() {
-    let data = r#"{
-        "name": "propertyA",
-        "default_value": 10.0
-    }"#;
-    let property: ControllerPropertyDef = serde_json::from_str(data).unwrap();
-    assert_eq!(property.name(), &name!("propertyA"));
-    assert!(matches!(property.default_value, Value::Float(_)));
-}
-
-#[test]
 fn test_controller_def_serde() {
     let data = r#"
     {

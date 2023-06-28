@@ -101,10 +101,10 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec3 {
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone)]
 pub struct Vec4 {
-    x: f64,
-    y: f64,
-    z: f64,
-    w: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub w: f64,
 }
 
 impl From<(f64, f64, f64, f64)> for Vec4 {

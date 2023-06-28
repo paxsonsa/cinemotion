@@ -3,6 +3,7 @@ mod error;
 pub mod message;
 pub mod models;
 mod name;
+pub mod prelude;
 pub mod state;
 
 pub use command::Command;

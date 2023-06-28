@@ -116,7 +116,7 @@ impl ControllerState {
 }
 
 /// A definition of a controller to be added to the system.
-#[derive(Constructor, Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ControllerDef {
     /// A unique name for the controller.
     name: Name,
@@ -126,6 +126,11 @@ pub struct ControllerDef {
 }
 
 impl ControllerDef {
+    /// Create a new controller definition.
+    pub fn new(name: Name, properties: Vec<PropertyDef>) -> Self {
+        Self { name, properties }
+    }
+
     /// Return the name of the controller.
     pub fn name(&self) -> &Name {
         &self.name
@@ -155,36 +160,5 @@ impl ControllerDef {
     ///
     pub fn property_mut(&mut self, name: &Name) -> Option<&mut PropertyDef> {
         self.properties.iter_mut().find(|p| p.name() == name)
-    }
-}
-
-/// A definition of a property on a controller.
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ControllerPropertyDef {
-    /// A unique name for the property on the controller.
-    name: Name,
-
-    /// A default value the property. This both defines the type of the property
-    /// and the default value when resetting the controller.
-    default_value: Value,
-}
-
-impl ControllerPropertyDef {
-    /// Build a new controller property definition.
-    pub fn new(name: Name, default_value: Value) -> Self {
-        Self {
-            name,
-            default_value,
-        }
-    }
-
-    /// Get the name of the property.
-    pub fn name(&self) -> &Name {
-        &self.name
-    }
-
-    /// Get the default value of the property.
-    pub fn default_value(&self) -> &Value {
-        &self.default_value
     }
 }
