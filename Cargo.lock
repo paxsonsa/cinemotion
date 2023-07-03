@@ -74,9 +74,9 @@ checksum = "9c7d0618f0e0b7e8ff11427422b64564d5fb0be1940354bfe2e0529b18a9d9b8"
 
 [[package]]
 name = "async-trait"
-version = "0.1.68"
+version = "0.1.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9ccdd8f2a161be9bd5c023df56f1b2a0bd1d83872ae53b71a84a12c9bf6e842"
+checksum = "7b2d0f03b3640e3a630367e40c468cb7f309529c708ed1d88597047b0e7c6ef7"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -297,15 +297,6 @@ checksum = "aa68f1b12764fab894d2755d2518754e71b4fd80ecfb822714a1206c2aab39bf"
 dependencies = [
  "cc",
  "libc",
-]
-
-[[package]]
-name = "fastrand"
-version = "1.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e51093e27b0797c359783294ca4f0a911c270184cb10f85783b118614a1501be"
-dependencies = [
- "instant",
 ]
 
 [[package]]
@@ -675,24 +666,6 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tracing",
-]
-
-[[package]]
-name = "indiemotion-swift"
-version = "0.1.0"
-dependencies = [
- "indiemotion-api",
- "swift-bridge",
- "swift-bridge-build",
-]
-
-[[package]]
-name = "instant"
-version = "0.1.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
-dependencies = [
- "cfg-if",
 ]
 
 [[package]]
@@ -1271,51 +1244,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
-name = "swift-bridge"
-version = "0.1.51"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8fa07c7cd2b2d7ca48d96f5abd159e3fd3eee3457e7bd03adc1994bfbdabd2f"
-dependencies = [
- "swift-bridge-build",
- "swift-bridge-macro",
-]
-
-[[package]]
-name = "swift-bridge-build"
-version = "0.1.51"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "286f727dc922736a1ed74c06bebf43d08b8295a7ba38c77326c74e2b9dfd43df"
-dependencies = [
- "proc-macro2",
- "swift-bridge-ir",
- "syn 1.0.109",
- "tempfile",
-]
-
-[[package]]
-name = "swift-bridge-ir"
-version = "0.1.51"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b4de97e9abde20abc1c01f6d4faa8072d723c73aba288264481a83a1e2787dc"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "swift-bridge-macro"
-version = "0.1.51"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64fabad38a0fc643ceeafefed79e08408c30eeec325b629e426a15b13d055d0a"
-dependencies = [
- "proc-macro2",
- "quote",
- "swift-bridge-ir",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "syn"
 version = "1.0.109"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1335,20 +1263,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "tempfile"
-version = "3.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31c0432476357e58790aaa47a8efb0c5138f137343f3b5f23bd36a27e3b0a6d6"
-dependencies = [
- "autocfg",
- "cfg-if",
- "fastrand",
- "redox_syscall",
- "rustix",
- "windows-sys",
 ]
 
 [[package]]
