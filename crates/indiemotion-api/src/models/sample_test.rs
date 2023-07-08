@@ -16,5 +16,5 @@ fn test_sample_serde() {
         }
     "#;
 
-    let sample: Sample = serde_json::from_str(data).unwrap();
+    let _: Sample = serde_json::from_str(data).unwrap();
 }
