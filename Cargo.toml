@@ -12,7 +12,7 @@ license = "MIT"
 
 [workspace.dependencies]
 anyhow = "1.0"
-async-trait = "0.1.66"
+async-trait = "0.1.71"
 chrono = "0.4.24"
 clap = { version = "4.3.4", features = ["derive"] }
 futures = "0.3.28"
