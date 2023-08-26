@@ -83,7 +83,7 @@ impl WebsocketComponentBuilder {
             .and(warp::ws())
             .and(warp::any().map(move || client_proxy.clone()))
             .map(|ws: warp::ws::Ws, proxy: ClientService| {
-                ws.on_upgrade(move |socket| connect(socket, proxy))
+                ws.on_upgrade(move |socket| handle_websocket(socket, proxy))
             });
 
         let server = warp::serve(router);
@@ -119,7 +119,12 @@ impl WebsocketComponentBuilder {
     }
 }
 
-async fn connect(ws: WebSocket, client_service: ClientService) {
+/// Handle a new websocket connection
+///
+/// When a new websocket connection is established, a new client is registered
+/// to the client service.  The client service will then relay messages to the
+/// client.  The client will relay messages to the client service.
+async fn handle_websocket(ws: WebSocket, client_service: ClientService) {
     let (mut ws_tx, mut ws_rx) = ws.split();
     let mut message_channel = tokio::sync::mpsc::unbounded_channel();
 
@@ -128,7 +133,7 @@ async fn connect(ws: WebSocket, client_service: ClientService) {
         Ok(handle) => handle,
         Err(err) => {
             tracing::error!("client registration failed: {}", err);
-            handle_error(
+            relay_server_error(
                 api::Error::UnexpectedError(format!("client registration failed {:#}", err)),
                 &mut ws_tx,
             )
@@ -155,8 +160,8 @@ async fn connect(ws: WebSocket, client_service: ClientService) {
                     break;
                 }
 
-                if let Err(err) = handle_message(handle, &msg, &client_service).await {
-                    handle_error(err, &mut ws_tx).await;
+                if let Err(err) = relay_message(handle, &msg, &client_service).await {
+                    relay_server_error(err, &mut ws_tx).await;
                 }
             },
             Some(message) = message_channel.1.recv() => {
@@ -177,7 +182,8 @@ async fn connect(ws: WebSocket, client_service: ClientService) {
     tracing::info!("closing connection: {}", handle);
 }
 
-async fn handle_error(err: api::Error, websocket: &mut SplitSink<WebSocket, ws::Message>) {
+/// Relay a server error into the websocket.
+async fn relay_server_error(err: api::Error, websocket: &mut SplitSink<WebSocket, ws::Message>) {
     let msg =
         api::message::Encoding::<api::message::JSONProtocol>::encode(&api::Message::Error(err))
             .unwrap();
@@ -189,8 +195,12 @@ async fn handle_error(err: api::Error, websocket: &mut SplitSink<WebSocket, ws::
     }
 }
 
-async fn handle_message(
-    handle: u32,
+/// Relay the incoming websocket message to the client service
+///
+/// The client handled passed is used to identify the client that sent the
+/// message. In the event as a result of the incoming
+async fn relay_message(
+    client_handle: u32,
     msg: &ws::Message,
     client_relay: &ClientService,
 ) -> api::Result<()> {
@@ -203,19 +213,19 @@ async fn handle_message(
     match api::message::Encoding::<api::message::JSONProtocol>::decode(message) {
         Ok(msg) => {
             let api::Message::Command(command) = msg else {
-                        tracing::info!("client {} sent invalid message type.", handle);
-                        return Err(api::Error::BadMessage("clients can only send command type messages".to_string()));
-                    };
+                tracing::info!("client {} sent invalid message type.", client_handle);
+                return Err(api::Error::BadMessage("clients can only send command type messages".to_string()));
+            };
 
-            if let Err(err) = client_relay.send_from(handle, command).await {
+            if let Err(err) = client_relay.send_from(client_handle, command).await {
                 tracing::error!(
                     "client {} command processing failed: {}, message: {}",
-                    handle,
+                    client_handle,
                     err,
                     message
                 );
                 return Err(api::Error::BadMessage(
-                    "clients can only send command type messages".to_string(),
+                    "failed to process command".to_string(),
                 ));
             }
             Ok(())

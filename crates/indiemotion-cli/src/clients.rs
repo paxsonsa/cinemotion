@@ -197,7 +197,7 @@ impl ClientService {
         let (tx, result) = sync::result::<()>();
         self.command_tx
             .send(Command::ReceiveFrom(client_handle, command, tx))
-            .map_err(|_| Error::ClientError("failed to receive command".to_string()))?;
+            .map_err(|_| Error::ClientError("failed to send command".to_string()))?;
 
         result
             .await
