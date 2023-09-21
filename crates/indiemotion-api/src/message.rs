@@ -19,6 +19,10 @@ mod message_test;
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "payload")]
 pub enum Message {
+    /// A simple echo message.
+    ///
+    /// This can be used to test a connection to the server.
+    Echo(String),
     /// A command to the server to perform some action.
     Command(crate::Command),
     /// A state update from the server to the client.

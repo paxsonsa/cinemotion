@@ -237,3 +237,20 @@ fn test_message_command_error_serde() {
     let message: Message = serde_json::from_str(data).expect("message should deserialize");
     assert!(matches!(message, Message::Error(Error::ControllerError(_))));
 }
+
+#[test]
+fn test_message_echo_message_serde() {
+    let command = Message::Echo("hello, world".into());
+    println!(
+        "{}",
+        Encoding::<JSONProtocol>::encode(&command).expect("message should serialize")
+    );
+
+    let data = r#"{
+        "type": "echo",
+        "payload": "hello, world"
+    }"#;
+
+    let message = Encoding::<JSONProtocol>::decode(data).expect("message should serialize");
+    assert!(matches!(message, Message::Echo(s) if s == "hello, world".to_string()));
+}
