@@ -1,6 +1,5 @@
-use serde::{Deserialize, Serialize};
-
 use crate::models::*;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "command", rename_all = "lowercase")]

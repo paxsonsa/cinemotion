@@ -28,7 +28,7 @@ fn test_property_state_serde() {
         }
       }
     "#;
-    let state: PropertyState = serde_json::from_str(&data).unwrap();
+    let state: PropertyState = serde_json::from_str(data).unwrap();
     println!("{:?}", state);
     assert!(matches!(state, PropertyState::Bound { .. }));
 
