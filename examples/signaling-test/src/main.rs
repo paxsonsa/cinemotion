@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use tokio;
 use warp::{self, Filter};
 
@@ -15,7 +17,9 @@ async fn main() {
     warp::serve(routes).run(([127, 0, 0, 1], 8080)).await;
 }
 
-async fn handle_sessions(body: String) -> Result<impl warp::Reply, std::convert::Infallible> {
-    println!("body -> {}", body);
+async fn handle_sessions(
+    body: HashMap<String, String>,
+) -> Result<impl warp::Reply, std::convert::Infallible> {
+    println!("body -> {:?}", body);
     Ok(warp::http::StatusCode::OK)
 }
