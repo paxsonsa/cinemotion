@@ -1,0 +1,15 @@
+[package]
+name = "mdns"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+libmdns = { workspace = true }
+env_logger = { version = "0.8", default-features = false, features = [
+  "termcolor",
+  "humantime",
+  "atty",
+] }
