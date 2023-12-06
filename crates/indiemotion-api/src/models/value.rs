@@ -131,6 +131,11 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec4 {
     }
 }
 
+// Represents a 4x4 double precision matrix.
+//
+// The matrix is represented a column major where each sub-tuple
+// repsents a column.
+//
 pub type Matrix44 = (
     (f64, f64, f64, f64),
     (f64, f64, f64, f64),
