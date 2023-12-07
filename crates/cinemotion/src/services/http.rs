@@ -1,7 +1,10 @@
-use std::{net::SocketAddr, pin::Pin};
+use std::{collections::HashMap, convert::Infallible, net::SocketAddr, pin::Pin, sync::Arc};
 
 use async_trait::async_trait;
+use tokio::sync::Mutex;
 use warp::{self, Filter};
+
+use crate::webrtc::{ConnectionManager, SessionDescriptor};
 
 use super::Service;
 
@@ -11,13 +14,20 @@ pub struct HttpService {
 }
 
 impl HttpService {
-    pub fn new<I>(address: I) -> Self
+    pub fn new<I>(address: I, connection_manager: ConnectionManager) -> Self
     where
         I: Into<SocketAddr> + Send + 'static,
     {
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
 
+        let manager = Arc::new(Mutex::new(connection_manager));
+
         let root = warp::path::end().map(|| "CineMotion Server");
+        let sessions = warp::post()
+            .and(warp::path("sessions"))
+            .and(warp::body::json())
+            .and(with_connection_manager(manager))
+            .map(handle_post_sessions);
         let service = warp::serve(root).run(address);
 
         HttpService {
@@ -69,4 +79,30 @@ impl futures::Future for HttpService {
             }
         }
     }
+}
+async fn handle_post_sessions(
+    session_desc: SessionDescriptor,
+    manager: Arc<Mutex<ConnectionManager>>,
+) -> Result<impl warp::Reply, Infallible> {
+    let mut manager = manager.lock().await;
+    match manager.create_connection(session_desc) {
+        Ok(r) => Ok(warp::reply::with_status(
+            warp::reply::json(&r),
+            warp::http::StatusCode::CREATED,
+        )),
+        Err(err) => {
+            let empty: HashMap<String, String> = HashMap::new();
+            Ok(warp::reply::with_status(
+                warp::reply::json(&empty),
+                warp::http::StatusCode::BAD_REQUEST,
+            ))
+        }
+    }
+}
+
+fn with_connection_manager(
+    manager: Arc<Mutex<ConnectionManager>>,
+) -> impl Filter<Extract = (Arc<Mutex<ConnectionManager>>,), Error = std::convert::Infallible> + Clone
+{
+    warp::any().map(move || manager.clone())
 }

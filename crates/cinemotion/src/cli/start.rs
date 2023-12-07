@@ -1,6 +1,7 @@
 use std::pin::Pin;
 
 use anyhow::{Context, Result};
+use cinemotion::webrtc::ConnectionManager;
 use clap::Args;
 use futures::stream::FuturesUnordered;
 use futures::StreamExt;
@@ -19,6 +20,9 @@ impl StartCmd {
         let mut services: Vec<Pin<Box<dyn cinemotion::services::Service>>> = vec![];
         let (cancel_tx, mut cancel_rx) = tokio::sync::mpsc::channel(1);
 
+        let connection_manager = ConnectionManager::new();
+
+        // Build the default binding addr for the signaling server.
         let bind_addr = self.server_bind_address.unwrap_or(
             format!("0.0.0.0:{}", cinemotion::DEFAULT_WEB_PORT)
                 .parse()
@@ -34,6 +38,7 @@ impl StartCmd {
         tracing::debug!("configure http service");
         services.push(Box::pin(cinemotion::services::http::HttpService::new(
             bind_addr,
+            connection_manager,
         )));
 
         let interrupt_task = tokio::task::spawn(async move {

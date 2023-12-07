@@ -349,6 +349,8 @@ dependencies = [
  "futures",
  "hostname",
  "libmdns",
+ "serde",
+ "serde_json",
  "thiserror",
  "tokio",
  "tracing",
