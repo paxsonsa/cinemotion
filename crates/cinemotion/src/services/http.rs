@@ -22,13 +22,9 @@ impl HttpService {
 
         let manager = Arc::new(Mutex::new(connection_manager));
 
-        let root = warp::path::end().map(|| "CineMotion Server");
-        let sessions = warp::post()
-            .and(warp::path("sessions"))
-            .and(warp::body::json())
-            .and(with_connection_manager(manager))
-            .map(handle_post_sessions);
-        let service = warp::serve(root).run(address);
+        let api = api(manager);
+        let routes = api.with(warp::log("cinemotion"));
+        let service = warp::serve(routes).run(address);
 
         HttpService {
             future: tokio::task::spawn(async move {
@@ -80,6 +76,34 @@ impl futures::Future for HttpService {
         }
     }
 }
+
+fn api(
+    manager: Arc<Mutex<ConnectionManager>>,
+) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    root().or(sessions_create(manager))
+}
+
+fn root() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::path::end().and_then(handle_root)
+}
+
+async fn handle_root() -> Result<impl warp::Reply, Infallible> {
+    Ok(warp::reply::with_status(
+        warp::reply::html("CineMotion"),
+        warp::http::StatusCode::OK,
+    ))
+}
+
+fn sessions_create(
+    manager: Arc<Mutex<ConnectionManager>>,
+) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::post()
+        .and(warp::path("sessions"))
+        .and(warp::body::json())
+        .and(with_connection_manager(manager))
+        .and_then(handle_post_sessions)
+}
+
 async fn handle_post_sessions(
     session_desc: SessionDescriptor,
     manager: Arc<Mutex<ConnectionManager>>,
