@@ -1,6 +1,7 @@
 use std::pin::Pin;
 
 use anyhow::{Context, Result};
+use cinemotion::services::runtime::{RuntimeOptions, RuntimeService};
 use cinemotion::webrtc::SignalingRelay;
 use clap::Args;
 use futures::stream::FuturesUnordered;
@@ -15,13 +16,19 @@ pub struct StartCmd {
 
 impl StartCmd {
     pub async fn run(&self) -> Result<i32> {
-        // TODO: Start the Engine Service.
         tracing::info!("starting...");
         let mut services: Vec<Pin<Box<dyn cinemotion::services::Service>>> = vec![];
         let (cancel_tx, mut cancel_rx) = tokio::sync::mpsc::channel(1);
 
         let (sender, _) = cinemotion::commands::command_channel();
         let relay = SignalingRelay::new(sender);
+
+        //TODO: Add engine system and connect singaling relay up
+        // Build runtime service for the core engine
+        tracing::info!("configure runtime services");
+        services.push(Box::pin(
+            cinemotion::services::runtime::RuntimeService::new(RuntimeOptions {}),
+        ));
 
         // Build the default binding addr for the signaling server.
         let bind_addr = self.server_bind_address.unwrap_or(

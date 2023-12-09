@@ -1,5 +1,6 @@
 pub mod commands;
 pub mod data;
+pub mod engine;
 pub(crate) mod error;
 pub mod services;
 pub mod webrtc;
