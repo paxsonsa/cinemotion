@@ -1,5 +1,3 @@
-mod connection_manager;
-mod session_desc;
+pub mod signaling;
 
-pub use connection_manager::ConnectionManager;
-pub use session_desc::SessionDescriptor;
+pub use signaling::SignalingRelay;

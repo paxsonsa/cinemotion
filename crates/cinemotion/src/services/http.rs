@@ -4,7 +4,8 @@ use async_trait::async_trait;
 use tokio::sync::Mutex;
 use warp::{self, Filter};
 
-use crate::webrtc::{ConnectionManager, SessionDescriptor};
+use crate::data::SessionDescriptor;
+use crate::webrtc::SignalingRelay;
 
 use super::Service;
 
@@ -14,7 +15,7 @@ pub struct HttpService {
 }
 
 impl HttpService {
-    pub fn new<I>(address: I, connection_manager: ConnectionManager) -> Self
+    pub fn new<I>(address: I, connection_manager: SignalingRelay) -> Self
     where
         I: Into<SocketAddr> + Send + 'static,
     {
@@ -78,7 +79,7 @@ impl futures::Future for HttpService {
 }
 
 fn api(
-    manager: Arc<Mutex<ConnectionManager>>,
+    manager: Arc<Mutex<SignalingRelay>>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     root().or(sessions_create(manager))
 }
@@ -95,7 +96,7 @@ async fn handle_root() -> Result<impl warp::Reply, Infallible> {
 }
 
 fn sessions_create(
-    manager: Arc<Mutex<ConnectionManager>>,
+    manager: Arc<Mutex<SignalingRelay>>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::post()
         .and(warp::path("sessions"))
@@ -106,10 +107,10 @@ fn sessions_create(
 
 async fn handle_post_sessions(
     session_desc: SessionDescriptor,
-    manager: Arc<Mutex<ConnectionManager>>,
+    manager: Arc<Mutex<SignalingRelay>>,
 ) -> Result<impl warp::Reply, Infallible> {
     let mut manager = manager.lock().await;
-    match manager.create_connection(session_desc) {
+    match manager.create(session_desc).await {
         Ok(r) => Ok(warp::reply::with_status(
             warp::reply::json(&r),
             warp::http::StatusCode::CREATED,
@@ -125,8 +126,8 @@ async fn handle_post_sessions(
 }
 
 fn with_connection_manager(
-    manager: Arc<Mutex<ConnectionManager>>,
-) -> impl Filter<Extract = (Arc<Mutex<ConnectionManager>>,), Error = std::convert::Infallible> + Clone
+    manager: Arc<Mutex<SignalingRelay>>,
+) -> impl Filter<Extract = (Arc<Mutex<SignalingRelay>>,), Error = std::convert::Infallible> + Clone
 {
     warp::any().map(move || manager.clone())
 }
