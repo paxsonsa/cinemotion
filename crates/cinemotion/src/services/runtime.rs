@@ -2,27 +2,50 @@ use std::{pin::Pin, time::Duration};
 
 use async_trait::async_trait;
 
+use crate::{
+    commands::{Request, RequestPipeRx},
+    engine::{Engine, EngineOpt},
+    Error, Result,
+};
+
 use super::Service;
 
-pub struct RuntimeOptions {}
+pub struct RuntimeOptions {
+    pub request_pipe: RequestPipeRx,
+}
 
 pub struct RuntimeService {
-    future: tokio::task::JoinHandle<std::result::Result<(), crate::Error>>,
+    future: tokio::task::JoinHandle<Result<()>>,
     shutdown_tx: tokio::sync::mpsc::Sender<()>,
 }
 
 impl RuntimeService {
-    pub fn new(options: RuntimeOptions) -> Self {
+    pub fn new(mut options: RuntimeOptions) -> Self {
+        let engine_opts = EngineOpt {};
+        let mut engine = Engine::new(engine_opts);
+
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
         let future = tokio::spawn(async move {
+            let mut request_buffer: Vec<Request> = Vec::with_capacity(1024);
             let mut interval = tokio::time::interval(Duration::from_millis(16));
             loop {
                 tokio::select! {
                     _ = shutdown_rx.recv() => {
                         break;
                     }
-                    _ = interval.tick() => {
+                    request = options.request_pipe.recv() => {
 
+                        let Some(request) = request else {
+                            return Err(Error::ChannelClosed("runtime request channel closed."));
+                        };
+
+                        request_buffer.push(request);
+                    }
+                    _ = interval.tick() => {
+                        for request in request_buffer.drain(..) {
+                            let command = request.command;
+                            let _ = engine.apply(command).await;
+                        }
                     }
                 }
             }

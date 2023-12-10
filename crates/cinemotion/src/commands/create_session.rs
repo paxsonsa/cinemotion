@@ -1,9 +1,7 @@
-use crate::{
-    data::{self, SessionDescriptor},
-    Result,
-};
+use crate::session::Session;
+use crate::Result;
 
 pub struct CreateSession {
-    pub session_desc: data::SessionDescriptor,
-    pub sender: tokio::sync::oneshot::Sender<Result<SessionDescriptor>>,
+    pub session: Box<dyn Session + Send>,
+    pub ack_pipe: tokio::sync::oneshot::Sender<Result<()>>,
 }

@@ -1,49 +1,44 @@
-use crate::commands::{Command, CreateSession};
-use crate::Error;
-use crate::{commands::CommandSender, Result};
+use crate::commands::{CreateSession, Request, RequestPipeTx};
+use crate::{Error, Result};
 
 use crate::data::SessionDescriptor;
 
-#[cfg(test)]
-#[path = "./signaling_test.rs"]
-mod signaling_test;
+use super::WebRTCSession;
 
 pub struct SignalingRelay {
-    sender: CommandSender,
+    sender: RequestPipeTx,
 }
 
 impl SignalingRelay {
-    pub fn new(sender: CommandSender) -> Self {
+    pub fn new(sender: RequestPipeTx) -> Self {
         SignalingRelay { sender }
     }
 
     pub async fn create(&self, session_desc: SessionDescriptor) -> Result<SessionDescriptor> {
-        let (result_sender, result_receiver) = tokio::sync::oneshot::channel();
+        let (ack_pipe, ack_pipe_rx) = tokio::sync::oneshot::channel();
 
-        let command: Command = CreateSession {
-            session_desc,
-            sender: result_sender,
-        }
-        .into();
+        let (remote_desc, session) = WebRTCSession::new(session_desc).await?;
+        let session = Box::new(session);
+        let request = Request::with_command(CreateSession { session, ack_pipe });
 
-        if let Err(err) = self.sender.send(command) {
+        if self.sender.send(request).is_err() {
             return Err(Error::SignalingFailed(
                 "lost connection to runtime while attempting to establish session".to_string(),
             ));
         }
 
-        match result_receiver.await {
-            Ok(result) => match result {
-                Ok(desc) => Ok(desc),
-                Err(err) => {
+        match ack_pipe_rx.await {
+            Ok(result) => {
+                if let Err(err) = result {
                     tracing::error!("failed to complete signaling request with: {err}");
-                    Err(Error::SignalingFailed(format!(
+                    return Err(Error::SignalingFailed(format!(
                         "runtime responded to request with error, {err}"
-                    )))
+                    )));
                 }
-            },
+                Ok(remote_desc)
+            }
             Err(_) => Err(Error::SignalingFailed(
-                "lost connection to runtime.".to_string(),
+                "lost connection to runtime while setting up session.".to_string(),
             )),
         }
     }

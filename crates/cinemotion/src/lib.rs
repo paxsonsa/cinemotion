@@ -3,6 +3,7 @@ pub mod data;
 pub mod engine;
 pub(crate) mod error;
 pub mod services;
+pub mod session;
 pub mod webrtc;
 
 pub static VERSION: &str = "0.1.0";

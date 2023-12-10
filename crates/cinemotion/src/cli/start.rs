@@ -20,14 +20,14 @@ impl StartCmd {
         let mut services: Vec<Pin<Box<dyn cinemotion::services::Service>>> = vec![];
         let (cancel_tx, mut cancel_rx) = tokio::sync::mpsc::channel(1);
 
-        let (sender, _) = cinemotion::commands::command_channel();
+        let (sender, reciever) = cinemotion::commands::request_channel();
         let relay = SignalingRelay::new(sender);
 
-        //TODO: Add engine system and connect singaling relay up
-        // Build runtime service for the core engine
         tracing::info!("configure runtime services");
         services.push(Box::pin(
-            cinemotion::services::runtime::RuntimeService::new(RuntimeOptions {}),
+            cinemotion::services::runtime::RuntimeService::new(RuntimeOptions {
+                request_pipe: reciever,
+            }),
         ));
 
         // Build the default binding addr for the signaling server.
