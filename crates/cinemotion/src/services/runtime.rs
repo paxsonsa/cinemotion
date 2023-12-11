@@ -43,8 +43,7 @@ impl RuntimeService {
                     }
                     _ = interval.tick() => {
                         for request in request_buffer.drain(..) {
-                            let command = request.command;
-                            let _ = engine.apply(command).await;
+                            let _ = engine.apply(request).await;
                         }
                     }
                 }

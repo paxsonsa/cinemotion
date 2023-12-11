@@ -1,4 +1,4 @@
 #[derive(Clone)]
-pub enum Response {
+pub enum Event {
     Echo(String),
 }

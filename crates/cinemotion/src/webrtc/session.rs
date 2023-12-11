@@ -1,4 +1,9 @@
-use crate::{commands::RequestPipeTx, data::SessionDescriptor, Error, Result};
+use crate::{
+    commands::{EventPipeRx, RequestPipeTx},
+    data::SessionDescriptor,
+    Error, Result,
+};
+use async_trait::async_trait;
 use std::sync::Arc;
 use webrtc::{
     api::{media_engine::MediaEngine, APIBuilder},
@@ -19,7 +24,10 @@ impl WebRTCSession {
     /// Establish a new WebRTC based session
     ///
     /// Returns the session descriptor to send back to client and an active session.
-    pub async fn new(desc: SessionDescriptor) -> Result<(SessionDescriptor, Self)> {
+    pub async fn new(
+        desc: SessionDescriptor,
+        request_pipe: RequestPipeTx,
+    ) -> Result<(SessionDescriptor, Self)> {
         let m = MediaEngine::default();
         let api = APIBuilder::new().with_media_engine(m).build();
 
@@ -60,4 +68,9 @@ impl WebRTCSession {
     }
 }
 
-impl Session for WebRTCSession {}
+#[async_trait]
+impl Session for WebRTCSession {
+    async fn initialize(&mut self, response_pipe: EventPipeRx) -> crate::Result<()> {
+        Ok(())
+    }
+}

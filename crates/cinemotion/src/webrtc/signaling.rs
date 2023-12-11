@@ -17,7 +17,14 @@ impl SignalingRelay {
     pub async fn create(&self, session_desc: SessionDescriptor) -> Result<SessionDescriptor> {
         let (ack_pipe, ack_pipe_rx) = tokio::sync::oneshot::channel();
 
-        let (remote_desc, session) = WebRTCSession::new(session_desc).await?;
+        // TODO: Add Request Sender to Session Object
+        // TODO: Add initialize() method to session trait and use that to init session with
+        // broadcast receiver an task.
+        // TODO: WebRTC Echo Test with Engine.
+        // FIXME: Maybe need to add two kinds of requests: Local for internal engine operations we
+        // do not want exposed to clients and, remote for operations from the client.
+
+        let (remote_desc, session) = WebRTCSession::new(session_desc, self.sender.clone()).await?;
         let session = Box::new(session);
         let request = Request::with_command(CreateSession { session, ack_pipe });
 

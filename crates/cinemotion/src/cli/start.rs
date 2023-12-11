@@ -20,7 +20,7 @@ impl StartCmd {
         let mut services: Vec<Pin<Box<dyn cinemotion::services::Service>>> = vec![];
         let (cancel_tx, mut cancel_rx) = tokio::sync::mpsc::channel(1);
 
-        let (sender, reciever) = cinemotion::commands::request_channel();
+        let (sender, reciever) = cinemotion::commands::request_pipe();
         let relay = SignalingRelay::new(sender);
 
         tracing::info!("configure runtime services");
