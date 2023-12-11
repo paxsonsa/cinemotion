@@ -22,7 +22,7 @@ pub struct RuntimeService {
 impl RuntimeService {
     pub fn new(mut options: RuntimeOptions) -> Self {
         let engine_opts = EngineOpt {};
-        let mut engine = Engine::new(engine_opts);
+        let mut engine = Box::new(Engine::new(engine_opts));
 
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
         let future = tokio::spawn(async move {
@@ -33,18 +33,9 @@ impl RuntimeService {
                     _ = shutdown_rx.recv() => {
                         break;
                     }
-                    request = options.request_pipe.recv() => {
-
-                        let Some(request) = request else {
-                            return Err(Error::ChannelClosed("runtime request channel closed."));
-                        };
-
-                        request_buffer.push(request);
-                    }
+                    request = options.request_pipe.recv() => queue_request(&mut request_buffer, request)?,
                     _ = interval.tick() => {
-                        for request in request_buffer.drain(..) {
-                            let _ = engine.apply(request).await;
-                        }
+                        tick(&mut request_buffer, &mut engine).await?;
                     }
                 }
             }
@@ -55,6 +46,21 @@ impl RuntimeService {
             shutdown_tx,
         }
     }
+}
+
+fn queue_request(buffer: &mut Vec<Request>, request: Option<Request>) -> Result<()> {
+    let Some(request) = request else {
+        return Err(Error::ChannelClosed("runtime request channel closed."));
+    };
+    buffer.push(request);
+    Ok(())
+}
+
+async fn tick(buffer: &mut Vec<Request>, engine: &mut Box<Engine>) -> Result<()> {
+    for request in buffer.drain(..) {
+        engine.apply(request).await?;
+    }
+    Ok(())
 }
 
 #[async_trait]

@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use cinemotion::services::runtime::{RuntimeOptions, RuntimeService};
 use cinemotion::webrtc::SignalingRelay;
 use clap::Args;
@@ -24,11 +24,10 @@ impl StartCmd {
         let relay = SignalingRelay::new(sender);
 
         tracing::info!("configure runtime services");
-        services.push(Box::pin(
-            cinemotion::services::runtime::RuntimeService::new(RuntimeOptions {
-                request_pipe: reciever,
-            }),
-        ));
+        let runtime = Box::pin(RuntimeService::new(RuntimeOptions {
+            request_pipe: reciever,
+        }));
+        services.push(runtime);
 
         // Build the default binding addr for the signaling server.
         let bind_addr = self.server_bind_address.unwrap_or(
