@@ -3,7 +3,7 @@ use std::{pin::Pin, time::Duration};
 use async_trait::async_trait;
 
 use crate::{
-    commands::{Request, RequestPipeRx},
+    commands::{event_pipe, Request, RequestPipeRx, RequestPipeTx},
     engine::{Engine, EngineOpt},
     Error, Result,
 };
@@ -11,7 +11,7 @@ use crate::{
 use super::Service;
 
 pub struct RuntimeOptions {
-    pub request_pipe: RequestPipeRx,
+    pub request_pipe: (RequestPipeTx, RequestPipeRx),
 }
 
 pub struct RuntimeService {
@@ -21,7 +21,11 @@ pub struct RuntimeService {
 
 impl RuntimeService {
     pub fn new(mut options: RuntimeOptions) -> Self {
-        let engine_opts = EngineOpt {};
+        let request_pipe = options.request_pipe.1;
+        let engine_opts = EngineOpt {
+            request_pipe: options.request_pipe.0,
+            event_pipe: event_pipe(),
+        };
         let mut engine = Box::new(Engine::new(engine_opts));
 
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
@@ -33,7 +37,7 @@ impl RuntimeService {
                     _ = shutdown_rx.recv() => {
                         break;
                     }
-                    request = options.request_pipe.recv() => queue_request(&mut request_buffer, request)?,
+                    request = request_pipe.recv() => queue_request(&mut request_buffer, request)?,
                     _ = interval.tick() => {
                         tick(&mut request_buffer, &mut engine).await?;
                     }

@@ -25,7 +25,7 @@ impl StartCmd {
 
         tracing::info!("configure runtime services");
         let runtime = Box::pin(RuntimeService::new(RuntimeOptions {
-            request_pipe: reciever,
+            request_pipe: (sender.clone(), reciever),
         }));
         services.push(runtime);
 

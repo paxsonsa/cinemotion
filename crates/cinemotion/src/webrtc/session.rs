@@ -14,13 +14,13 @@ use webrtc::{
     },
 };
 
-use crate::session::Session;
+use crate::session::SessionAgent;
 
-pub struct WebRTCSession {
+pub struct WebRTCAgent {
     peer_connection: Arc<RTCPeerConnection>,
 }
 
-impl WebRTCSession {
+impl WebRTCAgent {
     /// Establish a new WebRTC based session
     ///
     /// Returns the session descriptor to send back to client and an active session.
@@ -59,7 +59,7 @@ impl WebRTCSession {
             Some(desc) => SessionDescriptor::new(&desc.sdp),
             None => {
                 return Err(Error::SessionFailed(
-                    "failed to establish webrtc peer connection",
+                    "failed to establish webrtc peer connection".to_string(),
                 ))
             }
         };
@@ -69,7 +69,7 @@ impl WebRTCSession {
 }
 
 #[async_trait]
-impl Session for WebRTCSession {
+impl SessionAgent for WebRTCAgent {
     async fn initialize(&mut self, response_pipe: EventPipeRx) -> crate::Result<()> {
         Ok(())
     }

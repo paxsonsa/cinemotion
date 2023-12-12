@@ -1,7 +1,5 @@
 use thiserror::Error;
 
-pub type Result<T> = std::result::Result<T, Error>;
-
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("channel closed: {0}")]
@@ -14,8 +12,10 @@ pub enum Error {
     WebRTCError(#[from] webrtc::Error),
 
     #[error("session failed: {0}")]
-    SessionFailed(&'static str),
+    SessionFailed(String),
 
     #[error("bad session descriptor: {0}")]
     BadSessionDescriptor(String),
 }
+
+pub type Result<T> = std::result::Result<T, self::Error>;

@@ -1,9 +1,10 @@
 use crate::commands::{CreateSession, Request, RequestPipeTx};
+use crate::session::LOCAL_SESSION_ID;
 use crate::{Error, Result};
 
 use crate::data::SessionDescriptor;
 
-use super::WebRTCSession;
+use super::WebRTCAgent;
 
 pub struct SignalingRelay {
     sender: RequestPipeTx,
@@ -17,16 +18,19 @@ impl SignalingRelay {
     pub async fn create(&self, session_desc: SessionDescriptor) -> Result<SessionDescriptor> {
         let (ack_pipe, ack_pipe_rx) = tokio::sync::oneshot::channel();
 
-        // TODO: Add Request Sender to Session Object
-        // TODO: Add initialize() method to session trait and use that to init session with
-        // broadcast receiver an task.
         // TODO: WebRTC Echo Test with Engine.
         // FIXME: Maybe need to add two kinds of requests: Local for internal engine operations we
         // do not want exposed to clients and, remote for operations from the client.
 
-        let (remote_desc, session) = WebRTCSession::new(session_desc, self.sender.clone()).await?;
+        let (remote_desc, session) = WebRTCAgent::new(session_desc, self.sender.clone()).await?;
         let session = Box::new(session);
-        let request = Request::with_command(CreateSession { session, ack_pipe });
+        let request = Request::with_command(
+            LOCAL_SESSION_ID,
+            CreateSession {
+                agent: session,
+                ack_pipe,
+            },
+        );
 
         if self.sender.send(request).is_err() {
             return Err(Error::SignalingFailed(
