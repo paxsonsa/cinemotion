@@ -21,11 +21,11 @@ impl StartCmd {
         let (cancel_tx, mut cancel_rx) = tokio::sync::mpsc::channel(1);
 
         let (sender, reciever) = cinemotion::commands::request_pipe();
-        let relay = SignalingRelay::new(sender);
+        let relay = SignalingRelay::new(sender.clone());
 
         tracing::info!("configure runtime services");
         let runtime = Box::pin(RuntimeService::new(RuntimeOptions {
-            request_pipe: (sender.clone(), reciever),
+            request_pipe: (sender, reciever),
         }));
         services.push(runtime);
 

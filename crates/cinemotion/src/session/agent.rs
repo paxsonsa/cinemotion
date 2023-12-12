@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 
-use crate::commands::EventPipeRx;
+use super::SendHandlerFn;
 
 #[async_trait]
 pub trait SessionAgent {
-    async fn initialize(&mut self, response_pipe: EventPipeRx) -> crate::Result<()>;
+    async fn initialize(&mut self, sendFn: SendHandlerFn) -> crate::Result<()>;
 }

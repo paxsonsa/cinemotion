@@ -1,9 +1,7 @@
-use std::pin::Pin;
-
 use crate::commands::{Command, Event, EventPipeRx, Request, RequestPipeTx};
 use crate::{Error, Result};
 
-use super::SessionAgent;
+use super::{SendHandlerFn, SessionAgent};
 
 /// Manages a session connection to the runtime.
 ///
@@ -35,22 +33,22 @@ impl Session {
         }
     }
 
-    // pub type SendHandlerFn = Box<dyn (FnMut(Command) -> Result<()>) + Send + Sync>;
+    fn make_send(uid: usize, request_pipe: RequestPipeTx) -> SendHandlerFn {
+        Box::new(move |command: Command| {
+            let request = Request::with_command(uid, command);
+            if let Err(err) = request_pipe.send(request) {
+                let msg = format!(
+                    "session {} failed to send request, pipe broken. err={err}",
+                    uid
+                );
 
-    //     let func = |command: Command| {
-    //         let request = Request::with_command(uid, command);
-    //         if let Err(err) = request_pipe.send(request) {
-    //             let msg = format!(
-    //                 "session {} failed to send request, pipe broken. err={err}",
-    //                 uid
-    //             );
-    //             return Err(Error::SessionFailed(msg));
-    //         }
-    //         Ok(())
-    //     };
-    //     func
-    // }
-    //
+                return Err(Error::SessionFailed(msg));
+            }
+
+            Ok(())
+        })
+    }
+
     pub async fn recieve(event: Event) -> Result<()> {
         Ok(())
     }

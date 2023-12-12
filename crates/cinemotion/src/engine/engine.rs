@@ -36,21 +36,17 @@ impl Engine {
                 Ok(())
             }
             Command::CreateSession(create_session) => {
-                let mut agent = create_session.agent;
+                let agent = create_session.agent;
                 let ack_pipe = create_session.ack_pipe;
-
-                if let Err(err) = agent.initialize(self.event_pipe.subscribe()).await {
-                    tracing::error!("failed to new initialize session: {err}");
-                    return Ok(());
-                }
-
                 let active_id = self.sessions.len() + 1;
+
                 let session = Box::new(Session::new(
                     active_id,
                     self.request_pipe.clone(),
                     self.event_pipe.subscribe(),
                     agent,
                 ));
+
                 self.sessions.insert(active_id, session);
 
                 if ack_pipe.send(Ok(())).is_err() {

@@ -20,8 +20,8 @@ pub struct RuntimeService {
 }
 
 impl RuntimeService {
-    pub fn new(mut options: RuntimeOptions) -> Self {
-        let request_pipe = options.request_pipe.1;
+    pub fn new(options: RuntimeOptions) -> Self {
+        let mut request_pipe = options.request_pipe.1;
         let engine_opts = EngineOpt {
             request_pipe: options.request_pipe.0,
             event_pipe: event_pipe(),

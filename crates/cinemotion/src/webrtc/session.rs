@@ -1,6 +1,7 @@
 use crate::{
     commands::{EventPipeRx, RequestPipeTx},
     data::SessionDescriptor,
+    session::SendHandlerFn,
     Error, Result,
 };
 use async_trait::async_trait;
@@ -70,7 +71,7 @@ impl WebRTCAgent {
 
 #[async_trait]
 impl SessionAgent for WebRTCAgent {
-    async fn initialize(&mut self, response_pipe: EventPipeRx) -> crate::Result<()> {
+    async fn initialize(&mut self, sendFn: SendHandlerFn) -> crate::Result<()> {
         Ok(())
     }
 }
