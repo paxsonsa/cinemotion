@@ -15,20 +15,20 @@ use super::{SendHandlerFn, SessionAgent};
 pub struct Session {
     uid: usize,
     task: JoinHandle<()>,
-    agent: Mutex<Arc<Box<dyn SessionAgent + Send + Sync>>>,
+    agent: Arc<Mutex<Box<dyn SessionAgent + Send + Sync>>>,
 }
 
 impl Session {
     pub fn new(
         uid: usize,
         request_pipe: RequestPipeTx,
-        event_pipe: EventPipeRx,
+        mut event_pipe: EventPipeRx,
         mut agent: Box<dyn SessionAgent + Send + Sync>,
     ) -> Self {
         agent.initialize(Self::make_send(uid, request_pipe));
 
-        let agent = Mutex::new(Arc::new(agent));
-
+        let agent = Arc::new(Mutex::new(agent));
+        let shared_agent = Arc::clone(&agent);
         let task = tokio::spawn(async move {
             loop {
                 let event = match event_pipe.recv().await {
@@ -38,7 +38,7 @@ impl Session {
                 };
                 // TODO: Capture receive error and close agent.
                 // TODO: Handle Shutdown elegantly.
-                let agent = agent.lock().await;
+                let mut agent = shared_agent.lock().await;
                 match event.target {
                     Some(target) if target == uid => agent.receive(event).await,
                     Some(_) => {}

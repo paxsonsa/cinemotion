@@ -1,10 +1,12 @@
 use crate::{
-    commands::{Event, EventPipeRx, RequestPipeTx},
+    commands::{self, Command, Event, EventPipeRx, RequestPipeTx},
     data::SessionDescriptor,
     session::SendHandlerFn,
     Error, Result,
 };
+use arc_swap::ArcSwapOption;
 use async_trait::async_trait;
+use futures::lock::Mutex;
 use std::sync::Arc;
 use webrtc::{
     api::{media_engine::MediaEngine, APIBuilder},
@@ -19,6 +21,7 @@ use crate::session::SessionAgent;
 
 pub struct WebRTCAgent {
     peer_connection: Arc<RTCPeerConnection>,
+    send_handler: Arc<ArcSwapOption<Mutex<SendHandlerFn>>>,
 }
 
 impl WebRTCAgent {
@@ -65,13 +68,81 @@ impl WebRTCAgent {
             }
         };
 
-        Ok((local_desc, Self { peer_connection }))
+        Ok((
+            local_desc,
+            Self {
+                peer_connection,
+                send_handler: Default::default(),
+            },
+        ))
     }
 }
 
 #[async_trait]
 impl SessionAgent for WebRTCAgent {
-    async fn initialize(&mut self, send_fn: SendHandlerFn) {}
+    async fn initialize(&mut self, send_fn: SendHandlerFn) {
+        self.send_handler.store(Some(Arc::new(Mutex::new(send_fn))));
+        let options = RTCDataChannelInit {
+            ordered: Some(true),
+            ..Default::default()
+        };
+        let main_channel = match self
+            .peer_connection
+            .create_data_channel("main", Some(options))
+            .await
+        {
+            Ok(c) => c,
+            Err(err) => {
+                tracing::error!("failed to create agent data channel. err={err}");
+                return;
+            }
+        };
+
+        let shared_send_fn = Arc::clone(&self.send_handler);
+        main_channel.on_open(Box::new(move || {
+            Box::pin(async move {
+                if let Some(handler) = &*shared_send_fn.load() {
+                    let mut f = handler.lock().await;
+                    let init = commands::StartSession {};
+                    let _ = f(init.into());
+                }
+            })
+        }));
+
+        main_channel.on_message(Box::new(move |msg| {
+            let msg_str = String::from_utf8(msg.data.to_vec()).unwrap();
+            // TODO: use send handler to receive bytes and convert from protobuf
+            // TODO:: Protobuf Echo
+            Box::pin(async {})
+        }));
+
+        self.peer_connection
+            .on_peer_connection_state_change(Box::new(move |state: RTCPeerConnectionState| {
+                match state {
+                    RTCPeerConnectionState::Unspecified => {}
+                    RTCPeerConnectionState::New => {
+                        tracing::debug!("agent connection in new state");
+                    }
+                    RTCPeerConnectionState::Connecting => {
+                        tracing::debug!("agent is connecting");
+                    }
+                    RTCPeerConnectionState::Connected => {
+                        tracing::debug!("agent is connected");
+                    }
+                    RTCPeerConnectionState::Disconnected => {
+                        tracing::warn!("agent is disconnected, may come back");
+                    }
+                    RTCPeerConnectionState::Failed => {
+                        tracing::error!("agent connection has failed.");
+                    }
+                    RTCPeerConnectionState::Closed => {
+                        tracing::error!("agent connection was closed.");
+                    }
+                };
+
+                Box::pin(async {})
+            }));
+    }
     async fn receive(&mut self, event: Event) {}
     fn close(&mut self) {}
 }

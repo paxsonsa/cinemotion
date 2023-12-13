@@ -4,11 +4,13 @@ mod command;
 mod create_session;
 mod event;
 mod request;
+mod start_session;
 
 pub use create_session::CreateSession;
+pub use start_session::StartSession;
 
 pub use command::Command;
-pub use event::Event;
+pub use event::{Event, EventPayload};
 pub use request::Request;
 
 pub type EventPipeTx = tokio::sync::broadcast::Sender<Event>;

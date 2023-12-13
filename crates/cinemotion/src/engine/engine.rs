@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use crate::{
-    commands::{event_pipe, Command, EventPipeTx, Request, RequestPipeTx},
-    session::{Session, SessionAgent, LOCAL_SESSION_ID},
-    Result,
+    commands::{Command, Event, EventPayload, EventPipeTx, Request, RequestPipeTx},
+    session::Session,
+    Error, Result,
 };
 
 use super::EngineOpt;
@@ -57,6 +57,22 @@ impl Engine {
                 }
                 Ok(())
             }
+            Command::StartSession(_) => {
+                let event = Event {
+                    target: Some(request.session_id),
+                    payload: EventPayload::SessionInit,
+                };
+                self.send(event)
+            }
         }
+    }
+
+    fn send(&self, event: Event) -> Result<()> {
+        if let Err(_) = self.event_pipe.send(event) {
+            return Err(Error::EngineFailed(
+                "event pipe closed unexpectedly.".to_string(),
+            ));
+        }
+        Ok(())
     }
 }

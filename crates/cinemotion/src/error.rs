@@ -16,6 +16,9 @@ pub enum Error {
 
     #[error("bad session descriptor: {0}")]
     BadSessionDescriptor(String),
+
+    #[error("engine failed: {0}")]
+    EngineFailed(String),
 }
 
 pub type Result<T> = std::result::Result<T, self::Error>;

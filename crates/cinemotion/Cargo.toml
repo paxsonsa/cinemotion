@@ -15,6 +15,7 @@ path = "src/lib.rs"
 
 
 [dependencies]
+arc-swap.workspace = true
 clap.workspace = true
 anyhow.workspace = true
 tokio.workspace = true

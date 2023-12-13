@@ -1,6 +1,7 @@
 #[derive(Clone)]
 pub enum EventPayload {
     Echo(String),
+    SessionInit,
 }
 
 #[derive(Clone)]
