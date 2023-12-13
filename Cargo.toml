@@ -11,7 +11,7 @@ license = "MIT"
 [workspace.dependencies]
 anyhow = "1.0"
 arc-swap = "1.6.0"
-async-trait = "0.1.66"
+async-trait = "0.1.74"
 chrono = "0.4.24"
 clap = { version = "4.4", features = ["derive"] }
 futures = "0.3.29"
