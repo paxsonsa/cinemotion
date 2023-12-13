@@ -1,5 +1,10 @@
-use crate::commands::{Command, Event, EventPipeRx, Request, RequestPipeTx};
-use crate::{Error, Result};
+use std::sync::Arc;
+
+use tokio::sync::Mutex;
+use tokio::task::JoinHandle;
+
+use crate::commands::{Command, EventPipeRx, Request, RequestPipeTx};
+use crate::Error;
 
 use super::{SendHandlerFn, SessionAgent};
 
@@ -9,9 +14,8 @@ use super::{SendHandlerFn, SessionAgent};
 /// The agent is in charge of managing the communication to the client.
 pub struct Session {
     uid: usize,
-    event_pipe: EventPipeRx,
-    request_pipe: RequestPipeTx,
-    agent: Box<dyn SessionAgent + Send>,
+    task: JoinHandle<()>,
+    agent: Mutex<Arc<Box<dyn SessionAgent + Send + Sync>>>,
 }
 
 impl Session {
@@ -19,18 +23,31 @@ impl Session {
         uid: usize,
         request_pipe: RequestPipeTx,
         event_pipe: EventPipeRx,
-        agent: Box<dyn SessionAgent + Send>,
+        mut agent: Box<dyn SessionAgent + Send + Sync>,
     ) -> Self {
-        let task = tokio::spawn(async {});
+        agent.initialize(Self::make_send(uid, request_pipe));
 
-        // agent.initialize(;
+        let agent = Mutex::new(Arc::new(agent));
 
-        Session {
-            uid,
-            event_pipe,
-            request_pipe,
-            agent: agent.into(),
-        }
+        let task = tokio::spawn(async move {
+            loop {
+                let event = match event_pipe.recv().await {
+                    Ok(event) => event,
+                    Err(tokio::sync::broadcast::error::RecvError::Lagged(_)) => continue,
+                    Err(tokio::sync::broadcast::error::RecvError::Closed) => return,
+                };
+                // TODO: Capture receive error and close agent.
+                // TODO: Handle Shutdown elegantly.
+                let agent = agent.lock().await;
+                match event.target {
+                    Some(target) if target == uid => agent.receive(event).await,
+                    Some(_) => {}
+                    None => agent.receive(event).await,
+                };
+            }
+        });
+
+        Session { uid, task, agent }
     }
 
     fn make_send(uid: usize, request_pipe: RequestPipeTx) -> SendHandlerFn {
@@ -48,8 +65,11 @@ impl Session {
             Ok(())
         })
     }
+}
 
-    pub async fn recieve(event: Event) -> Result<()> {
-        Ok(())
+impl Drop for Session {
+    fn drop(&mut self) {
+        self.task.abort();
+        self.agent.blocking_lock().close();
     }
 }
