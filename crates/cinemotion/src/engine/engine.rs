@@ -30,7 +30,7 @@ impl Engine {
     }
 
     /// Apply the given request command to the engine.
-    pub async fn apply(&mut self, request: Request) -> Result<()> {
+    pub async fn apply(&mut self, request: Request) -> Result<Option<Event>> {
         let command = request.command;
         match command {
             // Respond to echo requests with an echo event.
@@ -40,7 +40,8 @@ impl Engine {
                     target: Some(request.session_id),
                     payload: EventPayload::Echo(message),
                 };
-                self.send(event)
+                self.send(event)?;
+                Ok(None)
             }
             // Create session is an internal event that establishes a new session
             // connection with the client.
@@ -64,7 +65,7 @@ impl Engine {
                     );
                     let _ = self.sessions.remove(&active_id);
                 }
-                Ok(())
+                Ok(None)
             }
 
             // An internal request to open the session begin initating the session
@@ -75,7 +76,7 @@ impl Engine {
                 //     payload: EventPayload::SessionInit,
                 // };
                 // self.send(event)
-                Ok(())
+                Ok(None)
             }
         }
     }
