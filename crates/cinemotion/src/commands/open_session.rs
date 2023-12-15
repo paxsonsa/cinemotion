@@ -1,9 +1,9 @@
-use super::Command;
+use super::{Command, InternalCommand};
 
 pub struct OpenSession {}
 
 impl From<OpenSession> for Command {
     fn from(value: OpenSession) -> Self {
-        Self::OpenSession(value)
+        Self::Internal(InternalCommand::OpenSession(value))
     }
 }

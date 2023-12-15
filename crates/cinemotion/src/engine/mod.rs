@@ -1,5 +1,5 @@
+pub mod components;
 pub mod engine;
-pub mod engine_opt;
+pub(crate) mod session;
 
 pub use engine::Engine;
-pub use engine_opt::EngineOpt;

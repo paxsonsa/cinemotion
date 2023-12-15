@@ -3,8 +3,9 @@ use std::{pin::Pin, time::Duration};
 use async_trait::async_trait;
 
 use crate::{
-    commands::{event_pipe, Request, RequestPipeRx, RequestPipeTx},
-    engine::{Engine, EngineOpt},
+    commands::{Request, RequestPipeRx, RequestPipeTx},
+    engine::session::SessionComponentImpl,
+    engine::Engine,
     Error, Result,
 };
 
@@ -22,11 +23,13 @@ pub struct RuntimeService {
 impl RuntimeService {
     pub fn new(options: RuntimeOptions) -> Self {
         let mut request_pipe = options.request_pipe.1;
-        let engine_opts = EngineOpt {
-            request_pipe: options.request_pipe.0,
-            event_pipe: event_pipe(),
-        };
-        let mut engine = Box::new(Engine::new(engine_opts));
+        let session_component = SessionComponentImpl::boxed(options.request_pipe.0.clone());
+        let engine = Engine::builder()
+            .with_session_component(session_component)
+            .build()
+            .unwrap();
+
+        let mut engine = Box::new(engine);
 
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
         let future = tokio::spawn(async move {
@@ -37,9 +40,9 @@ impl RuntimeService {
                     _ = shutdown_rx.recv() => {
                         break;
                     }
-                    request = request_pipe.recv() => queue_request(&mut request_buffer, request)?,
+                    request = request_pipe.recv() => apply_request(&mut engine, request).await?,
                     _ = interval.tick() => {
-                        tick(&mut request_buffer, &mut engine).await?;
+                        engine.tick().await?
                     }
                 }
             }
@@ -52,19 +55,11 @@ impl RuntimeService {
     }
 }
 
-fn queue_request(buffer: &mut Vec<Request>, request: Option<Request>) -> Result<()> {
+async fn apply_request(engine: &mut Box<Engine>, request: Option<Request>) -> Result<()> {
     let Some(request) = request else {
         return Err(Error::ChannelClosed("runtime request channel closed."));
     };
-    buffer.push(request);
-    Ok(())
-}
-
-async fn tick(buffer: &mut Vec<Request>, engine: &mut Box<Engine>) -> Result<()> {
-    for request in buffer.drain(..) {
-        engine.apply(request).await?;
-    }
-    Ok(())
+    engine.apply(request).await
 }
 
 #[async_trait]

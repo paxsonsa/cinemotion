@@ -1,7 +1,7 @@
 use crate::session::SessionAgent;
 use crate::Result;
 
-use super::Command;
+use super::{Command, InternalCommand};
 
 pub struct CreateSession {
     pub agent: Box<dyn SessionAgent + Send + Sync>,
@@ -10,6 +10,6 @@ pub struct CreateSession {
 
 impl From<CreateSession> for Command {
     fn from(value: CreateSession) -> Self {
-        Self::CreateSession(value)
+        Self::Internal(InternalCommand::CreateSession(value))
     }
 }

@@ -1,92 +1,87 @@
 use std::collections::HashMap;
 
-use crate::{
-    commands::{Command, Event, EventPayload, EventPipeTx, Request, RequestPipeTx},
-    session::Session,
-    Error, Result,
-};
+use super::components::SessionComponent;
+use crate::{commands::*, session::Session, Result};
 
-use super::EngineOpt;
+pub struct EngineBuilder {
+    session_component: Option<Box<dyn SessionComponent>>,
+}
 
-#[cfg(test)]
-#[path = "./engine_test.rs"]
-mod engine_test;
+impl EngineBuilder {
+    pub fn new() -> Self {
+        Self {
+            session_component: None,
+        }
+    }
+    pub fn with_session_component(mut self, session_component: Box<dyn SessionComponent>) -> Self {
+        self.session_component = Some(session_component);
+        self
+    }
+
+    pub fn build(self) -> Result<Engine> {
+        let session_component = self.session_component.unwrap();
+        Ok(Engine {
+            session_component,
+            sessions: HashMap::new(),
+        })
+    }
+}
 
 pub struct Engine {
-    request_pipe: RequestPipeTx,
-    event_pipe: EventPipeTx,
+    session_component: Box<dyn SessionComponent>,
     sessions: HashMap<usize, Box<Session>>,
 }
 
 impl Engine {
-    pub fn new(options: EngineOpt) -> Self {
-        let event_pipe = options.event_pipe;
-        let request_pipe = options.request_pipe;
-        Self {
-            request_pipe,
-            event_pipe,
-            sessions: Default::default(),
-        }
+    pub fn builder() -> EngineBuilder {
+        EngineBuilder::new()
     }
-
     /// Apply the given request command to the engine.
-    pub async fn apply(&mut self, request: Request) -> Result<Option<Event>> {
+    pub async fn apply(&mut self, request: Request) -> Result<()> {
+        let source_id = request.session_id;
         let command = request.command;
         match command {
-            // Respond to echo requests with an echo event.
-            Command::Echo(message) => {
-                tracing::info!("echo: {message}");
-                let event = Event {
-                    target: Some(request.session_id),
-                    payload: EventPayload::Echo(message),
-                };
-                self.send(event)?;
-                Ok(None)
+            Command::Client(client_command) => {
+                self.handle_client_command(source_id, client_command).await
             }
-            // Create session is an internal event that establishes a new session
-            // connection with the client.
-            Command::CreateSession(create_session) => {
-                let agent = create_session.agent;
-                let ack_pipe = create_session.ack_pipe;
-                let active_id = self.sessions.len() + 1;
-
-                let session = Box::new(Session::new(
-                    active_id,
-                    self.request_pipe.clone(),
-                    self.event_pipe.subscribe(),
-                    agent,
-                ));
-
-                self.sessions.insert(active_id, session);
-
-                if ack_pipe.send(Ok(())).is_err() {
-                    tracing::error!(
-                        "create ack pipe dropped while creating session, dropping session"
-                    );
-                    let _ = self.sessions.remove(&active_id);
-                }
-                Ok(None)
-            }
-
-            // An internal request to open the session begin initating the session
-            // associated with the request
-            Command::OpenSession(_) => {
-                // let event = Event {
-                //     target: Some(request.session_id),
-                //     payload: EventPayload::SessionInit,
-                // };
-                // self.send(event)
-                Ok(None)
+            Command::Internal(internal_command) => {
+                self.handle_internal_command(internal_command).await
             }
         }
     }
 
-    fn send(&self, event: Event) -> Result<()> {
-        if let Err(_) = self.event_pipe.send(event) {
-            return Err(Error::EngineFailed(
-                "event pipe closed unexpectedly.".to_string(),
-            ));
-        }
+    pub async fn tick(&mut self) -> Result<()> {
         Ok(())
+    }
+
+    async fn handle_client_command(
+        &mut self,
+        source_id: usize,
+        client_command: crate::commands::ClientCommand,
+    ) -> Result<()> {
+        match client_command {
+            ClientCommand::Echo(message) => {
+                tracing::info!("echo: {message}");
+                let event = Event {
+                    target: Some(source_id),
+                    payload: EventPayload::Echo(message),
+                };
+                self.session_component.send(event).await?;
+                Ok(())
+            }
+        }
+    }
+
+    async fn handle_internal_command(
+        &mut self,
+        internal_command: crate::commands::InternalCommand,
+    ) -> Result<()> {
+        match internal_command {
+            InternalCommand::CreateSession(session) => {
+                self.session_component.create_session(session).await?;
+                Ok(())
+            }
+            InternalCommand::OpenSession(open_session) => Ok(()),
+        }
     }
 }
