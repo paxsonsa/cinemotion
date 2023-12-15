@@ -1,18 +1,29 @@
-use std::collections::HashMap;
+use std::sync::Arc;
+
+use tokio::sync::Mutex;
+
+use super::Observer;
 
 use super::components::SessionComponent;
-use crate::{commands::*, session::Session, Result};
+use crate::{commands::*, Result};
 
-pub struct EngineBuilder {
+pub struct Builder {
+    engine_observer: Option<Arc<Mutex<dyn Observer>>>,
     session_component: Option<Box<dyn SessionComponent>>,
 }
 
-impl EngineBuilder {
+impl Builder {
     pub fn new() -> Self {
         Self {
+            engine_observer: None,
             session_component: None,
         }
     }
+    pub fn with_engine_observer(mut self, engine_observer: Arc<Mutex<dyn Observer>>) -> Self {
+        self.engine_observer = Some(engine_observer);
+        self
+    }
+
     pub fn with_session_component(mut self, session_component: Box<dyn SessionComponent>) -> Self {
         self.session_component = Some(session_component);
         self
@@ -20,24 +31,34 @@ impl EngineBuilder {
 
     pub fn build(self) -> Result<Engine> {
         let session_component = self.session_component.unwrap();
+        let observer = self.engine_observer;
         Ok(Engine {
+            observer,
             session_component,
-            sessions: HashMap::new(),
         })
     }
 }
 
+impl Default for Builder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct Engine {
+    observer: Option<Arc<Mutex<dyn Observer>>>,
     session_component: Box<dyn SessionComponent>,
-    sessions: HashMap<usize, Box<Session>>,
 }
 
 impl Engine {
-    pub fn builder() -> EngineBuilder {
-        EngineBuilder::new()
+    pub fn builder() -> Builder {
+        Builder::new()
     }
     /// Apply the given request command to the engine.
     pub async fn apply(&mut self, request: Request) -> Result<()> {
+        if let Some(observer) = &self.observer {
+            observer.lock().await.on_request(&request);
+        }
         let source_id = request.session_id;
         let command = request.command;
         match command {
@@ -66,6 +87,9 @@ impl Engine {
                     target: Some(source_id),
                     payload: EventPayload::Echo(message),
                 };
+                if let Some(observer) = &self.observer {
+                    observer.lock().await.on_event(&event);
+                }
                 self.session_component.send(event).await?;
                 Ok(())
             }
