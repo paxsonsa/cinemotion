@@ -1,6 +1,7 @@
 #[cfg(test)]
 #[path = "./lib_test.rs"]
 mod lib_test;
+use prost::Message;
 
 // Include the `items` module, which is generated from items.proto.
 pub mod proto {
@@ -17,7 +18,16 @@ pub enum Error {
     EncodingError(#[from] prost::EncodeError),
 }
 
-impl TryFrom<bytes::Bytes> for Message {
+impl TryInto<bytes::Bytes> for Event {
+    type Error = self::Error;
+    fn try_into(self) -> Result<bytes::Bytes, Self::Error> {
+        let mut buf = bytes::BytesMut::new();
+        self.encode(&mut buf)?;
+        Ok(buf.freeze())
+    }
+}
+
+impl TryFrom<bytes::Bytes> for Command {
     type Error = self::Error;
 
     fn try_from(value: bytes::Bytes) -> Result<Self, Self::Error> {
@@ -32,16 +42,12 @@ impl TryFrom<bytes::Bytes> for Message {
 // generated protobuf types.
 macro_rules! impl_from_payload {
     ($type:ident) => {
-        impl From<$type> for message::Payload {
+        impl From<$type> for command::Payload {
             fn from(request: $type) -> Self {
-                message::Payload::$type(request)
+                command::Payload::$type(request)
             }
         }
     };
 }
 
-impl_from_payload!(EchoRequest);
-impl_from_payload!(EchoResponse);
-
-
-
+impl_from_payload!(Echo);

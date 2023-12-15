@@ -8,5 +8,5 @@ use super::SendHandlerFn;
 pub trait SessionAgent {
     async fn initialize(&mut self, send_fn: SendHandlerFn);
     async fn receive(&mut self, event: Event);
-    fn close(&mut self);
+    async fn close(&mut self);
 }

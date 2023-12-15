@@ -19,6 +19,9 @@ pub enum Error {
 
     #[error("engine failed: {0}")]
     EngineFailed(String),
+
+    #[error("bad command error: {0}")]
+    BadCommand(String),
 }
 
 pub type Result<T> = std::result::Result<T, self::Error>;

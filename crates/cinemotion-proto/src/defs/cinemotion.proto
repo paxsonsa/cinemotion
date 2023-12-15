@@ -1,20 +1,20 @@
 syntax = "proto3";
 package cinemotion;
 
-message Message {
+message Command {
 	oneof payload {
-		EchoRequest echo_request = 1;
-		EchoResponse echo_response = 2;
+    Echo echo = 1;
 	}
 }
 
-// Request a echo from the server.
-message EchoRequest {
-	string message = 1;
+message Event {
+  oneof payload {
+    Echo echo = 1;
+  }
 }
 
-// A response to the echo request.
-message EchoResponse {
+// An echo to/from the server.
+message Echo {
 	string message = 1;
 }
 

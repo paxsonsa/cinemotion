@@ -28,13 +28,22 @@ impl Engine {
             sessions: Default::default(),
         }
     }
+
+    /// Apply the given request command to the engine.
     pub async fn apply(&mut self, request: Request) -> Result<()> {
         let command = request.command;
         match command {
+            // Respond to echo requests with an echo event.
             Command::Echo(message) => {
                 tracing::info!("echo: {message}");
-                Ok(())
+                let event = Event {
+                    target: Some(request.session_id),
+                    payload: EventPayload::Echo(message),
+                };
+                self.send(event)
             }
+            // Create session is an internal event that establishes a new session
+            // connection with the client.
             Command::CreateSession(create_session) => {
                 let agent = create_session.agent;
                 let ack_pipe = create_session.ack_pipe;
@@ -57,12 +66,16 @@ impl Engine {
                 }
                 Ok(())
             }
+
+            // An internal request to open the session begin initating the session
+            // associated with the request
             Command::OpenSession(_) => {
-                let event = Event {
-                    target: Some(request.session_id),
-                    payload: EventPayload::SessionInit,
-                };
-                self.send(event)
+                // let event = Event {
+                //     target: Some(request.session_id),
+                //     payload: EventPayload::SessionInit,
+                // };
+                // self.send(event)
+                Ok(())
             }
         }
     }

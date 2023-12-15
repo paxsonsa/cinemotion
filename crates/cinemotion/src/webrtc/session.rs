@@ -23,6 +23,7 @@ use crate::session::SessionAgent;
 pub struct WebRTCAgent {
     peer_connection: Arc<RTCPeerConnection>,
     send_handler: Arc<ArcSwapOption<Mutex<SendHandlerFn>>>,
+    main_channel: Option<Arc<RTCDataChannel>>,
 }
 
 impl WebRTCAgent {
@@ -74,6 +75,7 @@ impl WebRTCAgent {
             Self {
                 peer_connection,
                 send_handler: Default::default(),
+                main_channel: None,
             },
         ))
     }
@@ -115,11 +117,25 @@ impl SessionAgent for WebRTCAgent {
         }));
 
         // Establish the message handling when the data channel receives a message
+        let shared_send_fn = Arc::clone(&self.send_handler);
         main_channel.on_message(Box::new(move |msg| {
-            // TODO: use send handler to receive bytes and convert from protobuf
-            // TODO:: Protobuf Echo
+            // Decode the incoming message as a command and send it through the handler.
+            let shared_send_fn = Arc::clone(&shared_send_fn);
+            Box::pin(async move {
+                let command = match Command::decode(msg.data) {
+                    Ok(command) => command,
+                    Err(err) => {
+                        // TODO: Send error back to client
+                        tracing::error!("failed to decode command. err={err}");
+                        return;
+                    }
+                };
 
-            Box::pin(async {})
+                if let Some(handler) = &*shared_send_fn.load() {
+                    let mut f = handler.lock().await;
+                    let _ = f(command);
+                }
+            })
         }));
 
         // Listen for peer connection state changes
@@ -149,7 +165,29 @@ impl SessionAgent for WebRTCAgent {
 
                 Box::pin(async {})
             }));
+
+        // Save the main channel
+        self.main_channel = Some(main_channel);
     }
-    async fn receive(&mut self, event: Event) {}
-    fn close(&mut self) {}
+    async fn receive(&mut self, event: Event) {
+        let Some(channel) = &self.main_channel else {
+            return;
+        };
+        let proto: cinemotion_proto::Event = event.into();
+        let data = match proto.try_into() {
+            Ok(data) => data,
+            Err(err) => {
+                // TODO: Send error back to caller
+                tracing::error!("failed to encode event. err={err}");
+                return;
+            }
+        };
+        if let Err(err) = channel.send(&data).await {
+            //TODO: Send error back to caller
+            tracing::error!("failed to send event. err={err}");
+        }
+    }
+    async fn close(&mut self) {
+        self.peer_connection.close().await;
+    }
 }
