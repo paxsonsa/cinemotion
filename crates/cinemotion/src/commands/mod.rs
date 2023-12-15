@@ -2,16 +2,18 @@ use crate::Result;
 
 mod command;
 mod create_session;
+mod echo;
 mod event;
+mod open_session;
 mod request;
-mod start_session;
 
-pub use create_session::CreateSession;
-pub use start_session::StartSession;
+pub use create_session::*;
+pub use echo::*;
+pub use open_session::*;
 
-pub use command::Command;
-pub use event::{Event, EventPayload};
-pub use request::Request;
+pub use command::*;
+pub use event::*;
+pub use request::*;
 
 pub type EventPipeTx = tokio::sync::broadcast::Sender<Event>;
 pub type EventPipeRx = tokio::sync::broadcast::Receiver<Event>;

@@ -4,6 +4,7 @@ use crate::{
     session::SendHandlerFn,
     Error, Result,
 };
+
 use arc_swap::ArcSwapOption;
 use async_trait::async_trait;
 use futures::lock::Mutex;
@@ -81,11 +82,14 @@ impl WebRTCAgent {
 #[async_trait]
 impl SessionAgent for WebRTCAgent {
     async fn initialize(&mut self, send_fn: SendHandlerFn) {
+        // Bind the given send handler for use in the session
         self.send_handler.store(Some(Arc::new(Mutex::new(send_fn))));
         let options = RTCDataChannelInit {
             ordered: Some(true),
             ..Default::default()
         };
+
+        // Create the main channel for sending and receiving data
         let main_channel = match self
             .peer_connection
             .create_data_channel("main", Some(options))
@@ -98,24 +102,27 @@ impl SessionAgent for WebRTCAgent {
             }
         };
 
+        // Establish the session open sequence once the data channel is opened
         let shared_send_fn = Arc::clone(&self.send_handler);
         main_channel.on_open(Box::new(move || {
             Box::pin(async move {
                 if let Some(handler) = &*shared_send_fn.load() {
                     let mut f = handler.lock().await;
-                    let init = commands::StartSession {};
+                    let init = commands::OpenSession {};
                     let _ = f(init.into());
                 }
             })
         }));
 
+        // Establish the message handling when the data channel receives a message
         main_channel.on_message(Box::new(move |msg| {
-            let msg_str = String::from_utf8(msg.data.to_vec()).unwrap();
             // TODO: use send handler to receive bytes and convert from protobuf
             // TODO:: Protobuf Echo
+
             Box::pin(async {})
         }));
 
+        // Listen for peer connection state changes
         self.peer_connection
             .on_peer_connection_state_change(Box::new(move |state: RTCPeerConnectionState| {
                 match state {

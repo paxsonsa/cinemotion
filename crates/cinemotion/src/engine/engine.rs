@@ -57,7 +57,7 @@ impl Engine {
                 }
                 Ok(())
             }
-            Command::StartSession(_) => {
+            Command::OpenSession(_) => {
                 let event = Event {
                     target: Some(request.session_id),
                     payload: EventPayload::SessionInit,

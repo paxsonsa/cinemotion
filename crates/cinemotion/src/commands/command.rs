@@ -1,19 +1,13 @@
-use super::{CreateSession, StartSession};
+use super::{CreateSession, Echo, OpenSession};
 
 pub enum Command {
-    Echo(String),
+    Echo(Echo),
     CreateSession(super::CreateSession),
-    StartSession(super::StartSession),
+    OpenSession(super::OpenSession),
 }
 
-impl From<CreateSession> for Command {
-    fn from(value: CreateSession) -> Self {
-        Self::CreateSession(value)
-    }
-}
-
-impl From<StartSession> for Command {
-    fn from(value: StartSession) -> Self {
-        Self::StartSession(value)
-    }
+fn decode(buf: B) -> Result<Command>
+where
+    B: bytes::Buf,
+{
 }

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+// Request a echo from the server.
+message EchoRequest {
+  string message = 1;
+}
+
+// A response to the echo request.
+message EchoResponse {
+  string message = 1;
+}
+
