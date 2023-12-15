@@ -16,6 +16,18 @@ impl Command {
     }
 }
 
+impl From<InternalCommand> for Command {
+    fn from(value: InternalCommand) -> Self {
+        Self::Internal(value)
+    }
+}
+
+impl From<ClientCommand> for Command {
+    fn from(value: ClientCommand) -> Self {
+        Self::Client(value)
+    }
+}
+
 /// An internal command is not received from the client but used interally to
 /// communicate between service layers with the core engine.
 pub enum InternalCommand {
@@ -49,4 +61,3 @@ impl From<cinemotion_proto::command::Payload> for ClientCommand {
         }
     }
 }
-// TODO: Add different command types to seperate engine, session, and internal commands.

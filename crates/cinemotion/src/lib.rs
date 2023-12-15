@@ -11,5 +11,6 @@ pub static DEFAULT_WEB_PORT: u16 = 7272;
 
 pub use error::{Error, Result};
 
+pub use commands::{Command, Event, Request};
 pub use engine::Engine;
 pub use session::SessionAgent;

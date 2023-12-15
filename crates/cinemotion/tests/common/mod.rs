@@ -1,26 +1,22 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
-use arc_swap::ArcSwapOption;
-use async_trait::async_trait;
-use cinemotion;
-use cinemotion::commands::Event;
-use cinemotion::session::SendHandlerFn;
+pub mod session;
 
-struct MockSession {
-    pub send_fn: ArcSwapOption<Mutex<SendHandlerFn>>,
+pub struct EngineSpy {
+    pub session_component: Arc<Mutex<session::SpySessionComponent>>,
 }
 
-#[async_trait]
-impl cinemotion::session::SessionAgent for MockSession {
-    async fn initialize(&mut self, send_fn: SendHandlerFn) {
-        todo!()
-    }
-
-    async fn receive(&mut self, event: Event) {
-        todo!()
-    }
-
-    async fn close(&mut self) {
-        todo!()
-    }
+pub fn make_engine() -> (cinemotion::Engine, EngineSpy) {
+    let session_component = Box::new(session::FakeSessionComponent::new());
+    let session_spy = session_component.spy.clone();
+    let engine = cinemotion::Engine::builder()
+        .with_session_component(session_component)
+        .build()
+        .unwrap();
+    (
+        engine,
+        EngineSpy {
+            session_component: session_spy,
+        },
+    )
 }

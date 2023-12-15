@@ -3,7 +3,7 @@ use std::fmt::{self, Display, Formatter};
 use super::ClientCommand;
 use cinemotion_proto::Echo as EchoProto;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Echo(String);
 
 impl Display for Echo {
@@ -31,9 +31,9 @@ impl From<EchoProto> for Echo {
     }
 }
 
-impl Into<EchoProto> for Echo {
-    fn into(self) -> EchoProto {
-        EchoProto { message: self.0 }
+impl From<Echo> for EchoProto {
+    fn from(val: Echo) -> Self {
+        EchoProto { message: val.0 }
     }
 }
 

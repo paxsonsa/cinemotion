@@ -20,16 +20,18 @@ impl EngineBuilder {
 
     pub fn build(self) -> Result<Engine> {
         let session_component = self.session_component.unwrap();
-        Ok(Engine {
-            session_component,
-            sessions: HashMap::new(),
-        })
+        Ok(Engine { session_component })
+    }
+}
+
+impl Default for EngineBuilder {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
 pub struct Engine {
     session_component: Box<dyn SessionComponent>,
-    sessions: HashMap<usize, Box<Session>>,
 }
 
 impl Engine {

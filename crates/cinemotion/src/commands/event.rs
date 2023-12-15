@@ -1,15 +1,24 @@
 use super::Echo;
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventPayload {
     Echo(Echo),
     //    SessionInit,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Event {
     pub target: Option<usize>,
     pub payload: EventPayload,
+}
+
+impl Event {
+    pub fn new(target: usize, payload: EventPayload) -> Self {
+        Self {
+            target: Some(target),
+            payload,
+        }
+    }
 }
 
 impl Into<cinemotion_proto::Event> for Event {

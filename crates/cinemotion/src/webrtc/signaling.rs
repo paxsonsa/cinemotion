@@ -19,8 +19,6 @@ impl SignalingRelay {
         let (ack_pipe, ack_pipe_rx) = tokio::sync::oneshot::channel();
 
         // TODO: WebRTC Echo Test with Engine.
-        // FIXME: Maybe need to add two kinds of requests: Local for internal engine operations we
-        // do not want exposed to clients and, remote for operations from the client.
 
         let (remote_desc, session) = WebRTCAgent::new(session_desc, self.sender.clone()).await?;
         let session = Box::new(session);
