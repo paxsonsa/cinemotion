@@ -13,6 +13,7 @@ arc-swap = "1.6.0"
 async-trait = "0.1.74"
 bytes = "1.5"
 chrono = "0.4.24"
+cinemotion = { path = "crates/cinemotion" }
 cinemotion-proto = { path = "crates/cinemotion-proto" }
 clap = { version = "4.4", features = ["derive"] }
 futures = "0.3.29"
