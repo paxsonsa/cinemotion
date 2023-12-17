@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
 
+pub mod harness;
 pub mod session;
 
 pub struct EngineSpy {
@@ -20,3 +21,6 @@ pub fn make_engine() -> (cinemotion::Engine, EngineSpy) {
         },
     )
 }
+
+// TODO: Create function that create the test harness and engine together
+// TODO: Add event listener to the engine so we can capture events to spy on.

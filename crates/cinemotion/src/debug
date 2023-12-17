@@ -1,7 +1,0 @@
-CineMotion Debugging Tool
-1. Generate a playbook file to execute against the services
-   - This should be a series of requests, events, state checks.
-   - These should be relatively simple to configure and execute.
-2. Execute the debugging tool using the cli interface to test and output the result of the playbook.
-
-How do we create these? JSON?
