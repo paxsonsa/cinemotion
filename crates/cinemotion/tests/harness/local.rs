@@ -4,14 +4,17 @@ use cinemotion::{Engine, EngineState, Event, Request, Result};
 
 pub struct LocalEngineTestHarness {
     engine: Engine,
+    spy: super::common::SpySessionComponent,
 }
 
 impl LocalEngineTestHarness {
-    pub fn new(engine: Engine) -> Self {
-        Self { engine }
+    pub fn new() -> Self {
+        let (engine, spy) = super::common::make_engine();
+
+        Self { engine, spy }
     }
 
-    pub fn boxed(engine: Engine) -> Box<dyn EngineTestHarness> {
+    pub fn boxed() -> Box<dyn EngineTestHarness> {
         Box::new(Self::new(engine))
     }
 }

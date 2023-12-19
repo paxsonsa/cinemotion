@@ -34,7 +34,7 @@ pub enum HarnessKind {
     Local,
 }
 
-pub async fn run_harness(kind: HarnessKind, engine: Engine, steps: Vec<Step>) -> Result<()> {
+pub async fn run_harness(kind: HarnessKind, steps: Vec<Step>) -> Result<()> {
     let mut harness = match kind {
         HarnessKind::Local => LocalEngineTestHarness::boxed(engine),
     };

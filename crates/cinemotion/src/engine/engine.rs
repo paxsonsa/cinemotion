@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use super::components::SessionComponent;
 use crate::{commands::*, session::Session, Result};
 

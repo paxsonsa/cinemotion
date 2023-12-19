@@ -1,6 +1,5 @@
 use std::sync::{Arc, Mutex};
 
-pub mod harness;
 pub mod session;
 
 pub struct EngineSpy {
