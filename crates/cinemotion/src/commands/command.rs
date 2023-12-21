@@ -35,6 +35,12 @@ pub enum InternalCommand {
     OpenSession(OpenSession),
 }
 
+impl From<CreateSession> for InternalCommand {
+    fn from(value: CreateSession) -> Self {
+        Self::CreateSession(value)
+    }
+}
+
 /// Client commands are received from the client and are used by the client to
 /// control the engine.
 pub enum ClientCommand {

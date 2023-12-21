@@ -1,7 +1,9 @@
+use futures::future::Future;
+use std::pin::Pin;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-use cinemotion::*;
+use cinemotion::{commands::CreateSession, session::LOCAL_SESSION_ID, *};
 
 mod common;
 
@@ -73,12 +75,49 @@ impl EngineTestHarness {
 struct Task {
     pub description: String,
     pub action: Action,
+    pub assertion: Option<Box<dyn FnOnce() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>>,
 }
 
 enum Action {
     Request(Request),
     ExpectEvents(Vec<Event>),
     ExpectState(State),
+}
+
+impl From<Request> for Action {
+    fn from(request: Request) -> Self {
+        Action::Request(request)
+    }
+}
+
+macro_rules! request {
+    ($description:expr, $request:expr) => {
+        Task {
+            description: $description.to_string(),
+            action: Action::Request($request.into()),
+            assertion: None,
+        }
+    };
+}
+
+macro_rules! events {
+    ($description:expr, $($event:expr),*) => {
+        Task {
+            description: $description.to_string(),
+            action: Action::ExpectEvents(vec![$($event.into()),*]),
+            assertion: None,
+        }
+    };
+}
+
+macro_rules! state {
+    ($description:expr, $state:expr) => {
+        Task {
+            description: $description.to_string(),
+            action: Action::ExpectState($state),
+            assertion: None,
+        }
+    };
 }
 
 async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
@@ -123,6 +162,20 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
 #[tokio::test]
 async fn test_session_initialize() {
     let mut harness = EngineTestHarness::new();
-    let tasks = vec![];
+
+    let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
+    let tasks = vec![request!(
+        "create session",
+        Request {
+            session_id: LOCAL_SESSION_ID,
+            command: Command::Internal(
+                CreateSession {
+                    agent: Box::<common::session::DummyAgent>::default(),
+                    ack_pipe,
+                }
+                .into()
+            ),
+        }
+    )];
     run_harness(&mut harness, tasks).await;
 }

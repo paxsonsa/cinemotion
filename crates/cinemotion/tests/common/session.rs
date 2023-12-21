@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 use async_trait::async_trait;
 use cinemotion::commands::{CreateSession, Event};
 use cinemotion::engine::components::SessionComponent;
-use cinemotion::Result;
+use cinemotion::{Result, SessionAgent};
 
 pub struct SpySessionComponent {
     pub create_session_called: bool,
@@ -78,4 +78,15 @@ impl SessionComponent for FakeSessionComponent {
         spy.send_called_args.push(event);
         Ok(())
     }
+}
+
+/// A dummy session agent that does nothing
+#[derive(Default)]
+pub struct DummyAgent {}
+
+#[async_trait]
+impl SessionAgent for DummyAgent {
+    async fn initialize(&mut self, _send_fn: cinemotion::session::SendHandlerFn) {}
+    async fn receive(&mut self, _event: Event) {}
+    async fn close(&mut self) {}
 }

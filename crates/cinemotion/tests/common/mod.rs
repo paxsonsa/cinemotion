@@ -17,6 +17,3 @@ pub fn make_engine() -> (cinemotion::engine::Builder, EngineSpy) {
         },
     )
 }
-
-// TODO: Create function that create the test harness and engine together
-// TODO: Add event listener to the engine so we can capture events to spy on.
