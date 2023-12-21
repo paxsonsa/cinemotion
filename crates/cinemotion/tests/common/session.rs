@@ -1,14 +1,14 @@
 use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
-use cinemotion::commands::{CreateSession, Event};
-use cinemotion::engine::components::SessionComponent;
-use cinemotion::{Result, SessionAgent};
+use cinemotion::commands::{AddConnection, Event};
+use cinemotion::engine::components::NetworkComponent;
+use cinemotion::{ConnectionAgent, Result};
 
 pub struct SpySessionComponent {
     pub create_session_called: bool,
     pub create_session_called_count: usize,
-    pub create_session_called_args: Vec<cinemotion::commands::CreateSession>,
+    pub create_session_called_args: Vec<cinemotion::commands::AddConnection>,
     pub open_session_called: bool,
     pub open_session_called_count: usize,
     pub open_session_called_args: Vec<usize>,
@@ -46,8 +46,8 @@ impl FakeSessionComponent {
 }
 
 #[async_trait]
-impl SessionComponent for FakeSessionComponent {
-    async fn create_session(&mut self, options: CreateSession) -> Result<()> {
+impl NetworkComponent for FakeSessionComponent {
+    async fn add_connection(&mut self, options: AddConnection) -> Result<()> {
         let mut spy = self.spy.lock().unwrap();
         spy.create_session_called = true;
         spy.create_session_called_count += 1;
@@ -55,7 +55,7 @@ impl SessionComponent for FakeSessionComponent {
         Ok(())
     }
 
-    async fn open_session(&mut self, session_id: usize) -> Result<()> {
+    async fn open_connection(&mut self, session_id: usize) -> Result<()> {
         let mut spy = self.spy.lock().unwrap();
         spy.open_session_called = true;
         spy.open_session_called_count += 1;
@@ -63,7 +63,7 @@ impl SessionComponent for FakeSessionComponent {
         Ok(())
     }
 
-    async fn close_session(&mut self, session_id: usize) -> Result<()> {
+    async fn close_connection(&mut self, session_id: usize) -> Result<()> {
         let mut spy = self.spy.lock().unwrap();
         spy.close_session_called = true;
         spy.close_session_called_count += 1;
@@ -85,8 +85,8 @@ impl SessionComponent for FakeSessionComponent {
 pub struct DummyAgent {}
 
 #[async_trait]
-impl SessionAgent for DummyAgent {
-    async fn initialize(&mut self, _send_fn: cinemotion::session::SendHandlerFn) {}
+impl ConnectionAgent for DummyAgent {
+    async fn initialize(&mut self, _send_fn: cinemotion::connection::SendHandlerFn) {}
     async fn receive(&mut self, _event: Event) {}
     async fn close(&mut self) {}
 }

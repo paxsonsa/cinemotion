@@ -3,11 +3,11 @@ use base64::prelude::{Engine, BASE64_STANDARD_NO_PAD};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct SessionDescriptor {
+pub struct WebRTCSessionDescriptor {
     pub payload: String,
 }
 
-impl SessionDescriptor {
+impl WebRTCSessionDescriptor {
     /// create a new session descriptor with the raw SDP string
     /// the payload is base64 encoded.
     pub fn new(desc_raw: &str) -> Self {
@@ -26,7 +26,7 @@ impl SessionDescriptor {
         let payload = match BASE64_STANDARD_NO_PAD.decode(&self.payload) {
             Ok(s) => s,
             Err(err) => {
-                return Err(Error::BadSessionDescriptor(format!(
+                return Err(Error::BadRTCDescriptor(format!(
                     "failed to decode base64 payload: {err}"
                 )))
             }
@@ -34,7 +34,7 @@ impl SessionDescriptor {
         let s = match String::from_utf8(payload) {
             Ok(s) => s,
             Err(err) => {
-                return Err(Error::BadSessionDescriptor(format!(
+                return Err(Error::BadRTCDescriptor(format!(
                     "failed to decode utf8 string from decoded payload: {err}"
                 )))
             }

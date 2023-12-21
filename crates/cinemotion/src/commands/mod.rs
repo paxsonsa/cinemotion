@@ -1,15 +1,11 @@
-use crate::Result;
-
 mod command;
-mod create_session;
+mod connection;
 mod echo;
 mod event;
-mod open_session;
 mod request;
 
-pub use create_session::*;
+pub use connection::*;
 pub use echo::*;
-pub use open_session::*;
 
 pub use command::*;
 pub use event::*;

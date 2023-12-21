@@ -1,5 +1,5 @@
-pub mod session;
+pub mod agent;
 pub mod signaling;
 
-pub use session::WebRTCAgent;
+pub use agent::WebRTCAgent;
 pub use signaling::SignalingRelay;

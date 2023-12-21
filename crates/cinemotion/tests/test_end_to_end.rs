@@ -3,7 +3,7 @@ use std::pin::Pin;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-use cinemotion::{commands::CreateSession, session::LOCAL_SESSION_ID, *};
+use cinemotion::{commands::AddConnection, connection::LOCAL_CONN_ID, *};
 
 mod common;
 
@@ -160,16 +160,16 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
 }
 
 #[tokio::test]
-async fn test_session_initialize() {
+async fn test_connection_init() {
     let mut harness = EngineTestHarness::new();
 
     let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
     let tasks = vec![request!(
         "create session",
         Request {
-            session_id: LOCAL_SESSION_ID,
+            conn_id: LOCAL_CONN_ID,
             command: Command::Internal(
-                CreateSession {
+                AddConnection {
                     agent: Box::<common::session::DummyAgent>::default(),
                     ack_pipe,
                 }

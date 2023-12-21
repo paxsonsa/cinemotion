@@ -4,7 +4,7 @@ use async_trait::async_trait;
 
 use crate::{
     commands::{Request, RequestPipeRx, RequestPipeTx},
-    engine::session::SessionComponentImpl,
+    engine::network::NetworkComponentImpl,
     engine::Engine,
     Error, Result,
 };
@@ -23,9 +23,9 @@ pub struct RuntimeService {
 impl RuntimeService {
     pub fn new(options: RuntimeOptions) -> Self {
         let mut request_pipe = options.request_pipe.1;
-        let session_component = SessionComponentImpl::boxed(options.request_pipe.0.clone());
+        let network = NetworkComponentImpl::boxed(options.request_pipe.0.clone());
         let engine = Engine::builder()
-            .with_session_component(session_component)
+            .with_network_component(network)
             .build()
             .unwrap();
 

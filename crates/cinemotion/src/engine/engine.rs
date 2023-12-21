@@ -4,19 +4,19 @@ use tokio::sync::Mutex;
 
 use super::Observer;
 
-use super::components::SessionComponent;
+use super::components::NetworkComponent;
 use crate::{commands::*, Result};
 
 pub struct Builder {
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
-    session_component: Option<Box<dyn SessionComponent>>,
+    network_component: Option<Box<dyn NetworkComponent>>,
 }
 
 impl Builder {
     pub fn new() -> Self {
         Self {
             engine_observer: None,
-            session_component: None,
+            network_component: None,
         }
     }
     pub fn with_engine_observer(mut self, engine_observer: Arc<Mutex<dyn Observer>>) -> Self {
@@ -24,18 +24,15 @@ impl Builder {
         self
     }
 
-    pub fn with_session_component(mut self, session_component: Box<dyn SessionComponent>) -> Self {
-        self.session_component = Some(session_component);
+    pub fn with_network_component(mut self, component: Box<dyn NetworkComponent>) -> Self {
+        self.network_component = Some(component);
         self
     }
 
     pub fn build(self) -> Result<Engine> {
-        let session_component = self.session_component.unwrap();
+        let network = self.network_component.unwrap();
         let observer = self.engine_observer;
-        Ok(Engine {
-            observer,
-            session_component,
-        })
+        Ok(Engine { observer, network })
     }
 }
 
@@ -47,7 +44,7 @@ impl Default for Builder {
 
 pub struct Engine {
     observer: Option<Arc<Mutex<dyn Observer>>>,
-    session_component: Box<dyn SessionComponent>,
+    network: Box<dyn NetworkComponent>,
 }
 
 impl Engine {
@@ -59,7 +56,7 @@ impl Engine {
         if let Some(observer) = &self.observer {
             observer.lock().await.on_request(&request);
         }
-        let source_id = request.session_id;
+        let source_id = request.conn_id;
         let command = request.command;
         match command {
             Command::Client(client_command) => {
@@ -90,7 +87,7 @@ impl Engine {
                 if let Some(observer) = &self.observer {
                     observer.lock().await.on_event(&event);
                 }
-                self.session_component.send(event).await?;
+                self.network.send(event).await?;
                 Ok(())
             }
         }
@@ -101,11 +98,11 @@ impl Engine {
         internal_command: crate::commands::InternalCommand,
     ) -> Result<()> {
         match internal_command {
-            InternalCommand::CreateSession(session) => {
-                self.session_component.create_session(session).await?;
+            InternalCommand::AddConnection(conn) => {
+                self.network.add_connection(conn).await?;
                 Ok(())
             }
-            InternalCommand::OpenSession(open_session) => Ok(()),
+            InternalCommand::OpenConnection(open_connection) => Ok(()),
         }
     }
 }

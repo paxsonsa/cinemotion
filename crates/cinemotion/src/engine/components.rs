@@ -1,14 +1,19 @@
 use async_trait::async_trait;
 
 use crate::{
-    commands::{CreateSession, Event},
+    commands::{AddConnection, Event},
     Result,
 };
 
+/// A component that handles all the network operations.
 #[async_trait]
-pub trait SessionComponent: Send + Sync {
-    async fn create_session(&mut self, options: CreateSession) -> Result<()>;
-    async fn open_session(&mut self, session_id: usize) -> Result<()>;
-    async fn close_session(&mut self, session_id: usize) -> Result<()>;
+pub trait NetworkComponent: Send + Sync {
+    /// Create and add a connection to manage
+    async fn add_connection(&mut self, options: AddConnection) -> Result<()>;
+    /// Open the connection session and being communicating with the peer.
+    async fn open_connection(&mut self, session_id: usize) -> Result<()>;
+    /// Close the connection session and stop communicating with the peer.
+    async fn close_connection(&mut self, session_id: usize) -> Result<()>;
+    /// Send an event to the connected peers.
     async fn send(&mut self, event: Event) -> Result<()>;
 }

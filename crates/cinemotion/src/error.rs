@@ -11,11 +11,11 @@ pub enum Error {
     #[error("webrtc error occurred: {0}")]
     WebRTCError(#[from] webrtc::Error),
 
-    #[error("session failed: {0}")]
-    SessionFailed(String),
+    #[error("connection failed: {0}")]
+    ConnectionFailed(String),
 
-    #[error("bad session descriptor: {0}")]
-    BadSessionDescriptor(String),
+    #[error("bad webrtc descriptor: {0}")]
+    BadRTCDescriptor(String),
 
     #[error("engine failed: {0}")]
     EngineFailed(String),

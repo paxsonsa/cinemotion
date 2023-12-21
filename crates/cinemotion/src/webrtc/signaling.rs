@@ -1,8 +1,8 @@
-use crate::commands::{CreateSession, Request, RequestPipeTx};
-use crate::session::LOCAL_SESSION_ID;
+use crate::commands::{AddConnection, Request, RequestPipeTx};
+use crate::connection::LOCAL_CONN_ID;
 use crate::{Error, Result};
 
-use crate::data::SessionDescriptor;
+use crate::data::WebRTCSessionDescriptor;
 
 use super::WebRTCAgent;
 
@@ -15,16 +15,17 @@ impl SignalingRelay {
         SignalingRelay { sender }
     }
 
-    pub async fn create(&self, session_desc: SessionDescriptor) -> Result<SessionDescriptor> {
+    pub async fn create(
+        &self,
+        session_desc: WebRTCSessionDescriptor,
+    ) -> Result<WebRTCSessionDescriptor> {
         let (ack_pipe, ack_pipe_rx) = tokio::sync::oneshot::channel();
-
-        // TODO: WebRTC Echo Test with Engine.
 
         let (remote_desc, session) = WebRTCAgent::new(session_desc, self.sender.clone()).await?;
         let session = Box::new(session);
         let request = Request::with_command(
-            LOCAL_SESSION_ID,
-            CreateSession {
+            LOCAL_CONN_ID,
+            AddConnection {
                 agent: session,
                 ack_pipe,
             },

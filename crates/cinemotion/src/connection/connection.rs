@@ -6,24 +6,24 @@ use tokio::task::JoinHandle;
 use crate::commands::{Command, EventPipeRx, Request, RequestPipeTx};
 use crate::Error;
 
-use super::{SendHandlerFn, SessionAgent};
+use super::{ConnectionAgent, SendHandlerFn};
 
-/// Manages a session connection to the runtime.
+/// Manages a connection to the runtime.
 ///
-/// Each session manages through a particular agent layer.
+/// Each connection manages through a particular agent layer.
 /// The agent is in charge of managing the communication to the client.
-pub struct Session {
+pub struct Connection {
     uid: usize,
     task: JoinHandle<()>,
-    agent: Arc<Mutex<Box<dyn SessionAgent + Send + Sync>>>,
+    agent: Arc<Mutex<Box<dyn ConnectionAgent + Send + Sync>>>,
 }
 
-impl Session {
+impl Connection {
     pub fn new(
         uid: usize,
         request_pipe: RequestPipeTx,
         mut event_pipe: EventPipeRx,
-        mut agent: Box<dyn SessionAgent + Send + Sync>,
+        mut agent: Box<dyn ConnectionAgent + Send + Sync>,
     ) -> Self {
         agent.initialize(Self::make_send(uid, request_pipe));
 
@@ -47,7 +47,7 @@ impl Session {
             }
         });
 
-        Session { uid, task, agent }
+        Connection { uid, task, agent }
     }
 
     fn make_send(uid: usize, request_pipe: RequestPipeTx) -> SendHandlerFn {
@@ -55,11 +55,11 @@ impl Session {
             let request = Request::with_command(uid, command);
             if let Err(err) = request_pipe.send(request) {
                 let msg = format!(
-                    "session {} failed to send request, pipe broken. err={err}",
+                    "connection {} failed to send request, pipe broken. err={err}",
                     uid
                 );
 
-                return Err(Error::SessionFailed(msg));
+                return Err(Error::ConnectionFailed(msg));
             }
 
             Ok(())
@@ -67,7 +67,7 @@ impl Session {
     }
 }
 
-impl Drop for Session {
+impl Drop for Connection {
     fn drop(&mut self) {
         self.task.abort();
         self.agent.blocking_lock().close();

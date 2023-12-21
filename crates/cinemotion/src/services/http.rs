@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use tokio::sync::Mutex;
 use warp::{self, Filter};
 
-use crate::data::SessionDescriptor;
+use crate::data::WebRTCSessionDescriptor;
 use crate::webrtc::SignalingRelay;
 
 use super::Service;
@@ -81,7 +81,7 @@ impl futures::Future for HttpService {
 fn api(
     manager: Arc<Mutex<SignalingRelay>>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    root().or(sessions_create(manager))
+    root().or(session_create(manager))
 }
 
 fn root() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -95,7 +95,7 @@ async fn handle_root() -> Result<impl warp::Reply, Infallible> {
     ))
 }
 
-fn sessions_create(
+fn session_create(
     manager: Arc<Mutex<SignalingRelay>>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::post()
@@ -106,7 +106,7 @@ fn sessions_create(
 }
 
 async fn handle_post_sessions(
-    session_desc: SessionDescriptor,
+    session_desc: WebRTCSessionDescriptor,
     manager: Arc<Mutex<SignalingRelay>>,
 ) -> Result<impl warp::Reply, Infallible> {
     let mut manager = manager.lock().await;

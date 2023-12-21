@@ -1,7 +1,7 @@
 use crate::{
     commands::{self, Command, Event, EventPipeRx, RequestPipeTx},
-    data::SessionDescriptor,
-    session::SendHandlerFn,
+    connection::SendHandlerFn,
+    data::WebRTCSessionDescriptor,
     Error, Result,
 };
 
@@ -18,7 +18,7 @@ use webrtc::{
     },
 };
 
-use crate::session::SessionAgent;
+use crate::connection::ConnectionAgent;
 
 pub struct WebRTCAgent {
     peer_connection: Arc<RTCPeerConnection>,
@@ -31,9 +31,9 @@ impl WebRTCAgent {
     ///
     /// Returns the session descriptor to send back to client and an active session.
     pub async fn new(
-        desc: SessionDescriptor,
+        desc: WebRTCSessionDescriptor,
         request_pipe: RequestPipeTx,
-    ) -> Result<(SessionDescriptor, Self)> {
+    ) -> Result<(WebRTCSessionDescriptor, Self)> {
         let m = MediaEngine::default();
         let api = APIBuilder::new().with_media_engine(m).build();
 
@@ -62,9 +62,9 @@ impl WebRTCAgent {
         let _ = gather_complete.recv().await;
 
         let local_desc = match peer_connection.local_description().await {
-            Some(desc) => SessionDescriptor::new(&desc.sdp),
+            Some(desc) => WebRTCSessionDescriptor::new(&desc.sdp),
             None => {
-                return Err(Error::SessionFailed(
+                return Err(Error::ConnectionFailed(
                     "failed to establish webrtc peer connection".to_string(),
                 ))
             }
@@ -82,7 +82,7 @@ impl WebRTCAgent {
 }
 
 #[async_trait]
-impl SessionAgent for WebRTCAgent {
+impl ConnectionAgent for WebRTCAgent {
     async fn initialize(&mut self, send_fn: SendHandlerFn) {
         // Bind the given send handler for use in the session
         self.send_handler.store(Some(Arc::new(Mutex::new(send_fn))));
@@ -110,7 +110,7 @@ impl SessionAgent for WebRTCAgent {
             Box::pin(async move {
                 if let Some(handler) = &*shared_send_fn.load() {
                     let mut f = handler.lock().await;
-                    let init = commands::OpenSession {};
+                    let init = commands::OpenConnection {};
                     let _ = f(init.into());
                 }
             })

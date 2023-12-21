@@ -1,4 +1,4 @@
-use super::{CreateSession, Echo, OpenSession};
+use super::{AddConnection, Echo, OpenConnection};
 use crate::{Error, Result};
 
 pub enum Command {
@@ -31,13 +31,13 @@ impl From<ClientCommand> for Command {
 /// An internal command is not received from the client but used interally to
 /// communicate between service layers with the core engine.
 pub enum InternalCommand {
-    CreateSession(CreateSession),
-    OpenSession(OpenSession),
+    AddConnection(AddConnection),
+    OpenConnection(OpenConnection),
 }
 
-impl From<CreateSession> for InternalCommand {
-    fn from(value: CreateSession) -> Self {
-        Self::CreateSession(value)
+impl From<AddConnection> for InternalCommand {
+    fn from(value: AddConnection) -> Self {
+        Self::AddConnection(value)
     }
 }
 
