@@ -1,4 +1,4 @@
-use super::{AddConnection, Echo, OpenConnection};
+use super::{AddConnection, ConnectionInit, Echo, OpenConnection};
 use crate::{Error, Result};
 
 pub enum Command {
@@ -45,6 +45,7 @@ impl From<AddConnection> for InternalCommand {
 /// control the engine.
 pub enum ClientCommand {
     Echo(Echo),
+    Init(ConnectionInit),
 }
 
 impl ClientCommand {
@@ -64,6 +65,7 @@ impl From<cinemotion_proto::command::Payload> for ClientCommand {
     fn from(value: cinemotion_proto::command::Payload) -> Self {
         match value {
             cinemotion_proto::command::Payload::Echo(echo) => Self::Echo(echo.into()),
+            cinemotion_proto::command::Payload::Init(init) => Self::Init(init.into()),
         }
     }
 }

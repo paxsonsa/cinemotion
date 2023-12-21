@@ -4,12 +4,14 @@ package cinemotion;
 message Command {
 	oneof payload {
     Echo echo = 1;
+    Init init = 2;
 	}
 }
 
 message Event {
   oneof payload {
     Echo echo = 1;
+    ConnectionOpened connection_opened = 2;
   }
 }
 
@@ -18,3 +20,9 @@ message Echo {
 	string message = 1;
 }
 
+message Init {
+  string name = 1;
+}
+
+// A hello from the server to start the connection.
+message ConnectionOpened {}

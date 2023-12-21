@@ -5,7 +5,10 @@ use tokio::sync::Mutex;
 use super::Observer;
 
 use super::components::NetworkComponent;
-use crate::{commands::*, Result};
+use crate::{
+    commands::{self, *},
+    Result,
+};
 
 pub struct Builder {
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
@@ -63,7 +66,8 @@ impl Engine {
                 self.handle_client_command(source_id, client_command).await
             }
             Command::Internal(internal_command) => {
-                self.handle_internal_command(internal_command).await
+                self.handle_internal_command(source_id, internal_command)
+                    .await
             }
         }
     }
@@ -87,14 +91,16 @@ impl Engine {
                 if let Some(observer) = &self.observer {
                     observer.lock().await.on_event(&event);
                 }
-                self.network.send(event).await?;
+                self.send(event).await?;
                 Ok(())
             }
+            ClientCommand::Init(_) => Ok(()),
         }
     }
 
     async fn handle_internal_command(
         &mut self,
+        source_id: usize,
         internal_command: crate::commands::InternalCommand,
     ) -> Result<()> {
         match internal_command {
@@ -102,7 +108,20 @@ impl Engine {
                 self.network.add_connection(conn).await?;
                 Ok(())
             }
-            InternalCommand::OpenConnection(open_connection) => Ok(()),
+            InternalCommand::OpenConnection(_) => {
+                self.send(Event {
+                    target: Some(source_id),
+                    payload: commands::ConnectionOpened {}.into(),
+                })
+                .await
+            }
         }
+    }
+
+    async fn send(&mut self, event: Event) -> Result<()> {
+        if let Some(observer) = &self.observer {
+            observer.lock().await.on_event(&event);
+        }
+        self.network.send(event).await
     }
 }

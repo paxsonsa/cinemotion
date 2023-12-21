@@ -30,6 +30,7 @@ impl NetworkComponentImpl {
 #[async_trait]
 impl NetworkComponent for NetworkComponentImpl {
     async fn add_connection(&mut self, options: AddConnection) -> Result<()> {
+        // TODO: add a connection open timeout that will close the connection if it is not opened
         let agent = options.agent;
         let ack_pipe = options.ack_pipe;
         let active_id = self.connections.len() + 1;
@@ -40,7 +41,7 @@ impl NetworkComponent for NetworkComponentImpl {
             agent,
         ));
         self.connections.insert(active_id, conn);
-        if ack_pipe.send(Ok(())).is_err() {
+        if ack_pipe.send(Ok(active_id)).is_err() {
             tracing::error!(
                 "create ack pipe dropped while creating connection, dropping connection"
             );

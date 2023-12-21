@@ -1,6 +1,7 @@
+use cinemotion::commands::EventPayload;
 use futures::future::Future;
-use std::pin::Pin;
 use std::sync::Arc;
+use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
 
 use cinemotion::{commands::AddConnection, connection::LOCAL_CONN_ID, *};
@@ -133,7 +134,10 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
                 let expected_count = expected_events.len();
                 let observed_count = events.len();
 
-                assert!(observed_count >= expected_count);
+                assert!(
+                    observed_count >= expected_count,
+                    "there are less observed events than expected events"
+                );
 
                 let mut start_index = 0;
                 for event in events.iter() {
@@ -143,12 +147,18 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
                     start_index += 1;
                 }
 
-                assert_ne!(start_index, observed_count);
-                assert!(observed_count - start_index >= expected_count);
+                assert_ne!(
+                    start_index, observed_count,
+                    "could not find the start of the expected events"
+                );
+                assert!(
+                    observed_count - start_index >= expected_count,
+                    "the remaing events are less than the expected events"
+                );
 
                 for (i, expected_event) in expected_events.iter().enumerate() {
                     let index = start_index + i;
-                    assert_eq!(expected_event, &events[index]);
+                    assert_eq!(expected_event, &events[index], "the expect event at index {} does not match the observed event at index {}", i, index)
                 }
             }
             Action::ExpectState(expected_state) => {
@@ -163,19 +173,44 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
 async fn test_connection_init() {
     let mut harness = EngineTestHarness::new();
 
+    let conn_id: usize = 1;
     let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
-    let tasks = vec![request!(
-        "create session",
-        Request {
-            conn_id: LOCAL_CONN_ID,
-            command: Command::Internal(
-                AddConnection {
+    let tasks = vec![
+        request!(
+            "create connection",
+            Request {
+                conn_id: LOCAL_CONN_ID,
+                command: AddConnection {
                     agent: Box::<common::session::DummyAgent>::default(),
                     ack_pipe,
                 }
-                .into()
-            ),
-        }
-    )];
+                .into(),
+            }
+        ),
+        request!(
+            "open connection",
+            Request {
+                conn_id, // Hardcoded Id that should be set.
+                command: commands::OpenConnection {}.into(),
+            }
+        ),
+        events!(
+            "expect hello event to be sent",
+            Event {
+                target: Some(conn_id),
+                payload: commands::ConnectionOpened {}.into(),
+            }
+        ),
+        request!(
+            "initial connection session",
+            Request {
+                conn_id,
+                command: commands::ConnectionInit {
+                    name: "clientA".to_string(),
+                }
+                .into(),
+            }
+        ),
+    ];
     run_harness(&mut harness, tasks).await;
 }

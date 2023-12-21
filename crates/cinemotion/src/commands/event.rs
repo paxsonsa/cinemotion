@@ -1,9 +1,10 @@
+use super::ConnectionOpened;
 use super::Echo;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventPayload {
     Echo(Echo),
-    //    SessionInit,
+    ConnectionOpened(ConnectionOpened), //    SessionInit,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -20,12 +21,14 @@ impl Event {
         }
     }
 }
-
-impl Into<cinemotion_proto::Event> for Event {
-    fn into(self) -> cinemotion_proto::Event {
+impl From<Event> for cinemotion_proto::Event {
+    fn from(value: Event) -> Self {
         cinemotion_proto::Event {
-            payload: Some(match self.payload {
+            payload: Some(match value.payload {
                 EventPayload::Echo(echo) => cinemotion_proto::event::Payload::Echo(echo.into()),
+                EventPayload::ConnectionOpened(hello) => {
+                    cinemotion_proto::event::Payload::ConnectionOpened(hello.into())
+                }
             }),
         }
     }
