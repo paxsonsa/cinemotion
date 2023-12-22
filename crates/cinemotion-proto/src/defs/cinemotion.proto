@@ -4,14 +4,14 @@ package cinemotion;
 message Command {
 	oneof payload {
     Echo echo = 1;
-    Init init = 2;
+    InitCommand init = 2;
 	}
 }
 
 message Event {
   oneof payload {
     Echo echo = 1;
-    ConnectionOpened connection_opened = 2;
+    ConnectionOpenedEvent connection_opened = 2;
   }
 }
 
@@ -20,9 +20,30 @@ message Echo {
 	string message = 1;
 }
 
-message Init {
-  string name = 1;
+/******************************
+* Command Types
+******************************/
+
+// Initiate the connection with the peer description.
+message InitCommand {
+  Peer peer = 1;
 }
 
+/*******************************
+* Event Types
+********************************/
+
 // A hello from the server to start the connection.
-message ConnectionOpened {}
+message ConnectionOpenedEvent {}
+
+/*******************************
+* Data Types
+********************************/
+enum PeerRole {
+  CONTROLLER = 0;
+}
+message Peer {
+  string name = 1;
+  PeerRole role = 2;
+}
+

@@ -1,22 +1,24 @@
 use super::{ClientCommand, Command, EventPayload, InternalCommand};
 use crate::connection::ConnectionAgent;
+use crate::data::peer;
 use crate::Result;
-use cinemotion_proto::ConnectionOpened as ConnectionOpenedProto;
-use cinemotion_proto::Init as InitProto;
+use cinemotion_proto as proto;
 
-pub struct ConnectionInit {
-    pub name: String,
+pub struct Init {
+    pub peer: peer::Peer,
 }
 
-impl From<ConnectionInit> for Command {
-    fn from(value: ConnectionInit) -> Self {
+impl From<Init> for Command {
+    fn from(value: Init) -> Self {
         Self::Client(ClientCommand::Init(value))
     }
 }
 
-impl From<InitProto> for ConnectionInit {
-    fn from(value: InitProto) -> Self {
-        Self { name: value.name }
+impl From<proto::InitCommand> for Init {
+    fn from(value: proto::InitCommand) -> Self {
+        Self {
+            peer: value.peer.unwrap().into(),
+        }
     }
 }
 
@@ -29,7 +31,7 @@ impl From<ConnectionOpened> for EventPayload {
     }
 }
 
-impl From<ConnectionOpened> for ConnectionOpenedProto {
+impl From<ConnectionOpened> for proto::ConnectionOpenedEvent {
     fn from(_: ConnectionOpened) -> Self {
         Self {}
     }

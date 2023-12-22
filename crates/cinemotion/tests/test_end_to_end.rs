@@ -1,5 +1,6 @@
 use cinemotion::commands::EventPayload;
 use futures::future::Future;
+use std::borrow::BorrowMut;
 use std::sync::Arc;
 use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
@@ -62,7 +63,8 @@ impl EngineTestHarness {
         events
     }
 
-    fn observed_state(&self) -> State {
+    async fn observed_state(&mut self) -> State {
+        let _ = self.engine.tick().await.expect("engine tick should pass.");
         let state = self
             .spy
             .lock()
@@ -82,7 +84,7 @@ struct Task {
 enum Action {
     Request(Request),
     ExpectEvents(Vec<Event>),
-    ExpectState(State),
+    ExpectState(Box<dyn FnMut(&mut State)>),
 }
 
 impl From<Request> for Action {
@@ -115,7 +117,7 @@ macro_rules! state {
     ($description:expr, $state:expr) => {
         Task {
             description: $description.to_string(),
-            action: Action::ExpectState($state),
+            action: Action::ExpectState(Box::new($state)),
             assertion: None,
         }
     };
@@ -161,9 +163,15 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
                     assert_eq!(expected_event, &events[index], "the expect event at index {} does not match the observed event at index {}", i, index)
                 }
             }
-            Action::ExpectState(expected_state) => {
-                let observed_state = harness.observed_state();
-                assert_eq!(observed_state, expected_state);
+            Action::ExpectState(mut state_fn) => {
+                let observed_state = harness.observed_state().await;
+                let mut expected_state = observed_state.clone();
+                state_fn(&mut expected_state);
+                assert_eq!(
+                    observed_state, expected_state,
+                    "current state does not match expected state:\ncurrent: {:#?}\n!=\n expect: {:#?}",
+                    observed_state, expected_state
+                );
             }
         };
     }
@@ -205,10 +213,22 @@ async fn test_connection_init() {
             "initial connection session",
             Request {
                 conn_id,
-                command: commands::ConnectionInit {
-                    name: "clientA".to_string(),
+                command: commands::Init {
+                    peer: data::Peer {
+                        name: "test".to_string(),
+                        role: data::PeerRole::Controller,
+                    }
                 }
                 .into(),
+            }
+        ),
+        state!(
+            "expect the peer information to be in the public state",
+            |state: &mut State| {
+                state.peers = vec![data::Peer {
+                    name: "test".to_string(),
+                    role: data::PeerRole::Controller,
+                }];
             }
         ),
     ];

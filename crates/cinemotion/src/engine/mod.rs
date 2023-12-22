@@ -4,8 +4,12 @@ pub mod engine;
 pub mod network;
 pub mod observer;
 
+use super::data;
+
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct State {}
+pub struct State {
+    pub peers: Vec<data::Peer>,
+}
 
 pub use engine::{Builder, Engine};
 pub use observer::Observer;

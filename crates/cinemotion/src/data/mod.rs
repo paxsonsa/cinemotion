@@ -1,3 +1,5 @@
-mod session_desc;
+pub mod peer;
+pub mod webrtc;
 
-pub use session_desc::WebRTCSessionDescriptor;
+pub use peer::*;
+pub use webrtc::WebRTCSessionDescriptor;

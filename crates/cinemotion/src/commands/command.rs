@@ -1,4 +1,4 @@
-use super::{AddConnection, ConnectionInit, Echo, OpenConnection};
+use super::{AddConnection, Init, Echo, OpenConnection};
 use crate::{Error, Result};
 
 pub enum Command {
@@ -45,7 +45,7 @@ impl From<AddConnection> for InternalCommand {
 /// control the engine.
 pub enum ClientCommand {
     Echo(Echo),
-    Init(ConnectionInit),
+    Init(Init),
 }
 
 impl ClientCommand {

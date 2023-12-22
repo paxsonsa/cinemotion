@@ -4,7 +4,7 @@ use super::Echo;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventPayload {
     Echo(Echo),
-    ConnectionOpened(ConnectionOpened), //    SessionInit,
+    ConnectionOpened(ConnectionOpened),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

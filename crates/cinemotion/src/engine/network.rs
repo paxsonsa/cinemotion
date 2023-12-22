@@ -31,6 +31,8 @@ impl NetworkComponentImpl {
 impl NetworkComponent for NetworkComponentImpl {
     async fn add_connection(&mut self, options: AddConnection) -> Result<()> {
         // TODO: add a connection open timeout that will close the connection if it is not opened
+        // Do this on the engine side that tracks if the connection is open or not and each tick
+        // check timeout.
         let agent = options.agent;
         let ack_pipe = options.ack_pipe;
         let active_id = self.connections.len() + 1;

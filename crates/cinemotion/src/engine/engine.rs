@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use tokio::sync::Mutex;
 
-use super::Observer;
+use super::{Observer, State};
 
 use super::components::NetworkComponent;
 use crate::{
@@ -33,9 +33,15 @@ impl Builder {
     }
 
     pub fn build(self) -> Result<Engine> {
+        let state = State::default();
         let network = self.network_component.unwrap();
         let observer = self.engine_observer;
-        Ok(Engine { observer, network })
+        Ok(Engine {
+            active_state: state.clone(),
+            current_state: state,
+            observer,
+            network,
+        })
     }
 }
 
@@ -46,6 +52,8 @@ impl Default for Builder {
 }
 
 pub struct Engine {
+    active_state: State,
+    current_state: State,
     observer: Option<Arc<Mutex<dyn Observer>>>,
     network: Box<dyn NetworkComponent>,
 }
@@ -73,6 +81,11 @@ impl Engine {
     }
 
     pub async fn tick(&mut self) -> Result<()> {
+        if let Some(observer) = &self.observer {
+            observer.lock().await.on_state_change(&self.active_state);
+        }
+        self.current_state = self.active_state.clone();
+        // TODO: send state to peers
         Ok(())
     }
 
@@ -94,7 +107,11 @@ impl Engine {
                 self.send(event).await?;
                 Ok(())
             }
-            ClientCommand::Init(_) => Ok(()),
+            ClientCommand::Init(init) => {
+                let peer = init.peer;
+                self.active_state.peers.push(peer);
+                Ok(())
+            }
         }
     }
 
