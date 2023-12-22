@@ -1,8 +1,8 @@
 use crate::{
-    commands::{self, Command, Event, EventPipeRx, RequestPipeTx},
+    commands::{self, Command, EventPipeRx, RequestPipeTx},
     connection::SendHandlerFn,
     data::WebRTCSessionDescriptor,
-    Error, Result,
+    Error, Event, Result,
 };
 
 use arc_swap::ArcSwapOption;

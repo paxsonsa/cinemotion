@@ -1,17 +1,17 @@
-use cinemotion::commands::EventPayload;
 use futures::future::Future;
-use std::borrow::BorrowMut;
 use std::sync::Arc;
 use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
 
-use cinemotion::{commands::AddConnection, connection::LOCAL_CONN_ID, *};
+use cinemotion::{
+    commands, connection::LOCAL_CONN_ID, data, engine, events, Event, EventBody, Message, Result,
+};
 
 mod common;
 
 struct ObserverSpy {
     observed_events: Vec<Event>,
-    observed_state: State,
+    observed_state: engine::State,
 }
 
 struct HarnessObserver {
@@ -19,17 +19,17 @@ struct HarnessObserver {
 }
 
 impl engine::Observer for HarnessObserver {
-    fn on_state_change(&mut self, new_state: &State) {
+    fn on_state_change(&mut self, new_state: &engine::State) {
         self.spy.lock().unwrap().observed_state = new_state.clone();
     }
     fn on_event(&mut self, event: &Event) {
         self.spy.lock().unwrap().observed_events.push(event.clone());
     }
-    fn on_request(&mut self, request: &Request) {}
+    fn on_request(&mut self, request: &Message) {}
 }
 
 struct EngineTestHarness {
-    engine: Engine,
+    engine: engine::Engine,
     spy: Arc<std::sync::Mutex<ObserverSpy>>,
 }
 
@@ -39,7 +39,7 @@ impl EngineTestHarness {
 
         let spy = Arc::new(std::sync::Mutex::new(ObserverSpy {
             observed_events: Vec::new(),
-            observed_state: State::default(),
+            observed_state: engine::State::default(),
         }));
         let observer = HarnessObserver { spy: spy.clone() };
         let engine = builder
@@ -49,7 +49,7 @@ impl EngineTestHarness {
         Self { engine, spy }
     }
 
-    async fn send_request(&mut self, request: Request) -> Result<()> {
+    async fn send_request(&mut self, request: Message) -> Result<()> {
         self.engine.apply(request).await
     }
 
@@ -63,7 +63,7 @@ impl EngineTestHarness {
         events
     }
 
-    async fn observed_state(&mut self) -> State {
+    async fn observed_state(&mut self) -> engine::State {
         let _ = self.engine.tick().await.expect("engine tick should pass.");
         let state = self
             .spy
@@ -82,14 +82,14 @@ struct Task {
 }
 
 enum Action {
-    Request(Request),
+    Message(Message),
     ExpectEvents(Vec<Event>),
-    ExpectState(Box<dyn FnMut(&mut State)>),
+    ExpectState(Box<dyn FnMut(&mut engine::State)>),
 }
 
-impl From<Request> for Action {
-    fn from(request: Request) -> Self {
-        Action::Request(request)
+impl From<Message> for Action {
+    fn from(request: Message) -> Self {
+        Action::Message(request)
     }
 }
 
@@ -97,7 +97,7 @@ macro_rules! request {
     ($description:expr, $request:expr) => {
         Task {
             description: $description.to_string(),
-            action: Action::Request($request.into()),
+            action: Action::Message($request.into()),
             assertion: None,
         }
     };
@@ -127,7 +127,7 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
     for task in tasks {
         println!("{}", task.description);
         match task.action {
-            Action::Request(request) => harness
+            Action::Message(request) => harness
                 .send_request(request)
                 .await
                 .expect("request should not fail to send"),
@@ -181,14 +181,14 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
 async fn test_connection_init() {
     let mut harness = EngineTestHarness::new();
 
-    let conn_id: usize = 1;
+    let source_id: usize = 1;
     let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
     let tasks = vec![
         request!(
             "create connection",
-            Request {
-                conn_id: LOCAL_CONN_ID,
-                command: AddConnection {
+            Message {
+                source_id: LOCAL_CONN_ID,
+                command: commands::AddConnection {
                     agent: Box::<common::session::DummyAgent>::default(),
                     ack_pipe,
                 }
@@ -197,22 +197,22 @@ async fn test_connection_init() {
         ),
         request!(
             "open connection",
-            Request {
-                conn_id, // Hardcoded Id that should be set.
+            Message {
+                source_id, // Hardcoded Id that should be set.
                 command: commands::OpenConnection {}.into(),
             }
         ),
         events!(
             "expect hello event to be sent",
             Event {
-                target: Some(conn_id),
-                payload: commands::ConnectionOpened {}.into(),
+                target: Some(source_id),
+                payload: events::ConnectionOpened {}.into(),
             }
         ),
         request!(
             "initial connection session",
-            Request {
-                conn_id,
+            Message {
+                source_id,
                 command: commands::Init {
                     peer: data::Peer {
                         name: "test".to_string(),
@@ -224,7 +224,7 @@ async fn test_connection_init() {
         ),
         state!(
             "expect the peer information to be in the public state",
-            |state: &mut State| {
+            |state: &mut engine::State| {
                 state.peers = vec![data::Peer {
                     name: "test".to_string(),
                     role: data::PeerRole::Controller,

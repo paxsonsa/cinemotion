@@ -3,9 +3,9 @@ use std::collections::HashMap;
 use async_trait::async_trait;
 
 use crate::{
-    commands::{event_pipe, AddConnection, Event, EventPipeTx, RequestPipeTx},
+    commands::{event_pipe, AddConnection, EventPipeTx, RequestPipeTx},
     connection::Connection,
-    Error, Result,
+    Error, Event, Result,
 };
 
 use super::components::NetworkComponent;

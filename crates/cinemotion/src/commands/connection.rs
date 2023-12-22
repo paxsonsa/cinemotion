@@ -1,4 +1,4 @@
-use super::{ClientCommand, Command, EventPayload, InternalCommand};
+use super::{Command, PeerCommand, SystemCommand};
 use crate::connection::ConnectionAgent;
 use crate::data::peer;
 use crate::Result;
@@ -10,7 +10,7 @@ pub struct Init {
 
 impl From<Init> for Command {
     fn from(value: Init) -> Self {
-        Self::Client(ClientCommand::Init(value))
+        Self::Peer(PeerCommand::Init(value))
     }
 }
 
@@ -21,27 +21,11 @@ impl From<proto::InitCommand> for Init {
         }
     }
 }
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ConnectionOpened {}
-
-impl From<ConnectionOpened> for EventPayload {
-    fn from(value: ConnectionOpened) -> Self {
-        Self::ConnectionOpened(value)
-    }
-}
-
-impl From<ConnectionOpened> for proto::ConnectionOpenedEvent {
-    fn from(_: ConnectionOpened) -> Self {
-        Self {}
-    }
-}
-
 pub struct OpenConnection {}
 
 impl From<OpenConnection> for Command {
     fn from(value: OpenConnection) -> Self {
-        Self::Internal(InternalCommand::OpenConnection(value))
+        Self::System(SystemCommand::OpenConnection(value))
     }
 }
 
@@ -52,6 +36,6 @@ pub struct AddConnection {
 
 impl From<AddConnection> for Command {
     fn from(value: AddConnection) -> Self {
-        Self::Internal(InternalCommand::AddConnection(value))
+        Self::System(SystemCommand::AddConnection(value))
     }
 }

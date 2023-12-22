@@ -1,6 +1,6 @@
-use crate::commands::{AddConnection, Request, RequestPipeTx};
+use crate::commands::{AddConnection, RequestPipeTx};
 use crate::connection::LOCAL_CONN_ID;
-use crate::{Error, Result};
+use crate::{Error, Message, Result};
 
 use crate::data::WebRTCSessionDescriptor;
 
@@ -23,7 +23,7 @@ impl SignalingRelay {
 
         let (remote_desc, session) = WebRTCAgent::new(session_desc, self.sender.clone()).await?;
         let session = Box::new(session);
-        let request = Request::with_command(
+        let request = Message::with_command(
             LOCAL_CONN_ID,
             AddConnection {
                 agent: session,

@@ -1,21 +1,20 @@
 mod command;
 mod connection;
 mod echo;
-mod event;
-mod request;
 
 pub use connection::*;
 pub use echo::*;
 
 pub use command::*;
-pub use event::*;
-pub use request::*;
+
+use super::Event;
+use super::Message;
 
 pub type EventPipeTx = tokio::sync::broadcast::Sender<Event>;
 pub type EventPipeRx = tokio::sync::broadcast::Receiver<Event>;
 
-pub type RequestPipeTx = tokio::sync::mpsc::UnboundedSender<Request>;
-pub type RequestPipeRx = tokio::sync::mpsc::UnboundedReceiver<Request>;
+pub type RequestPipeTx = tokio::sync::mpsc::UnboundedSender<Message>;
+pub type RequestPipeRx = tokio::sync::mpsc::UnboundedReceiver<Message>;
 
 pub fn request_pipe() -> (RequestPipeTx, RequestPipeRx) {
     tokio::sync::mpsc::unbounded_channel()

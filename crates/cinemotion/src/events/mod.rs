@@ -1,5 +1,10 @@
-use super::ConnectionOpened;
-use super::Echo;
+mod connection;
+
+use crate::commands::Echo;
+
+pub use connection::*;
+
+use cinemotion_proto as proto;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventBody {
@@ -21,13 +26,13 @@ impl Event {
         }
     }
 }
-impl From<Event> for cinemotion_proto::Event {
+impl From<Event> for proto::Event {
     fn from(value: Event) -> Self {
-        cinemotion_proto::Event {
+        proto::Event {
             payload: Some(match value.payload {
-                EventBody::Echo(echo) => cinemotion_proto::event::Payload::Echo(echo.into()),
-                EventBody::ConnectionOpened(hello) => {
-                    cinemotion_proto::event::Payload::ConnectionOpened(hello.into())
+                EventBody::Echo(echo) => proto::event::Payload::Echo(echo.into()),
+                EventBody::ConnectionOpened(opened) => {
+                    proto::event::Payload::ConnectionOpened(opened.into())
                 }
             }),
         }

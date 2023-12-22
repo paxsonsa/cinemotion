@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::commands::Event;
+use crate::Event;
 
 use super::SendHandlerFn;
 

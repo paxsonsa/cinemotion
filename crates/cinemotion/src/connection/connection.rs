@@ -3,8 +3,8 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tokio::task::JoinHandle;
 
-use crate::commands::{Command, EventPipeRx, Request, RequestPipeTx};
-use crate::Error;
+use crate::commands::{Command, EventPipeRx, RequestPipeTx};
+use crate::{Error, Message};
 
 use super::{ConnectionAgent, SendHandlerFn};
 
@@ -52,7 +52,7 @@ impl Connection {
 
     fn make_send(uid: usize, request_pipe: RequestPipeTx) -> SendHandlerFn {
         Box::new(move |command: Command| {
-            let request = Request::with_command(uid, command);
+            let request = Message::with_command(uid, command);
             if let Err(err) = request_pipe.send(request) {
                 let msg = format!(
                     "connection {} failed to send request, pipe broken. err={err}",

@@ -1,9 +1,9 @@
 use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
-use cinemotion::commands::{AddConnection, Event};
-use cinemotion::engine::components::NetworkComponent;
-use cinemotion::{ConnectionAgent, Result};
+use cinemotion::{
+    commands::AddConnection, engine::components::NetworkComponent, ConnectionAgent, Event, Result,
+};
 
 pub struct SpySessionComponent {
     pub create_session_called: bool,

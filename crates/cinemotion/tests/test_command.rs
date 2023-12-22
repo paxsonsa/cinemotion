@@ -1,7 +1,4 @@
-use cinemotion::{
-    self,
-    commands::{self, Event, EventPayload, Request},
-};
+use cinemotion::{commands, Event, EventBody, Message};
 mod common;
 
 #[tokio::test]
@@ -9,9 +6,9 @@ async fn test_echo_command() {
     let (builder, spy) = common::make_engine();
     let mut engine = builder.build().expect("engine should build successfully");
 
-    let request = Request::with_command(
+    let request = Message::with_command(
         1,
-        commands::ClientCommand::from(commands::Echo::from("hello".to_string())),
+        commands::PeerCommand::from(commands::Echo::from("hello".to_string())),
     );
     engine.apply(request).await.expect("failed to apply engine");
 
@@ -23,6 +20,6 @@ async fn test_echo_command() {
     // The same echo message should be broadcast back to the session
     assert_eq!(
         event,
-        Event::new(1, EventPayload::Echo("hello".to_string().into()))
+        Event::new(1, EventBody::Echo("hello".to_string().into()))
     );
 }

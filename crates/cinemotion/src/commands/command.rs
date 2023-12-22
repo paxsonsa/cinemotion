@@ -1,9 +1,9 @@
-use super::{AddConnection, Init, Echo, OpenConnection};
+use super::{AddConnection, Echo, Init, OpenConnection};
 use crate::{Error, Result};
 
 pub enum Command {
-    Internal(InternalCommand),
-    Client(ClientCommand),
+    System(SystemCommand),
+    Peer(PeerCommand),
 }
 
 impl Command {
@@ -11,31 +11,31 @@ impl Command {
     ///
     /// Note: only client commands can be decoded from a byte buffer.
     pub fn decode(buf: bytes::Bytes) -> Result<Self> {
-        let command = ClientCommand::decode(buf)?;
-        Ok(Self::Client(command))
+        let command = PeerCommand::decode(buf)?;
+        Ok(Self::Peer(command))
     }
 }
 
-impl From<InternalCommand> for Command {
-    fn from(value: InternalCommand) -> Self {
-        Self::Internal(value)
+impl From<SystemCommand> for Command {
+    fn from(value: SystemCommand) -> Self {
+        Self::System(value)
     }
 }
 
-impl From<ClientCommand> for Command {
-    fn from(value: ClientCommand) -> Self {
-        Self::Client(value)
+impl From<PeerCommand> for Command {
+    fn from(value: PeerCommand) -> Self {
+        Self::Peer(value)
     }
 }
 
 /// An internal command is not received from the client but used interally to
 /// communicate between service layers with the core engine.
-pub enum InternalCommand {
+pub enum SystemCommand {
     AddConnection(AddConnection),
     OpenConnection(OpenConnection),
 }
 
-impl From<AddConnection> for InternalCommand {
+impl From<AddConnection> for SystemCommand {
     fn from(value: AddConnection) -> Self {
         Self::AddConnection(value)
     }
@@ -43,12 +43,12 @@ impl From<AddConnection> for InternalCommand {
 
 /// Client commands are received from the client and are used by the client to
 /// control the engine.
-pub enum ClientCommand {
+pub enum PeerCommand {
     Echo(Echo),
     Init(Init),
 }
 
-impl ClientCommand {
+impl PeerCommand {
     /// Decode a command from a byte buffer.
     pub fn decode(buf: bytes::Bytes) -> Result<Self> {
         let Some(payload) = cinemotion_proto::Command::try_from(buf)
@@ -61,7 +61,7 @@ impl ClientCommand {
     }
 }
 
-impl From<cinemotion_proto::command::Payload> for ClientCommand {
+impl From<cinemotion_proto::command::Payload> for PeerCommand {
     fn from(value: cinemotion_proto::command::Payload) -> Self {
         match value {
             cinemotion_proto::command::Payload::Echo(echo) => Self::Echo(echo.into()),

@@ -3,10 +3,10 @@ use std::{pin::Pin, time::Duration};
 use async_trait::async_trait;
 
 use crate::{
-    commands::{Request, RequestPipeRx, RequestPipeTx},
+    commands::{RequestPipeRx, RequestPipeTx},
     engine::network::NetworkComponentImpl,
     engine::Engine,
-    Error, Result,
+    Error, Message, Result,
 };
 
 use super::Service;
@@ -33,7 +33,7 @@ impl RuntimeService {
 
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
         let future = tokio::spawn(async move {
-            let mut request_buffer: Vec<Request> = Vec::with_capacity(1024);
+            let mut request_buffer: Vec<Message> = Vec::with_capacity(1024);
             let mut interval = tokio::time::interval(Duration::from_millis(16));
             loop {
                 tokio::select! {
@@ -55,7 +55,7 @@ impl RuntimeService {
     }
 }
 
-async fn apply_request(engine: &mut Box<Engine>, request: Option<Request>) -> Result<()> {
+async fn apply_request(engine: &mut Box<Engine>, request: Option<Message>) -> Result<()> {
     let Some(request) = request else {
         return Err(Error::ChannelClosed("runtime request channel closed."));
     };

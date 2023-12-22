@@ -5,10 +5,7 @@ use tokio::sync::Mutex;
 use super::{Observer, State};
 
 use super::components::NetworkComponent;
-use crate::{
-    commands::{self, *},
-    Result,
-};
+use crate::{commands, events, Command, Event, Message, Result};
 
 pub struct Builder {
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
@@ -63,17 +60,17 @@ impl Engine {
         Builder::new()
     }
     /// Apply the given request command to the engine.
-    pub async fn apply(&mut self, request: Request) -> Result<()> {
+    pub async fn apply(&mut self, request: Message) -> Result<()> {
         if let Some(observer) = &self.observer {
             observer.lock().await.on_request(&request);
         }
-        let source_id = request.conn_id;
+        let source_id = request.source_id;
         let command = request.command;
         match command {
-            Command::Client(client_command) => {
+            Command::Peer(client_command) => {
                 self.handle_client_command(source_id, client_command).await
             }
-            Command::Internal(internal_command) => {
+            Command::System(internal_command) => {
                 self.handle_internal_command(source_id, internal_command)
                     .await
             }
@@ -85,21 +82,21 @@ impl Engine {
             observer.lock().await.on_state_change(&self.active_state);
         }
         self.current_state = self.active_state.clone();
-        // TODO: send state to peers
+        // FIXME: send state to peers
         Ok(())
     }
 
     async fn handle_client_command(
         &mut self,
         source_id: usize,
-        client_command: crate::commands::ClientCommand,
+        client_command: crate::commands::PeerCommand,
     ) -> Result<()> {
         match client_command {
-            ClientCommand::Echo(message) => {
+            commands::PeerCommand::Echo(message) => {
                 tracing::info!("echo: {message}");
                 let event = Event {
                     target: Some(source_id),
-                    payload: EventPayload::Echo(message),
+                    payload: events::EventBody::Echo(message),
                 };
                 if let Some(observer) = &self.observer {
                     observer.lock().await.on_event(&event);
@@ -107,7 +104,7 @@ impl Engine {
                 self.send(event).await?;
                 Ok(())
             }
-            ClientCommand::Init(init) => {
+            commands::PeerCommand::Init(init) => {
                 let peer = init.peer;
                 self.active_state.peers.push(peer);
                 Ok(())
@@ -118,17 +115,17 @@ impl Engine {
     async fn handle_internal_command(
         &mut self,
         source_id: usize,
-        internal_command: crate::commands::InternalCommand,
+        internal_command: crate::commands::SystemCommand,
     ) -> Result<()> {
         match internal_command {
-            InternalCommand::AddConnection(conn) => {
+            commands::SystemCommand::AddConnection(conn) => {
                 self.network.add_connection(conn).await?;
                 Ok(())
             }
-            InternalCommand::OpenConnection(_) => {
+            commands::SystemCommand::OpenConnection(_) => {
                 self.send(Event {
                     target: Some(source_id),
-                    payload: commands::ConnectionOpened {}.into(),
+                    payload: events::ConnectionOpened {}.into(),
                 })
                 .await
             }
