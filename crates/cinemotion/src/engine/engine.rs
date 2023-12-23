@@ -8,6 +8,7 @@ use super::components::NetworkComponent;
 use crate::{commands, events, Command, Event, Message, Result};
 
 pub struct Builder {
+    initial_state: Option<State>,
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
     network_component: Option<Box<dyn NetworkComponent>>,
 }
@@ -15,9 +16,14 @@ pub struct Builder {
 impl Builder {
     pub fn new() -> Self {
         Self {
+            initial_state: None,
             engine_observer: None,
             network_component: None,
         }
+    }
+    pub fn with_inital_state(mut self, state: State) -> Self {
+        self.initial_state = Some(state);
+        self
     }
     pub fn with_engine_observer(mut self, engine_observer: Arc<Mutex<dyn Observer>>) -> Self {
         self.engine_observer = Some(engine_observer);
@@ -30,7 +36,7 @@ impl Builder {
     }
 
     pub fn build(self) -> Result<Engine> {
-        let state = State::default();
+        let state = self.initial_state.unwrap_or_default();
         let network = self.network_component.unwrap();
         let observer = self.engine_observer;
         Ok(Engine {

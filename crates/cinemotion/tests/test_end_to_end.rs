@@ -1,4 +1,5 @@
 use futures::future::Future;
+use paste::paste;
 use std::sync::Arc;
 use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
@@ -9,6 +10,7 @@ use cinemotion::{
 
 mod common;
 
+#[derive(Default, Clone)]
 struct ObserverSpy {
     observed_events: Vec<Event>,
     observed_state: engine::State,
@@ -37,13 +39,23 @@ impl EngineTestHarness {
     fn new() -> Self {
         let (builder, _) = common::make_engine();
 
-        let spy = Arc::new(std::sync::Mutex::new(ObserverSpy {
-            observed_events: Vec::new(),
-            observed_state: engine::State::default(),
-        }));
+        let spy = Arc::new(std::sync::Mutex::new(ObserverSpy::default()));
         let observer = HarnessObserver { spy: spy.clone() };
         let engine = builder
             .with_engine_observer(Arc::new(Mutex::new(observer)))
+            .build()
+            .expect("engine should build successfully");
+        Self { engine, spy }
+    }
+
+    fn with_state(state: engine::State) -> Self {
+        let (builder, _) = common::make_engine();
+
+        let spy = Arc::new(std::sync::Mutex::new(ObserverSpy::default()));
+        let observer = HarnessObserver { spy: spy.clone() };
+        let engine = builder
+            .with_engine_observer(Arc::new(Mutex::new(observer)))
+            .with_inital_state(state)
             .build()
             .expect("engine should build successfully");
         Self { engine, spy }
@@ -197,13 +209,25 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
     }
 }
 
-#[tokio::test]
-async fn test_connection_init() {
-    let mut harness = EngineTestHarness::new();
+macro_rules! harness {
+    ($name:ident, $state:block, $body:block) => {
+        paste! {
+            #[tokio::test]
+            async fn [<test_$name>]() {
+                let tasks = $body;
+                let state = $state;
+                let mut harness = EngineTestHarness::with_state(state);
+                run_harness(&mut harness, tasks).await;
+            }
+        }
+    };
+}
 
+harness!(connection_setup, { engine::State::default() }, {
     let source_id: usize = 1;
     let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
-    let tasks = vec![
+
+    vec![
         request!(
             "create connection",
             Message {
@@ -254,6 +278,18 @@ async fn test_connection_init() {
         event!("expect some state event to be emitted", |event: &Event| {
             matches!(event.body, EventBody::StateChanged(_))
         }),
-    ];
-    run_harness(&mut harness, tasks).await;
-}
+    ]
+});
+
+harness!(
+    peer_mapping,
+    {
+        let mut state = engine::State::default();
+        state.peers = vec![data::Peer {
+            name: "test".to_string(),
+            role: data::PeerRole::Controller,
+        }];
+        state
+    },
+    { vec![] }
+);
