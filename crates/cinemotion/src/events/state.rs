@@ -1,8 +1,8 @@
 use cinemotion_proto as proto;
 
-use crate::engine::State;
+use crate::State;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct StateChangeEvent(pub State);
 
 impl From<StateChangeEvent> for proto::StateChangeEvent {

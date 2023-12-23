@@ -22,6 +22,12 @@ pub enum Error {
 
     #[error("bad command error: {0}")]
     BadCommand(String),
+
+    #[error("invalid scene object: {0}")]
+    InvalidSceneObject(String),
+
+    #[error("invalid property value: {0}")]
+    InvalidValue(String),
 }
 
 pub type Result<T> = std::result::Result<T, self::Error>;

@@ -1,4 +1,4 @@
-use super::State;
+use crate::State;
 use crate::{Event, Message};
 
 pub trait Observer: Send + Sync {

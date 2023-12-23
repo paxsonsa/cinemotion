@@ -48,8 +48,9 @@ enum PeerRole {
   CONTROLLER = 0;
 }
 message Peer {
-  string name = 1;
-  PeerRole role = 2;
+  uint32 uid = 1;
+  string name = 2;
+  PeerRole role = 3;
 }
 
 message State {

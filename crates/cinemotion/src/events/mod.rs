@@ -8,7 +8,7 @@ pub use state::StateChangeEvent;
 
 use cinemotion_proto as proto;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Event {
     pub target: Option<usize>,
     pub body: EventBody,
@@ -39,7 +39,7 @@ impl From<Event> for proto::Event {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum EventBody {
     Echo(Echo),
     ConnectionOpened(ConnectionOpenedEvent),

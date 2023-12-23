@@ -2,7 +2,8 @@ use std::sync::Arc;
 
 use tokio::sync::Mutex;
 
-use super::{Observer, State};
+use super::Observer;
+use crate::State;
 
 use super::components::NetworkComponent;
 use crate::{commands, events, Command, Event, Message, Result};
@@ -115,7 +116,9 @@ impl Engine {
             }
             commands::PeerCommand::Init(init) => {
                 let peer = init.peer;
-                self.active_state.peers.push(peer);
+                self.active_state
+                    .peers
+                    .insert(source_id.try_into().unwrap(), peer);
                 Ok(())
             }
         }
@@ -134,7 +137,7 @@ impl Engine {
             commands::SystemCommand::OpenConnection(_) => {
                 self.send(Event {
                     target: Some(source_id),
-                    body: events::ConnectionOpenedEvent {}.into(),
+                    body: events::ConnectionOpenedEvent().into(),
                 })
                 .await
             }

@@ -17,7 +17,7 @@ impl Deref for Name {
 /// Create a new name from a string.
 ///
 /// ```
-/// use indiemotion_api::Name;
+/// use cinemotion::Name;
 /// let name = "test".to_string();
 /// let name = Name::from(name);
 /// ```
@@ -31,7 +31,7 @@ impl From<String> for Name {
 /// Create a new name from a str.
 ///
 /// ```
-/// use indiemotion_api::Name;
+/// use cinemotion::Name;
 /// let name = Name::from("test");
 /// ```
 ///
@@ -44,7 +44,7 @@ impl From<&str> for Name {
 /// Create a new name from a string literal.
 ///
 /// ```
-/// use indiemotion_api::name;
+/// use cinemotion::name;
 /// let name = name!("test");
 /// ```
 ///

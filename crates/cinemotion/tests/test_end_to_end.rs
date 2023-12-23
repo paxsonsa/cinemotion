@@ -1,11 +1,13 @@
 use futures::future::Future;
 use paste::paste;
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
 
 use cinemotion::{
-    commands, connection::LOCAL_CONN_ID, data, engine, events, Event, EventBody, Message, Result,
+    commands, connection::LOCAL_CONN_ID, data, engine, events, name, Event, EventBody, Message,
+    Result, State,
 };
 
 mod common;
@@ -13,7 +15,7 @@ mod common;
 #[derive(Default, Clone)]
 struct ObserverSpy {
     observed_events: Vec<Event>,
-    observed_state: engine::State,
+    observed_state: State,
 }
 
 struct HarnessObserver {
@@ -21,7 +23,7 @@ struct HarnessObserver {
 }
 
 impl engine::Observer for HarnessObserver {
-    fn on_state_change(&mut self, new_state: &engine::State) {
+    fn on_state_change(&mut self, new_state: &State) {
         self.spy.lock().unwrap().observed_state = new_state.clone();
     }
     fn on_event(&mut self, event: &Event) {
@@ -48,7 +50,7 @@ impl EngineTestHarness {
         Self { engine, spy }
     }
 
-    fn with_state(state: engine::State) -> Self {
+    fn with_state(state: State) -> Self {
         let (builder, _) = common::make_engine();
 
         let spy = Arc::new(std::sync::Mutex::new(ObserverSpy::default()));
@@ -75,7 +77,7 @@ impl EngineTestHarness {
         events
     }
 
-    async fn observed_state(&mut self) -> engine::State {
+    async fn observed_state(&mut self) -> State {
         let _ = self.engine.tick().await.expect("engine tick should pass.");
         let state = self
             .spy
@@ -97,7 +99,7 @@ enum Action {
     Message(Message),
     ExpectEvents(Vec<Event>),
     ExpectEvent(Box<dyn FnMut(&Event) -> bool>),
-    ExpectState(Box<dyn FnMut(&mut engine::State)>),
+    ExpectState(Box<dyn FnMut(&mut State)>),
 }
 
 impl From<Message> for Action {
@@ -223,8 +225,7 @@ macro_rules! harness {
     };
 }
 
-harness!(connection_setup, { engine::State::default() }, {
-    let source_id: usize = 1;
+harness!(connection_setup, { State::default() }, {
     let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
 
     vec![
@@ -242,25 +243,27 @@ harness!(connection_setup, { engine::State::default() }, {
         request!(
             "open connection",
             Message {
-                source_id, // Hardcoded Id that should be set.
+                source_id: 1, // Hardcoded Id that should be set.
                 command: commands::OpenConnection {}.into(),
             }
         ),
         events!(
             "expect hello event to be sent",
             Event {
-                target: Some(source_id),
-                body: events::ConnectionOpenedEvent {}.into(),
+                target: Some(1),
+                body: events::ConnectionOpenedEvent().into(),
             }
         ),
         request!(
             "initial connection session",
             Message {
-                source_id,
+                source_id: 1,
                 command: commands::Init {
                     peer: data::Peer {
-                        name: "test".to_string(),
+                        uid: 1,
+                        name: name!("test"),
                         role: data::PeerRole::Controller,
+                        properties: Default::default(),
                     }
                 }
                 .into(),
@@ -268,11 +271,18 @@ harness!(connection_setup, { engine::State::default() }, {
         ),
         state!(
             "expect the peer information to be in the public state",
-            |state: &mut engine::State| {
-                state.peers = vec![data::Peer {
-                    name: "test".to_string(),
-                    role: data::PeerRole::Controller,
-                }];
+            |state: &mut State| {
+                let mut peers = HashMap::new();
+                peers.insert(
+                    1,
+                    data::Peer {
+                        uid: 1,
+                        name: name!("test"),
+                        role: data::PeerRole::Controller,
+                        properties: Default::default(),
+                    },
+                );
+                state.peers = peers;
             }
         ),
         event!("expect some state event to be emitted", |event: &Event| {
@@ -284,11 +294,18 @@ harness!(connection_setup, { engine::State::default() }, {
 harness!(
     peer_mapping,
     {
-        let mut state = engine::State::default();
-        state.peers = vec![data::Peer {
-            name: "test".to_string(),
-            role: data::PeerRole::Controller,
-        }];
+        let mut state = State::default();
+        let mut peers = HashMap::new();
+        peers.insert(
+            1,
+            data::Peer {
+                uid: 1,
+                name: name!("test"),
+                role: data::PeerRole::Controller,
+                properties: Default::default(),
+            },
+        );
+        state.peers = peers;
         state
     },
     { vec![] }
