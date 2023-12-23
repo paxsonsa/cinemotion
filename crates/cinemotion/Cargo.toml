@@ -38,5 +38,8 @@ base64.workspace = true
 prost.workspace = true
 prost-types.workspace = true
 
+[dev-dependencies]
+paste = "1.0"
+
 [build-dependencies]
 prost-build = "0.12"
