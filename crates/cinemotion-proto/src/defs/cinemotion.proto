@@ -12,6 +12,7 @@ message Event {
   oneof payload {
     Echo echo = 1;
     ConnectionOpenedEvent connection_opened = 2;
+    StateChangeEvent state_change = 3;
   }
 }
 
@@ -36,6 +37,10 @@ message InitCommand {
 // A hello from the server to start the connection.
 message ConnectionOpenedEvent {}
 
+message StateChangeEvent {
+  State state = 1;
+}
+
 /*******************************
 * Data Types
 ********************************/
@@ -45,5 +50,9 @@ enum PeerRole {
 message Peer {
   string name = 1;
   PeerRole role = 2;
+}
+
+message State {
+  repeated Peer peers = 1;
 }
 

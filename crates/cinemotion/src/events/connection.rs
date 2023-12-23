@@ -2,16 +2,16 @@ use super::EventBody;
 use cinemotion_proto as proto;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ConnectionOpened {}
+pub struct ConnectionOpenedEvent {}
 
-impl From<ConnectionOpened> for EventBody {
-    fn from(value: ConnectionOpened) -> Self {
+impl From<ConnectionOpenedEvent> for EventBody {
+    fn from(value: ConnectionOpenedEvent) -> Self {
         Self::ConnectionOpened(value)
     }
 }
 
-impl From<ConnectionOpened> for proto::ConnectionOpenedEvent {
-    fn from(_: ConnectionOpened) -> Self {
+impl From<ConnectionOpenedEvent> for proto::ConnectionOpenedEvent {
+    fn from(_: ConnectionOpenedEvent) -> Self {
         Self {}
     }
 }

@@ -82,8 +82,11 @@ impl Engine {
             observer.lock().await.on_state_change(&self.active_state);
         }
         self.current_state = self.active_state.clone();
-        // FIXME: send state to peers
-        Ok(())
+        self.send(Event {
+            target: None,
+            body: events::StateChangeEvent(self.current_state.clone()).into(),
+        })
+        .await
     }
 
     async fn handle_client_command(
@@ -96,7 +99,7 @@ impl Engine {
                 tracing::info!("echo: {message}");
                 let event = Event {
                     target: Some(source_id),
-                    payload: events::EventBody::Echo(message),
+                    body: events::EventBody::Echo(message),
                 };
                 if let Some(observer) = &self.observer {
                     observer.lock().await.on_event(&event);
@@ -125,7 +128,7 @@ impl Engine {
             commands::SystemCommand::OpenConnection(_) => {
                 self.send(Event {
                     target: Some(source_id),
-                    payload: events::ConnectionOpened {}.into(),
+                    body: events::ConnectionOpenedEvent {}.into(),
                 })
                 .await
             }

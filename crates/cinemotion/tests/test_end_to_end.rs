@@ -84,6 +84,7 @@ struct Task {
 enum Action {
     Message(Message),
     ExpectEvents(Vec<Event>),
+    ExpectEvent(Box<dyn FnMut(&Event) -> bool>),
     ExpectState(Box<dyn FnMut(&mut engine::State)>),
 }
 
@@ -113,6 +114,16 @@ macro_rules! events {
     };
 }
 
+macro_rules! event {
+    ($description:expr, $event:expr) => {
+        Task {
+            description: $description.to_string(),
+            action: Action::ExpectEvent(Box::new($event)),
+            assertion: None,
+        }
+    };
+}
+
 macro_rules! state {
     ($description:expr, $state:expr) => {
         Task {
@@ -125,7 +136,7 @@ macro_rules! state {
 
 async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
     for task in tasks {
-        println!("{}", task.description);
+        println!("⏵ {}", task.description);
         match task.action {
             Action::Message(request) => harness
                 .send_request(request)
@@ -162,6 +173,15 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
                     let index = start_index + i;
                     assert_eq!(expected_event, &events[index], "the expect event at index {} does not match the observed event at index {}", i, index)
                 }
+            }
+            Action::ExpectEvent(mut event_fn) => {
+                let events = harness.observed_events();
+                for event in events.iter() {
+                    if event_fn(event) {
+                        return;
+                    }
+                }
+                panic!("expected event not found",);
             }
             Action::ExpectState(mut state_fn) => {
                 let observed_state = harness.observed_state().await;
@@ -206,7 +226,7 @@ async fn test_connection_init() {
             "expect hello event to be sent",
             Event {
                 target: Some(source_id),
-                payload: events::ConnectionOpened {}.into(),
+                body: events::ConnectionOpenedEvent {}.into(),
             }
         ),
         request!(
@@ -231,6 +251,9 @@ async fn test_connection_init() {
                 }];
             }
         ),
+        event!("expect some state event to be emitted", |event: &Event| {
+            matches!(event.body, EventBody::StateChanged(_))
+        }),
     ];
     run_harness(&mut harness, tasks).await;
 }

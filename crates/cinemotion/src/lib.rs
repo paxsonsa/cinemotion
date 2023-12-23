@@ -16,6 +16,6 @@ pub use error::{Error, Result};
 
 pub use commands::Command;
 pub use connection::ConnectionAgent;
-pub use engine::{Engine, State};
+pub use engine::Engine;
 pub use events::{Event, EventBody};
 pub use message::Message;

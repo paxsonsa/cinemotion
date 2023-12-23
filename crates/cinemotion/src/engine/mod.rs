@@ -3,13 +3,9 @@ pub mod components;
 pub mod engine;
 pub mod network;
 pub mod observer;
-
-use super::data;
-
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct State {
-    pub peers: Vec<data::Peer>,
-}
+pub mod state;
 
 pub use engine::{Builder, Engine};
 pub use observer::Observer;
+pub use state::*;
+
