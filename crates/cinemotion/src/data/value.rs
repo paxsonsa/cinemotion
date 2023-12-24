@@ -1,8 +1,7 @@
 use crate::{Error, Result};
-use serde::{Deserialize, Serialize};
+use cinemotion_proto as proto;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(untagged)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Float(f64),
     Vec3(Vec3),
@@ -30,7 +29,14 @@ impl Value {
                 Ok(())
             }
             (Self::Matrix44(ref mut this), Self::Matrix44(them)) => {
-                *this = *them;
+                (this.row0.x, this.row0.y, this.row0.z, this.row0.w) =
+                    (them.row0.x, them.row0.y, them.row0.z, them.row0.w);
+                (this.row1.x, this.row1.y, this.row1.z, this.row1.w) =
+                    (them.row1.x, them.row1.y, them.row1.z, them.row1.w);
+                (this.row2.x, this.row2.y, this.row2.z, this.row2.w) =
+                    (them.row2.x, them.row2.y, them.row2.z, them.row2.w);
+                (this.row3.x, this.row3.y, this.row3.z, this.row3.w) =
+                    (them.row3.x, them.row3.y, them.row3.z, them.row3.w);
                 Ok(())
             }
             _ => Err(Error::InvalidValue("value has different type".into())),
@@ -64,7 +70,39 @@ impl From<(f64, f64, f64)> for Value {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq)]
+impl From<proto::PropertyValue> for Value {
+    fn from(prop_value: proto::PropertyValue) -> Self {
+        match prop_value.value.unwrap() {
+            proto::property_value::Value::FloatValue(value) => Self::Float(value),
+            proto::property_value::Value::Vec3Value(value) => Self::Vec3(value.into()),
+            proto::property_value::Value::Vec4Value(value) => Self::Vec4(value.into()),
+            proto::property_value::Value::Matrix4x4Value(value) => Self::Matrix44(value.into()),
+        }
+    }
+}
+
+impl From<Value> for proto::PropertyValue {
+    fn from(value: Value) -> Self {
+        let mut prop_value = proto::PropertyValue::default();
+        match value {
+            Value::Float(value) => {
+                prop_value.value = Some(proto::property_value::Value::FloatValue(value));
+            }
+            Value::Vec3(value) => {
+                prop_value.value = Some(proto::property_value::Value::Vec3Value(value.into()));
+            }
+            Value::Vec4(value) => {
+                prop_value.value = Some(proto::property_value::Value::Vec4Value(value.into()));
+            }
+            Value::Matrix44(value) => {
+                prop_value.value = Some(proto::property_value::Value::Matrix4x4Value(value.into()));
+            }
+        }
+        prop_value
+    }
+}
+
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
@@ -83,6 +121,26 @@ impl From<Vec3> for (f64, f64, f64) {
     }
 }
 
+impl From<proto::Vec3> for Vec3 {
+    fn from(value: proto::Vec3) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
+    }
+}
+
+impl From<Vec3> for proto::Vec3 {
+    fn from(value: Vec3) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
+    }
+}
+
 impl std::cmp::PartialEq<(f64, f64, f64)> for Vec3 {
     fn eq(&self, other: &(f64, f64, f64)) -> bool {
         (self.x, self.y, self.z) == *other
@@ -95,7 +153,7 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec3 {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Vec4 {
     pub x: f64,
     pub y: f64,
@@ -112,6 +170,28 @@ impl From<(f64, f64, f64, f64)> for Vec4 {
 impl From<Vec4> for (f64, f64, f64, f64) {
     fn from(vec4: Vec4) -> Self {
         (vec4.x, vec4.y, vec4.z, vec4.w)
+    }
+}
+
+impl From<proto::Vec4> for Vec4 {
+    fn from(value: proto::Vec4) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+            w: value.w,
+        }
+    }
+}
+
+impl From<Vec4> for proto::Vec4 {
+    fn from(value: Vec4) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+            w: value.w,
+        }
     }
 }
 
@@ -132,9 +212,32 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec4 {
 // The matrix is represented a column major where each sub-tuple
 // repsents a column.
 //
-pub type Matrix44 = (
-    (f64, f64, f64, f64),
-    (f64, f64, f64, f64),
-    (f64, f64, f64, f64),
-    (f64, f64, f64, f64),
-);
+#[derive(Debug, Default, Clone, PartialEq)]
+pub struct Matrix44 {
+    row0: Vec4,
+    row1: Vec4,
+    row2: Vec4,
+    row3: Vec4,
+}
+
+impl From<Matrix44> for proto::Matrix4x4 {
+    fn from(value: Matrix44) -> Self {
+        Self {
+            row0: Some(value.row0.into()),
+            row1: Some(value.row1.into()),
+            row2: Some(value.row2.into()),
+            row3: Some(value.row3.into()),
+        }
+    }
+}
+
+impl From<proto::Matrix4x4> for Matrix44 {
+    fn from(value: proto::Matrix4x4) -> Self {
+        Self {
+            row0: value.row0.unwrap().into(),
+            row1: value.row1.unwrap().into(),
+            row2: value.row2.unwrap().into(),
+            row3: value.row3.unwrap().into(),
+        }
+    }
+}

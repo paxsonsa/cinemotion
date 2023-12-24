@@ -25,9 +25,9 @@ message Echo {
 * Command Types
 ******************************/
 
-// Initiate the connection with the peer description.
+// Initiate the connection with the controller description.
 message InitCommand {
-  Peer peer = 1;
+  Controller controller = 1;
 }
 
 /*******************************
@@ -44,16 +44,46 @@ message StateChangeEvent {
 /*******************************
 * Data Types
 ********************************/
-enum PeerRole {
-  CONTROLLER = 0;
-}
-message Peer {
+message Controller {
   uint32 uid = 1;
   string name = 2;
-  PeerRole role = 3;
+  repeated PropertyDef properties = 3;
 }
 
 message State {
-  repeated Peer peers = 1;
+  repeated Controller controllers = 1;
 }
 
+message PropertyDef {
+  string name = 1;
+  PropertyValue default_value = 2;
+}
+
+message PropertyValue {
+  oneof value {
+    double float_value = 1;
+    Vec3 vec3_value = 2;
+    Vec4 vec4_value = 3;
+    Matrix4x4 matrix4x4_value = 4;
+  }
+}
+
+message Vec3 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message Vec4 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double w = 4;
+}
+
+message Matrix4x4 {
+  Vec4 row0 = 1;
+  Vec4 row1 = 2;
+  Vec4 row2 = 3;
+  Vec4 row3 = 4;
+}

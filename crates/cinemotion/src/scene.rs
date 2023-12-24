@@ -1,14 +1,12 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
-
 use crate::{
     data::{PropertyState, Value},
     name, Name, Result,
 };
 
 /// Represents the currently loaded scene in the system.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Scene {
     /// The name of the scene.
     pub name: Name,
@@ -60,7 +58,7 @@ impl Scene {
 }
 
 /// Represents an object in the scene graph that can be animated but the controllers.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SceneObject {
     /// A unique name for the scene object.
     name: Name,

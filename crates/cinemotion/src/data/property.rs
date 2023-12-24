@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::Name;
-
 use super::value::*;
+use crate::Name;
+use cinemotion_proto as proto;
 
 /// A generic defintion for a property.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PropertyDef {
     /// The name of the property.
     name: Name,
@@ -34,8 +34,26 @@ impl PropertyDef {
     }
 }
 
+impl From<proto::PropertyDef> for PropertyDef {
+    fn from(value: proto::PropertyDef) -> Self {
+        Self {
+            name: value.name.into(),
+            default_value: value.default_value.unwrap().into(),
+        }
+    }
+}
+
+impl From<PropertyDef> for proto::PropertyDef {
+    fn from(value: PropertyDef) -> Self {
+        Self {
+            name: value.name.to_string(),
+            default_value: Some(value.default_value.into()),
+        }
+    }
+}
+
 /// A helper struct for representing a property binding address.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PropertyBinding {
     /// The namespace of the controller that has the property.
     pub namespace: Name,
@@ -49,8 +67,7 @@ pub struct PropertyBinding {
 /// The property state can either be unbound, meaning the property not attached
 /// to a controller, or bound, meaning the property is attached to a controller property.
 ///
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(untagged, deny_unknown_fields)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PropertyState {
     /// An unbound property does not reference a controller property for updates.
     Unbound {

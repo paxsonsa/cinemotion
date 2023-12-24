@@ -3,7 +3,7 @@ use crate::{Error, Result};
 
 pub enum Command {
     System(SystemCommand),
-    Peer(PeerCommand),
+    Controller(ControllerCommand),
 }
 
 impl Command {
@@ -11,8 +11,8 @@ impl Command {
     ///
     /// Note: only client commands can be decoded from a byte buffer.
     pub fn decode(buf: bytes::Bytes) -> Result<Self> {
-        let command = PeerCommand::decode(buf)?;
-        Ok(Self::Peer(command))
+        let command = ControllerCommand::decode(buf)?;
+        Ok(Self::Controller(command))
     }
 }
 
@@ -22,9 +22,9 @@ impl From<SystemCommand> for Command {
     }
 }
 
-impl From<PeerCommand> for Command {
-    fn from(value: PeerCommand) -> Self {
-        Self::Peer(value)
+impl From<ControllerCommand> for Command {
+    fn from(value: ControllerCommand) -> Self {
+        Self::Controller(value)
     }
 }
 
@@ -43,12 +43,12 @@ impl From<AddConnection> for SystemCommand {
 
 /// Client commands are received from the client and are used by the client to
 /// control the engine.
-pub enum PeerCommand {
+pub enum ControllerCommand {
     Echo(Echo),
     Init(Init),
 }
 
-impl PeerCommand {
+impl ControllerCommand {
     /// Decode a command from a byte buffer.
     pub fn decode(buf: bytes::Bytes) -> Result<Self> {
         let Some(payload) = cinemotion_proto::Command::try_from(buf)
@@ -61,7 +61,7 @@ impl PeerCommand {
     }
 }
 
-impl From<cinemotion_proto::command::Payload> for PeerCommand {
+impl From<cinemotion_proto::command::Payload> for ControllerCommand {
     fn from(value: cinemotion_proto::command::Payload) -> Self {
         match value {
             cinemotion_proto::command::Payload::Echo(echo) => Self::Echo(echo.into()),

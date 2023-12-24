@@ -1,11 +1,9 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
-
 use super::Value;
 use crate::Name;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Clone)]
 pub struct Sample {
     properties: HashMap<Name, Value>,
 }

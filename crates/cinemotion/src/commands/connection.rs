@@ -1,23 +1,23 @@
-use super::{Command, PeerCommand, SystemCommand};
+use super::{Command, ControllerCommand, SystemCommand};
 use crate::connection::ConnectionAgent;
-use crate::data::peer;
+use crate::data::controllers;
 use crate::Result;
 use cinemotion_proto as proto;
 
 pub struct Init {
-    pub peer: peer::Peer,
+    pub peer: controllers::Controller,
 }
 
 impl From<Init> for Command {
     fn from(value: Init) -> Self {
-        Self::Peer(PeerCommand::Init(value))
+        Self::Controller(ControllerCommand::Init(value))
     }
 }
 
 impl From<proto::InitCommand> for Init {
     fn from(value: proto::InitCommand) -> Self {
         Self {
-            peer: value.peer.unwrap().into(),
+            peer: value.controller.unwrap().into(),
         }
     }
 }

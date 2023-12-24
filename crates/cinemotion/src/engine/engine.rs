@@ -2,11 +2,9 @@ use std::sync::Arc;
 
 use tokio::sync::Mutex;
 
-use super::Observer;
-use crate::State;
-
 use super::components::NetworkComponent;
-use crate::{commands, events, Command, Event, Message, Result};
+use super::Observer;
+use crate::{commands, events, Command, Event, Message, Result, Scene, State};
 
 pub struct Builder {
     initial_state: Option<State>,
@@ -74,7 +72,7 @@ impl Engine {
         let source_id = request.source_id;
         let command = request.command;
         match command {
-            Command::Peer(client_command) => {
+            Command::Controller(client_command) => {
                 self.handle_client_command(source_id, client_command).await
             }
             Command::System(internal_command) => {
@@ -99,10 +97,10 @@ impl Engine {
     async fn handle_client_command(
         &mut self,
         source_id: usize,
-        client_command: crate::commands::PeerCommand,
+        client_command: crate::commands::ControllerCommand,
     ) -> Result<()> {
         match client_command {
-            commands::PeerCommand::Echo(message) => {
+            commands::ControllerCommand::Echo(message) => {
                 tracing::info!("echo: {message}");
                 let event = Event {
                     target: Some(source_id),
@@ -114,11 +112,11 @@ impl Engine {
                 self.send(event).await?;
                 Ok(())
             }
-            commands::PeerCommand::Init(init) => {
+            commands::ControllerCommand::Init(init) => {
                 let peer = init.peer;
                 self.active_state
-                    .peers
-                    .insert(source_id.try_into().unwrap(), peer);
+                    .controllers
+                    .insert(peer.name.clone(), peer);
                 Ok(())
             }
         }

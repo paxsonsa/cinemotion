@@ -8,7 +8,7 @@ async fn test_echo_command() {
 
     let request = Message::with_command(
         1,
-        commands::PeerCommand::from(commands::Echo::from("hello".to_string())),
+        commands::ControllerCommand::from(commands::Echo::from("hello".to_string())),
     );
     engine.apply(request).await.expect("failed to apply engine");
 

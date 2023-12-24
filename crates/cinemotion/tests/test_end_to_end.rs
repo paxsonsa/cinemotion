@@ -259,11 +259,10 @@ harness!(connection_setup, { State::default() }, {
             Message {
                 source_id: 1,
                 command: commands::Init {
-                    peer: data::Peer {
+                    peer: data::Controller {
                         uid: 1,
                         name: name!("test"),
-                        role: data::PeerRole::Controller,
-                        properties: Default::default(),
+                        properties: vec![],
                     }
                 }
                 .into(),
@@ -272,17 +271,16 @@ harness!(connection_setup, { State::default() }, {
         state!(
             "expect the peer information to be in the public state",
             |state: &mut State| {
-                let mut peers = HashMap::new();
-                peers.insert(
-                    1,
-                    data::Peer {
+                let mut controllers = HashMap::new();
+                controllers.insert(
+                    name!("test"),
+                    data::Controller {
                         uid: 1,
                         name: name!("test"),
-                        role: data::PeerRole::Controller,
                         properties: Default::default(),
                     },
                 );
-                state.peers = peers;
+                state.controllers = controllers;
             }
         ),
         event!("expect some state event to be emitted", |event: &Event| {
@@ -295,17 +293,16 @@ harness!(
     peer_mapping,
     {
         let mut state = State::default();
-        let mut peers = HashMap::new();
-        peers.insert(
-            1,
-            data::Peer {
+        let mut controllers = HashMap::new();
+        controllers.insert(
+            name!("test"),
+            data::Controller {
                 uid: 1,
                 name: name!("test"),
-                role: data::PeerRole::Controller,
                 properties: Default::default(),
             },
         );
-        state.peers = peers;
+        state.controllers = controllers;
         state
     },
     { vec![] }

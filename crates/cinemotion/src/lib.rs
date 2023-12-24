@@ -2,7 +2,7 @@ pub mod commands;
 pub mod connection;
 pub mod data;
 pub mod engine;
-pub(crate) mod error;
+pub mod error;
 pub mod events;
 pub mod message;
 pub mod name;
