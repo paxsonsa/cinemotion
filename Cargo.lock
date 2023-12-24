@@ -2838,16 +2838,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "webrtc-test"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "base64",
- "tokio",
- "webrtc",
-]
-
-[[package]]
 name = "webrtc-util"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
