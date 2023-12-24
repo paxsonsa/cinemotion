@@ -1,4 +1,4 @@
-use super::{AddConnection, Echo, Init, OpenConnection};
+use super::*;
 use crate::{Error, Result};
 
 pub enum Command {
@@ -46,6 +46,7 @@ impl From<AddConnection> for SystemCommand {
 pub enum ControllerCommand {
     Echo(Echo),
     Init(Init),
+    UpdateSceneObject(UpdateSceneObject),
 }
 
 impl ControllerCommand {

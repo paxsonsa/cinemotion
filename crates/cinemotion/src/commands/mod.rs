@@ -1,9 +1,11 @@
 mod command;
 mod connection;
 mod echo;
+mod scene;
 
 pub use connection::*;
 pub use echo::*;
+pub use scene::*;
 
 pub use command::*;
 

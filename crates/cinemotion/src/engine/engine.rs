@@ -119,6 +119,7 @@ impl Engine {
                     .insert(peer.name.clone(), peer);
                 Ok(())
             }
+            commands::ControllerCommand::UpdateSceneObject(_) => Ok(()),
         }
     }
 

@@ -6,8 +6,8 @@ use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
 
 use cinemotion::{
-    commands, connection::LOCAL_CONN_ID, data, engine, events, name, Event, EventBody, Message,
-    Result, State,
+    commands, connection::LOCAL_CONN_ID, data, engine, events, name, scene, Event, EventBody,
+    Message, Result, State,
 };
 
 mod common;
@@ -316,5 +316,26 @@ harness!(
     },
     // TODO: Create a message to update the main scene object with a mapping to the controller.
     // - Check State for the mapping.
-    { vec![] }
+    {
+        vec![request!(
+            "update the root scene objest to mapping controller property to object",
+            Message {
+                source_id: 1,
+                command: commands::UpdateSceneObject {
+                    object: scene::SceneObject::new(
+                        name!("root"),
+                        HashMap::from([(
+                            name!("position"),
+                            data::PropertyState::bind(
+                                name!("test"),
+                                name!("position"),
+                                data::Value::Vec3((0.0, 0.0, 0.0).into())
+                            ),
+                        )])
+                    )
+                }
+                .into(),
+            }
+        )]
+    }
 );
