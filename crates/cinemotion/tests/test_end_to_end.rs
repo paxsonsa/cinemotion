@@ -262,7 +262,10 @@ harness!(connection_setup, { State::default() }, {
                     peer: data::Controller {
                         uid: 1,
                         name: name!("test"),
-                        properties: vec![],
+                        properties: vec![data::PropertyDef::new(
+                            name!("position"),
+                            data::Value::Vec3((0.0, 0.0, 0.0).into()),
+                        )],
                     }
                 }
                 .into(),
@@ -277,7 +280,10 @@ harness!(connection_setup, { State::default() }, {
                     data::Controller {
                         uid: 1,
                         name: name!("test"),
-                        properties: Default::default(),
+                        properties: vec![data::PropertyDef::new(
+                            name!("position"),
+                            data::Value::Vec3((0.0, 0.0, 0.0).into()),
+                        )],
                     },
                 );
                 state.controllers = controllers;
@@ -299,11 +305,16 @@ harness!(
             data::Controller {
                 uid: 1,
                 name: name!("test"),
-                properties: Default::default(),
+                properties: vec![data::PropertyDef::new(
+                    name!("position"),
+                    data::Value::Vec3((0.0, 0.0, 0.0).into()),
+                )],
             },
         );
         state.controllers = controllers;
         state
     },
+    // TODO: Create a message to update the main scene object with a mapping to the controller.
+    // - Check State for the mapping.
     { vec![] }
 );
