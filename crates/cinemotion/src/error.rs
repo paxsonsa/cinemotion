@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Clone, Debug, Error, PartialEq)]
 pub enum Error {
     #[error("channel closed: {0}")]
     ChannelClosed(&'static str),
@@ -9,7 +9,7 @@ pub enum Error {
     SignalingFailed(String),
 
     #[error("webrtc error occurred: {0}")]
-    WebRTCError(#[from] webrtc::Error),
+    WebRTCError(String),
 
     #[error("connection failed: {0}")]
     ConnectionFailed(String),
@@ -28,6 +28,12 @@ pub enum Error {
 
     #[error("invalid property value: {0}")]
     InvalidValue(String),
+}
+
+impl From<webrtc::Error> for Error {
+    fn from(error: webrtc::Error) -> Self {
+        Self::WebRTCError(error.to_string())
+    }
 }
 
 pub type Result<T> = std::result::Result<T, self::Error>;

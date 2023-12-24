@@ -1,10 +1,12 @@
 mod connection;
+mod error;
 mod state;
 
 use crate::commands::Echo;
 
 pub use connection::*;
-pub use state::StateChangeEvent;
+pub use error::*;
+pub use state::*;
 
 use cinemotion_proto as proto;
 
@@ -34,6 +36,7 @@ impl From<Event> for proto::Event {
                 EventBody::StateChanged(change) => {
                     proto::event::Payload::StateChange(change.into())
                 }
+                EventBody::Error(err) => proto::event::Payload::Error(err.into()),
             }),
         }
     }
@@ -44,10 +47,17 @@ pub enum EventBody {
     Echo(Echo),
     ConnectionOpened(ConnectionOpenedEvent),
     StateChanged(StateChangeEvent),
+    Error(ErrorEvent),
 }
 
 impl From<StateChangeEvent> for EventBody {
     fn from(value: StateChangeEvent) -> Self {
         Self::StateChanged(value)
+    }
+}
+
+impl From<ErrorEvent> for EventBody {
+    fn from(value: ErrorEvent) -> Self {
+        Self::Error(value)
     }
 }
