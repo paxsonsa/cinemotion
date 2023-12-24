@@ -1,13 +1,14 @@
 use futures::future::Future;
 use paste::paste;
+use pretty_assertions_sorted::{assert_eq, assert_eq_sorted, assert_ne};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
 
 use cinemotion::{
-    commands, connection::LOCAL_CONN_ID, data, engine, events, name, scene, Event, EventBody,
-    Message, Result, State,
+    commands, connection::LOCAL_CONN_ID, data, engine, events, name, scene, Error, Event,
+    EventBody, Message, Result, State,
 };
 
 mod common;
@@ -185,7 +186,7 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
 
                 for (i, expected_event) in expected_events.iter().enumerate() {
                     let index = start_index + i;
-                    assert_eq!(expected_event, &events[index], "the expect event at index {} does not match the observed event at index {}", i, index)
+                    assert_eq_sorted!(expected_event, &events[index], "the expect event at index {} does not match the observed event at index {}", i, index)
                 }
             }
             Action::ExpectEvent(mut event_fn) => {
@@ -201,10 +202,10 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
                 let observed_state = harness.observed_state().await;
                 let mut expected_state = observed_state.clone();
                 state_fn(&mut expected_state);
-                assert_eq!(
-                    observed_state, expected_state,
-                    "current state does not match expected state:\ncurrent: {:#?}\n!=\n expect: {:#?}",
-                    observed_state, expected_state
+                assert_eq_sorted!(
+                    observed_state,
+                    expected_state,
+                    "current state does not match expected state:",
                 );
             }
         };
@@ -296,7 +297,7 @@ harness!(connection_setup, { State::default() }, {
 });
 
 harness!(
-    peer_mapping,
+    scene_object_commands,
     {
         let mut state = State::default();
         let mut controllers = HashMap::new();
@@ -314,28 +315,79 @@ harness!(
         state.controllers = controllers;
         state
     },
-    // TODO: Create a message to update the main scene object with a mapping to the controller.
-    // - Check State for the mapping.
     {
-        vec![request!(
-            "update the root scene objest to mapping controller property to object",
-            Message {
-                source_id: 1,
-                command: commands::UpdateSceneObject {
-                    object: scene::SceneObject::new(
-                        name!("root"),
-                        HashMap::from([(
+        vec![
+            request!(
+                "update the root scene object to map controller property to object",
+                Message {
+                    source_id: 1,
+                    command: commands::UpdateSceneObject {
+                        object: scene::SceneObject::new(
+                            name!("default"),
+                            HashMap::from([(
+                                name!("position"),
+                                data::PropertyState::bind(
+                                    name!("test"),
+                                    name!("position"),
+                                    data::Value::Vec3((0.0, 0.0, 0.0).into())
+                                ),
+                            )])
+                        )
+                    }
+                    .into(),
+                }
+            ),
+            state!(
+                "verify that the scene objects property is bound to the controller",
+                |state: &mut State| {
+                    state
+                        .scene
+                        .objects_mut()
+                        .get_mut(&name!("default"))
+                        .expect("expected default object")
+                        .properties_mut()
+                        .insert(
                             name!("position"),
                             data::PropertyState::bind(
                                 name!("test"),
                                 name!("position"),
-                                data::Value::Vec3((0.0, 0.0, 0.0).into())
+                                data::Value::Vec3((0.0, 0.0, 0.0).into()),
                             ),
-                        )])
-                    )
+                        );
                 }
-                .into(),
-            }
-        )]
+            ),
+            request!(
+                "attempt to update a scene object that does not exist",
+                Message {
+                    source_id: 1,
+                    command: commands::UpdateSceneObject {
+                        object: scene::SceneObject::new(
+                            name!("doesnotexist"),
+                            HashMap::from([(
+                                name!("position"),
+                                data::PropertyState::bind(
+                                    name!("test"),
+                                    name!("position"),
+                                    data::Value::Vec3((0.0, 0.0, 0.0).into())
+                                ),
+                            )])
+                        )
+                    }
+                    .into(),
+                }
+            ),
+            event!("expect an error event to be emitted", |event: &Event| {
+                match event.target {
+                    Some(1) => match &event.body {
+                        EventBody::Error(event) => {
+                            matches!(event.0, Error::InvalidSceneObject(_))
+                        }
+                        _ => false,
+                    },
+
+                    _ => false,
+                }
+            }),
+        ]
     }
 );

@@ -13,6 +13,7 @@ message Event {
     Echo echo = 1;
     ConnectionOpenedEvent connection_opened = 2;
     StateChangeEvent state_change = 3;
+    ErrorEvent error = 4;
   }
 }
 
@@ -39,6 +40,15 @@ message ConnectionOpenedEvent {}
 
 message StateChangeEvent {
   State state = 1;
+}
+
+message ErrorEvent {
+  enum ErrorType {
+    UNKNOWN = 0;
+    INVALID_SCENE_OBJECT = 20;
+  }
+  ErrorType type = 10;
+  string description = 11;
 }
 
 /*******************************

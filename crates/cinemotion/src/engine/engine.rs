@@ -71,13 +71,25 @@ impl Engine {
         }
         let source_id = request.source_id;
         let command = request.command;
-        match command {
+        let result = match command {
             Command::Controller(client_command) => {
                 self.handle_client_command(source_id, client_command).await
             }
             Command::System(internal_command) => {
                 self.handle_internal_command(source_id, internal_command)
                     .await
+            }
+        };
+        match result {
+            Ok(_) => Ok(()),
+            Err(err) => {
+                tracing::error!("error applying message: {}", err);
+                self.send(Event {
+                    target: Some(source_id),
+                    body: events::ErrorEvent(err).into(),
+                })
+                .await?;
+                Ok(())
             }
         }
     }
@@ -119,7 +131,20 @@ impl Engine {
                     .insert(peer.name.clone(), peer);
                 Ok(())
             }
-            commands::ControllerCommand::UpdateSceneObject(_) => Ok(()),
+            commands::ControllerCommand::UpdateSceneObject(update) => {
+                let scene_object = update.object;
+                let name = scene_object.name().clone();
+                let objects = self.active_state.scene.objects_mut();
+                match objects.contains_key(&name) {
+                    true => {
+                        objects.insert(name, scene_object);
+                        Ok(())
+                    }
+                    false => Err(crate::Error::InvalidSceneObject(
+                        "object does not exist".into(),
+                    )),
+                }
+            }
         }
     }
 

@@ -103,6 +103,11 @@ impl SceneObject {
 /// The default scene object is automagically added to the scene when the engine is initialized.
 /// this should not be used.
 ///
+/// ```
+/// use cinemotion::scene::SceneObject;
+/// let obj = SceneObject::default();
+/// ```
+///
 impl Default for SceneObject {
     fn default() -> Self {
         Self::new(

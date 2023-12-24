@@ -3,7 +3,7 @@ use std::{ops::Deref, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Display, Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Display, Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash, PartialOrd)]
 pub struct Name(Arc<str>);
 
 impl Deref for Name {
