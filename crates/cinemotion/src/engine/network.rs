@@ -52,10 +52,6 @@ impl NetworkComponent for NetworkComponentImpl {
         Ok(())
     }
 
-    async fn open_connection(&mut self, conn_id: usize) -> Result<()> {
-        todo!()
-    }
-
     async fn close_connection(&mut self, conn_id: usize) -> Result<()> {
         todo!()
     }

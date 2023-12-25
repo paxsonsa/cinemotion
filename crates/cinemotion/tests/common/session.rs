@@ -9,9 +9,6 @@ pub struct SpySessionComponent {
     pub create_session_called: bool,
     pub create_session_called_count: usize,
     pub create_session_called_args: Vec<cinemotion::commands::AddConnection>,
-    pub open_session_called: bool,
-    pub open_session_called_count: usize,
-    pub open_session_called_args: Vec<usize>,
     pub close_session_called: bool,
     pub close_session_called_count: usize,
     pub close_session_called_args: Vec<usize>,
@@ -31,9 +28,6 @@ impl FakeSessionComponent {
                 create_session_called: false,
                 create_session_called_count: 0,
                 create_session_called_args: vec![],
-                open_session_called: false,
-                open_session_called_count: 0,
-                open_session_called_args: vec![],
                 close_session_called: false,
                 close_session_called_count: 0,
                 close_session_called_args: vec![],
@@ -52,14 +46,6 @@ impl NetworkComponent for FakeSessionComponent {
         spy.create_session_called = true;
         spy.create_session_called_count += 1;
         spy.create_session_called_args.push(options);
-        Ok(())
-    }
-
-    async fn open_connection(&mut self, session_id: usize) -> Result<()> {
-        let mut spy = self.spy.lock().unwrap();
-        spy.open_session_called = true;
-        spy.open_session_called_count += 1;
-        spy.open_session_called_args.push(session_id);
         Ok(())
     }
 

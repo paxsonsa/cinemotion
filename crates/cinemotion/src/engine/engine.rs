@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use super::components::NetworkComponent;
 use super::Observer;
-use crate::{commands, events, Command, Event, Message, Result, Scene, State};
+use crate::{commands, events, Command, Event, Message, Result, State};
 
 pub struct Builder {
     initial_state: Option<State>,

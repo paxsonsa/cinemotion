@@ -11,7 +11,7 @@ impl From<ConnectionOpenedEvent> for EventBody {
 }
 
 impl From<ConnectionOpenedEvent> for proto::ConnectionOpenedEvent {
-    fn from(value: ConnectionOpenedEvent) -> Self {
+    fn from(_: ConnectionOpenedEvent) -> Self {
         Self {}
     }
 }

@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use super::value::*;
 use crate::Name;
 use cinemotion_proto as proto;
