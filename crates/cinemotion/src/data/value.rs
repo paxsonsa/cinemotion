@@ -70,6 +70,24 @@ impl From<(f64, f64, f64)> for Value {
     }
 }
 
+impl From<Vec3> for Value {
+    fn from(value: Vec3) -> Self {
+        Self::Vec3(value)
+    }
+}
+
+impl From<Vec4> for Value {
+    fn from(value: Vec4) -> Self {
+        Self::Vec4(value)
+    }
+}
+
+impl From<Matrix44> for Value {
+    fn from(value: Matrix44) -> Self {
+        Self::Matrix44(value)
+    }
+}
+
 impl From<proto::PropertyValue> for Value {
     fn from(prop_value: proto::PropertyValue) -> Self {
         match prop_value.value.unwrap() {

@@ -1,6 +1,7 @@
 use super::*;
 use crate::{Error, Result};
 
+#[derive(Debug)]
 pub enum Command {
     System(SystemCommand),
     Controller(ControllerCommand),
@@ -30,6 +31,7 @@ impl From<ControllerCommand> for Command {
 
 /// An internal command is not received from the client but used interally to
 /// communicate between service layers with the core engine.
+#[derive(Debug)]
 pub enum SystemCommand {
     AddConnection(AddConnection),
     OpenConnection(OpenConnection),
@@ -43,10 +45,13 @@ impl From<AddConnection> for SystemCommand {
 
 /// Client commands are received from the client and are used by the client to
 /// control the engine.
+#[derive(Debug)]
 pub enum ControllerCommand {
     Echo(Echo),
     Init(Init),
+    AddSceneObject(AddSceneObject),
     UpdateSceneObject(UpdateSceneObject),
+    DeleteSceneObject(DeleteSceneObject),
 }
 
 impl ControllerCommand {
@@ -65,8 +70,15 @@ impl ControllerCommand {
 impl From<cinemotion_proto::command::Payload> for ControllerCommand {
     fn from(value: cinemotion_proto::command::Payload) -> Self {
         match value {
-            cinemotion_proto::command::Payload::Echo(echo) => Self::Echo(echo.into()),
-            cinemotion_proto::command::Payload::Init(init) => Self::Init(init.into()),
+            cinemotion_proto::command::Payload::Echo(p) => Self::Echo(p.into()),
+            cinemotion_proto::command::Payload::Init(p) => Self::Init(p.into()),
+            cinemotion_proto::command::Payload::AddSceneObject(p) => Self::AddSceneObject(p.into()),
+            cinemotion_proto::command::Payload::UpdateSceneObject(p) => {
+                Self::UpdateSceneObject(p.into())
+            }
+            cinemotion_proto::command::Payload::DeleteSceneObject(p) => {
+                Self::DeleteSceneObject(p.into())
+            }
         }
     }
 }

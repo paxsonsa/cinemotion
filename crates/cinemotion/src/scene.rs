@@ -1,3 +1,4 @@
+use cinemotion_proto as proto;
 use std::collections::HashMap;
 
 use crate::{
@@ -118,5 +119,18 @@ impl Default for SceneObject {
                 (name!("velocity"), PropertyState::unbound(Value::vec3())),
             ]),
         )
+    }
+}
+
+impl From<proto::SceneObject> for SceneObject {
+    fn from(value: proto::SceneObject) -> Self {
+        Self {
+            name: value.name.into(),
+            properties: value
+                .properties
+                .into_iter()
+                .map(|(name, state)| (name.into(), state.into()))
+                .collect(),
+        }
     }
 }

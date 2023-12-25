@@ -5,6 +5,9 @@ message Command {
 	oneof payload {
     Echo echo = 1;
     InitCommand init = 2;
+    AddSceneObject add_scene_object = 30;
+    UpdateSceneObject update_scene_object = 31;
+    DeleteSceneObject delete_scene_object = 32;
 	}
 }
 
@@ -31,6 +34,20 @@ message InitCommand {
   Controller controller = 1;
 }
 
+// Add an object to the scene.
+message AddSceneObject {
+    SceneObject object = 10;
+}
+
+// Update an existing object in the scene.
+message UpdateSceneObject {
+    SceneObject object = 10;
+}
+
+// Delete an object from the scene.
+message DeleteSceneObject {
+    string name = 10;
+}
 /*******************************
 * Event Types
 ********************************/
@@ -96,4 +113,21 @@ message Matrix4x4 {
   Vec4 row1 = 2;
   Vec4 row2 = 3;
   Vec4 row3 = 4;
+}
+
+message SceneObject {
+  string name = 1;
+  map<string, PropertyState> properties = 2;
+}
+
+message PropertyState {
+  enum StateType {
+    UNBOUND = 0;
+    BOUND = 1;
+  }
+
+  StateType type = 1;
+  PropertyValue value = 2;
+  string namespace = 3;
+  string property = 4;
 }

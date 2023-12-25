@@ -1,5 +1,6 @@
 use super::Command;
 
+#[derive(Debug)]
 pub struct Message {
     pub source_id: usize,
     pub command: Command,

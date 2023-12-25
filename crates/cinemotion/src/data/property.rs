@@ -117,3 +117,16 @@ impl PropertyState {
         }
     }
 }
+
+impl From<proto::PropertyState> for PropertyState {
+    fn from(value: proto::PropertyState) -> Self {
+        match value.r#type() {
+            proto::property_state::StateType::Unbound => Self::unbound(value.value.unwrap().into()),
+            proto::property_state::StateType::Bound => Self::bind(
+                value.namespace.into(),
+                value.property.into(),
+                value.value.unwrap().into(),
+            ),
+        }
+    }
+}

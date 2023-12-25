@@ -132,7 +132,7 @@ impl Engine {
                 Ok(())
             }
             commands::ControllerCommand::UpdateSceneObject(update) => {
-                let scene_object = update.object;
+                let scene_object = update.0;
                 let name = scene_object.name().clone();
                 let objects = self.active_state.scene.objects_mut();
                 match objects.contains_key(&name) {
@@ -144,6 +144,24 @@ impl Engine {
                         "object does not exist".into(),
                     )),
                 }
+            }
+            commands::ControllerCommand::AddSceneObject(object) => {
+                let object = object.0;
+                let name = object.name().clone();
+                let objects = self.active_state.scene.objects_mut();
+                match objects.contains_key(&name) {
+                    true => Err(crate::Error::InvalidSceneObject(
+                        "object already exists".into(),
+                    )),
+                    false => {
+                        objects.insert(name, object);
+                        Ok(())
+                    }
+                }
+            }
+            commands::ControllerCommand::DeleteSceneObject(name) => {
+                self.active_state.scene.objects_mut().remove(&name.0);
+                Ok(())
             }
         }
     }

@@ -1,7 +1,9 @@
+use cinemotion::data::PropertyState;
 use futures::future::Future;
 use paste::paste;
 use pretty_assertions_sorted::{assert_eq, assert_eq_sorted, assert_ne};
 use std::collections::HashMap;
+use std::fmt::Debug;
 use std::sync::Arc;
 use std::{pin::Pin, usize};
 use tokio::sync::Mutex;
@@ -74,7 +76,9 @@ impl EngineTestHarness {
             .lock()
             .expect("lock should not panic")
             .observed_events
-            .clone();
+            .drain(..)
+            .collect();
+
         events
     }
 
@@ -90,10 +94,10 @@ impl EngineTestHarness {
     }
 }
 
+#[derive(Debug)]
 struct Task {
     pub description: String,
     pub action: Action,
-    pub assertion: Option<Box<dyn FnOnce() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>>,
 }
 
 enum Action {
@@ -101,6 +105,17 @@ enum Action {
     ExpectEvents(Vec<Event>),
     ExpectEvent(Box<dyn FnMut(&Event) -> bool>),
     ExpectState(Box<dyn FnMut(&mut State)>),
+}
+
+impl Debug for Action {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Action::Message(message) => write!(f, "Action::Message({:?})", message),
+            Action::ExpectEvents(events) => write!(f, "Action::ExpectEvents({:?})", events),
+            Action::ExpectEvent(_) => write!(f, "Action::ExpectEvent(_)"),
+            Action::ExpectState(_) => write!(f, "Action::ExpectState(_)"),
+        }
+    }
 }
 
 impl From<Message> for Action {
@@ -114,7 +129,6 @@ macro_rules! request {
         Task {
             description: $description.to_string(),
             action: Action::Message($request.into()),
-            assertion: None,
         }
     };
 }
@@ -124,7 +138,6 @@ macro_rules! events {
         Task {
             description: $description.to_string(),
             action: Action::ExpectEvents(vec![$($event.into()),*]),
-            assertion: None,
         }
     };
 }
@@ -134,7 +147,6 @@ macro_rules! event {
         Task {
             description: $description.to_string(),
             action: Action::ExpectEvent(Box::new($event)),
-            assertion: None,
         }
     };
 }
@@ -144,7 +156,6 @@ macro_rules! state {
         Task {
             description: $description.to_string(),
             action: Action::ExpectState(Box::new($state)),
-            assertion: None,
         }
     };
 }
@@ -191,10 +202,15 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
             }
             Action::ExpectEvent(mut event_fn) => {
                 let events = harness.observed_events();
+                let mut found = false;
                 for event in events.iter() {
                     if event_fn(event) {
-                        return;
+                        found = true;
+                        break;
                     }
+                }
+                if found {
+                    continue;
                 }
                 panic!("expected event not found",);
             }
@@ -217,9 +233,10 @@ macro_rules! harness {
         paste! {
             #[tokio::test]
             async fn [<test_$name>]() {
-                let tasks = $body;
+                let tasks: Vec<Task> = $body;
                 let state = $state;
                 let mut harness = EngineTestHarness::with_state(state);
+                println!("⏵ running harness with: {:#?}", tasks);
                 run_harness(&mut harness, tasks).await;
             }
         }
@@ -318,22 +335,105 @@ harness!(
     {
         vec![
             request!(
+                "attempt to update a scene object that does not exist",
+                Message {
+                    source_id: 1,
+                    command: commands::UpdateSceneObject(scene::SceneObject::new(
+                        name!("doesnotexist"),
+                        HashMap::from([(
+                            name!("position"),
+                            data::PropertyState::bind(
+                                name!("test"),
+                                name!("position"),
+                                data::Value::Vec3((0.0, 0.0, 0.0).into())
+                            ),
+                        )])
+                    ))
+                    .into(),
+                }
+            ),
+            event!("expect an error event to be emitted", |event: &Event| {
+                match event.target {
+                    Some(1) => match &event.body {
+                        EventBody::Error(event) => {
+                            matches!(event.0, Error::InvalidSceneObject(_))
+                        }
+                        _ => false,
+                    },
+
+                    _ => false,
+                }
+            }),
+            request!(
+                "add a new scene object.",
+                Message {
+                    source_id: 1,
+                    command: commands::AddSceneObject(scene::SceneObject::new(
+                        name!("object1"),
+                        HashMap::from([(
+                            name!("position"),
+                            PropertyState::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
+                        )])
+                    ))
+                    .into(),
+                }
+            ),
+            state!(
+                "verify that the scene object is in the state",
+                |state: &mut State| {
+                    state.scene.objects_mut().insert(
+                        name!("object1"),
+                        scene::SceneObject::new(
+                            name!("object1"),
+                            HashMap::from([(
+                                name!("position"),
+                                PropertyState::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
+                            )]),
+                        ),
+                    );
+                }
+            ),
+            request!(
+                "try to add a existing scene object.",
+                Message {
+                    source_id: 1,
+                    command: commands::AddSceneObject(scene::SceneObject::new(
+                        name!("object1"),
+                        HashMap::from([(
+                            name!("position"),
+                            PropertyState::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
+                        )])
+                    ))
+                    .into(),
+                }
+            ),
+            event!("expect an error event to be emitted", |event: &Event| {
+                match event.target {
+                    Some(1) => match &event.body {
+                        EventBody::Error(event) => {
+                            matches!(event.0, Error::InvalidSceneObject(_))
+                        }
+                        _ => false,
+                    },
+
+                    _ => false,
+                }
+            }),
+            request!(
                 "update the root scene object to map controller property to object",
                 Message {
                     source_id: 1,
-                    command: commands::UpdateSceneObject {
-                        object: scene::SceneObject::new(
-                            name!("default"),
-                            HashMap::from([(
+                    command: commands::UpdateSceneObject(scene::SceneObject::new(
+                        name!("default"),
+                        HashMap::from([(
+                            name!("position"),
+                            data::PropertyState::bind(
+                                name!("test"),
                                 name!("position"),
-                                data::PropertyState::bind(
-                                    name!("test"),
-                                    name!("position"),
-                                    data::Value::Vec3((0.0, 0.0, 0.0).into())
-                                ),
-                            )])
-                        )
-                    }
+                                data::Value::Vec3((0.0, 0.0, 0.0).into())
+                            ),
+                        )])
+                    ))
                     .into(),
                 }
             ),
@@ -357,36 +457,14 @@ harness!(
                 }
             ),
             request!(
-                "attempt to update a scene object that does not exist",
+                "delete object in the scene",
                 Message {
                     source_id: 1,
-                    command: commands::UpdateSceneObject {
-                        object: scene::SceneObject::new(
-                            name!("doesnotexist"),
-                            HashMap::from([(
-                                name!("position"),
-                                data::PropertyState::bind(
-                                    name!("test"),
-                                    name!("position"),
-                                    data::Value::Vec3((0.0, 0.0, 0.0).into())
-                                ),
-                            )])
-                        )
-                    }
-                    .into(),
+                    command: commands::DeleteSceneObject(name!("object1"),).into(),
                 }
             ),
-            event!("expect an error event to be emitted", |event: &Event| {
-                match event.target {
-                    Some(1) => match &event.body {
-                        EventBody::Error(event) => {
-                            matches!(event.0, Error::InvalidSceneObject(_))
-                        }
-                        _ => false,
-                    },
-
-                    _ => false,
-                }
+            state!("check that the object was deleted", |state: &mut State| {
+                let _ = state.scene.objects_mut().remove(&name!("object1"));
             }),
         ]
     }
