@@ -43,15 +43,17 @@ impl From<AddConnection> for SystemCommand {
     }
 }
 
-/// Client commands are received from the client and are used by the client to
+/// Controller commands are received from the controller to
 /// control the engine.
 #[derive(Debug)]
 pub enum ControllerCommand {
     Echo(Echo),
     Init(Init),
+    ChangeMode(ChangeMode),
     AddSceneObject(AddSceneObject),
     UpdateSceneObject(UpdateSceneObject),
     DeleteSceneObject(DeleteSceneObject),
+    SampleMotion(SampleMotion),
 }
 
 impl ControllerCommand {

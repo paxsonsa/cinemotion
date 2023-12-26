@@ -9,7 +9,8 @@ use crate::Scene;
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct State {
     pub scene: Scene,
-    pub controllers: HashMap<Name, Controller>,
+    pub controllers: HashMap<Name, controllers::Controller>,
+    pub mode: motion::Mode,
 }
 
 impl From<State> for proto::State {

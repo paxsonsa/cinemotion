@@ -163,6 +163,11 @@ impl Engine {
                 self.active_state.scene.objects_mut().remove(&name.0);
                 Ok(())
             }
+            commands::ControllerCommand::ChangeMode(mode_change) => {
+                self.active_state.mode = mode_change.0;
+                Ok(())
+            }
+            commands::ControllerCommand::SampleMotion(_) => Ok(()),
         }
     }
 

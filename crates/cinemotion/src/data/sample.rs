@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use super::Value;
 use crate::Name;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sample {
     properties: HashMap<Name, Value>,
 }
