@@ -2,14 +2,14 @@ use std::sync::Arc;
 
 use tokio::sync::Mutex;
 
-use super::components::NetworkComponent;
+use super::components::network;
 use super::Observer;
-use crate::{commands, events, Command, Event, Message, Result, State};
+use crate::{commands, data, events, Command, Event, Message, Result, State};
 
 pub struct Builder {
     initial_state: Option<State>,
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
-    network_component: Option<Box<dyn NetworkComponent>>,
+    network_component: Option<Box<dyn network::NetworkComponent>>,
 }
 
 impl Builder {
@@ -29,7 +29,7 @@ impl Builder {
         self
     }
 
-    pub fn with_network_component(mut self, component: Box<dyn NetworkComponent>) -> Self {
+    pub fn with_network_component(mut self, component: Box<dyn network::NetworkComponent>) -> Self {
         self.network_component = Some(component);
         self
     }
@@ -57,7 +57,7 @@ pub struct Engine {
     active_state: State,
     current_state: State,
     observer: Option<Arc<Mutex<dyn Observer>>>,
-    network: Box<dyn NetworkComponent>,
+    network: Box<dyn network::NetworkComponent>,
 }
 
 impl Engine {
@@ -95,9 +95,12 @@ impl Engine {
     }
 
     pub async fn tick(&mut self) -> Result<()> {
+        self.render().await?;
+
         if let Some(observer) = &self.observer {
             observer.lock().await.on_state_change(&self.active_state);
         }
+
         self.current_state = self.active_state.clone();
         self.send(Event {
             target: None,
@@ -126,6 +129,10 @@ impl Engine {
             }
             commands::ControllerCommand::Init(init) => {
                 let peer = init.peer;
+
+                let context = self.network.context_mut(source_id);
+                context.name = Some(peer.name.clone());
+
                 self.active_state
                     .controllers
                     .insert(peer.name.clone(), peer);
@@ -167,12 +174,46 @@ impl Engine {
                 self.active_state.mode = mode_change.0;
                 Ok(())
             }
-            // TODO: Create a context object for the message to be passed in that holds some
-            // arbitrary data. This will allow us to pass in the current state to the
-            // TODO: Store the connections id into the context after it has be initialized.
-            // TODO: Use the context to update the controllers current property state from the
-            // motion sample.
-            commands::ControllerCommand::SampleMotion(_) => Ok(()),
+            commands::ControllerCommand::SampleMotion(sample) => {
+                let sample = sample.0;
+                // Extract the context from the network item and then get a ref to the name
+                let Some(context) = self.network.context(source_id) else {
+                    tracing::error!("context not found for id: {}", source_id);
+                    return Ok(());
+                };
+
+                let Some(name) = context.name.as_ref() else {
+                    tracing::error!("no name is assigned to the connection {source_id}");
+                    return Ok(());
+                };
+
+                let Some(controller) = self.active_state.controllers.get_mut(&name) else {
+                    tracing::error!("controller not found for name: {}", name);
+                    return Ok(());
+                };
+
+                for (property_name, value) in sample.properties() {
+                    let Some(property) = controller.properties.get_mut(property_name) else {
+                        tracing::error!(
+                            "property not found for name: {}.{}",
+                            name.to_string(),
+                            property_name
+                        );
+                        continue;
+                    };
+
+                    if let Err(err) = property.update(value) {
+                        tracing::error!(
+                            "error updating property: {}.{}: {}",
+                            name.to_string(),
+                            property_name,
+                            err
+                        );
+                    }
+                }
+
+                Ok(())
+            }
         }
     }
 
@@ -201,5 +242,53 @@ impl Engine {
             observer.lock().await.on_event(&event);
         }
         self.network.send(event).await
+    }
+    async fn render(&mut self) -> Result<()> {
+        for obj in self.active_state.scene.objects_mut().values_mut() {
+            let obj_name = obj.name().clone();
+            for (name, property) in obj.properties_mut() {
+                match property {
+                    data::PropertyLink::Bound { value, binding } => {
+                        let Some(controller) =
+                            self.active_state.controllers.get(&binding.namespace)
+                        else {
+                            tracing::error!(
+                                "controller not found for name: {} for scene objext property {}.{}",
+                                binding.namespace,
+                                obj_name,
+                                name
+                            );
+                            continue;
+                        };
+                        let Some(controller_property) =
+                            controller.properties.get(&binding.property)
+                        else {
+                            tracing::error!(
+                                "property not found for name: {}.{}",
+                                binding.namespace.to_string(),
+                                binding.property
+                            );
+                            continue;
+                        };
+                        if let Err(err) = value.update(&controller_property.value) {
+                            tracing::error!(
+                                "error updating property: {}.{}: {}",
+                                obj_name.to_string(),
+                                name,
+                                err
+                            );
+                        }
+                    }
+                    data::PropertyLink::Unbound { .. } => {
+                        tracing::error!(
+                            "ignored unbound property on scene object {}.{}",
+                            obj_name,
+                            name
+                        );
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 }

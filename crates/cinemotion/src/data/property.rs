@@ -1,58 +1,59 @@
 use super::value::*;
-use crate::Name;
+use crate::{Name, Result};
 use cinemotion_proto as proto;
 
-/// A generic defintion for a property.
+/// Represents a property on a controller.
+///
+/// A property is the primary way to communcation motion from a controller.
+/// When a controller is updated, the property value will be updated and the default value
+/// will replace the current value when the motion state is reset.
 #[derive(Debug, Clone, PartialEq)]
-pub struct PropertyDef {
+pub struct Property {
     /// The name of the property.
-    name: Name,
-
-    /// The default value to use when idle and the type the property is.
-    default_value: Value,
+    pub name: Name,
+    /// The current value of the property.
+    pub value: Value,
+    /// The default value of the property to use when the motion state is reset.
+    pub default_value: Value,
 }
 
-impl PropertyDef {
-    /// Build a new property definition.
-    pub fn new(name: Name, default_value: Value) -> Self {
+impl Property {
+    pub fn with_default_value(name: Name, default_value: Value) -> Self {
         Self {
             name,
+            value: default_value.clone(),
             default_value,
         }
     }
 
-    /// Get the name of the property.
-    pub fn name(&self) -> &Name {
-        &self.name
-    }
-
-    /// Get the default value of the property.
-    pub fn default_value(&self) -> &Value {
-        &self.default_value
+    pub fn update(&mut self, value: &Value) -> Result<()> {
+        self.value.update(value)
     }
 }
 
-impl From<proto::PropertyDef> for PropertyDef {
-    fn from(value: proto::PropertyDef) -> Self {
+impl From<Property> for proto::Property {
+    fn from(value: Property) -> Self {
         Self {
-            name: value.name.into(),
-            default_value: value.default_value.unwrap().into(),
+            name: value.name.to_string(),
+            value: Some(value.value.into()),
+            default_value: Some(value.default_value.into()),
         }
     }
 }
 
-impl From<PropertyDef> for proto::PropertyDef {
-    fn from(value: PropertyDef) -> Self {
+impl From<proto::Property> for Property {
+    fn from(value: proto::Property) -> Self {
         Self {
-            name: value.name.to_string(),
-            default_value: Some(value.default_value.into()),
+            name: value.name.into(),
+            value: value.value.unwrap().into(),
+            default_value: value.default_value.unwrap().into(),
         }
     }
 }
 
 /// A helper struct for representing a property binding address.
 #[derive(Debug, Clone, PartialEq)]
-pub struct PropertyBinding {
+pub struct PropertyReference {
     /// The namespace of the controller that has the property.
     pub namespace: Name,
     /// The name of the property on the controller to use as
@@ -60,13 +61,13 @@ pub struct PropertyBinding {
     pub property: Name,
 }
 
-/// Represents the property state for a specific property of a scene object.
+/// Represents the property link for a specific property of a scene object.
 ///
-/// The property state can either be unbound, meaning the property not attached
+/// The property link can either be unbound, meaning the property not attached
 /// to a controller, or bound, meaning the property is attached to a controller property.
 ///
 #[derive(Debug, Clone, PartialEq)]
-pub enum PropertyState {
+pub enum PropertyLink {
     /// An unbound property does not reference a controller property for updates.
     Unbound {
         /// The current value of the property.
@@ -79,16 +80,16 @@ pub enum PropertyState {
         value: Value,
 
         /// The binding for the property to use.
-        binding: PropertyBinding,
+        binding: PropertyReference,
     },
 }
 
-impl PropertyState {
+impl PropertyLink {
     /// Create new property state bound to the given namespace and property.
     pub fn bind(namespace: Name, property: Name, value: Value) -> Self {
         Self::Bound {
             value,
-            binding: PropertyBinding {
+            binding: PropertyReference {
                 namespace,
                 property,
             },
@@ -116,11 +117,11 @@ impl PropertyState {
     }
 }
 
-impl From<proto::PropertyState> for PropertyState {
-    fn from(value: proto::PropertyState) -> Self {
+impl From<proto::PropertyLink> for PropertyLink {
+    fn from(value: proto::PropertyLink) -> Self {
         match value.r#type() {
-            proto::property_state::StateType::Unbound => Self::unbound(value.value.unwrap().into()),
-            proto::property_state::StateType::Bound => Self::bind(
+            proto::property_link::BindState::Unbound => Self::unbound(value.value.unwrap().into()),
+            proto::property_link::BindState::Bound => Self::bind(
                 value.namespace.into(),
                 value.property.into(),
                 value.value.unwrap().into(),

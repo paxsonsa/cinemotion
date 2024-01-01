@@ -31,7 +31,7 @@ message Echo {
 
 // Initiate the connection with the controller description.
 message InitCommand {
-  Controller controller = 1;
+  ControllerDef controller = 1;
 }
 
 // Add an object to the scene.
@@ -74,16 +74,23 @@ message ErrorEvent {
 message Controller {
   uint32 uid = 1;
   string name = 2;
-  repeated PropertyDef properties = 3;
+  map<string, Property> properties = 3;
+}
+
+message ControllerDef {
+  uint32 uid = 1;
+  string name = 2;
+  map<string, PropertyValue> properties = 3;
 }
 
 message State {
   repeated Controller controllers = 1;
 }
 
-message PropertyDef {
+message Property {
   string name = 1;
   PropertyValue default_value = 2;
+  PropertyValue value = 3;
 }
 
 message PropertyValue {
@@ -117,16 +124,16 @@ message Matrix4x4 {
 
 message SceneObject {
   string name = 1;
-  map<string, PropertyState> properties = 2;
+  map<string, PropertyLink> properties = 2;
 }
 
-message PropertyState {
-  enum StateType {
+message PropertyLink {
+  enum BindState {
     UNBOUND = 0;
     BOUND = 1;
   }
 
-  StateType type = 1;
+  BindState type = 1;
   PropertyValue value = 2;
   string namespace = 3;
   string property = 4;

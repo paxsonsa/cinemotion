@@ -36,6 +36,7 @@ base64.workspace = true
 [dev-dependencies]
 paste = "1.0"
 pretty_assertions_sorted = "1.2"
+tracing-test = "0.2.4"
 
 [build-dependencies]
 prost-build = "0.12"

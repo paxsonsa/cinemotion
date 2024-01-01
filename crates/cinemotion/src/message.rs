@@ -1,7 +1,5 @@
-use super::Command;
-
-#[derive(Debug)]
-pub struct Context {}
+use crate::Command;
+use crate::Name;
 
 #[derive(Debug)]
 pub struct Message {

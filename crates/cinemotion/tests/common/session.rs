@@ -2,10 +2,9 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use cinemotion::{
-    commands::AddConnection, engine::components::NetworkComponent, message, ConnectionAgent, Event,
-    Result,
+    commands::AddConnection, connection, engine::components::NetworkComponent, name,
+    ConnectionAgent, Event, Result,
 };
-use tokio::task::yield_now;
 
 pub struct SpySessionComponent {
     pub create_session_called: bool,
@@ -20,14 +19,17 @@ pub struct SpySessionComponent {
 }
 
 pub struct FakeSessionComponent {
-    pub context: cinemotion::message::Context,
+    pub context: connection::Context,
     pub spy: Arc<Mutex<SpySessionComponent>>,
 }
 
 impl FakeSessionComponent {
     pub fn new() -> Self {
         Self {
-            context: message::Context {},
+            context: connection::Context {
+                uid: 1,
+                name: Some(name!("test")),
+            },
             spy: Arc::new(Mutex::new(SpySessionComponent {
                 create_session_called: false,
                 create_session_called_count: 0,
@@ -45,6 +47,14 @@ impl FakeSessionComponent {
 
 #[async_trait]
 impl NetworkComponent for FakeSessionComponent {
+    fn context_mut(&mut self, conn_id: usize) -> &mut connection::Context {
+        &mut self.context
+    }
+
+    fn context(&self, conn_id: usize) -> Option<&connection::Context> {
+        Some(&self.context)
+    }
+
     async fn add_connection(&mut self, options: AddConnection) -> Result<()> {
         let mut spy = self.spy.lock().unwrap();
         spy.create_session_called = true;
@@ -67,10 +77,6 @@ impl NetworkComponent for FakeSessionComponent {
         spy.send_called_count += 1;
         spy.send_called_args.push(event);
         Ok(())
-    }
-
-    async fn context_for(&self, conn_id: usize) -> Option<&cinemotion::message::Context> {
-        Some(&self.context)
     }
 }
 

@@ -1,4 +1,4 @@
-use cinemotion::data::PropertyState;
+use cinemotion::data::PropertyLink;
 use futures::future::Future;
 use paste::paste;
 use pretty_assertions_sorted::{assert_eq, assert_eq_sorted, assert_ne};
@@ -232,7 +232,9 @@ macro_rules! harness {
     ($name:ident, $state:block, $body:block) => {
         paste! {
             #[tokio::test]
+            #[tracing_test::traced_test]
             async fn [<test_$name>]() {
+                tracing::info!("😍");
                 let tasks: Vec<Task> = $body;
                 let state = $state;
                 let mut harness = EngineTestHarness::with_state(state);
@@ -280,10 +282,13 @@ harness!(connection_setup, { State::default() }, {
                     peer: data::Controller {
                         uid: 1,
                         name: name!("test"),
-                        properties: vec![data::PropertyDef::new(
+                        properties: vec![data::Property::with_default_value(
                             name!("position"),
                             data::Value::Vec3((0.0, 0.0, 0.0).into()),
-                        )],
+                        )]
+                        .into_iter()
+                        .map(|p| (p.name.clone(), p))
+                        .collect(),
                     }
                 }
                 .into(),
@@ -298,10 +303,13 @@ harness!(connection_setup, { State::default() }, {
                     data::Controller {
                         uid: 1,
                         name: name!("test"),
-                        properties: vec![data::PropertyDef::new(
+                        properties: vec![data::Property::with_default_value(
                             name!("position"),
                             data::Value::Vec3((0.0, 0.0, 0.0).into()),
-                        )],
+                        )]
+                        .into_iter()
+                        .map(|p| (p.name.clone(), p))
+                        .collect(),
                     },
                 );
                 state.controllers = controllers;
@@ -323,10 +331,13 @@ harness!(
             data::Controller {
                 uid: 1,
                 name: name!("test"),
-                properties: vec![data::PropertyDef::new(
+                properties: vec![data::Property::with_default_value(
                     name!("position"),
                     data::Value::Vec3((0.0, 0.0, 0.0).into()),
-                )],
+                )]
+                .into_iter()
+                .map(|p| (p.name.clone(), p))
+                .collect(),
             },
         );
         state.controllers = controllers;
@@ -342,7 +353,7 @@ harness!(
                         name!("doesnotexist"),
                         HashMap::from([(
                             name!("position"),
-                            data::PropertyState::bind(
+                            data::PropertyLink::bind(
                                 name!("test"),
                                 name!("position"),
                                 data::Value::Vec3((0.0, 0.0, 0.0).into())
@@ -372,7 +383,7 @@ harness!(
                         name!("object1"),
                         HashMap::from([(
                             name!("position"),
-                            PropertyState::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
+                            PropertyLink::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
                         )])
                     ))
                     .into(),
@@ -387,7 +398,7 @@ harness!(
                             name!("object1"),
                             HashMap::from([(
                                 name!("position"),
-                                PropertyState::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
+                                PropertyLink::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
                             )]),
                         ),
                     );
@@ -401,7 +412,7 @@ harness!(
                         name!("object1"),
                         HashMap::from([(
                             name!("position"),
-                            PropertyState::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
+                            PropertyLink::unbound(data::Vec3::from((0.0, 0.0, 0.0)).into()),
                         )])
                     ))
                     .into(),
@@ -427,7 +438,7 @@ harness!(
                         name!("default"),
                         HashMap::from([(
                             name!("position"),
-                            data::PropertyState::bind(
+                            data::PropertyLink::bind(
                                 name!("test"),
                                 name!("position"),
                                 data::Value::Vec3((0.0, 0.0, 0.0).into())
@@ -448,7 +459,7 @@ harness!(
                         .properties_mut()
                         .insert(
                             name!("position"),
-                            data::PropertyState::bind(
+                            data::PropertyLink::bind(
                                 name!("test"),
                                 name!("position"),
                                 data::Value::Vec3((0.0, 0.0, 0.0).into()),
@@ -481,10 +492,13 @@ harness!(
             data::Controller {
                 uid: 1,
                 name: name!("test"),
-                properties: vec![data::PropertyDef::new(
+                properties: vec![data::Property::with_default_value(
                     name!("position"),
                     data::Value::Vec3((0.0, 0.0, 0.0).into()),
-                )],
+                )]
+                .into_iter()
+                .map(|p| (p.name.clone(), p))
+                .collect(),
             },
         );
 
@@ -494,7 +508,7 @@ harness!(
             name!("object1"),
             HashMap::from([(
                 name!("position"),
-                PropertyState::bind(
+                PropertyLink::bind(
                     name!("test"),
                     name!("position"),
                     data::Value::Vec3((0.0, 0.0, 0.0).into()),
@@ -542,7 +556,7 @@ harness!(
                         .properties_mut()
                         .insert(
                             name!("position"),
-                            data::PropertyState::bind(
+                            data::PropertyLink::bind(
                                 name!("test"),
                                 name!("position"),
                                 data::Value::Vec3((0.0, 1.0, 0.0).into()),

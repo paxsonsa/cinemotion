@@ -2,7 +2,7 @@ use cinemotion_proto as proto;
 use std::collections::HashMap;
 
 use crate::{
-    data::{PropertyState, Value},
+    data::{PropertyLink, Value},
     name, Name, Result,
 };
 
@@ -64,12 +64,12 @@ pub struct SceneObject {
     /// A unique name for the scene object.
     name: Name,
     /// A map of property names and property states.
-    properties: HashMap<Name, PropertyState>,
+    properties: HashMap<Name, PropertyLink>,
 }
 
 impl SceneObject {
     /// Create a new scene object with the given name and properties.
-    pub fn new(name: Name, properties: HashMap<Name, PropertyState>) -> Self {
+    pub fn new(name: Name, properties: HashMap<Name, PropertyLink>) -> Self {
         Self { name, properties }
     }
 
@@ -79,17 +79,17 @@ impl SceneObject {
     }
 
     /// Get the properties of the scene object.
-    pub fn properties(&self) -> &HashMap<Name, PropertyState> {
+    pub fn properties(&self) -> &HashMap<Name, PropertyLink> {
         &self.properties
     }
 
     /// Get the mutable properties of the scene object.
-    pub fn properties_mut(&mut self) -> &mut HashMap<Name, PropertyState> {
+    pub fn properties_mut(&mut self) -> &mut HashMap<Name, PropertyLink> {
         &mut self.properties
     }
 
     /// Get the property state for the given property name.
-    pub fn property(&self, name: &Name) -> Option<&PropertyState> {
+    pub fn property(&self, name: &Name) -> Option<&PropertyLink> {
         self.properties.get(name)
     }
 }
@@ -114,9 +114,9 @@ impl Default for SceneObject {
         Self::new(
             "default".into(),
             HashMap::from([
-                (name!("position"), PropertyState::unbound(Value::vec3())),
-                (name!("orientation"), PropertyState::unbound(Value::vec3())),
-                (name!("velocity"), PropertyState::unbound(Value::vec3())),
+                (name!("position"), PropertyLink::unbound(Value::vec3())),
+                (name!("orientation"), PropertyLink::unbound(Value::vec3())),
+                (name!("velocity"), PropertyLink::unbound(Value::vec3())),
             ]),
         )
     }

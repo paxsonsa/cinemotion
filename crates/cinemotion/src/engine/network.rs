@@ -4,15 +4,15 @@ use async_trait::async_trait;
 
 use crate::{
     commands::{event_pipe, AddConnection, EventPipeTx, MessagePipeTx},
-    connection::Connection,
-    message, Error, Event, Result,
+    connection::{Connection, Context},
+    Error, Event, Result,
 };
 
-use super::components::NetworkComponent;
+use super::components::network::NetworkComponent;
 
 pub struct NetworkComponentImpl {
     connections: HashMap<usize, Box<Connection>>,
-    contexts: HashMap<usize, message::Context>,
+    contexts: HashMap<usize, Context>,
     message_pipe: MessagePipeTx,
     event_pipe: EventPipeTx,
 }
@@ -31,12 +31,29 @@ impl NetworkComponentImpl {
 
 #[async_trait]
 impl NetworkComponent for NetworkComponentImpl {
+    /// Get the context for a connection id.
+    fn context(&self, conn_id: usize) -> Option<&Context> {
+        match self.contexts.get(&conn_id) {
+            Some(ctx) => Some(ctx),
+            None => None,
+        }
+    }
+
+    /// Get a mutable reference to the context for a connection id.
+    /// If the context does not exist then create it.
+    fn context_mut(&mut self, conn_id: usize) -> &mut Context {
+        self.contexts.entry(conn_id).or_default();
+        self.contexts.get_mut(&conn_id).unwrap()
+    }
+
     async fn add_connection(&mut self, options: AddConnection) -> Result<()> {
         // TODO: add a connection open timeout that will close the connection if it is not opened
         // Do this on the engine side that tracks if the connection is open or not and each tick
         // check timeout.
         let agent = options.agent;
         let ack_pipe = options.ack_pipe;
+        // FIXME: change this to use a atomic incrementor, if connection disconnect and the
+        // reconnect then the id migh be reused.
         let active_id = self.connections.len() + 1;
         let conn = Box::new(Connection::new(
             active_id,
@@ -65,9 +82,5 @@ impl NetworkComponent for NetworkComponentImpl {
             ));
         }
         Ok(())
-    }
-
-    async fn context_for(&self, conn_id: usize) -> Option<&message::Context> {
-        self.contexts.get(&conn_id)
     }
 }
