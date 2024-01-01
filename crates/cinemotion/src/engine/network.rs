@@ -5,13 +5,14 @@ use async_trait::async_trait;
 use crate::{
     commands::{event_pipe, AddConnection, EventPipeTx, MessagePipeTx},
     connection::Connection,
-    Error, Event, Result,
+    message, Error, Event, Result,
 };
 
 use super::components::NetworkComponent;
 
 pub struct NetworkComponentImpl {
     connections: HashMap<usize, Box<Connection>>,
+    contexts: HashMap<usize, message::Context>,
     message_pipe: MessagePipeTx,
     event_pipe: EventPipeTx,
 }
@@ -21,6 +22,7 @@ impl NetworkComponentImpl {
         let event_pipe = event_pipe();
         Box::new(Self {
             connections: Default::default(),
+            contexts: Default::default(),
             message_pipe,
             event_pipe,
         })
@@ -63,5 +65,9 @@ impl NetworkComponent for NetworkComponentImpl {
             ));
         }
         Ok(())
+    }
+
+    async fn context_for(&self, conn_id: usize) -> Option<&message::Context> {
+        self.contexts.get(&conn_id)
     }
 }
