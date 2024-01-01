@@ -1,4 +1,4 @@
-use crate::commands::{AddConnection, RequestPipeTx};
+use crate::commands::{AddConnection, MessagePipeTx};
 use crate::connection::LOCAL_CONN_ID;
 use crate::{Error, Message, Result};
 
@@ -7,11 +7,11 @@ use crate::data::WebRTCSessionDescriptor;
 use super::WebRTCAgent;
 
 pub struct SignalingRelay {
-    sender: RequestPipeTx,
+    sender: MessagePipeTx,
 }
 
 impl SignalingRelay {
-    pub fn new(sender: RequestPipeTx) -> Self {
+    pub fn new(sender: MessagePipeTx) -> Self {
         SignalingRelay { sender }
     }
 
@@ -23,7 +23,7 @@ impl SignalingRelay {
 
         let (remote_desc, session) = WebRTCAgent::new(session_desc, self.sender.clone()).await?;
         let session = Box::new(session);
-        let request = Message::with_command(
+        let message = Message::with_command(
             LOCAL_CONN_ID,
             AddConnection {
                 agent: session,
@@ -31,7 +31,7 @@ impl SignalingRelay {
             },
         );
 
-        if self.sender.send(request).is_err() {
+        if self.sender.send(message).is_err() {
             return Err(Error::SignalingFailed(
                 "lost connection to runtime while attempting to establish session".to_string(),
             ));
@@ -40,9 +40,9 @@ impl SignalingRelay {
         match ack_pipe_rx.await {
             Ok(result) => {
                 if let Err(err) = result {
-                    tracing::error!("failed to complete signaling request with: {err}");
+                    tracing::error!("failed to complete signaling message with: {err}");
                     return Err(Error::SignalingFailed(format!(
-                        "runtime responded to request with error, {err}"
+                        "runtime responded to message with error, {err}"
                     )));
                 }
                 Ok(remote_desc)

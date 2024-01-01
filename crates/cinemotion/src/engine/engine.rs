@@ -64,13 +64,13 @@ impl Engine {
     pub fn builder() -> Builder {
         Builder::new()
     }
-    /// Apply the given request command to the engine.
-    pub async fn apply(&mut self, request: Message) -> Result<()> {
+    /// Apply the given message command to the engine.
+    pub async fn apply(&mut self, message: Message) -> Result<()> {
         if let Some(observer) = &self.observer {
-            observer.lock().await.on_request(&request);
+            observer.lock().await.on_message(&message);
         }
-        let source_id = request.source_id;
-        let command = request.command;
+        let source_id = message.source_id;
+        let command = message.command;
         let result = match command {
             Command::Controller(client_command) => {
                 self.handle_client_command(source_id, client_command).await
@@ -167,6 +167,11 @@ impl Engine {
                 self.active_state.mode = mode_change.0;
                 Ok(())
             }
+            // TODO: Create a context object for the message to be passed in that holds some
+            // arbitrary data. This will allow us to pass in the current state to the
+            // TODO: Store the connections id into the context after it has be initialized.
+            // TODO: Use the context to update the controllers current property state from the
+            // motion sample.
             commands::ControllerCommand::SampleMotion(_) => Ok(()),
         }
     }

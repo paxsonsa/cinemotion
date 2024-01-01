@@ -3,7 +3,7 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tokio::task::JoinHandle;
 
-use crate::commands::{Command, EventPipeRx, RequestPipeTx};
+use crate::commands::{Command, EventPipeRx, MessagePipeTx};
 use crate::{Error, Message};
 
 use super::{ConnectionAgent, SendHandlerFn};
@@ -21,11 +21,11 @@ pub struct Connection {
 impl Connection {
     pub fn new(
         uid: usize,
-        request_pipe: RequestPipeTx,
+        message_pipe: MessagePipeTx,
         mut event_pipe: EventPipeRx,
         mut agent: Box<dyn ConnectionAgent + Send + Sync>,
     ) -> Self {
-        agent.initialize(Self::make_send(uid, request_pipe));
+        agent.initialize(Self::make_send(uid, message_pipe));
 
         let agent = Arc::new(Mutex::new(agent));
         let shared_agent = Arc::clone(&agent);
@@ -50,12 +50,12 @@ impl Connection {
         Connection { uid, task, agent }
     }
 
-    fn make_send(uid: usize, request_pipe: RequestPipeTx) -> SendHandlerFn {
+    fn make_send(uid: usize, message_pipe: MessagePipeTx) -> SendHandlerFn {
         Box::new(move |command: Command| {
-            let request = Message::with_command(uid, command);
-            if let Err(err) = request_pipe.send(request) {
+            let message = Message::with_command(uid, command);
+            if let Err(err) = message_pipe.send(message) {
                 let msg = format!(
-                    "connection {} failed to send request, pipe broken. err={err}",
+                    "connection {} failed to send message, pipe broken. err={err}",
                     uid
                 );
 

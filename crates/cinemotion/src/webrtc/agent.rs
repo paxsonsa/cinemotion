@@ -1,5 +1,5 @@
 use crate::{
-    commands::{self, Command, EventPipeRx, RequestPipeTx},
+    commands::{self, Command, EventPipeRx, MessagePipeTx},
     connection::SendHandlerFn,
     data::WebRTCSessionDescriptor,
     Error, Event, Result,
@@ -32,7 +32,7 @@ impl WebRTCAgent {
     /// Returns the session descriptor to send back to client and an active session.
     pub async fn new(
         desc: WebRTCSessionDescriptor,
-        request_pipe: RequestPipeTx,
+        message_pipe: MessagePipeTx,
     ) -> Result<(WebRTCSessionDescriptor, Self)> {
         let m = MediaEngine::default();
         let api = APIBuilder::new().with_media_engine(m).build();

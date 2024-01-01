@@ -3,7 +3,7 @@ use super::Echo;
 use prost::Message;
 
 #[test]
-fn test_echo_request_size() {
+fn test_echo_message_size() {
     let message = Command {
         payload: Some(
             Echo {

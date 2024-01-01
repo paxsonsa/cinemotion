@@ -3,7 +3,7 @@ use std::{pin::Pin, time::Duration};
 use async_trait::async_trait;
 
 use crate::{
-    commands::{RequestPipeRx, RequestPipeTx},
+    commands::{MessagePipeRx, MessagePipeTx},
     engine::network::NetworkComponentImpl,
     engine::Engine,
     Error, Message, Result,
@@ -12,7 +12,7 @@ use crate::{
 use super::Service;
 
 pub struct RuntimeOptions {
-    pub request_pipe: (RequestPipeTx, RequestPipeRx),
+    pub message_pipe: (MessagePipeTx, MessagePipeRx),
 }
 
 pub struct RuntimeService {
@@ -22,8 +22,8 @@ pub struct RuntimeService {
 
 impl RuntimeService {
     pub fn new(options: RuntimeOptions) -> Self {
-        let mut request_pipe = options.request_pipe.1;
-        let network = NetworkComponentImpl::boxed(options.request_pipe.0.clone());
+        let mut message_pipe = options.message_pipe.1;
+        let network = NetworkComponentImpl::boxed(options.message_pipe.0.clone());
         let engine = Engine::builder()
             .with_network_component(network)
             .build()
@@ -33,14 +33,14 @@ impl RuntimeService {
 
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
         let future = tokio::spawn(async move {
-            let mut request_buffer: Vec<Message> = Vec::with_capacity(1024);
+            let mut message_buffer: Vec<Message> = Vec::with_capacity(1024);
             let mut interval = tokio::time::interval(Duration::from_millis(16));
             loop {
                 tokio::select! {
                     _ = shutdown_rx.recv() => {
                         break;
                     }
-                    request = request_pipe.recv() => apply_request(&mut engine, request).await?,
+                    message = message_pipe.recv() => apply_message(&mut engine, message).await?,
                     _ = interval.tick() => {
                         engine.tick().await?
                     }
@@ -55,11 +55,11 @@ impl RuntimeService {
     }
 }
 
-async fn apply_request(engine: &mut Box<Engine>, request: Option<Message>) -> Result<()> {
-    let Some(request) = request else {
-        return Err(Error::ChannelClosed("runtime request channel closed."));
+async fn apply_message(engine: &mut Box<Engine>, message: Option<Message>) -> Result<()> {
+    let Some(message) = message else {
+        return Err(Error::ChannelClosed("runtime message channel closed."));
     };
-    engine.apply(request).await
+    engine.apply(message).await
 }
 
 #[async_trait]

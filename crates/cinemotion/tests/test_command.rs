@@ -6,11 +6,11 @@ async fn test_echo_command() {
     let (builder, spy) = common::make_engine();
     let mut engine = builder.build().expect("engine should build successfully");
 
-    let request = Message::with_command(
+    let message = Message::with_command(
         1,
         commands::ControllerCommand::from(commands::Echo::from("hello".to_string())),
     );
-    engine.apply(request).await.expect("failed to apply engine");
+    engine.apply(message).await.expect("failed to apply engine");
 
     let spy = spy.session_component.lock().unwrap();
     assert!(spy.send_called);

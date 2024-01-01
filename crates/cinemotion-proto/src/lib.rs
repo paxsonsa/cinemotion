@@ -43,8 +43,8 @@ impl TryFrom<bytes::Bytes> for Command {
 macro_rules! impl_from_payload {
     ($type:ident) => {
         impl From<$type> for command::Payload {
-            fn from(request: $type) -> Self {
-                command::Payload::$type(request)
+            fn from(message: $type) -> Self {
+                command::Payload::$type(message)
             }
         }
     };

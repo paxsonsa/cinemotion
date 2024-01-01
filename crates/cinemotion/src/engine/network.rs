@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use async_trait::async_trait;
 
 use crate::{
-    commands::{event_pipe, AddConnection, EventPipeTx, RequestPipeTx},
+    commands::{event_pipe, AddConnection, EventPipeTx, MessagePipeTx},
     connection::Connection,
     Error, Event, Result,
 };
@@ -12,16 +12,16 @@ use super::components::NetworkComponent;
 
 pub struct NetworkComponentImpl {
     connections: HashMap<usize, Box<Connection>>,
-    request_pipe: RequestPipeTx,
+    message_pipe: MessagePipeTx,
     event_pipe: EventPipeTx,
 }
 
 impl NetworkComponentImpl {
-    pub fn boxed(request_pipe: RequestPipeTx) -> Box<dyn NetworkComponent> {
+    pub fn boxed(message_pipe: MessagePipeTx) -> Box<dyn NetworkComponent> {
         let event_pipe = event_pipe();
         Box::new(Self {
             connections: Default::default(),
-            request_pipe,
+            message_pipe,
             event_pipe,
         })
     }
@@ -38,7 +38,7 @@ impl NetworkComponent for NetworkComponentImpl {
         let active_id = self.connections.len() + 1;
         let conn = Box::new(Connection::new(
             active_id,
-            self.request_pipe.clone(),
+            self.message_pipe.clone(),
             self.event_pipe.subscribe(),
             agent,
         ));

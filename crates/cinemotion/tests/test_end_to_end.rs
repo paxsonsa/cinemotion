@@ -32,7 +32,7 @@ impl engine::Observer for HarnessObserver {
     fn on_event(&mut self, event: &Event) {
         self.spy.lock().unwrap().observed_events.push(event.clone());
     }
-    fn on_request(&mut self, request: &Message) {}
+    fn on_message(&mut self, message: &Message) {}
 }
 
 struct EngineTestHarness {
@@ -66,8 +66,8 @@ impl EngineTestHarness {
         Self { engine, spy }
     }
 
-    async fn send_request(&mut self, request: Message) -> Result<()> {
-        self.engine.apply(request).await
+    async fn send_message(&mut self, message: Message) -> Result<()> {
+        self.engine.apply(message).await
     }
 
     fn observed_events(&self) -> Vec<Event> {
@@ -119,16 +119,16 @@ impl Debug for Action {
 }
 
 impl From<Message> for Action {
-    fn from(request: Message) -> Self {
-        Action::Message(request)
+    fn from(message: Message) -> Self {
+        Action::Message(message)
     }
 }
 
-macro_rules! request {
-    ($description:expr, $request:expr) => {
+macro_rules! message {
+    ($description:expr, $message:expr) => {
         Task {
             description: $description.to_string(),
-            action: Action::Message($request.into()),
+            action: Action::Message($message.into()),
         }
     };
 }
@@ -164,10 +164,10 @@ async fn run_harness(harness: &mut EngineTestHarness, tasks: Vec<Task>) {
     for task in tasks {
         println!("⏵ {}", task.description);
         match task.action {
-            Action::Message(request) => harness
-                .send_request(request)
+            Action::Message(message) => harness
+                .send_message(message)
                 .await
-                .expect("request should not fail to send"),
+                .expect("message should not fail to send"),
             Action::ExpectEvents(expected_events) => {
                 let events = harness.observed_events();
                 let expected_count = expected_events.len();
@@ -247,7 +247,7 @@ harness!(connection_setup, { State::default() }, {
     let (ack_pipe, _ack_pipe_rx) = tokio::sync::oneshot::channel();
 
     vec![
-        request!(
+        message!(
             "create connection",
             Message {
                 source_id: LOCAL_CONN_ID,
@@ -258,7 +258,7 @@ harness!(connection_setup, { State::default() }, {
                 .into(),
             }
         ),
-        request!(
+        message!(
             "open connection",
             Message {
                 source_id: 1, // Hardcoded Id that should be set.
@@ -272,7 +272,7 @@ harness!(connection_setup, { State::default() }, {
                 body: events::ConnectionOpenedEvent().into(),
             }
         ),
-        request!(
+        message!(
             "initial connection session",
             Message {
                 source_id: 1,
@@ -334,7 +334,7 @@ harness!(
     },
     {
         vec![
-            request!(
+            message!(
                 "attempt to update a scene object that does not exist",
                 Message {
                     source_id: 1,
@@ -364,7 +364,7 @@ harness!(
                     _ => false,
                 }
             }),
-            request!(
+            message!(
                 "add a new scene object.",
                 Message {
                     source_id: 1,
@@ -393,7 +393,7 @@ harness!(
                     );
                 }
             ),
-            request!(
+            message!(
                 "try to add a existing scene object.",
                 Message {
                     source_id: 1,
@@ -419,7 +419,7 @@ harness!(
                     _ => false,
                 }
             }),
-            request!(
+            message!(
                 "update the root scene object to map controller property to object",
                 Message {
                     source_id: 1,
@@ -456,7 +456,7 @@ harness!(
                         );
                 }
             ),
-            request!(
+            message!(
                 "delete object in the scene",
                 Message {
                     source_id: 1,
@@ -510,7 +510,7 @@ harness!(
     },
     {
         vec![
-            request!(
+            message!(
                 "update the motion mode to be live",
                 Message {
                     source_id: 1,
@@ -520,7 +520,7 @@ harness!(
             state!("verify that the mode is live", |state: &mut State| {
                 state.mode = data::Mode::Live;
             }),
-            request!(
+            message!(
                 "send a motion sample",
                 Message {
                     source_id: 1,
