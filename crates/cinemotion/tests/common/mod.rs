@@ -1,6 +1,9 @@
 use std::sync::{Arc, Mutex};
 
+pub mod harness;
 pub mod session;
+
+pub use harness::*;
 
 pub struct EngineSpy {
     pub session_component: Arc<Mutex<session::SpySessionComponent>>,

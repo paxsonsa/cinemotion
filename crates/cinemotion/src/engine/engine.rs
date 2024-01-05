@@ -187,7 +187,7 @@ impl Engine {
                     return Ok(());
                 };
 
-                let Some(controller) = self.active_state.controllers.get_mut(&name) else {
+                let Some(controller) = self.active_state.controllers.get_mut(name) else {
                     tracing::error!("controller not found for name: {}", name);
                     return Ok(());
                 };
