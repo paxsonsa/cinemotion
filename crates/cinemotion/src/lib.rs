@@ -11,7 +11,6 @@ pub mod services;
 pub mod state;
 pub mod webrtc;
 
-// TODO: Add Recording Commands
 // TODO: Add test for protobuf conversion
 // TODO: Add individual error checks for runtime operations mode are changed
 // TODO: Add controller removal when connection is closed.

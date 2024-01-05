@@ -224,7 +224,7 @@ impl Engine {
     }
 
     fn handle_init(&mut self, init: commands::Init, source_id: usize) -> Result<()> {
-        let peer = init.peer;
+        let mut peer = init.peer;
         let context = self.network.context_mut(source_id);
         context.name = Some(peer.name.clone());
         self.active_state

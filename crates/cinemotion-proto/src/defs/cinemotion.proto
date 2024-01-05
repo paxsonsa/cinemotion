@@ -72,13 +72,11 @@ message ErrorEvent {
 * Data Types
 ********************************/
 message Controller {
-  uint32 uid = 1;
   string name = 2;
   map<string, Property> properties = 3;
 }
 
 message ControllerDef {
-  uint32 uid = 1;
   string name = 2;
   map<string, PropertyValue> properties = 3;
 }

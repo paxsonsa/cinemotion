@@ -8,12 +8,23 @@ pub enum Command {
 }
 
 impl Command {
+    pub fn from_protobuf(buf: cinemotion_proto::Command) -> Result<Self> {
+        let Some(payload) = buf.payload else {
+            return Err(Error::BadCommand(
+                "failed to decode command from protobuf, no payload found".to_string(),
+            ));
+        };
+        let command = ControllerCommand::from_protobuf(payload)?;
+        Ok(Self::Controller(command))
+    }
+
     /// Decode a command from a byte buffer.
     ///
     /// Note: only client commands can be decoded from a byte buffer.
-    pub fn decode(buf: bytes::Bytes) -> Result<Self> {
-        let command = ControllerCommand::decode(buf)?;
-        Ok(Self::Controller(command))
+    pub fn from_protobuf_bytes(buf: bytes::Bytes) -> Result<Self> {
+        let command = cinemotion_proto::Command::try_from(buf)
+            .map_err(|err| Error::BadCommand(format!("failed to decode command: {err}")))?;
+        Self::from_protobuf(command)
     }
 }
 
@@ -58,13 +69,7 @@ pub enum ControllerCommand {
 
 impl ControllerCommand {
     /// Decode a command from a byte buffer.
-    pub fn decode(buf: bytes::Bytes) -> Result<Self> {
-        let Some(payload) = cinemotion_proto::Command::try_from(buf)
-            .map_err(|err| Error::BadCommand(format!("failed to decode command: {err}")))?
-            .payload
-        else {
-            return Err(Error::BadCommand("command is missing payload.".to_string()));
-        };
+    pub fn from_protobuf(payload: cinemotion_proto::command::Payload) -> Result<Self> {
         Ok(payload.into())
     }
 }

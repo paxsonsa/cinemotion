@@ -122,7 +122,7 @@ impl ConnectionAgent for WebRTCAgent {
             // Decode the incoming message as a command and send it through the handler.
             let shared_send_fn = Arc::clone(&shared_send_fn);
             Box::pin(async move {
-                let command = match Command::decode(msg.data) {
+                let command = match Command::from_protobuf_bytes(msg.data) {
                     Ok(command) => command,
                     Err(err) => {
                         // TODO: Send error back to client

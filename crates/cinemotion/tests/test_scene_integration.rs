@@ -15,7 +15,6 @@ harness!(
         controllers.insert(
             name!("test"),
             data::Controller {
-                uid: 1,
                 name: name!("test"),
                 properties: vec![data::Property::with_default_value(
                     name!("position"),

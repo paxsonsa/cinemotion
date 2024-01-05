@@ -43,7 +43,6 @@ harness!(connection_setup, { State::default() }, {
                 source_id: 1,
                 command: commands::Init {
                     peer: data::Controller {
-                        uid: 1,
                         name: name!("test"),
                         properties: vec![data::Property::with_default_value(
                             name!("position"),
@@ -64,7 +63,6 @@ harness!(connection_setup, { State::default() }, {
                 controllers.insert(
                     name!("test"),
                     data::Controller {
-                        uid: 1,
                         name: name!("test"),
                         properties: vec![data::Property::with_default_value(
                             name!("position"),
