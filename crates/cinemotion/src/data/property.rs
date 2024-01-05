@@ -29,6 +29,10 @@ impl Property {
     pub fn update(&mut self, value: &Value) -> Result<()> {
         self.value.update(value)
     }
+
+    pub fn reset(&mut self) -> Result<()> {
+        self.value.update(&self.default_value)
+    }
 }
 
 impl From<Property> for proto::Property {
