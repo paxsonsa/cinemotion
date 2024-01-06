@@ -8,6 +8,7 @@ message Command {
     AddSceneObject add_scene_object = 30;
     UpdateSceneObject update_scene_object = 31;
     DeleteSceneObject delete_scene_object = 32;
+    ChangeMode change_mode = 40;
 	}
 }
 
@@ -47,6 +48,15 @@ message UpdateSceneObject {
 // Delete an object from the scene.
 message DeleteSceneObject {
     string name = 10;
+}
+
+message ChangeMode {
+  enum Mode {
+    IDLE = 0;
+    LIVE = 1;
+    RECORDING = 2;
+  }
+  Mode mode = 1;
 }
 /*******************************
 * Event Types
@@ -131,7 +141,7 @@ message PropertyLink {
     BOUND = 1;
   }
 
-  BindState type = 1;
+  BindState bind_state = 1;
   PropertyValue value = 2;
   string namespace = 3;
   string property = 4;

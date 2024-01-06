@@ -86,6 +86,7 @@ impl From<cinemotion_proto::command::Payload> for ControllerCommand {
             cinemotion_proto::command::Payload::DeleteSceneObject(p) => {
                 Self::DeleteSceneObject(p.into())
             }
+            cinemotion_proto::command::Payload::ChangeMode(mode) => Self::ChangeMode(mode.into()),
         }
     }
 }

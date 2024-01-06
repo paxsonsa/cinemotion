@@ -123,7 +123,7 @@ impl PropertyLink {
 
 impl From<proto::PropertyLink> for PropertyLink {
     fn from(value: proto::PropertyLink) -> Self {
-        match value.r#type() {
+        match value.bind_state() {
             proto::property_link::BindState::Unbound => Self::unbound(value.value.unwrap().into()),
             proto::property_link::BindState::Bound => Self::bind(
                 value.namespace.into(),
