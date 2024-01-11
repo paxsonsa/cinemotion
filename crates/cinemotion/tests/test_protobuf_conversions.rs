@@ -1,6 +1,5 @@
 use cinemotion::{commands, data, events, name, Event};
 use cinemotion_proto as proto;
-use proto::property_link;
 use std::collections::HashMap;
 
 #[test]
@@ -133,4 +132,57 @@ fn test_add_scene_object_conversion() {
         .property(&name!("orientation"))
         .expect("should have orientation property");
     matches!(property, data::PropertyLink::Unbound { .. });
+}
+
+#[test]
+fn test_delete_scene_object_conversion() {
+    let message = proto::Command {
+        payload: Some(proto::command::Payload::DeleteSceneObject(
+            proto::DeleteSceneObject {
+                name: "test_object".to_string(),
+            },
+        )),
+    };
+    let command = commands::Command::from_protobuf(message).expect("should pass");
+    let commands::Command::Controller(commands::ControllerCommand::DeleteSceneObject(name)) =
+        command
+    else {
+        panic!("should be update scene object command");
+    };
+
+    assert_eq!(name.0, name!("test_object"));
+}
+
+#[test]
+fn test_sample_object_conversion() {
+    let message = proto::Command {
+        payload: Some(proto::command::Payload::SendSample(proto::SendSample {
+            sample: Some(proto::Sample {
+                properties: HashMap::from([
+                    (
+                        "position".to_string(),
+                        proto::PropertyValue {
+                            value: Some(proto::property_value::Value::Vec3Value(proto::Vec3 {
+                                x: 0.0,
+                                y: 0.0,
+                                z: 0.0,
+                            })),
+                        },
+                    ),
+                    (
+                        "orientation".to_string(),
+                        proto::PropertyValue {
+                            value: Some(proto::property_value::Value::Vec3Value(proto::Vec3 {
+                                x: 0.0,
+                                y: 0.0,
+                                z: 0.0,
+                            })),
+                        },
+                    ),
+                ]),
+            }),
+        })),
+    };
+
+    let _ = commands::Command::from_protobuf(message).expect("should pass");
 }

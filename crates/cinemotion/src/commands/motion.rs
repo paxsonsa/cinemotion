@@ -32,3 +32,13 @@ impl From<Sample> for SampleMotion {
         Self(value)
     }
 }
+
+impl From<proto::SendSample> for SampleMotion {
+    fn from(value: proto::SendSample) -> Self {
+        let Some(sample) = value.sample else {
+            return SampleMotion(Sample::empty());
+        };
+
+        Self(sample.into())
+    }
+}
