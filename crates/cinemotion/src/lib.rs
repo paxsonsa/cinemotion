@@ -11,7 +11,6 @@ pub mod services;
 pub mod state;
 pub mod webrtc;
 
-// TODO: Add controller removal when connection is closed.
 // TODO: Add support for clear the scene.
 // TODO: Add support for animation capture and saving
 // TODO: Add support for triggers

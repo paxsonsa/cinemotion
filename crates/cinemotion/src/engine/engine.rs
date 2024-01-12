@@ -131,6 +131,11 @@ impl Engine {
             commands::ControllerCommand::AddSceneObject(object) => {
                 self.handle_add_scene_obj(object)
             }
+            commands::ControllerCommand::ClearScene(_) => {
+                self.ensure_idle_mode()?;
+                self.active_state.scene.objects_mut().clear();
+                Ok(())
+            }
             commands::ControllerCommand::DeleteSceneObject(name) => {
                 self.handle_delete_scene_obj(name)
             }

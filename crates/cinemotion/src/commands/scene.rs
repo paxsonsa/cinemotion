@@ -18,6 +18,15 @@ impl From<proto::AddSceneObject> for AddSceneObject {
 }
 
 #[derive(Debug)]
+pub struct ClearScene {}
+
+impl From<proto::ClearScene> for ClearScene {
+    fn from(_: proto::ClearScene) -> Self {
+        Self {}
+    }
+}
+
+#[derive(Debug)]
 pub struct DeleteSceneObject(pub crate::Name);
 
 impl From<DeleteSceneObject> for Command {

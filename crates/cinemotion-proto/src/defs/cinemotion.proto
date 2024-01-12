@@ -6,8 +6,9 @@ message Command {
     Echo echo = 1;
     InitCommand init = 2;
     AddSceneObject add_scene_object = 30;
-    UpdateSceneObject update_scene_object = 31;
+    ClearScene clear_scene = 31;
     DeleteSceneObject delete_scene_object = 32;
+    UpdateSceneObject update_scene_object = 33;
     ChangeMode change_mode = 40;
     SendSample send_sample = 50;
 	}
@@ -50,6 +51,9 @@ message UpdateSceneObject {
 message DeleteSceneObject {
     string name = 10;
 }
+
+// Clear the scene.
+message ClearScene {}
 
 message ChangeMode {
   enum Mode {

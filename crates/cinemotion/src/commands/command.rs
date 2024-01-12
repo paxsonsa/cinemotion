@@ -63,8 +63,9 @@ pub enum ControllerCommand {
     Init(Init),
     ChangeMode(ChangeMode),
     AddSceneObject(AddSceneObject),
-    UpdateSceneObject(UpdateSceneObject),
+    ClearScene(ClearScene),
     DeleteSceneObject(DeleteSceneObject),
+    UpdateSceneObject(UpdateSceneObject),
     SampleMotion(SampleMotion),
 }
 
@@ -81,11 +82,12 @@ impl From<cinemotion_proto::command::Payload> for ControllerCommand {
             cinemotion_proto::command::Payload::Echo(p) => Self::Echo(p.into()),
             cinemotion_proto::command::Payload::Init(p) => Self::Init(p.into()),
             cinemotion_proto::command::Payload::AddSceneObject(p) => Self::AddSceneObject(p.into()),
-            cinemotion_proto::command::Payload::UpdateSceneObject(p) => {
-                Self::UpdateSceneObject(p.into())
-            }
+            cinemotion_proto::command::Payload::ClearScene(p) => Self::ClearScene(p.into()),
             cinemotion_proto::command::Payload::DeleteSceneObject(p) => {
                 Self::DeleteSceneObject(p.into())
+            }
+            cinemotion_proto::command::Payload::UpdateSceneObject(p) => {
+                Self::UpdateSceneObject(p.into())
             }
             cinemotion_proto::command::Payload::ChangeMode(mode) => Self::ChangeMode(mode.into()),
             cinemotion_proto::command::Payload::SendSample(sample) => {
