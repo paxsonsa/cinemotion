@@ -6,6 +6,10 @@ use super::components::network;
 use super::Observer;
 use crate::{commands, data, events, Command, Event, Message, Result, State};
 
+#[cfg(test)]
+#[path = "engine_test.rs"]
+mod engine_test;
+
 pub struct Builder {
     initial_state: Option<State>,
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
@@ -36,7 +40,9 @@ impl Builder {
 
     pub fn build(self) -> Result<Engine> {
         let state = self.initial_state.unwrap_or_default();
-        let network = self.network_component.unwrap();
+        let network = self
+            .network_component
+            .expect("expect network component to be supplied");
         let observer = self.engine_observer;
         Ok(Engine {
             active_state: state.clone(),
@@ -189,11 +195,13 @@ impl Engine {
     }
 
     fn handle_delete_scene_obj(&mut self, name: commands::DeleteSceneObject) -> Result<()> {
+        self.ensure_idle_mode()?;
         self.active_state.scene.objects_mut().remove(&name.0);
         Ok(())
     }
 
     fn handle_add_scene_obj(&mut self, object: commands::AddSceneObject) -> Result<()> {
+        self.ensure_idle_mode()?;
         let object = object.0;
         let name = object.name().clone();
         let objects = self.active_state.scene.objects_mut();
@@ -209,6 +217,7 @@ impl Engine {
     }
 
     fn handle_update_scene_obj(&mut self, update: commands::UpdateSceneObject) -> Result<()> {
+        self.ensure_idle_mode()?;
         let scene_object = update.0;
         let name = scene_object.name().clone();
         let objects = self.active_state.scene.objects_mut();
@@ -224,7 +233,8 @@ impl Engine {
     }
 
     fn handle_init(&mut self, init: commands::Init, source_id: usize) -> Result<()> {
-        let mut peer = init.peer;
+        self.ensure_idle_mode()?;
+        let peer = init.peer;
         let context = self.network.context_mut(source_id);
         context.name = Some(peer.name.clone());
         self.active_state
@@ -262,6 +272,9 @@ impl Engine {
                     body: events::ConnectionOpenedEvent().into(),
                 })
                 .await
+            }
+            commands::SystemCommand::CloseConnection(_) => {
+                self.network.close_connection(source_id).await
             }
         }
     }
@@ -319,6 +332,16 @@ impl Engine {
             }
         }
         Ok(())
+    }
+
+    fn ensure_idle_mode(&self) -> Result<()> {
+        if self.active_state.mode.is_live() {
+            Err(crate::Error::InvalidMode(
+                "cannot perform command while in live mode".into(),
+            ))
+        } else {
+            Ok(())
+        }
     }
 }
 

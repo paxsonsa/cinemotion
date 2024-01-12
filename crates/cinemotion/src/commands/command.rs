@@ -46,6 +46,7 @@ impl From<ControllerCommand> for Command {
 pub enum SystemCommand {
     AddConnection(AddConnection),
     OpenConnection(OpenConnection),
+    CloseConnection(CloseConnection),
 }
 
 impl From<AddConnection> for SystemCommand {

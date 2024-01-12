@@ -11,12 +11,11 @@ pub mod services;
 pub mod state;
 pub mod webrtc;
 
-// TODO: Add test for protobuf conversion
-// TODO: Add individual error checks for runtime operations mode are changed
 // TODO: Add controller removal when connection is closed.
 // TODO: Add support for clear the scene.
 // TODO: Add support for animation capture and saving
 // TODO: Add support for triggers
+// TODO: Document the API
 pub static VERSION: &str = "0.1.0";
 pub static DEFAULT_WEB_PORT: u16 = 7272;
 

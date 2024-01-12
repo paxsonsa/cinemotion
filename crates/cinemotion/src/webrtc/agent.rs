@@ -116,17 +116,35 @@ impl ConnectionAgent for WebRTCAgent {
             })
         }));
 
+        // Establish the session close sequence once the data channel is closed
+        let shared_send_fn = Arc::clone(&self.send_handler);
+        main_channel.on_close(Box::new(move || {
+            let shared_send_fn = Arc::clone(&shared_send_fn);
+
+            Box::pin(async move {
+                let command = commands::CloseConnection {};
+                tracing::debug!("agent data channel closed");
+                if let Some(handler) = &*shared_send_fn.load() {
+                    let mut f = handler.lock().await;
+                    let _ = f(command.into());
+                }
+            })
+        }));
+
         // Establish the message handling when the data channel receives a message
         let shared_send_fn = Arc::clone(&self.send_handler);
+        let shared_channel = Arc::clone(&main_channel);
         main_channel.on_message(Box::new(move |msg| {
             // Decode the incoming message as a command and send it through the handler.
             let shared_send_fn = Arc::clone(&shared_send_fn);
+            let shared_channel = Arc::clone(&shared_channel);
             Box::pin(async move {
                 let command = match Command::from_protobuf_bytes(msg.data) {
                     Ok(command) => command,
                     Err(err) => {
-                        // TODO: Send error back to client
                         tracing::error!("failed to decode command. err={err}");
+                        let error = make_error_event(err);
+                        convert_and_send(&shared_channel, error).await;
                         return;
                     }
                 };
@@ -173,21 +191,30 @@ impl ConnectionAgent for WebRTCAgent {
         let Some(channel) = &self.main_channel else {
             return;
         };
-        let proto: cinemotion_proto::Event = event.into();
-        let data = match proto.try_into() {
-            Ok(data) => data,
-            Err(err) => {
-                // TODO: Send error back to caller
-                tracing::error!("failed to encode event. err={err}");
-                return;
-            }
-        };
-        if let Err(err) = channel.send(&data).await {
-            //TODO: Send error back to caller
-            tracing::error!("failed to send event. err={err}");
-        }
+        convert_and_send(channel, event).await;
     }
     async fn close(&mut self) {
-        self.peer_connection.close().await;
+        let _ = self.peer_connection.close().await;
+    }
+}
+
+fn make_error_event(err: Error) -> crate::Event {
+    crate::Event {
+        target: Some(0),
+        body: crate::events::ErrorEvent(err).into(),
+    }
+}
+
+async fn convert_and_send(channel: &Arc<RTCDataChannel>, event: crate::Event) {
+    let proto: cinemotion_proto::Event = event.into();
+    let data = match proto.try_into() {
+        Ok(data) => data,
+        Err(err) => {
+            tracing::error!("failed to encode event. err={err}");
+            return;
+        }
+    };
+    if let Err(err) = channel.send(&data).await {
+        tracing::error!("failed to send event. err={err}");
     }
 }

@@ -72,7 +72,9 @@ impl NetworkComponent for NetworkComponentImpl {
     }
 
     async fn close_connection(&mut self, conn_id: usize) -> Result<()> {
-        todo!()
+        self.connections.remove(&conn_id);
+        self.contexts.remove(&conn_id);
+        Ok(())
     }
 
     async fn send(&mut self, event: Event) -> Result<()> {

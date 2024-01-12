@@ -28,6 +28,9 @@ pub enum Error {
 
     #[error("invalid property value: {0}")]
     InvalidValue(String),
+
+    #[error("invalid mode: {0}")]
+    InvalidMode(String),
 }
 
 impl From<webrtc::Error> for Error {

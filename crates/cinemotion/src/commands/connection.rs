@@ -52,3 +52,12 @@ impl From<AddConnection> for Command {
         Self::System(SystemCommand::AddConnection(value))
     }
 }
+
+#[derive(Debug)]
+pub struct CloseConnection {}
+
+impl From<CloseConnection> for Command {
+    fn from(value: CloseConnection) -> Self {
+        Self::System(SystemCommand::CloseConnection(value))
+    }
+}
