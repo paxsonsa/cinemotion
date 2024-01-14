@@ -11,7 +11,6 @@ pub mod services;
 pub mod state;
 pub mod webrtc;
 
-// TODO: Add support for clear the scene.
 // TODO: Add support for animation capture and saving
 // TODO: Add support for triggers
 // TODO: Document the API
