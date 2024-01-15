@@ -31,6 +31,9 @@ pub enum Error {
 
     #[error("invalid mode: {0}")]
     InvalidMode(String),
+
+    #[error("cannot modify closed take")]
+    TakeClosed,
 }
 
 impl From<webrtc::Error> for Error {

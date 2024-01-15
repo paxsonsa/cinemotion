@@ -11,9 +11,12 @@ pub mod services;
 pub mod state;
 pub mod webrtc;
 
-// TODO: Add support for animation capture and saving
+// TODO: A QUIC Implementation
+// - Demo with simple client server between swift and rust
 // TODO: Add support for triggers
 // TODO: Document the API
+// TODO: Update Take Manager to track object object and controller state.
+// TODO: Add support for multiple scenes
 pub static VERSION: &str = "0.1.0";
 pub static DEFAULT_WEB_PORT: u16 = 7272;
 

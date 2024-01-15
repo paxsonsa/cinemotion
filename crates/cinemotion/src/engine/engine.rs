@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use tokio::sync::Mutex;
 
-use super::components::network;
+use super::components::{network, take};
 use super::Observer;
 use crate::{commands, data, events, Command, Event, Message, Result, State};
 
@@ -14,6 +14,7 @@ pub struct Builder {
     initial_state: Option<State>,
     engine_observer: Option<Arc<Mutex<dyn Observer>>>,
     network_component: Option<Box<dyn network::NetworkComponent>>,
+    take_component: Option<Box<take::TakeManager>>,
 }
 
 impl Builder {
@@ -22,6 +23,7 @@ impl Builder {
             initial_state: None,
             engine_observer: None,
             network_component: None,
+            take_component: None,
         }
     }
     pub fn with_inital_state(mut self, state: State) -> Self {
@@ -38,17 +40,26 @@ impl Builder {
         self
     }
 
+    pub fn with_take_manager(mut self, take_manager: Box<take::TakeManager>) -> Self {
+        self.take_component = Some(take_manager);
+        self
+    }
+
     pub fn build(self) -> Result<Engine> {
         let state = self.initial_state.unwrap_or_default();
         let network = self
             .network_component
             .expect("expect network component to be supplied");
+        let take_manager = self
+            .take_component
+            .expect("expect take manager to be supplied");
         let observer = self.engine_observer;
         Ok(Engine {
             active_state: state.clone(),
             current_state: state,
             observer,
             network,
+            take_manager,
         })
     }
 }
@@ -64,6 +75,7 @@ pub struct Engine {
     current_state: State,
     observer: Option<Arc<Mutex<dyn Observer>>>,
     network: Box<dyn network::NetworkComponent>,
+    take_manager: Box<take::TakeManager>,
 }
 
 impl Engine {
@@ -194,6 +206,7 @@ impl Engine {
             // Reset the sampling state, we don't need to worry about the scene objects
             // because the will be updated when the engine renders.
             reset_controller_properties(&mut self.active_state);
+            self.take_manager.new_take();
         }
         self.active_state.mode = mode_change.0;
         Ok(())
