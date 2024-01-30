@@ -32,6 +32,11 @@ warp.workspace = true
 serde.workspace = true
 webrtc.workspace = true
 base64.workspace = true
+quinn.workspace = true
+rustls.workspace = true
+rcgen.workspace = true
+hostname.workspace = true
+get_if_addrs.workspace = true
 
 [dev-dependencies]
 paste = "1.0"

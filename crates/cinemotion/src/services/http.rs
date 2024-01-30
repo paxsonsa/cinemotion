@@ -15,13 +15,13 @@ pub struct HttpService {
 }
 
 impl HttpService {
-    pub fn new<I>(address: I, connection_manager: SignalingRelay) -> Self
+    pub fn new<I>(address: I, signaling_relay: SignalingRelay) -> Self
     where
         I: Into<SocketAddr> + Send + 'static,
     {
         let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel(1);
 
-        let manager = Arc::new(Mutex::new(connection_manager));
+        let manager = Arc::new(Mutex::new(signaling_relay));
 
         let api = api(manager);
         let routes = api.with(warp::log("cinemotion"));

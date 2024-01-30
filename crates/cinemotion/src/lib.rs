@@ -6,6 +6,7 @@ pub mod error;
 pub mod events;
 pub mod message;
 pub mod name;
+pub mod quic;
 pub mod scene;
 pub mod services;
 pub mod state;
