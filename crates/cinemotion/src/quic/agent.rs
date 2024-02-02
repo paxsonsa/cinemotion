@@ -27,12 +27,13 @@ impl QuicAgent {
                     }
                     Err(err) => {
                         tracing::error!("engine failed to add connection: {}", err);
-                        shared_conn.close(1u32.into(), "engine failed to ack connection.");
+                        shared_conn
+                            .close(1u32.into(), "engine failed to ack connection.".as_bytes());
                     }
                 },
                 Err(e) => {
                     tracing::error!("quic connection agent failed to add: {}", e);
-                    shared_conn.close(1u32.into(), "engine failed to ack connection.");
+                    shared_conn.close(1u32.into(), "engine failed to ack connection.".as_bytes());
                 }
             }
         });
@@ -50,7 +51,7 @@ impl ConnectionAgent for QuicAgent {
         self.send_handler.store(Some(Arc::new(Mutex::new(send_fn))));
 
         // Open a new bidirectional data stream for the message pipe.
-        let (send_stream, recv_stream) = match self.conn.open_bi().await {
+        let (send_stream, mut recv_stream) = match self.conn.open_bi().await {
             Ok(stream) => stream,
             Err(e) => {
                 tracing::error!("failed to open stream: {}", e);
@@ -67,8 +68,8 @@ impl ConnectionAgent for QuicAgent {
         tokio::spawn(async move {
             loop {
                 tokio::select! {
-                    serialization = stream::recv_command(&recv_stream) => {
-                        match serialization.await {
+                    serialization = stream::recv_command(&mut recv_stream) => {
+                        match serialization {
                             Ok(command) => {
                                 if let Some(handler) = &*shared_send_fn.load() {
                                     let mut f = handler.lock().await;

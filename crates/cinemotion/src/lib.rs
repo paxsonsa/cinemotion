@@ -6,18 +6,17 @@ pub mod error;
 pub mod events;
 pub mod message;
 pub mod name;
-pub mod quic;
 pub mod scene;
+pub mod quic;
 pub mod services;
 pub mod state;
 pub mod webrtc;
 
-// TODO: A QUIC Implementation
-// - Demo with simple client server between swift and rust
+// TODO: Add support for animation capture and saving
+// 1) Add a new type for storing object and controller animation as takes.
+// 2) Create a component for measuring animation takes and tools for creating takes.
 // TODO: Add support for triggers
 // TODO: Document the API
-// TODO: Update Take Manager to track object object and controller state.
-// TODO: Add support for multiple scenes
 pub static VERSION: &str = "0.1.0";
 pub static DEFAULT_WEB_PORT: u16 = 7272;
 

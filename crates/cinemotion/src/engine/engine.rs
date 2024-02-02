@@ -97,6 +97,10 @@ impl Engine {
                 self.handle_internal_command(source_id, internal_command)
                     .await
             }
+            Command::Invalid => {
+                tracing::error!("invalid command received from {}", source_id);
+                Ok(())
+            }
         };
         match result {
             Ok(_) => Ok(()),

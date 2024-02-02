@@ -1,10 +1,11 @@
 use super::*;
-use crate::{Error, Result};
+use crate::{quic, Error, Result};
 
 #[derive(Debug)]
 pub enum Command {
     System(SystemCommand),
     Controller(ControllerCommand),
+    Invalid,
 }
 
 impl Command {

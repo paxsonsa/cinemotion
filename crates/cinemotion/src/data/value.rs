@@ -70,6 +70,18 @@ impl From<(f64, f64, f64)> for Value {
     }
 }
 
+impl From<(f64, f64, f64, f64)> for Value {
+    fn from(value: (f64, f64, f64, f64)) -> Self {
+        Self::Vec4(value.into())
+    }
+}
+
+impl From<[[f64; 4]; 4]> for Value {
+    fn from(value: [[f64; 4]; 4]) -> Self {
+        Self::Matrix44(value.into())
+    }
+}
+
 impl From<Vec3> for Value {
     fn from(value: Vec3) -> Self {
         Self::Vec3(value)
@@ -179,6 +191,17 @@ pub struct Vec4 {
     pub w: f64,
 }
 
+impl From<[f64; 4]> for Vec4 {
+    fn from(value: [f64; 4]) -> Self {
+        Self {
+            x: value[0],
+            y: value[1],
+            z: value[2],
+            w: value[3],
+        }
+    }
+}
+
 impl From<(f64, f64, f64, f64)> for Vec4 {
     fn from((x, y, z, w): (f64, f64, f64, f64)) -> Self {
         Self { x, y, z, w }
@@ -232,10 +255,21 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec4 {
 //
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct Matrix44 {
-    row0: Vec4,
-    row1: Vec4,
-    row2: Vec4,
-    row3: Vec4,
+    pub row0: Vec4,
+    pub row1: Vec4,
+    pub row2: Vec4,
+    pub row3: Vec4,
+}
+
+impl From<[[f64; 4]; 4]> for Matrix44 {
+    fn from(value: [[f64; 4]; 4]) -> Self {
+        Self {
+            row0: value[0].into(),
+            row1: value[1].into(),
+            row2: value[2].into(),
+            row3: value[3].into(),
+        }
+    }
 }
 
 impl From<Matrix44> for proto::Matrix4x4 {
