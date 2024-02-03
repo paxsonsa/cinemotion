@@ -2,14 +2,14 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use cinemotion::{
-    commands::AddConnection, connection, engine::components::NetworkComponent, name,
+    connection, engine::components::NetworkComponent, messages::AddConnection, name,
     ConnectionAgent, Event, Result,
 };
 
 pub struct SpySessionComponent {
     pub create_session_called: bool,
     pub create_session_called_count: usize,
-    pub create_session_called_args: Vec<cinemotion::commands::AddConnection>,
+    pub create_session_called_args: Vec<AddConnection>,
     pub close_session_called: bool,
     pub close_session_called_count: usize,
     pub close_session_called_args: Vec<usize>,

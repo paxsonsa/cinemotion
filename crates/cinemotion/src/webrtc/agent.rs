@@ -1,7 +1,7 @@
 use crate::{
-    commands::{self, Command, EventPipeRx, MessagePipeTx},
     connection::SendHandlerFn,
     data::WebRTCSessionDescriptor,
+    messages::{self, MessagePipeTx, Payload},
     Error, Event, Result,
 };
 
@@ -110,7 +110,7 @@ impl ConnectionAgent for WebRTCAgent {
             Box::pin(async move {
                 if let Some(handler) = &*shared_send_fn.load() {
                     let mut f = handler.lock().await;
-                    let init = commands::OpenConnection {};
+                    let init = messages::OpenConnection {};
                     let _ = f(init.into());
                 }
             })
@@ -122,7 +122,7 @@ impl ConnectionAgent for WebRTCAgent {
             let shared_send_fn = Arc::clone(&shared_send_fn);
 
             Box::pin(async move {
-                let command = commands::CloseConnection {};
+                let command = messages::CloseConnection {};
                 tracing::debug!("agent data channel closed");
                 if let Some(handler) = &*shared_send_fn.load() {
                     let mut f = handler.lock().await;
@@ -139,7 +139,7 @@ impl ConnectionAgent for WebRTCAgent {
             let shared_send_fn = Arc::clone(&shared_send_fn);
             let shared_channel = Arc::clone(&shared_channel);
             Box::pin(async move {
-                let command = match Command::from_protobuf_bytes(msg.data) {
+                let command = match Payload::from_protobuf_bytes(msg.data) {
                     Ok(command) => command,
                     Err(err) => {
                         tracing::error!("failed to decode command. err={err}");

@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use super::components::network;
 use super::Observer;
-use crate::{commands, data, events, Command, Event, Message, Result, State};
+use crate::{data, events, messages, Event, Result, State};
 
 #[cfg(test)]
 #[path = "engine_test.rs"]
@@ -72,21 +72,21 @@ impl Engine {
         Builder::new()
     }
     /// Apply the given message command to the engine.
-    pub async fn apply(&mut self, message: Message) -> Result<()> {
+    pub async fn apply(&mut self, message: messages::Message) -> Result<()> {
         if let Some(observer) = &self.observer {
             observer.lock().await.on_message(&message);
         }
         let source_id = message.source_id;
         let command = message.command;
         let result = match command {
-            Command::Controller(client_command) => {
+            messages::Payload::Client(client_command) => {
                 self.handle_client_command(source_id, client_command).await
             }
-            Command::System(internal_command) => {
+            messages::Payload::System(internal_command) => {
                 self.handle_internal_command(source_id, internal_command)
                     .await
             }
-            Command::Invalid => {
+            messages::Payload::Invalid => {
                 tracing::error!("invalid command received from {}", source_id);
                 Ok(())
             }
@@ -123,37 +123,29 @@ impl Engine {
     async fn handle_client_command(
         &mut self,
         source_id: usize,
-        client_command: crate::commands::ControllerCommand,
+        client_command: crate::messages::ClientCommand,
     ) -> Result<()> {
         match client_command {
-            commands::ControllerCommand::Echo(message) => {
-                self.handle_echo(source_id, message).await
-            }
-            commands::ControllerCommand::Init(init) => self.handle_init(init, source_id),
-            commands::ControllerCommand::UpdateSceneObject(update) => {
+            messages::ClientCommand::Echo(message) => self.handle_echo(source_id, message).await,
+            messages::ClientCommand::Init(init) => self.handle_init(init, source_id),
+            messages::ClientCommand::UpdateSceneObject(update) => {
                 self.handle_update_scene_obj(update)
             }
-            commands::ControllerCommand::AddSceneObject(object) => {
-                self.handle_add_scene_obj(object)
-            }
-            commands::ControllerCommand::ClearScene(_) => {
+            messages::ClientCommand::AddSceneObject(object) => self.handle_add_scene_obj(object),
+            messages::ClientCommand::ClearScene(_) => {
                 self.ensure_idle_mode()?;
                 self.active_state.scene.objects_mut().clear();
                 Ok(())
             }
-            commands::ControllerCommand::DeleteSceneObject(name) => {
-                self.handle_delete_scene_obj(name)
-            }
-            commands::ControllerCommand::ChangeMode(mode_change) => {
+            messages::ClientCommand::DeleteSceneObject(name) => self.handle_delete_scene_obj(name),
+            messages::ClientCommand::ChangeMode(mode_change) => {
                 self.handle_mode_change(mode_change)
             }
-            commands::ControllerCommand::SampleMotion(sample) => {
-                self.handle_sample(sample, source_id)
-            }
+            messages::ClientCommand::SampleMotion(sample) => self.handle_sample(sample, source_id),
         }
     }
 
-    fn handle_sample(&mut self, sample: commands::SampleMotion, source_id: usize) -> Result<()> {
+    fn handle_sample(&mut self, sample: messages::SampleMotion, source_id: usize) -> Result<()> {
         if self.active_state.mode.is_idle() {
             tracing::debug!("ignoring sample motion command because the mode is idle");
             return Ok(());
@@ -193,7 +185,7 @@ impl Engine {
         Ok(())
     }
 
-    fn handle_mode_change(&mut self, mode_change: commands::ChangeMode) -> Result<()> {
+    fn handle_mode_change(&mut self, mode_change: messages::ChangeMode) -> Result<()> {
         let is_sample_mode = !self.active_state.mode.is_idle();
         if is_sample_mode && mode_change.0.is_idle() {
             // Reset the sampling state, we don't need to worry about the scene objects
@@ -204,13 +196,13 @@ impl Engine {
         Ok(())
     }
 
-    fn handle_delete_scene_obj(&mut self, name: commands::DeleteSceneObject) -> Result<()> {
+    fn handle_delete_scene_obj(&mut self, name: messages::DeleteSceneObject) -> Result<()> {
         self.ensure_idle_mode()?;
         self.active_state.scene.objects_mut().remove(&name.0);
         Ok(())
     }
 
-    fn handle_add_scene_obj(&mut self, object: commands::AddSceneObject) -> Result<()> {
+    fn handle_add_scene_obj(&mut self, object: messages::AddSceneObject) -> Result<()> {
         self.ensure_idle_mode()?;
         let object = object.0;
         let name = object.name().clone();
@@ -226,7 +218,7 @@ impl Engine {
         }
     }
 
-    fn handle_update_scene_obj(&mut self, update: commands::UpdateSceneObject) -> Result<()> {
+    fn handle_update_scene_obj(&mut self, update: messages::UpdateSceneObject) -> Result<()> {
         self.ensure_idle_mode()?;
         let scene_object = update.0;
         let name = scene_object.name().clone();
@@ -242,7 +234,7 @@ impl Engine {
         }
     }
 
-    fn handle_init(&mut self, init: commands::Init, source_id: usize) -> Result<()> {
+    fn handle_init(&mut self, init: messages::Init, source_id: usize) -> Result<()> {
         self.ensure_idle_mode()?;
         let peer = init.peer;
         let context = self.network.context_mut(source_id);
@@ -253,7 +245,7 @@ impl Engine {
         Ok(())
     }
 
-    async fn handle_echo(&mut self, source_id: usize, message: commands::Echo) -> Result<()> {
+    async fn handle_echo(&mut self, source_id: usize, message: messages::Echo) -> Result<()> {
         tracing::info!("echo: {message}");
         let event = Event {
             target: Some(source_id),
@@ -269,21 +261,21 @@ impl Engine {
     async fn handle_internal_command(
         &mut self,
         source_id: usize,
-        internal_command: crate::commands::SystemCommand,
+        internal_command: crate::messages::SystemCommand,
     ) -> Result<()> {
         match internal_command {
-            commands::SystemCommand::AddConnection(conn) => {
+            messages::SystemCommand::AddConnection(conn) => {
                 self.network.add_connection(conn).await?;
                 Ok(())
             }
-            commands::SystemCommand::OpenConnection(_) => {
+            messages::SystemCommand::OpenConnection(_) => {
                 self.send(Event {
                     target: Some(source_id),
                     body: events::ConnectionOpenedEvent().into(),
                 })
                 .await
             }
-            commands::SystemCommand::CloseConnection(_) => {
+            messages::SystemCommand::CloseConnection(_) => {
                 self.network.close_connection(source_id).await
             }
         }

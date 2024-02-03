@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-use cinemotion::{engine, Event, Message, Result, State};
+use cinemotion::{engine, messages, Event, Result, State};
 
 #[derive(Default, Clone)]
 struct ObserverSpy {
@@ -22,7 +22,7 @@ impl engine::Observer for HarnessObserver {
     fn on_event(&mut self, event: &Event) {
         self.spy.lock().unwrap().observed_events.push(event.clone());
     }
-    fn on_message(&mut self, _: &Message) {}
+    fn on_message(&mut self, _: &messages::Message) {}
 }
 
 pub struct EngineTestHarness {
@@ -56,7 +56,7 @@ impl EngineTestHarness {
         Self { engine, spy }
     }
 
-    pub async fn send_message(&mut self, message: Message) -> Result<()> {
+    pub async fn send_message(&mut self, message: messages::Message) -> Result<()> {
         self.engine.apply(message).await
     }
 
@@ -91,7 +91,7 @@ pub struct Task {
 }
 
 pub enum Action {
-    Message(Message),
+    Message(messages::Message),
     ExpectEvents(Vec<Event>),
     ExpectEvent(Box<dyn FnMut(&Event) -> bool>),
     ExpectState(Box<dyn FnMut(&mut State)>),
@@ -108,8 +108,8 @@ impl Debug for Action {
     }
 }
 
-impl From<Message> for Action {
-    fn from(message: Message) -> Self {
+impl From<messages::Message> for Action {
+    fn from(message: messages::Message) -> Self {
         Action::Message(message)
     }
 }

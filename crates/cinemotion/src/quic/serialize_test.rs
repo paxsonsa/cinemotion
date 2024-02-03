@@ -1,5 +1,5 @@
-use bytes::{Buf, BufMut, BytesMut};
-use pretty_assertions_sorted::{assert_eq_sorted, assert_ne};
+use bytes::{BufMut, BytesMut};
+use pretty_assertions_sorted::assert_eq_sorted;
 
 use super::*;
 

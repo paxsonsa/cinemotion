@@ -1,14 +1,12 @@
 use super::Service;
-use bytes::BytesMut;
 use hostname;
 use quinn::{Endpoint, ServerConfig};
-use std::borrow::BorrowMut;
 use std::pin::Pin;
 use std::str;
-use std::{net::SocketAddr, sync::Arc};
+use std::sync::Arc;
 
-use crate::commands::{AddConnection, MessagePipeTx};
 use crate::connection::LOCAL_CONN_ID;
+use crate::messages::{AddConnection, Message as MessageFrame, MessagePipeTx};
 use crate::quic;
 
 pub const ALPN_QUIC_HTTP: &[&[u8]] = &[b"cinemotionv1"];
@@ -112,7 +110,7 @@ async fn run_server(sender: MessagePipeTx) {
             Ok(conn) => {
                 let (ack_pipe, ack_pipe_rx) = tokio::sync::oneshot::channel();
                 let agent = Box::new(quic::QuicAgent::new(conn, ack_pipe_rx));
-                if let Err(err) = sender.send(crate::Message::with_command(
+                if let Err(err) = sender.send(MessageFrame::with_command(
                     LOCAL_CONN_ID,
                     AddConnection { agent, ack_pipe },
                 )) {
@@ -149,12 +147,6 @@ async fn get_certificate_names() -> Vec<String> {
 // Implementation of `ServerCertVerifier` that verifies everything as trustworthy.
 struct SkipServerVerification;
 
-impl SkipServerVerification {
-    fn new() -> Arc<Self> {
-        Arc::new(Self)
-    }
-}
-
 impl rustls::client::ServerCertVerifier for SkipServerVerification {
     fn verify_server_cert(
         &self,
@@ -167,12 +159,4 @@ impl rustls::client::ServerCertVerifier for SkipServerVerification {
     ) -> Result<rustls::client::ServerCertVerified, rustls::Error> {
         Ok(rustls::client::ServerCertVerified::assertion())
     }
-}
-fn configure_client() -> quinn::ClientConfig {
-    let crypto = rustls::ClientConfig::builder()
-        .with_safe_defaults()
-        .with_custom_certificate_verifier(SkipServerVerification::new())
-        .with_no_client_auth();
-
-    quinn::ClientConfig::new(Arc::new(crypto))
 }

@@ -109,7 +109,7 @@ async fn handle_post_sessions(
     session_desc: WebRTCSessionDescriptor,
     manager: Arc<Mutex<SignalingRelay>>,
 ) -> Result<impl warp::Reply, Infallible> {
-    let mut manager = manager.lock().await;
+    let manager = manager.lock().await;
     match manager.create(session_desc).await {
         Ok(r) => Ok(warp::reply::with_status(
             warp::reply::json(&r),

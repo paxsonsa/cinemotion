@@ -2,7 +2,7 @@ mod connection;
 mod error;
 mod state;
 
-use crate::commands::Echo;
+use crate::messages::Echo;
 
 pub use connection::*;
 pub use error::*;
@@ -60,4 +60,12 @@ impl From<ErrorEvent> for EventBody {
     fn from(value: ErrorEvent) -> Self {
         Self::Error(value)
     }
+}
+
+pub type EventPipeTx = tokio::sync::broadcast::Sender<Event>;
+pub type EventPipeRx = tokio::sync::broadcast::Receiver<Event>;
+
+pub fn event_pipe() -> EventPipeTx {
+    let (sender, _) = tokio::sync::broadcast::channel(1024);
+    sender
 }

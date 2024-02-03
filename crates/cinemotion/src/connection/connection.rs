@@ -3,8 +3,9 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tokio::task::JoinHandle;
 
-use crate::commands::{Command, EventPipeRx, MessagePipeTx};
-use crate::{Error, Message};
+use crate::events::EventPipeRx;
+use crate::messages::{Message, MessagePipeTx, Payload};
+use crate::Error;
 
 use super::{ConnectionAgent, SendHandlerFn};
 
@@ -51,7 +52,7 @@ impl Connection {
     }
 
     fn make_send(uid: usize, message_pipe: MessagePipeTx) -> SendHandlerFn {
-        Box::new(move |command: Command| {
+        Box::new(move |command: Payload| {
             let message = Message::with_command(uid, command);
             if let Err(err) = message_pipe.send(message) {
                 let msg = format!(

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::*;
-use crate::{engine::components::network::NetworkComponent, *};
+use crate::*;
 
 struct NetworkSpyValues {
     events: Vec<Event>,
@@ -38,7 +38,7 @@ impl super::network::NetworkComponent for NetworkSpy {
         Some(&self.context)
     }
     /// Create and add a connection to manage
-    async fn add_connection(&mut self, _: commands::AddConnection) -> Result<()> {
+    async fn add_connection(&mut self, _: messages::AddConnection) -> Result<()> {
         Ok(())
     }
     /// Close the connection and stop communicating with the peer.
@@ -67,7 +67,7 @@ async fn test_init_errors_when_not_idle() {
         .build()
         .expect("failed to build engine");
 
-    let command = crate::commands::Init {
+    let command = crate::messages::Init {
         peer: data::Controller {
             name: name!("controllerA"),
             properties: HashMap::new(),
@@ -95,7 +95,7 @@ async fn test_update_scene_obj_errors_when_not_idle() {
         .expect("failed to build engine");
 
     let command =
-        crate::commands::UpdateSceneObject(crate::SceneObject::new(name!("obj"), HashMap::new()));
+        crate::messages::UpdateSceneObject(crate::SceneObject::new(name!("obj"), HashMap::new()));
 
     assert!(matches!(
         engine.handle_update_scene_obj(command),
@@ -119,7 +119,7 @@ async fn test_add_scene_obj_errors_when_not_idle() {
         .expect("failed to build engine");
 
     let command =
-        crate::commands::AddSceneObject(crate::SceneObject::new(name!("obj"), HashMap::new()));
+        crate::messages::AddSceneObject(crate::SceneObject::new(name!("obj"), HashMap::new()));
 
     assert!(matches!(
         engine.handle_add_scene_obj(command),
@@ -142,7 +142,7 @@ async fn test_delete_scene_obj_errors_when_not_idle() {
         .build()
         .expect("failed to build engine");
 
-    let command = crate::commands::DeleteSceneObject(name!("objectA"));
+    let command = crate::messages::DeleteSceneObject(name!("objectA"));
 
     assert!(matches!(
         engine.handle_delete_scene_obj(command),

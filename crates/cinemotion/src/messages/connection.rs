@@ -1,4 +1,4 @@
-use super::{Command, ControllerCommand, SystemCommand};
+use super::{ClientCommand, Payload, SystemCommand};
 use crate::connection::ConnectionAgent;
 use crate::data::controllers;
 use crate::Result;
@@ -10,9 +10,9 @@ pub struct Init {
     pub peer: controllers::Controller,
 }
 
-impl From<Init> for Command {
+impl From<Init> for Payload {
     fn from(value: Init) -> Self {
-        Self::Controller(ControllerCommand::Init(value))
+        Self::Client(ClientCommand::Init(value))
     }
 }
 
@@ -27,7 +27,7 @@ impl From<proto::InitCommand> for Init {
 #[derive(Debug)]
 pub struct OpenConnection {}
 
-impl From<OpenConnection> for Command {
+impl From<OpenConnection> for Payload {
     fn from(value: OpenConnection) -> Self {
         Self::System(SystemCommand::OpenConnection(value))
     }
@@ -47,7 +47,7 @@ impl Debug for AddConnection {
     }
 }
 
-impl From<AddConnection> for Command {
+impl From<AddConnection> for Payload {
     fn from(value: AddConnection) -> Self {
         Self::System(SystemCommand::AddConnection(value))
     }
@@ -56,7 +56,7 @@ impl From<AddConnection> for Command {
 #[derive(Debug)]
 pub struct CloseConnection {}
 
-impl From<CloseConnection> for Command {
+impl From<CloseConnection> for Payload {
     fn from(value: CloseConnection) -> Self {
         Self::System(SystemCommand::CloseConnection(value))
     }

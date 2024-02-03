@@ -1,7 +1,5 @@
-use crate::commands;
+use crate::messages;
 use bytes::{Buf, Bytes};
-use futures::{task::Context, task::Poll, Future, FutureExt};
-use std::pin::Pin;
 use thiserror::Error;
 
 #[cfg(test)]
@@ -9,7 +7,7 @@ use thiserror::Error;
 mod stream_test;
 
 #[derive(Clone, Debug, Error, PartialEq)]
-enum FrameError {
+pub enum FrameError {
     #[error("invalid frame: {0}")]
     InvalidFrame(String),
 }
@@ -92,7 +90,7 @@ pub enum RecvError {
     NotImplemented,
 }
 
-pub async fn recv_command<T>(stream: &mut T) -> Result<commands::Command, RecvError>
+pub async fn recv_command<T>(stream: &mut T) -> Result<messages::Payload, RecvError>
 where
     T: tokio::io::AsyncReadExt + Send + Sync + Unpin,
 {
@@ -103,7 +101,7 @@ where
     match frame.frame_type() {
         FrameType::Command => {
             todo!();
-            // let command: commands::Command = frame.into();
+            // let command: messages::Command = frame.into();
             // Ok(command)
         }
         FrameType::Error => Err(RecvError::NotImplemented),

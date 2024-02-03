@@ -3,8 +3,9 @@ use std::collections::HashMap;
 use async_trait::async_trait;
 
 use crate::{
-    commands::{event_pipe, AddConnection, EventPipeTx, MessagePipeTx},
     connection::{Connection, Context},
+    events::{event_pipe, EventPipeTx},
+    messages::{AddConnection, MessagePipeTx},
     Error, Event, Result,
 };
 

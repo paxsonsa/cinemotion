@@ -2,7 +2,7 @@ use paste::paste;
 use std::collections::HashMap;
 
 use cinemotion::{
-    commands, connection::LOCAL_CONN_ID, data, events, name, Event, EventBody, Message, State,
+    connection::LOCAL_CONN_ID, data, events, messages, name, Event, EventBody, State,
 };
 
 mod common;
@@ -14,9 +14,9 @@ harness!(connection_setup, { State::default() }, {
     vec![
         message!(
             "create connection",
-            Message {
+            messages::Message {
                 source_id: LOCAL_CONN_ID,
-                command: commands::AddConnection {
+                command: messages::AddConnection {
                     agent: Box::<common::session::DummyAgent>::default(),
                     ack_pipe,
                 }
@@ -25,9 +25,9 @@ harness!(connection_setup, { State::default() }, {
         ),
         message!(
             "open connection",
-            Message {
+            messages::Message {
                 source_id: 1, // Hardcoded Id that should be set.
-                command: commands::OpenConnection {}.into(),
+                command: messages::OpenConnection {}.into(),
             }
         ),
         events!(
@@ -39,9 +39,9 @@ harness!(connection_setup, { State::default() }, {
         ),
         message!(
             "initial connection session",
-            Message {
+            messages::Message {
                 source_id: 1,
-                command: commands::Init {
+                command: messages::Init {
                     peer: data::Controller {
                         name: name!("test"),
                         properties: vec![data::Property::with_default_value(

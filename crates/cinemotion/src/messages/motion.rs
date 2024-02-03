@@ -6,9 +6,9 @@ use crate::data::{motion::Mode, Sample};
 #[derive(Debug, Clone, PartialEq)]
 pub struct ChangeMode(pub Mode);
 
-impl From<ChangeMode> for Command {
+impl From<ChangeMode> for Payload {
     fn from(value: ChangeMode) -> Self {
-        Self::Controller(ControllerCommand::ChangeMode(value))
+        Self::Client(ClientCommand::ChangeMode(value))
     }
 }
 
@@ -21,9 +21,9 @@ impl From<proto::ChangeMode> for ChangeMode {
 #[derive(Debug, Clone, PartialEq)]
 pub struct SampleMotion(pub Sample);
 
-impl From<SampleMotion> for Command {
+impl From<SampleMotion> for Payload {
     fn from(value: SampleMotion) -> Self {
-        Self::Controller(ControllerCommand::SampleMotion(value))
+        Self::Client(ClientCommand::SampleMotion(value))
     }
 }
 

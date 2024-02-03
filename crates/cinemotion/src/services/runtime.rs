@@ -3,10 +3,10 @@ use std::{pin::Pin, time::Duration};
 use async_trait::async_trait;
 
 use crate::{
-    commands::{MessagePipeRx, MessagePipeTx},
     engine::network::NetworkComponentImpl,
     engine::Engine,
-    Error, Message, Result,
+    messages::{Message, MessagePipeRx, MessagePipeTx},
+    Error, Result,
 };
 
 use super::Service;

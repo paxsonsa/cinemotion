@@ -1,15 +1,14 @@
-use crate::Command;
-use crate::Name;
+use super::Payload;
 
 #[derive(Debug)]
 pub struct Message {
     pub source_id: usize,
-    pub command: Command,
+    pub command: Payload,
 }
 
 impl Message {
-    pub fn with_command(conn_id: usize, command: impl Into<Command>) -> Message {
-        Message {
+    pub fn with_command(conn_id: usize, command: impl Into<Payload>) -> Message {
+        Self {
             source_id: conn_id,
             command: command.into(),
         }

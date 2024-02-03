@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::{commands::AddConnection, connection, Event, Result};
+use crate::{connection, messages::AddConnection, Event, Result};
 
 /// A component that handles all the network operations.
 #[async_trait]

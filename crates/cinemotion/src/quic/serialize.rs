@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use bytes::{Buf, Bytes};
 
 use super::stream::*;
-use crate::commands::*;
 use crate::data::*;
+use crate::messages;
 use crate::Name;
 
 #[cfg(test)]
@@ -36,7 +36,7 @@ pub enum DeserializeError {
     Value,
 }
 
-impl TryFrom<Frame> for Command {
+impl TryFrom<Frame> for messages::Payload {
     type Error = DeserializeError;
 
     fn try_from(frame: Frame) -> Result<Self, Self::Error> {
@@ -54,12 +54,12 @@ impl TryFrom<Frame> for Command {
                     CommandKind::Init => Ok(deserialize_init(payload)?.into()),
                 }
             }
-            _ => Ok(Command::Invalid),
+            _ => Ok(messages::Payload::Invalid),
         }
     }
 }
 
-fn deserialize_init(mut payload: Bytes) -> Result<Init, DeserializeError> {
+fn deserialize_init(mut payload: Bytes) -> Result<messages::Init, DeserializeError> {
     let name_len = payload.get_u16();
     let name = payload.split_to(name_len as usize).to_vec();
     let name = String::from_utf8(name).map_err(|_| DeserializeError::String)?;
@@ -79,7 +79,7 @@ fn deserialize_init(mut payload: Bytes) -> Result<Init, DeserializeError> {
         properties.insert(property.name.clone(), property);
     }
 
-    Ok(Init {
+    Ok(messages::Init {
         peer: Controller {
             name: name.into(),
             properties,

@@ -1,6 +1,6 @@
-use crate::commands::{AddConnection, MessagePipeTx};
 use crate::connection::LOCAL_CONN_ID;
-use crate::{Error, Message, Result};
+use crate::messages::{AddConnection, Message, MessagePipeTx};
+use crate::{Error, Result};
 
 use crate::data::WebRTCSessionDescriptor;
 

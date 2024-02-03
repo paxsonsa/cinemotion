@@ -2,7 +2,7 @@ use cinemotion::data::PropertyLink;
 use paste::paste;
 use std::collections::HashMap;
 
-use cinemotion::{commands, data, name, scene, Message, State};
+use cinemotion::{data, messages, name, scene, State};
 
 mod common;
 use common::*;
@@ -51,9 +51,9 @@ harness!(
         vec![
             message!(
                 "update the motion mode to be live",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::ChangeMode(data::Mode::Live).into(),
+                    command: messages::ChangeMode(data::Mode::Live).into(),
                 }
             ),
             state!("verify that the mode is live", |state: &mut State| {
@@ -61,9 +61,9 @@ harness!(
             }),
             message!(
                 "send a motion sample",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::SampleMotion(data::Sample::new(HashMap::from([(
+                    command: messages::SampleMotion(data::Sample::new(HashMap::from([(
                         name!("position"),
                         data::Value::Vec3((0.0, 1.0, 0.0).into())
                     ),])))
@@ -145,9 +145,9 @@ harness!(
         vec![
             message!(
                 "send a motion sample",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::SampleMotion(data::Sample::new(HashMap::from([(
+                    command: messages::SampleMotion(data::Sample::new(HashMap::from([(
                         name!("position"),
                         data::Value::Vec3((0.0, 1.0, 0.0).into())
                     ),])))
@@ -233,9 +233,9 @@ harness!(
         vec![
             message!(
                 "change mode to idle",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::ChangeMode(data::Mode::Idle).into(),
+                    command: messages::ChangeMode(data::Mode::Idle).into(),
                 }
             ),
             state!(

@@ -1,13 +1,13 @@
-use super::{Command, ControllerCommand};
+use super::{ClientCommand, Payload};
 use crate::scene;
 use cinemotion_proto as proto;
 
 #[derive(Debug)]
 pub struct AddSceneObject(pub scene::SceneObject);
 
-impl From<AddSceneObject> for Command {
+impl From<AddSceneObject> for Payload {
     fn from(value: AddSceneObject) -> Self {
-        Self::Controller(ControllerCommand::AddSceneObject(value))
+        Self::Client(ClientCommand::AddSceneObject(value))
     }
 }
 
@@ -29,9 +29,9 @@ impl From<proto::ClearScene> for ClearScene {
 #[derive(Debug)]
 pub struct DeleteSceneObject(pub crate::Name);
 
-impl From<DeleteSceneObject> for Command {
+impl From<DeleteSceneObject> for Payload {
     fn from(value: DeleteSceneObject) -> Self {
-        Self::Controller(ControllerCommand::DeleteSceneObject(value))
+        Self::Client(ClientCommand::DeleteSceneObject(value))
     }
 }
 
@@ -44,9 +44,9 @@ impl From<proto::DeleteSceneObject> for DeleteSceneObject {
 #[derive(Debug)]
 pub struct UpdateSceneObject(pub scene::SceneObject);
 
-impl From<UpdateSceneObject> for Command {
+impl From<UpdateSceneObject> for Payload {
     fn from(value: UpdateSceneObject) -> Self {
-        Self::Controller(ControllerCommand::UpdateSceneObject(value))
+        Self::Client(ClientCommand::UpdateSceneObject(value))
     }
 }
 

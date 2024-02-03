@@ -1,22 +1,23 @@
 use super::*;
-use crate::{quic, Error, Result};
+use crate::{Error, Result};
 
 #[derive(Debug)]
-pub enum Command {
+pub enum Payload {
+    // Error(ErrorMessage),
     System(SystemCommand),
-    Controller(ControllerCommand),
+    Client(ClientCommand),
     Invalid,
 }
 
-impl Command {
+impl Payload {
     pub fn from_protobuf(buf: cinemotion_proto::Command) -> Result<Self> {
         let Some(payload) = buf.payload else {
             return Err(Error::BadCommand(
                 "failed to decode command from protobuf, no payload found".to_string(),
             ));
         };
-        let command = ControllerCommand::from_protobuf(payload)?;
-        Ok(Self::Controller(command))
+        let command = ClientCommand::from_protobuf(payload)?;
+        Ok(Self::Client(command))
     }
 
     /// Decode a command from a byte buffer.
@@ -29,15 +30,15 @@ impl Command {
     }
 }
 
-impl From<SystemCommand> for Command {
+impl From<SystemCommand> for Payload {
     fn from(value: SystemCommand) -> Self {
         Self::System(value)
     }
 }
 
-impl From<ControllerCommand> for Command {
-    fn from(value: ControllerCommand) -> Self {
-        Self::Controller(value)
+impl From<ClientCommand> for Payload {
+    fn from(value: ClientCommand) -> Self {
+        Self::Client(value)
     }
 }
 
@@ -59,7 +60,7 @@ impl From<AddConnection> for SystemCommand {
 /// Controller commands are received from the controller to
 /// control the engine.
 #[derive(Debug)]
-pub enum ControllerCommand {
+pub enum ClientCommand {
     Echo(Echo),
     Init(Init),
     ChangeMode(ChangeMode),
@@ -70,14 +71,14 @@ pub enum ControllerCommand {
     SampleMotion(SampleMotion),
 }
 
-impl ControllerCommand {
+impl ClientCommand {
     /// Decode a command from a byte buffer.
     pub fn from_protobuf(payload: cinemotion_proto::command::Payload) -> Result<Self> {
         Ok(payload.into())
     }
 }
 
-impl From<cinemotion_proto::command::Payload> for ControllerCommand {
+impl From<cinemotion_proto::command::Payload> for ClientCommand {
     fn from(value: cinemotion_proto::command::Payload) -> Self {
         match value {
             cinemotion_proto::command::Payload::Echo(p) => Self::Echo(p.into()),

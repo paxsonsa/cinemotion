@@ -1,6 +1,6 @@
 use std::fmt::{self, Display, Formatter};
 
-use super::ControllerCommand;
+use super::ClientCommand;
 use cinemotion_proto::Echo as EchoProto;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -19,7 +19,7 @@ impl From<String> for Echo {
     }
 }
 
-impl From<Echo> for ControllerCommand {
+impl From<Echo> for ClientCommand {
     fn from(value: Echo) -> Self {
         Self::Echo(value)
     }

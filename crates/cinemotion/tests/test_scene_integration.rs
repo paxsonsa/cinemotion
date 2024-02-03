@@ -2,13 +2,13 @@ use cinemotion::data::PropertyLink;
 use paste::paste;
 use std::collections::HashMap;
 
-use cinemotion::{commands, data, name, scene, Error, Event, EventBody, Message, State};
+use cinemotion::{data, messages, name, scene, Error, Event, EventBody, State};
 
 mod common;
 use common::*;
 
 harness!(
-    scene_object_commands,
+    scene_object_messages,
     {
         let mut state = State::default();
         let mut controllers = HashMap::new();
@@ -32,9 +32,9 @@ harness!(
         vec![
             message!(
                 "attempt to update a scene object that does not exist",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::UpdateSceneObject(scene::SceneObject::new(
+                    command: messages::UpdateSceneObject(scene::SceneObject::new(
                         name!("doesnotexist"),
                         HashMap::from([(
                             name!("position"),
@@ -62,9 +62,9 @@ harness!(
             }),
             message!(
                 "add a new scene object.",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::AddSceneObject(scene::SceneObject::new(
+                    command: messages::AddSceneObject(scene::SceneObject::new(
                         name!("object1"),
                         HashMap::from([(
                             name!("position"),
@@ -91,9 +91,9 @@ harness!(
             ),
             message!(
                 "try to add a existing scene object.",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::AddSceneObject(scene::SceneObject::new(
+                    command: messages::AddSceneObject(scene::SceneObject::new(
                         name!("object1"),
                         HashMap::from([(
                             name!("position"),
@@ -117,9 +117,9 @@ harness!(
             }),
             message!(
                 "update the root scene object to map controller property to object",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::UpdateSceneObject(scene::SceneObject::new(
+                    command: messages::UpdateSceneObject(scene::SceneObject::new(
                         name!("default"),
                         HashMap::from([(
                             name!("position"),
@@ -154,9 +154,9 @@ harness!(
             ),
             message!(
                 "delete object in the scene",
-                Message {
+                messages::Message {
                     source_id: 1,
-                    command: commands::DeleteSceneObject(name!("object1"),).into(),
+                    command: messages::DeleteSceneObject(name!("object1"),).into(),
                 }
             ),
             state!("check that the object was deleted", |state: &mut State| {
