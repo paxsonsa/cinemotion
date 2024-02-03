@@ -1,4 +1,5 @@
 use bytes::{Buf, BufMut, BytesMut};
+use pretty_assertions_sorted::{assert_eq_sorted, assert_ne};
 
 use super::*;
 
@@ -109,7 +110,7 @@ fn test_init_deserialization() {
     bytes.put_f64(3.0);
     bytes.put_f64(4.0);
 
-    let name = Bytes::from("propertyC");
+    let name = Bytes::from("propertyD");
     bytes.put_u16(name.len() as u16);
     bytes.put(name);
     bytes.put_u8(4);
@@ -159,5 +160,5 @@ fn test_init_deserialization() {
     };
 
     let parsed = deserialize_init(bytes.freeze()).expect("should not fail to deserialize");
-    assert_eq!(parsed.peer, controller);
+    assert_eq_sorted!(parsed.peer, controller);
 }
