@@ -2,6 +2,7 @@ use bytes::{BufMut, BytesMut};
 use pretty_assertions_sorted::assert_eq_sorted;
 
 use super::*;
+use crate::*;
 
 #[test]
 fn test_value_float_deserialization() {
@@ -9,9 +10,9 @@ fn test_value_float_deserialization() {
     bytes.put_u8(1);
     bytes.put_f64(88.0);
 
-    let mut bytes = bytes.freeze();
-    let value = deserilize_value(&mut bytes).expect("the value should be parsable.");
-    assert_eq!(value, Value::Float(88.0));
+    let bytes = bytes.freeze();
+    let value = data::Value::try_from(&mut bytes.into()).expect("the value should be parsable.");
+    assert_eq!(value, data::Value::Float(88.0));
 }
 
 #[test]
@@ -22,9 +23,9 @@ fn test_value_vec3_deserialization() {
     bytes.put_f64(2.0);
     bytes.put_f64(3.0);
 
-    let mut bytes = bytes.freeze();
-    let value = deserilize_value(&mut bytes).expect("the value should be parsable.");
-    assert_eq!(value, Value::Vec3(Vec3::from((1.0, 2.0, 3.0))));
+    let bytes = bytes.freeze();
+    let value = data::Value::try_from(&mut bytes.into()).expect("the value should be parsable.");
+    assert_eq!(value, data::Value::Vec3(data::Vec3::from((1.0, 2.0, 3.0))));
 }
 
 #[test]
@@ -36,9 +37,12 @@ fn test_value_vec4_deserialization() {
     bytes.put_f64(3.0);
     bytes.put_f64(4.0);
 
-    let mut bytes = bytes.freeze();
-    let value = deserilize_value(&mut bytes).expect("the value should be parsable.");
-    assert_eq!(value, Value::Vec4(Vec4::from((1.0, 2.0, 3.0, 4.0))));
+    let bytes = bytes.freeze();
+    let value = data::Value::try_from(&mut bytes.into()).expect("the value should be parsable.");
+    assert_eq!(
+        value,
+        data::Value::Vec4(data::Vec4::from((1.0, 2.0, 3.0, 4.0)))
+    );
 }
 
 #[test]
@@ -62,11 +66,11 @@ fn test_value_matrix44_deserialization() {
     bytes.put_f64(15.0);
     bytes.put_f64(16.0);
 
-    let mut bytes = bytes.freeze();
-    let value = deserilize_value(&mut bytes).expect("the value should be parsable.");
+    let bytes = bytes.freeze();
+    let value = data::Value::try_from(&mut bytes.into()).expect("the value should be parsable.");
     assert_eq!(
         value,
-        Value::Matrix44(Matrix44::from([
+        data::Value::Matrix44(data::Matrix44::from([
             [1.0, 2.0, 3.0, 4.0],
             [5.0, 6.0, 7.0, 8.0],
             [9.0, 10.0, 11.0, 12.0],
@@ -131,20 +135,14 @@ fn test_init_deserialization() {
     bytes.put_f64(15.0);
     bytes.put_f64(16.0);
 
-    let controller = crate::data::Controller {
-        name: crate::name!("my controller 🕹️"),
+    let controller = data::Controller {
+        name: name!("my controller 🕹️"),
         properties: vec![
-            crate::data::Property::with_default_value(crate::name!("propertyA"), 1.0.into()),
-            crate::data::Property::with_default_value(
-                crate::name!("propertyB"),
-                (1.0, 2.0, 3.0).into(),
-            ),
-            crate::data::Property::with_default_value(
-                crate::name!("propertyC"),
-                (1.0, 2.0, 3.0, 4.0).into(),
-            ),
-            crate::data::Property::with_default_value(
-                crate::name!("propertyD"),
+            data::Property::with_default_value(name!("propertyA"), 1.0.into()),
+            data::Property::with_default_value(name!("propertyB"), (1.0, 2.0, 3.0).into()),
+            data::Property::with_default_value(name!("propertyC"), (1.0, 2.0, 3.0, 4.0).into()),
+            data::Property::with_default_value(
+                name!("propertyD"),
                 [
                     [1.0, 2.0, 3.0, 4.0],
                     [5.0, 6.0, 7.0, 8.0],
@@ -159,6 +157,9 @@ fn test_init_deserialization() {
         .collect(),
     };
 
-    let parsed = deserialize_init(bytes.freeze()).expect("should not fail to deserialize");
+    let parsed: messages::Init = (&mut QuicBytes::new(bytes.freeze()))
+        .try_into()
+        .expect("the init should be deserializable.");
+
     assert_eq_sorted!(parsed.peer, controller);
 }

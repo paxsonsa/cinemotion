@@ -1,5 +1,6 @@
 use crate::messages;
 use bytes::{Buf, Bytes};
+use std::ops::{Deref, DerefMut};
 use thiserror::Error;
 
 #[cfg(test)]
@@ -28,11 +29,45 @@ impl From<u8> for FrameType {
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub struct QuicBytes(Bytes);
+
+impl QuicBytes {
+    pub fn new(bytes: Bytes) -> Self {
+        Self(bytes)
+    }
+}
+
+impl Deref for QuicBytes {
+    type Target = Bytes;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for QuicBytes {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl From<Bytes> for QuicBytes {
+    fn from(value: Bytes) -> Self {
+        Self(value)
+    }
+}
+
+impl Clone for QuicBytes {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+
 pub struct Frame {
     pub api_version: u8,
     pub kind: u8,
     pub payload_length: u32,
-    pub payload: Bytes,
+    pub payload: QuicBytes,
 }
 
 impl Frame {
@@ -69,7 +104,7 @@ impl Frame {
             api_version,
             kind: frame_type,
             payload_length,
-            payload: buf.freeze(),
+            payload: buf.freeze().into(),
         })
     }
 

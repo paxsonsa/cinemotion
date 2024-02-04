@@ -19,6 +19,5 @@ async fn test_frame_from_stream() {
     assert_eq!(frame.api_version, 1);
     assert_eq!(frame.kind, 0);
     assert_eq!(frame.payload_length, 4);
-    assert_eq!(frame.payload, Bytes::from_static(&[1, 2, 3, 4]));
+    assert_eq!(frame.payload, Bytes::from_static(&[1, 2, 3, 4]).into());
 }
-
