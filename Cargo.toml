@@ -9,7 +9,7 @@ license = "MIT"
 
 [workspace.dependencies]
 anyhow = "1.0"
-arc-swap = "1.6.0"
+arc-swap = "1.7.0"
 async-trait = "0.1.75"
 bytes = "1.5"
 chrono = "0.4.24"
