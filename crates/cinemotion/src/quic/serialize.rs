@@ -1,6 +1,5 @@
 use bytes::{Buf, Bytes};
 use std::collections::HashMap;
-use std::ops::DerefMut;
 
 use super::stream::*;
 use crate::data;
@@ -62,37 +61,6 @@ impl TryFrom<Frame> for messages::Payload {
 }
 
 /// Deserialize a `messages::Init` from a quic byte buffer.
-///
-/// ```rust
-/// use bytes::{Bytes, BytesMut};
-/// use cinemotion::messages;
-/// let mut bytes = BytesMut::new();
-///
-/// // Controller name
-/// let name: Bytes = "my controller 🕹️".into();
-/// bytes.put_u16(name.len() as u16);
-/// bytes.put(name);
-///
-/// // Add Properties
-/// bytes.put_u16(4); // number of properties
-///
-/// let name = Bytes::from("propertyA");
-/// bytes.put_u16(name.len() as u16);
-/// bytes.put(name);
-/// bytes.put_u8(1);
-/// bytes.put_f64(1.0);
-///
-/// let name = Bytes::from("propertyB");
-/// bytes.put_u16(name.len() as u16);
-/// bytes.put(name);
-/// bytes.put_u8(2);
-/// bytes.put_f64(1.0);
-/// bytes.put_f64(2.0);
-/// bytes.put_f64(3.0);
-///
-/// let quic_bytes = QuicBytes(bytes.freeze());
-/// let init: messages::Init = quic_bytes.try_into().expect("the init should be deserializable.");
-/// ```
 impl TryFrom<&mut QuicBytes> for messages::Init {
     type Error = DeserializeError;
 
