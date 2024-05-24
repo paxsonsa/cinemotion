@@ -14,6 +14,7 @@ async-trait = "0.1.75"
 bytes = "1.5"
 chrono = "0.4.24"
 cinemotion = { path = "crates/cinemotion" }
+cinemotion-core = { path = "crates/cinemotion-core" }
 cinemotion-proto = { path = "crates/cinemotion-proto" }
 clap = { version = "4.5", features = ["derive"] }
 futures = "0.3.30"
