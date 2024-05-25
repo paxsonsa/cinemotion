@@ -40,11 +40,6 @@ impl Engine {
         &mut self.world
     }
 
-    fn setup(&mut self) -> Result<()> {
-        self.world = World::new();
-        Ok(())
-    }
-
     async fn tick(&mut self) -> Result<()> {
         // self.device_controller.update(&mut self.world).await?;
         // invoke!(self.scene_controller, update, &mut self.world);
@@ -57,7 +52,7 @@ impl Engine {
     async fn process(&mut self, dispatch: CommandInfo) -> Result<()> {
         let CommandInfo { command, dispatch } = dispatch;
         let result = match command {
-            commands::Command::Device(c) => handle_device_command(&mut self.world, c),
+            commands::Command::Device(c) => device::commands::process(&mut self.world, c),
             // commands::Command::Engine(c) => self.root_system(c)?,
             // commands::Command::Scene(c) => self.scene_system.process(c)?,
             // commands::Command::Object(c) => self.object_system.process(c)?,
@@ -76,28 +71,5 @@ impl Engine {
         // }
 
         state
-    }
-}
-
-fn handle_device_command(world: &mut World, command: commands::DeviceCommand) -> CommandResult {
-    match command {
-        commands::DeviceCommand::Register(mut data) => {
-            let mut query = world.query::<(&Device, &Name)>();
-            for (_, name) in query.iter(&world).collect::<Vec<_>>() {
-                if name == &data.name {
-                    let reason = format!("device with name '{}' already exists.", data.name);
-                    return Err(CommandError::Failed { reason });
-                }
-            }
-
-            let mut device = Device::new(data.name.clone());
-            for attr in data.attributes.drain(..) {
-                let _ = device.insert_attribute(attr);
-            }
-
-            let entity = world.spawn((data.name.clone(), device));
-            let id = entity.id().index();
-            Ok(Some(CommandReply::EntityId(id)))
-        }
     }
 }

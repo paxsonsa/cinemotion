@@ -1,6 +1,6 @@
 mod attributes;
-mod commands;
-mod device;
+pub mod commands;
+pub mod device;
 mod engine;
 mod engine_systems;
 mod error;
@@ -8,3 +8,4 @@ mod name;
 mod prelude;
 mod scene;
 mod state;
+mod world;

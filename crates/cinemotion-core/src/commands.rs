@@ -33,6 +33,9 @@ impl CommandInfo {
 pub enum CommandError {
     #[error("command failed: {reason}")]
     Failed { reason: String },
+
+    #[error("entity does not exist")]
+    NotFound,
 }
 
 pub enum CommandReply {
@@ -40,35 +43,11 @@ pub enum CommandReply {
 }
 
 pub enum Command {
-    Device(DeviceCommand),
+    Device(device::Command),
 }
 
-pub enum DeviceCommand {
-    Register(DeviceRegister),
-}
-
-pub struct DeviceRegister {
-    pub name: Name,
-    pub attributes: Vec<Attribute>,
-}
-
-impl DeviceRegister {
-    pub fn new<S: Into<String>>(name: S) -> Self {
-        Self {
-            name: name.into().into(),
-            attributes: Vec::new(),
-        }
-    }
-}
-
-impl Into<Command> for DeviceRegister {
-    fn into(self) -> Command {
-        Command::Device(self.into())
-    }
-}
-
-impl Into<DeviceCommand> for DeviceRegister {
-    fn into(self) -> DeviceCommand {
-        DeviceCommand::Register(self)
+impl From<device::Command> for Command {
+    fn from(value: device::Command) -> Self {
+        Self::Device(value)
     }
 }

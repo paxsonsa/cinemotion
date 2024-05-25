@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[derive(Clone)]
 pub struct Attribute {
     name: Name,
     value: AttributeValue,
@@ -7,11 +8,27 @@ pub struct Attribute {
 }
 
 impl Attribute {
-    pub fn new(name: Name, value: AttributeValue) -> Self {
+    pub fn new<N: Into<Name>>(name: N, value: AttributeValue) -> Self {
         Self {
-            name,
+            name: name.into(),
             value: value.clone(),
             default_value: value.clone(),
+        }
+    }
+
+    pub fn new_vec3<N: Into<Name>>(name: N) -> Self {
+        Self {
+            name: name.into(),
+            value: AttributeValue::vec3(),
+            default_value: AttributeValue::vec3(),
+        }
+    }
+
+    pub fn new_matrix44<N: Into<Name>>(name: N) -> Self {
+        Self {
+            name: name.into(),
+            value: AttributeValue::matrix44(),
+            default_value: AttributeValue::matrix44(),
         }
     }
 
