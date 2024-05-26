@@ -54,14 +54,17 @@ There are a number of commands and events that are apart of the protocol for int
 - RemoveDevice(id) -> id 
 
 ### Scene Commands
-- CreateScene
 - ResetScene
+- CreateScene
 - UpdateScene
 
 ### Object Commands
 - CreateObject
 - RemoveObject
 - UpdateObject
+
+TODO: AttributeLink
+TODO: Scene System Update (apply device values to objects)
 
 ### Take Commands
 - NewTake

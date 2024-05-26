@@ -3,8 +3,7 @@ use std::collections::HashMap;
 use bevy_ecs::prelude::Component;
 
 use crate::attributes::Attribute;
-use crate::name::Name;
-
+use crate::name::*;
 #[cfg(test)]
 #[path = "device_test.rs"]
 mod device_test;

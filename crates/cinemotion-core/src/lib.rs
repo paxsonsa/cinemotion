@@ -4,8 +4,9 @@ pub mod device;
 mod engine;
 mod engine_systems;
 mod error;
-mod name;
-mod prelude;
+#[macro_use]
+pub mod name;
+pub mod prelude;
 pub mod scene;
 mod state;
 pub mod world;

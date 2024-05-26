@@ -1,5 +1,4 @@
 use crate::attributes::*;
-use crate::name::*;
 use crate::prelude::*;
 use bevy_ecs::prelude::Component;
 
@@ -43,7 +42,7 @@ pub enum Command {
 
 pub mod system {
     use crate::name;
-    use crate::name::Name;
+    use crate::name::*;
     use crate::world::World;
 
     use super::{Attribute, SceneObject};

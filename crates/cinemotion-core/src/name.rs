@@ -1,3 +1,4 @@
+#![feature(decl_macro)]
 use bevy_ecs::prelude::*;
 use derive_more::Display;
 use std::{ops::Deref, sync::Arc};
@@ -16,7 +17,8 @@ impl Deref for Name {
 /// Create a new name from a string.
 ///
 /// ```
-/// use cinemotion::Name;
+/// use cinemotion_core::prelude::*;
+///
 /// let name = "test".to_string();
 /// let name = Name::from(name);
 /// ```
@@ -30,7 +32,7 @@ impl From<String> for Name {
 /// Create a new name from a str.
 ///
 /// ```
-/// use cinemotion::Name;
+/// use cinemotion_core::prelude::*;
 /// let name = Name::from("test");
 /// ```
 ///
@@ -43,7 +45,7 @@ impl From<&str> for Name {
 /// Create a new name from a string literal.
 ///
 /// ```
-/// use cinemotion::name;
+/// use cinemotion_core::prelude::*;
 /// let name = name!("test");
 /// ```
 ///

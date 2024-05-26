@@ -1,7 +1,5 @@
 use super::*;
 
-use crate::name;
-
 #[tokio::test]
 async fn test_scene_system_init() {
     let mut world = world::new();

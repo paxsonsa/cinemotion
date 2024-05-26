@@ -1,7 +1,7 @@
 use super::*;
 use crate::attributes::AttributeValue;
 use crate::commands::CommandReply;
-use crate::name;
+use crate::prelude::name;
 
 #[tokio::test]
 async fn test_device_system_command_registration() {
