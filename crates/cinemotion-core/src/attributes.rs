@@ -51,7 +51,7 @@ pub struct Attribute {
 }
 
 #[derive(Clone, Debug)]
-struct AttributeID(u32, Name);
+pub struct AttributeID(u32, Name);
 
 impl AttributeID {
     pub fn new(entity_id: u32, name: Name) -> Self {
@@ -66,8 +66,19 @@ pub struct AttributeLink {
 }
 
 impl AttributeLink {
-    pub fn new(source: AttributeID, attribute: Name) -> Self {
-        Self { source, attribute }
+    pub fn new<N: Into<Name>>(source: AttributeID, attribute: N) -> Self {
+        Self {
+            source,
+            attribute: attribute.into(),
+        }
+    }
+
+    pub fn mapped<N: Into<Name>>(source_id: u32, attribute: N) -> Self {
+        let attribute: Name = attribute.into();
+        Self {
+            source: AttributeID::new(source_id, attribute.clone()),
+            attribute,
+        }
     }
 
     pub fn source(&self) -> &AttributeID {
@@ -145,14 +156,7 @@ impl AttributeValue {
                 Ok(())
             }
             (Self::Matrix44(ref mut this), Self::Matrix44(them)) => {
-                (this.row0.x, this.row0.y, this.row0.z, this.row0.w) =
-                    (them.row0.x, them.row0.y, them.row0.z, them.row0.w);
-                (this.row1.x, this.row1.y, this.row1.z, this.row1.w) =
-                    (them.row1.x, them.row1.y, them.row1.z, them.row1.w);
-                (this.row2.x, this.row2.y, this.row2.z, this.row2.w) =
-                    (them.row2.x, them.row2.y, them.row2.z, them.row2.w);
-                (this.row3.x, this.row3.y, this.row3.z, this.row3.w) =
-                    (them.row3.x, them.row3.y, them.row3.z, them.row3.w);
+                this.data = them.data;
                 Ok(())
             }
             _ => Err(Error::InvalidValue("value has different type".into())),
@@ -169,6 +173,20 @@ impl AttributeValue {
     pub fn as_vec3(&self) -> Option<&Vec3> {
         match self {
             Self::Vec3(value) => Some(value),
+            _ => None,
+        }
+    }
+
+    pub fn as_matrix44(&self) -> Option<&Matrix44> {
+        match self {
+            Self::Matrix44(value) => Some(value),
+            _ => None,
+        }
+    }
+
+    pub fn as_matrix44_mut(&mut self) -> Option<&mut Matrix44> {
+        match self {
+            Self::Matrix44(value) => Some(value),
             _ => None,
         }
     }
@@ -192,8 +210,8 @@ impl From<(f64, f64, f64, f64)> for AttributeValue {
     }
 }
 
-impl From<[[f64; 4]; 4]> for AttributeValue {
-    fn from(value: [[f64; 4]; 4]) -> Self {
+impl From<[f64; 16]> for AttributeValue {
+    fn from(value: [f64; 16]) -> Self {
         Self::Matrix44(value.into())
     }
 }
@@ -295,21 +313,48 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec4 {
 // The matrix is represented a column major where each sub-tuple
 // repsents a column.
 //
-#[derive(Debug, Default, Clone, PartialEq)]
-pub struct Matrix44 {
-    pub row0: Vec4,
-    pub row1: Vec4,
-    pub row2: Vec4,
-    pub row3: Vec4,
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct Matrix44 {
+    data: [f64; 16], // Column-major storage
 }
 
-impl From<[[f64; 4]; 4]> for Matrix44 {
-    fn from(value: [[f64; 4]; 4]) -> Self {
-        Self {
-            row0: value[0].into(),
-            row1: value[1].into(),
-            row2: value[2].into(),
-            row3: value[3].into(),
+impl Matrix44 {
+    pub fn new() -> Self {
+        Self { data: [0.0; 16] }
+    }
+
+    pub fn identity() -> Self {
+        let mut matrix = Self::new();
+        matrix.data[0] = 1.0;
+        matrix.data[5] = 1.0;
+        matrix.data[10] = 1.0;
+        matrix.data[15] = 1.0;
+        matrix
+    }
+
+    pub fn get(&self, x: usize, y: usize) -> Option<f64> {
+        if x < 4 && y < 4 {
+            Some(self.data[y * 4 + x])
+        } else {
+            None
         }
+    }
+
+    pub fn set(&mut self, x: usize, y: usize, value: f64) {
+        if x < 4 && y < 4 {
+            self.data[y * 4 + x] = value;
+        }
+    }
+}
+
+impl Default for Matrix44 {
+    fn default() -> Self {
+        Self::identity()
+    }
+}
+
+impl From<[f64; 16]> for Matrix44 {
+    fn from(value: [f64; 16]) -> Self {
+        Self { data: value }
     }
 }

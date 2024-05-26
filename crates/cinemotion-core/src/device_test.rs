@@ -34,7 +34,7 @@ async fn test_device_system_command_update() {
     let mut device = Device::new("deviceA");
     device.insert_attribute(Attribute::new_matrix44("transform"));
 
-    let id = commands::add_device(&mut world, device.clone());
+    let id = system::add_device(&mut world, device.clone());
     println!("id: {}", id);
 
     // Add a new attribute
@@ -67,7 +67,7 @@ async fn test_device_system_command_remove() {
     let mut device = Device::new("deviceA");
     device.insert_attribute(Attribute::new_matrix44("transform"));
 
-    let id = commands::add_device(&mut world, device.clone());
+    let id = system::add_device(&mut world, device.clone());
     println!("id: {}", id);
 
     let command = Command::Remove(id);

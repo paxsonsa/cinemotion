@@ -42,10 +42,10 @@ pub enum Command {
 }
 
 pub mod commands {
-    use super::{Command, Device};
+    use super::{system, Command, Device};
     use crate::commands::{CommandError, CommandReply, CommandResult};
     use crate::prelude::Name;
-    use crate::world::{Entity, World};
+    use crate::world::World;
 
     pub fn process(world: &mut World, command: Command) -> CommandResult {
         match command {
@@ -57,28 +57,41 @@ pub mod commands {
                         return Err(CommandError::Failed { reason });
                     }
                 }
-                let id = add_device(world, device);
+                let id = system::add_device(world, device);
                 Ok(Some(CommandReply::EntityId(id)))
             }
-            Command::Update((id, device)) => match set_device(world, id, device) {
+            Command::Update((id, device)) => match system::set_device(world, id, device) {
                 Some(id) => Ok(Some(CommandReply::EntityId(id))),
                 None => Err(CommandError::NotFound),
             },
 
-            Command::Remove(device_id) => match remove_device_by_id(world, device_id) {
+            Command::Remove(device_id) => match system::remove_device_by_id(world, device_id) {
                 Some(id) => Ok(Some(CommandReply::EntityId(id))),
                 None => Err(CommandError::NotFound),
             },
         }
     }
+}
 
-    pub(super) fn add_device(world: &mut World, mut device: Device) -> u32 {
+pub mod system {
+    use super::Device;
+    use crate::world::{Entity, World};
+
+    pub(crate) fn get_by_id<'a>(world: &'a mut World, id: u32) -> Option<&Device> {
+        let entity = Entity::from_raw(id);
+        let Some(entity_ref) = world.get_entity_mut(entity) else {
+            return None;
+        };
+        entity_ref.get::<Device>()
+    }
+
+    pub(crate) fn add_device(world: &mut World, device: Device) -> u32 {
         let mut entity = world.spawn(device.name.clone());
         entity.insert(device);
         entity.id().index()
     }
 
-    pub(super) fn set_device(world: &mut World, device_id: u32, device: Device) -> Option<u32> {
+    pub(crate) fn set_device(world: &mut World, device_id: u32, device: Device) -> Option<u32> {
         let entity = Entity::from_raw(device_id);
         let Some(mut entity) = world.get_entity_mut(entity) else {
             return None;
@@ -87,7 +100,7 @@ pub mod commands {
         Some(entity.id().index())
     }
 
-    pub(super) fn remove_device_by_id(world: &mut World, device_id: u32) -> Option<u32> {
+    pub(crate) fn remove_device_by_id(world: &mut World, device_id: u32) -> Option<u32> {
         let entity = Entity::from_raw(device_id);
         match world.despawn(entity) {
             true => Some(device_id),
