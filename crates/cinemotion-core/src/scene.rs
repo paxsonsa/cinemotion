@@ -20,14 +20,25 @@ pub struct SceneObject {
 }
 
 impl SceneObject {
-    pub fn new(name: Name) -> Self {
+    pub fn new<N: Into<Name>>(name: N) -> Self {
         Self {
-            name,
+            name: name.into(),
             attributes: HashMap::new(),
         }
     }
+    pub fn attributes(&self) -> &HashMap<Name, Attribute> {
+        &self.attributes
+    }
 
-    pub fn insert_attribute(&mut self, attribute: Attribute) {}
+    pub fn insert_attribute(&mut self, attribute: Attribute) {
+        self.attributes.insert(attribute.name().clone(), attribute);
+    }
+}
+
+pub enum Command {
+    AddObject(SceneObject),
+    UpdateObject(u32, SceneObject),
+    RemoveObject(u32),
 }
 
 pub mod system {
@@ -44,5 +55,37 @@ pub mod system {
         let mut object = SceneObject::new(name);
         object.insert_attribute(Attribute::new_matrix44("transform"));
         entity.insert(object);
+    }
+}
+
+pub mod commands {
+
+    use super::{Command, Scene, SceneObject};
+    use crate::commands::{CommandError, CommandReply, CommandResult};
+    use crate::prelude::Name;
+    use crate::world::{Entity, World};
+
+    pub fn procces(world: &mut World, command: Command) -> CommandResult {
+        match command {
+            Command::AddObject(object) => {
+                let mut query = world.query::<(&SceneObject, &Name)>();
+                for (_, name) in query.iter(&world).collect::<Vec<_>>() {
+                    if name == &object.name {
+                        let reason = format!("object with name '{}' already exists.", object.name);
+                        return Err(CommandError::Failed { reason });
+                    }
+                }
+                let id = add_scene_object(world, object);
+                Ok(Some(CommandReply::EntityId(id)))
+            }
+            Command::UpdateObject(_, _) => todo!(),
+            Command::RemoveObject(_) => todo!(),
+        }
+    }
+
+    pub(super) fn add_scene_object(world: &mut World, object: SceneObject) -> u32 {
+        let mut entity = world.spawn(object.name.clone());
+        entity.insert(object);
+        entity.id().index()
     }
 }

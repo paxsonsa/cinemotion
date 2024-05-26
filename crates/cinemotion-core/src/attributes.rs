@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Attribute {
     name: Name,
     value: AttributeValue,
