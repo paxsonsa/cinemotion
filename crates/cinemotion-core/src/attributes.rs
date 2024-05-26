@@ -1,10 +1,82 @@
 use crate::prelude::*;
 
+use bevy_ecs::prelude::Component;
+use std::{collections::HashMap, ops::Deref};
+
+#[derive(Component, Debug)]
+pub struct AttributeMap(HashMap<Name, Attribute>);
+
+impl AttributeMap {
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+
+    pub fn get(&self, name: &Name) -> Option<&Attribute> {
+        self.0.get(name)
+    }
+
+    pub fn insert(&mut self, attribute: Attribute) {
+        self.0.insert(attribute.name.clone(), attribute);
+    }
+}
+
+impl Deref for AttributeMap {
+    type Target = HashMap<Name, Attribute>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl From<HashMap<Name, Attribute>> for AttributeMap {
+    fn from(value: HashMap<Name, Attribute>) -> Self {
+        Self(value)
+    }
+}
+
+#[derive(Component)]
+pub struct AttributeLinkMap(HashMap<Name, Attribute>);
+
+impl AttributeLinkMap {
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Attribute {
     name: Name,
     value: AttributeValue,
     default_value: AttributeValue,
+}
+
+#[derive(Clone, Debug)]
+struct AttributeID(u32, Name);
+
+impl AttributeID {
+    pub fn new(entity_id: u32, name: Name) -> Self {
+        Self(entity_id, name)
+    }
+}
+
+#[derive(Debug)]
+pub struct AttributeLink {
+    source: AttributeID,
+    attribute: Name,
+}
+
+impl AttributeLink {
+    pub fn new(source: AttributeID, attribute: Name) -> Self {
+        Self { source, attribute }
+    }
+
+    pub fn source(&self) -> &AttributeID {
+        &self.source
+    }
+
+    pub fn attribute(&self) -> Name {
+        self.attribute.clone()
+    }
 }
 
 impl Attribute {

@@ -5,13 +5,11 @@ async fn test_scene_system_init() {
     let mut world = world::new();
     system::init(&mut world);
 
-    let objects = world
-        .query::<&SceneObject>()
-        .iter(&world)
-        .collect::<Vec<&SceneObject>>();
+    let objects = system::get_all(&mut world);
 
     assert_eq!(objects.len(), 1);
-    assert_eq!(objects[0].name, "default".into());
+    let object = objects.first().unwrap();
+    assert_eq!(object.name(), name!("default"));
 }
 
 #[tokio::test]
@@ -26,13 +24,9 @@ async fn test_scene_command_add_object() {
         .unwrap()
         .expect("expected a object id for the engine");
 
-    let objects = world
-        .query::<&SceneObject>()
-        .iter(&world)
-        .collect::<Vec<&SceneObject>>();
-
+    let objects = system::get_all(&mut world);
     assert_eq!(objects.len(), 1);
-    assert_eq!(objects[0].name, name!("camera1"));
+    assert_eq!(objects[0].name(), name!("camera1"));
     println!("{:?}", objects[0].attributes());
     assert!(objects[0].attributes().get(&name!("transform")).is_some());
 }
@@ -43,7 +37,7 @@ async fn test_scene_command_update_object() {
 
     let mut object = SceneObject::new("camera1");
     object.insert_attribute(Attribute::new_matrix44("transform"));
-    let id = commands::add_scene_object(&mut world, object.clone());
+    let id = system::add_scene_object(&mut world, object.clone());
 
     object.insert_attribute(Attribute::new_vec3("vel"));
 
@@ -52,13 +46,8 @@ async fn test_scene_command_update_object() {
         .unwrap()
         .expect("expected a object id for the engine");
 
-    let objects = world
-        .query::<&SceneObject>()
-        .iter(&world)
-        .collect::<Vec<&SceneObject>>();
-
-    assert_eq!(objects.len(), 1);
-    assert_eq!(objects[0].name, name!("camera1"));
+    let objects = system::get_all(&mut world);
+    assert_eq!(objects[0].name(), name!("camera1"));
     assert_eq!(objects[0].attributes().len(), 2);
     assert!(objects[0].attributes().get(&name!("transform")).is_some());
     assert!(objects[0].attributes().get(&name!("vel")).is_some());
@@ -70,7 +59,7 @@ async fn test_scene_command_remove_object() {
 
     let mut object = SceneObject::new("camera1");
     object.insert_attribute(Attribute::new_matrix44("transform"));
-    let id = commands::add_scene_object(&mut world, object.clone());
+    let id = system::add_scene_object(&mut world, object.clone());
 
     object.insert_attribute(Attribute::new_vec3("vel"));
 
@@ -79,10 +68,6 @@ async fn test_scene_command_remove_object() {
         .unwrap()
         .expect("expected a object id for the engine");
 
-    let objects = world
-        .query::<&SceneObject>()
-        .iter(&world)
-        .collect::<Vec<&SceneObject>>();
-
+    let objects = system::get_all(&mut world);
     assert_eq!(objects.len(), 0);
 }

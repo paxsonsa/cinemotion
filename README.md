@@ -65,6 +65,7 @@ There are a number of commands and events that are apart of the protocol for int
 
 TODO: AttributeLink
 TODO: Scene System Update (apply device values to objects)
+TOOD: Remodel Device and Scene to share attributes
 
 ### Take Commands
 - NewTake
