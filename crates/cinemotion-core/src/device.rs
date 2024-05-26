@@ -48,6 +48,7 @@ impl Device {
 pub enum Command {
     Register(Device),
     Update(Device),
+    Remove(u32),
 }
 
 pub mod commands {
@@ -75,6 +76,11 @@ pub mod commands {
                 Some(id) => Ok(Some(CommandReply::EntityId(id))),
                 None => Err(CommandError::NotFound),
             },
+
+            Command::Remove(device_id) => match remove_device_by_id(world, device_id) {
+                Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                None => Err(CommandError::NotFound),
+            },
         }
     }
 
@@ -94,5 +100,13 @@ pub mod commands {
         };
         entity.insert(device);
         Some(entity.id().index())
+    }
+
+    pub(super) fn remove_device_by_id(world: &mut World, device_id: u32) -> Option<u32> {
+        let entity = Entity::from_raw(device_id);
+        match world.despawn(entity) {
+            true => Some(device_id),
+            false => None,
+        }
     }
 }

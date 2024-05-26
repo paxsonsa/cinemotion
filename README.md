@@ -49,11 +49,9 @@ the protobuf bytes message. The server will not send ACKs only errors and state 
 There are a number of commands and events that are apart of the protocol for interacting with the server. This is an overview of them.
 
 ### Controller/Device Commands
-- RegisterDevice(name, channels) -> id
-- UpdateDevice(id, name, channels)
-    - todo
+- RegisterDevice(device) -> id
+- UpdateDevice(device)
 - RemoveDevice(id) -> id 
-    - todo
 
 ### Scene Commands
 - CreateScene
