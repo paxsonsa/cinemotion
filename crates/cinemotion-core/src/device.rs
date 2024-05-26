@@ -11,7 +11,6 @@ mod device_test;
 
 #[derive(Component, Clone)]
 pub struct Device {
-    id: Option<u32>,
     name: Name,
     attributes: HashMap<Name, Attribute>,
 }
@@ -19,17 +18,9 @@ pub struct Device {
 impl Device {
     pub fn new<N: Into<Name>>(name: N) -> Self {
         Self {
-            id: None,
             name: name.into(),
             attributes: HashMap::new(),
         }
-    }
-    pub fn id(&self) -> Option<u32> {
-        self.id
-    }
-
-    pub fn set_id(&mut self, id: u32) {
-        self.id = Some(id);
     }
 
     pub fn name(&self) -> Name {
@@ -47,7 +38,7 @@ impl Device {
 
 pub enum Command {
     Register(Device),
-    Update(Device),
+    Update((u32, Device)),
     Remove(u32),
 }
 
@@ -67,12 +58,10 @@ pub mod commands {
                         return Err(CommandError::Failed { reason });
                     }
                 }
-
                 let id = add_device(world, device);
-
                 Ok(Some(CommandReply::EntityId(id)))
             }
-            Command::Update(device) => match set_device(world, device) {
+            Command::Update((id, device)) => match set_device(world, id, device) {
                 Some(id) => Ok(Some(CommandReply::EntityId(id))),
                 None => Err(CommandError::NotFound),
             },
@@ -84,15 +73,13 @@ pub mod commands {
         }
     }
 
-    pub(super) fn add_device(world: &mut World, device: Device) -> u32 {
-        let entity = world.spawn((device.name.clone(), device));
+    pub(super) fn add_device(world: &mut World, mut device: Device) -> u32 {
+        let mut entity = world.spawn(device.name.clone());
+        entity.insert(device);
         entity.id().index()
     }
 
-    pub(super) fn set_device(world: &mut World, device: Device) -> Option<u32> {
-        let Some(device_id) = device.id else {
-            return None;
-        };
+    pub(super) fn set_device(world: &mut World, device_id: u32, device: Device) -> Option<u32> {
         let entity = Entity::from_raw(device_id);
         let Some(mut entity) = world.get_entity_mut(entity) else {
             println!("not found 2");

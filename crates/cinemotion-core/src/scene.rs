@@ -1,22 +1,48 @@
-use async_trait::async_trait;
-
+use crate::attributes::*;
+use crate::name::*;
 use crate::prelude::*;
+use bevy_ecs::prelude::Component;
 
-/// Scene System for managing the scene state
-///
-/// The scene system is responsible for keeping the scene data
-/// in line with the device system. The core responsibilty is to
-/// make sure that an object with attribute links to a device attribute
-/// is updated each update cycle.
-pub struct SceneSystem {}
+use std::collections::HashMap;
 
-#[async_trait]
-impl EngineSystem for SceneSystem {
-    fn name(&self) -> String {
-        "system.scene".to_string()
+#[cfg(test)]
+#[path = "scene_test.rs"]
+mod scene_test;
+
+pub struct Scene {
+    name: Name,
+}
+
+#[derive(Component)]
+pub struct SceneObject {
+    name: Name,
+    attributes: HashMap<Name, Attribute>,
+}
+
+impl SceneObject {
+    pub fn new(name: Name) -> Self {
+        Self {
+            name,
+            attributes: HashMap::new(),
+        }
     }
 
-    async fn update(&mut self, world: &mut bevy_ecs::world::World) -> Result<()> {
-        todo!()
+    pub fn insert_attribute(&mut self, attribute: Attribute) {}
+}
+
+pub mod system {
+    use crate::name;
+    use crate::name::Name;
+    use crate::world::World;
+
+    use super::{Attribute, SceneObject};
+
+    pub fn init(world: &mut World) {
+        let name = name!("default");
+        let mut entity = world.spawn(name.clone());
+
+        let mut object = SceneObject::new(name);
+        object.insert_attribute(Attribute::new_matrix44("transform"));
+        entity.insert(object);
     }
 }

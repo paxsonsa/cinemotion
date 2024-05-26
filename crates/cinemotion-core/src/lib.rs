@@ -6,6 +6,6 @@ mod engine_systems;
 mod error;
 mod name;
 mod prelude;
-mod scene;
+pub mod scene;
 mod state;
-mod world;
+pub mod world;

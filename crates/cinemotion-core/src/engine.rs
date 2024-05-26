@@ -1,4 +1,3 @@
-use bevy_ecs::prelude::*;
 use bevy_ecs::system::{ReadOnlySystemParam, SystemParam, SystemParamItem, SystemState};
 
 use crate::commands::{self, CommandError, CommandInfo, CommandReply, CommandResult};
@@ -25,14 +24,16 @@ pub struct EngineState<'a, Param: SystemParam + 'static> {
 
 struct Engine {
     world: World,
-    scene_controller: Option<Box<dyn EngineSystem>>,
 }
 
 impl Engine {
     fn new() -> Self {
+        let mut world = world::new();
+
+        scene::system::init(&mut world);
+
         Engine {
-            world: World::new(),
-            scene_controller: None,
+            world: world::new(),
         }
     }
 

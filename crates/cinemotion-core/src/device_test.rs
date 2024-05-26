@@ -39,9 +39,8 @@ async fn test_device_system_command_update() {
 
     // Add a new attribute
     device.insert_attribute(Attribute::new_vec3("vel"));
-    device.set_id(id);
 
-    let command = Command::Update(device);
+    let command = Command::Update((id, device));
 
     let _reply = commands::process(&mut world, command)
         .unwrap()
