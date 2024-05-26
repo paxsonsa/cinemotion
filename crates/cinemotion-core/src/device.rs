@@ -82,7 +82,6 @@ pub mod commands {
     pub(super) fn set_device(world: &mut World, device_id: u32, device: Device) -> Option<u32> {
         let entity = Entity::from_raw(device_id);
         let Some(mut entity) = world.get_entity_mut(entity) else {
-            println!("not found 2");
             return None;
         };
         entity.insert(device);

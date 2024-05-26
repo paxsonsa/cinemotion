@@ -13,7 +13,7 @@ pub struct Scene {
     name: Name,
 }
 
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct SceneObject {
     name: Name,
     attributes: HashMap<Name, Attribute>,
@@ -78,8 +78,14 @@ pub mod commands {
                 let id = add_scene_object(world, object);
                 Ok(Some(CommandReply::EntityId(id)))
             }
-            Command::UpdateObject(_, _) => todo!(),
-            Command::RemoveObject(_) => todo!(),
+            Command::UpdateObject(id, object) => match set_scene_object(world, id, object) {
+                Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                None => Err(CommandError::NotFound),
+            },
+            Command::RemoveObject(id) => match remove_scene_object_by_id(world, id) {
+                Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                None => Err(CommandError::NotFound),
+            },
         }
     }
 
@@ -87,5 +93,22 @@ pub mod commands {
         let mut entity = world.spawn(object.name.clone());
         entity.insert(object);
         entity.id().index()
+    }
+
+    pub(super) fn set_scene_object(world: &mut World, id: u32, object: SceneObject) -> Option<u32> {
+        let entity = Entity::from_raw(id);
+        let Some(mut entity) = world.get_entity_mut(entity) else {
+            return None;
+        };
+        entity.insert(object);
+        Some(entity.id().index())
+    }
+
+    pub(super) fn remove_scene_object_by_id(world: &mut World, device_id: u32) -> Option<u32> {
+        let entity = Entity::from_raw(device_id);
+        match world.despawn(entity) {
+            true => Some(device_id),
+            false => None,
+        }
     }
 }
