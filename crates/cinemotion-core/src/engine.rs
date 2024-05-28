@@ -53,7 +53,7 @@ impl Engine {
     async fn process(&mut self, dispatch: CommandInfo) -> Result<()> {
         let CommandInfo { command, dispatch } = dispatch;
         let result = match command {
-            commands::Command::Device(c) => device::commands::process(&mut self.world, c),
+            commands::Command::Device(c) => devices::commands::process(&mut self.world, c),
             // commands::Command::Engine(c) => self.root_system(c)?,
             // commands::Command::Scene(c) => self.scene_system.process(c)?,
             // commands::Command::Object(c) => self.object_system.process(c)?,

@@ -1,6 +1,6 @@
 mod attributes;
 pub mod commands;
-pub mod device;
+pub mod devices;
 mod engine;
 mod engine_systems;
 mod error;

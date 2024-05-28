@@ -43,11 +43,11 @@ pub enum CommandReply {
 }
 
 pub enum Command {
-    Device(device::Command),
+    Device(devices::Command),
 }
 
-impl From<device::Command> for Command {
-    fn from(value: device::Command) -> Self {
+impl From<devices::Command> for Command {
+    fn from(value: devices::Command) -> Self {
         Self::Device(value)
     }
 }

@@ -1,7 +1,7 @@
 pub use crate::attributes::*;
 pub use crate::commands;
-pub use crate::device;
-pub use crate::device::{Device, DeviceId};
+pub use crate::devices;
+pub use crate::devices::{Device, DeviceId};
 pub use crate::engine_systems::*;
 pub use crate::error::*;
 pub use crate::name::*;
