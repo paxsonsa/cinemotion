@@ -1,7 +1,12 @@
 use crate::prelude::*;
 
+use std::sync::Arc;
+
 use bevy_ecs::prelude::Component;
-use std::{collections::HashMap, ops::Deref};
+use std::{
+    collections::HashMap,
+    ops::{Deref, DerefMut},
+};
 
 #[derive(Component, Debug)]
 pub struct AttributeMap(HashMap<Name, Attribute>);
@@ -28,61 +33,83 @@ impl Deref for AttributeMap {
     }
 }
 
+impl DerefMut for AttributeMap {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
 impl From<HashMap<Name, Attribute>> for AttributeMap {
     fn from(value: HashMap<Name, Attribute>) -> Self {
         Self(value)
     }
 }
 
-#[derive(Component)]
-pub struct AttributeLinkMap(HashMap<Name, Attribute>);
+#[derive(Clone, Component)]
+pub struct AttributeLinkMap(HashMap<Name, AttributeLink>);
 
 impl AttributeLinkMap {
     pub fn new() -> Self {
         Self(HashMap::new())
     }
 }
+impl Deref for AttributeLinkMap {
+    type Target = HashMap<Name, AttributeLink>;
 
-#[derive(Debug, Clone)]
-pub struct Attribute {
-    name: Name,
-    value: AttributeValue,
-    default_value: AttributeValue,
-}
-
-#[derive(Clone, Debug)]
-pub struct AttributeID(u32, Name);
-
-impl AttributeID {
-    pub fn new(entity_id: u32, name: Name) -> Self {
-        Self(entity_id, name)
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
-#[derive(Debug)]
+impl DerefMut for AttributeLinkMap {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl From<HashMap<Name, AttributeLink>> for AttributeLinkMap {
+    fn from(value: HashMap<Name, AttributeLink>) -> Self {
+        Self(value)
+    }
+}
+#[derive(Debug, Clone)]
+pub struct Attribute {
+    name: Name,
+    value: Arc<AttributeValue>,
+    default_value: Arc<AttributeValue>,
+}
+
+#[derive(Clone, Debug)]
 pub struct AttributeLink {
-    source: AttributeID,
+    device_id: DeviceId,
+    device_attr: Name,
     attribute: Name,
 }
 
 impl AttributeLink {
-    pub fn new<N: Into<Name>>(source: AttributeID, attribute: N) -> Self {
+    pub fn new<N: Into<Name>>(device_id: DeviceId, device_attr: N, attribute: N) -> Self {
         Self {
-            source,
+            device_id,
+            device_attr: device_attr.into(),
             attribute: attribute.into(),
         }
     }
 
-    pub fn mapped<N: Into<Name>>(source_id: u32, attribute: N) -> Self {
+    pub fn mapped<N: Into<Name>>(device_id: DeviceId, attribute: N) -> Self {
         let attribute: Name = attribute.into();
         Self {
-            source: AttributeID::new(source_id, attribute.clone()),
+            device_id,
+            device_attr: attribute.clone(),
             attribute,
         }
     }
 
-    pub fn source(&self) -> &AttributeID {
-        &self.source
+    pub fn device(&self) -> &DeviceId {
+        &self.device_id
+    }
+
+    pub fn device_attr(&self) -> &Name {
+        &self.device_attr
     }
 
     pub fn attribute(&self) -> Name {
@@ -94,24 +121,24 @@ impl Attribute {
     pub fn new<N: Into<Name>>(name: N, value: AttributeValue) -> Self {
         Self {
             name: name.into(),
-            value: value.clone(),
-            default_value: value.clone(),
+            value: Arc::new(value.clone()),
+            default_value: Arc::new(value.clone()),
         }
     }
 
     pub fn new_vec3<N: Into<Name>>(name: N) -> Self {
         Self {
             name: name.into(),
-            value: AttributeValue::vec3(),
-            default_value: AttributeValue::vec3(),
+            value: Arc::new(AttributeValue::vec3()),
+            default_value: Arc::new(AttributeValue::vec3()),
         }
     }
 
     pub fn new_matrix44<N: Into<Name>>(name: N) -> Self {
         Self {
             name: name.into(),
-            value: AttributeValue::matrix44(),
-            default_value: AttributeValue::matrix44(),
+            value: Arc::new(AttributeValue::matrix44()),
+            default_value: Arc::new(AttributeValue::matrix44()),
         }
     }
 
@@ -119,8 +146,15 @@ impl Attribute {
         &self.name
     }
 
-    pub fn value(&self) -> &AttributeValue {
-        &self.value
+    pub fn value(&self) -> Arc<AttributeValue> {
+        self.value.clone()
+    }
+
+    pub fn update_value(&mut self, value: Arc<AttributeValue>) -> Result<()> {
+        let mut new_value = (*self.value).clone();
+        new_value.update(&value)?;
+        self.value = Arc::new(new_value);
+        Ok(())
     }
 }
 
@@ -314,7 +348,7 @@ impl std::cmp::PartialEq<(f64, f64, f64)> for &Vec4 {
 // repsents a column.
 //
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct Matrix44 {
+pub struct Matrix44 {
     data: [f64; 16], // Column-major storage
 }
 

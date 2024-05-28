@@ -35,7 +35,6 @@ async fn test_device_system_command_update() {
     device.insert_attribute(Attribute::new_matrix44("transform"));
 
     let id = system::add_device(&mut world, device.clone());
-    println!("id: {}", id);
 
     // Add a new attribute
     device.insert_attribute(Attribute::new_vec3("vel"));
@@ -68,7 +67,6 @@ async fn test_device_system_command_remove() {
     device.insert_attribute(Attribute::new_matrix44("transform"));
 
     let id = system::add_device(&mut world, device.clone());
-    println!("id: {}", id);
 
     let command = Command::Remove(id);
 

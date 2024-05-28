@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::ops::Deref;
 
 use bevy_ecs::prelude::Component;
 
@@ -7,6 +8,29 @@ use crate::name::*;
 #[cfg(test)]
 #[path = "device_test.rs"]
 mod device_test;
+
+#[derive(Debug, Clone)]
+pub struct DeviceId(u32);
+
+impl DeviceId {
+    pub fn as_u32(&self) -> u32 {
+        self.0
+    }
+}
+
+impl Deref for DeviceId {
+    type Target = u32;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl From<u32> for DeviceId {
+    fn from(value: u32) -> Self {
+        Self(value)
+    }
+}
 
 #[derive(Component, Clone)]
 pub struct Device {
@@ -26,6 +50,10 @@ impl Device {
         self.name.clone()
     }
 
+    pub fn attribute(&self, name: &Name) -> Option<&Attribute> {
+        self.attributes().get(name)
+    }
+
     pub fn attributes(&self) -> &HashMap<Name, Attribute> {
         &self.attributes
     }
@@ -37,8 +65,8 @@ impl Device {
 
 pub enum Command {
     Register(Device),
-    Update((u32, Device)),
-    Remove(u32),
+    Update((DeviceId, Device)),
+    Remove(DeviceId),
 }
 
 pub mod commands {
@@ -58,15 +86,15 @@ pub mod commands {
                     }
                 }
                 let id = system::add_device(world, device);
-                Ok(Some(CommandReply::EntityId(id)))
+                Ok(Some(CommandReply::EntityId(*id)))
             }
             Command::Update((id, device)) => match system::set_device(world, id, device) {
-                Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                Some(id) => Ok(Some(CommandReply::EntityId(*id))),
                 None => Err(CommandError::NotFound),
             },
 
             Command::Remove(device_id) => match system::remove_device_by_id(world, device_id) {
-                Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                Some(id) => Ok(Some(CommandReply::EntityId(*id))),
                 None => Err(CommandError::NotFound),
             },
         }
@@ -74,34 +102,39 @@ pub mod commands {
 }
 
 pub mod system {
-    use super::Device;
+
+    use super::*;
     use crate::world::{Entity, World};
 
-    pub(crate) fn get_by_id<'a>(world: &'a mut World, id: u32) -> Option<&Device> {
-        let entity = Entity::from_raw(id);
+    pub(crate) fn get_by_id<'a>(world: &'a mut World, id: &DeviceId) -> Option<Device> {
+        let entity = Entity::from_raw(**id);
         let Some(entity_ref) = world.get_entity_mut(entity) else {
             return None;
         };
-        entity_ref.get::<Device>()
+        entity_ref.get::<Device>().cloned()
     }
 
-    pub(crate) fn add_device(world: &mut World, device: Device) -> u32 {
+    pub(crate) fn add_device(world: &mut World, device: Device) -> DeviceId {
         let mut entity = world.spawn(device.name.clone());
         entity.insert(device);
-        entity.id().index()
+        entity.id().index().into()
     }
 
-    pub(crate) fn set_device(world: &mut World, device_id: u32, device: Device) -> Option<u32> {
-        let entity = Entity::from_raw(device_id);
+    pub(crate) fn set_device(
+        world: &mut World,
+        device_id: DeviceId,
+        device: Device,
+    ) -> Option<DeviceId> {
+        let entity = Entity::from_raw(*device_id);
         let Some(mut entity) = world.get_entity_mut(entity) else {
             return None;
         };
         entity.insert(device);
-        Some(entity.id().index())
+        Some(entity.id().index().into())
     }
 
-    pub(crate) fn remove_device_by_id(world: &mut World, device_id: u32) -> Option<u32> {
-        let entity = Entity::from_raw(device_id);
+    pub(crate) fn remove_device_by_id(world: &mut World, device_id: DeviceId) -> Option<DeviceId> {
+        let entity = Entity::from_raw(*device_id);
         match world.despawn(entity) {
             true => Some(device_id),
             false => None,
