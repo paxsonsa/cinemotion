@@ -88,7 +88,10 @@ pub mod commands {
 pub mod system {
 
     use super::*;
-    use crate::world::{Entity, World};
+    use crate::{
+        globals,
+        world::{Entity, World},
+    };
 
     #[derive(Component)]
     struct DeviceEntity;
@@ -163,12 +166,16 @@ pub mod system {
         device_id: DeviceId,
         device: Device,
     ) -> Option<DeviceId> {
+        let motion_enabled = globals::system::is_motion_enabled(world);
+        println!("motion_enable: {:?}", motion_enabled);
         let Some(mut device_ref) = get_by_id(world, &device_id) else {
             return None;
         };
 
         device_ref.set_name(world, device.name);
-        device_ref.set_attributes(world, device.attributes);
+        if motion_enabled {
+            device_ref.set_attributes(world, device.attributes);
+        }
 
         Some(device_id)
     }

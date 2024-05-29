@@ -6,6 +6,7 @@ mod engine_systems;
 mod error;
 #[macro_use]
 pub mod name;
+mod globals;
 pub mod prelude;
 pub mod scene;
 mod state;

@@ -1,3 +1,5 @@
+use crate::globals;
+
 use super::*;
 
 #[tokio::test]
@@ -81,6 +83,7 @@ async fn test_scene_command_remove_object() {
 #[tokio::test]
 async fn test_scene_system_attribute_links() {
     let mut world = world::new();
+    globals::system::enable_motion(&mut world);
 
     let mut device = Device::new("root");
     device

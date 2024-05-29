@@ -48,6 +48,16 @@ the protobuf bytes message. The server will not send ACKs only errors and state 
 
 There are a number of commands and events that are apart of the protocol for interacting with the server. This is an overview of them.
 
+TODO: Add Global Settings for Mode
+    - only update scene when in live mode
+TODO: Add Reset for Scene
+
+TODO: Server Start Up
+TODO: Networking Layer (QUIC?)
+TODO: Service Discovery
+TODO: Prototype Blender Integration
+
+
 ### Controller/Device Commands
 - RegisterDevice(device) -> id
 - UpdateDevice(device)
@@ -59,19 +69,9 @@ There are a number of commands and events that are apart of the protocol for int
 - UpdateScene
 
 ### Object Commands
-- CreateObject
-- RemoveObject
-- UpdateObject
-
-TODO: Add Global Settings for Mode
-    - only update scene when in live mode
-TODO: Add Reset for Scene
-
-TODO: Server Start Up
-TODO: Networking Layer (QUIC?)
-TODO: Service Discovery
-TODO: Prototype Blender Integration
-
+- CreateObject -> id
+- RemoveObject -> id|null
+- UpdateObject -> id|null
 
 ### Take Commands
 - NewTake
