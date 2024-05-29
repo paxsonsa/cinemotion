@@ -1,6 +1,4 @@
-use crate::attributes::*;
 use crate::prelude::*;
-
 use std::collections::HashMap;
 
 #[cfg(test)]
@@ -210,10 +208,10 @@ pub mod system {
                 link.device()
             )));
         };
-        let Some(attr) = device.attribute(link.device_attr()) else {
+        let Some(attr) = device.attribute(world, link.device_attr()) else {
             return Err(Error::NotFound(format!(
                 "no device attribute '{}.{}'",
-                device.name(),
+                device.name(&world),
                 link.device_attr()
             )));
         };

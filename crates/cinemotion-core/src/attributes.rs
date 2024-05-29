@@ -8,7 +8,7 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone)]
 pub struct AttributeMap(HashMap<Name, Attribute>);
 
 impl AttributeMap {

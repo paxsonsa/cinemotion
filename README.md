@@ -63,9 +63,18 @@ There are a number of commands and events that are apart of the protocol for int
 - RemoveObject
 - UpdateObject
 
-TODO: AttributeLink
-TODO: Scene System Update (apply device values to objects)
 TOOD: Remodel Device and Scene to share attributes
+    - Use Ref Modeling
+    - Look for places to use Arc
+TODO: Add Global Settings for Mode
+    - only update scene when in live mode
+TODO: Add Reset for Scene
+
+TODO: Server Start Up
+TODO: Networking Layer (QUIC?)
+TODO: Service Discovery
+TODO: Prototype Blender Integration
+
 
 ### Take Commands
 - NewTake

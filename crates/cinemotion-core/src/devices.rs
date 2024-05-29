@@ -1,10 +1,10 @@
-use std::collections::HashMap;
 use std::ops::Deref;
 
 use bevy_ecs::prelude::Component;
 
 use crate::attributes::Attribute;
 use crate::name::*;
+use crate::prelude::AttributeMap;
 #[cfg(test)]
 #[path = "device_test.rs"]
 mod device_test;
@@ -34,32 +34,16 @@ impl From<u32> for DeviceId {
 
 #[derive(Component, Clone)]
 pub struct Device {
-    name: Name,
-    attributes: HashMap<Name, Attribute>,
+    pub name: Name,
+    pub attributes: AttributeMap,
 }
 
 impl Device {
     pub fn new<N: Into<Name>>(name: N) -> Self {
         Self {
             name: name.into(),
-            attributes: HashMap::new(),
+            attributes: AttributeMap::new(),
         }
-    }
-
-    pub fn name(&self) -> Name {
-        self.name.clone()
-    }
-
-    pub fn attribute(&self, name: &Name) -> Option<&Attribute> {
-        self.attributes().get(name)
-    }
-
-    pub fn attributes(&self) -> &HashMap<Name, Attribute> {
-        &self.attributes
-    }
-
-    pub fn insert_attribute(&mut self, attribute: Attribute) -> Option<Attribute> {
-        self.attributes.insert(attribute.name().clone(), attribute)
     }
 }
 
@@ -106,17 +90,71 @@ pub mod system {
     use super::*;
     use crate::world::{Entity, World};
 
-    pub(crate) fn get_by_id<'a>(world: &'a mut World, id: &DeviceId) -> Option<Device> {
+    #[derive(Component)]
+    struct DeviceEntity;
+
+    pub struct DeviceEntityRef {
+        pub entity: Entity,
+    }
+
+    impl DeviceEntityRef {
+        pub fn name<'w>(&self, world: &'w World) -> &'w Name {
+            world
+                .get::<Name>(self.entity)
+                .expect("expect device entity to have a name")
+        }
+
+        pub fn set_name(&mut self, world: &mut World, name: Name) {
+            self._set(world, name)
+        }
+
+        pub fn attribute<'w>(&self, world: &'w World, name: &Name) -> Option<&'w Attribute> {
+            self.attributes(&world).get(name)
+        }
+
+        pub fn set_attributes(&mut self, world: &mut World, attrs: AttributeMap) {
+            self._set(world, attrs)
+        }
+        pub fn attributes<'w>(&self, world: &'w World) -> &'w AttributeMap {
+            world
+                .get::<AttributeMap>(self.entity)
+                .expect("device entity should have attribute map")
+        }
+
+        pub fn insert_attribute(&mut self, world: &mut World, attribute: Attribute) {
+            world
+                .get_mut::<AttributeMap>(self.entity)
+                .expect("device entity should have attribute map")
+                .insert(attribute)
+        }
+
+        fn _set<'w, T: Component>(&mut self, world: &'w mut World, value: T) {
+            world.get_entity_mut(self.entity).unwrap().insert(value);
+        }
+    }
+
+    pub(crate) fn get_by_id<'a>(world: &'a mut World, id: &DeviceId) -> Option<DeviceEntityRef> {
         let entity = Entity::from_raw(**id);
         let Some(entity_ref) = world.get_entity_mut(entity) else {
             return None;
         };
-        entity_ref.get::<Device>().cloned()
+        if entity_ref.get::<DeviceEntity>().is_none() {
+            return None;
+        }
+
+        Some(DeviceEntityRef { entity })
+    }
+
+    pub(super) fn get_all<'a>(world: &'a mut World) -> Vec<DeviceEntityRef> {
+        world
+            .query::<(&DeviceEntity, Entity)>()
+            .iter(&world)
+            .map(|(_, entity)| DeviceEntityRef { entity })
+            .collect::<Vec<_>>()
     }
 
     pub(crate) fn add_device(world: &mut World, device: Device) -> DeviceId {
-        let mut entity = world.spawn(device.name.clone());
-        entity.insert(device);
+        let entity = world.spawn((DeviceEntity, device.name, device.attributes));
         entity.id().index().into()
     }
 
@@ -125,12 +163,14 @@ pub mod system {
         device_id: DeviceId,
         device: Device,
     ) -> Option<DeviceId> {
-        let entity = Entity::from_raw(*device_id);
-        let Some(mut entity) = world.get_entity_mut(entity) else {
+        let Some(mut device_ref) = get_by_id(world, &device_id) else {
             return None;
         };
-        entity.insert(device);
-        Some(entity.id().index().into())
+
+        device_ref.set_name(world, device.name);
+        device_ref.set_attributes(world, device.attributes);
+
+        Some(device_id)
     }
 
     pub(crate) fn remove_device_by_id(world: &mut World, device_id: DeviceId) -> Option<DeviceId> {

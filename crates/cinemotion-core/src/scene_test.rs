@@ -83,7 +83,9 @@ async fn test_scene_system_attribute_links() {
     let mut world = world::new();
 
     let mut device = Device::new("root");
-    device.insert_attribute(Attribute::new_matrix44("transform"));
+    device
+        .attributes
+        .insert(Attribute::new_matrix44("transform"));
 
     // TODO: Rename device to devices
     let device_id = crate::devices::system::add_device(&mut world, device.clone());
@@ -103,13 +105,16 @@ async fn test_scene_system_attribute_links() {
     // The object's linked attribute should be updated to match the device's attribute.
     assert_eq!(
         object_ref.attribute(&world, "transform").unwrap().value(),
-        device_ref.attribute(&name!("transform")).unwrap().value()
+        device_ref
+            .attribute(&world, &name!("transform"))
+            .unwrap()
+            .value()
     );
     // Update the device's transform to something and update the world with it.
     let mut value = AttributeValue::matrix44();
     value.as_matrix44_mut().unwrap().set(0, 1, 100.0);
     let attribute = Attribute::new("transform", value);
-    device.insert_attribute(attribute);
+    device.attributes.insert(attribute);
 
     crate::devices::system::set_device(&mut world, device_id.clone(), device);
 
@@ -120,7 +125,10 @@ async fn test_scene_system_attribute_links() {
     // The object's linked attribute should NOT be updated to match the device's attribute.
     assert_ne!(
         object_ref.attribute(&world, "transform").unwrap().value(),
-        device_ref.attribute(&name!("transform")).unwrap().value()
+        device_ref
+            .attribute(&world, &name!("transform"))
+            .unwrap()
+            .value()
     );
 
     // Update the scene system
@@ -132,6 +140,9 @@ async fn test_scene_system_attribute_links() {
         devices::system::get_by_id(&mut world, &device_id).expect("device should exist");
     assert_eq!(
         object_ref.attribute(&world, "transform").unwrap().value(),
-        device_ref.attribute(&name!("transform")).unwrap().value()
+        device_ref
+            .attribute(&world, &name!("transform"))
+            .unwrap()
+            .value()
     );
 }
