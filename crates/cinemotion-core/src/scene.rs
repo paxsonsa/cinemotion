@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::Deref};
 
 #[cfg(test)]
 #[path = "scene_test.rs"]
@@ -7,6 +7,29 @@ mod scene_test;
 
 pub struct Scene {
     name: Name,
+}
+
+#[derive(Debug, Clone)]
+pub struct ObjectId(u32);
+
+impl ObjectId {
+    pub fn as_u32(&self) -> u32 {
+        self.0
+    }
+}
+
+impl Deref for ObjectId {
+    type Target = u32;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl From<u32> for ObjectId {
+    fn from(value: u32) -> Self {
+        Self(value)
+    }
 }
 
 #[derive(Clone)]
@@ -44,8 +67,8 @@ impl SceneObject {
 
 pub enum Command {
     AddObject(SceneObject),
-    UpdateObject(u32, SceneObject),
-    RemoveObject(u32),
+    UpdateObject(ObjectId, SceneObject),
+    RemoveObject(ObjectId),
 }
 
 pub mod system {
@@ -58,7 +81,8 @@ pub mod system {
     use bevy_ecs::prelude::{Component, Entity};
 
     use super::{
-        Attribute, AttributeLink, AttributeLinkMap, AttributeMap, AttributeValue, SceneObject,
+        Attribute, AttributeLink, AttributeLinkMap, AttributeMap, AttributeValue, ObjectId,
+        SceneObject,
     };
 
     #[derive(Component, Debug)]
@@ -69,8 +93,8 @@ pub mod system {
     }
 
     impl SceneObjectEntityRef {
-        pub fn id(&self) -> u32 {
-            self.entity.index()
+        pub fn id(&self) -> ObjectId {
+            self.entity.index().into()
         }
 
         pub fn name<'w>(&self, world: &'w World) -> Name {
@@ -145,8 +169,11 @@ pub mod system {
         Ok(())
     }
 
-    pub(super) fn get_by_id<'a>(world: &'a mut World, id: u32) -> Option<SceneObjectEntityRef> {
-        let entity = Entity::from_raw(id);
+    pub(super) fn get_by_id<'a>(
+        world: &'a mut World,
+        id: &ObjectId,
+    ) -> Option<SceneObjectEntityRef> {
+        let entity = Entity::from_raw(**id);
         let Some(entity_ref) = world.get_entity(entity) else {
             return None;
         };
@@ -166,15 +193,19 @@ pub mod system {
             .collect::<Vec<_>>()
     }
 
-    pub(super) fn add_scene_object(world: &mut World, object: SceneObject) -> u32 {
+    pub(super) fn add_scene_object(world: &mut World, object: SceneObject) -> ObjectId {
         let attributes = AttributeMap::from(object.attributes);
         let links = AttributeLinkMap::from(object.links);
         let entity = world.spawn((SceneObjectEntity, object.name, attributes, links));
-        entity.id().index()
+        entity.id().index().into()
     }
 
-    pub(super) fn set_scene_object(world: &mut World, id: u32, object: SceneObject) -> Option<u32> {
-        let Some(mut object_ref) = get_by_id(world, id) else {
+    pub(super) fn set_scene_object(
+        world: &mut World,
+        id: ObjectId,
+        object: SceneObject,
+    ) -> Option<ObjectId> {
+        let Some(mut object_ref) = get_by_id(world, &id) else {
             return None;
         };
 
@@ -185,8 +216,11 @@ pub mod system {
         Some(object_ref.id())
     }
 
-    pub(super) fn remove_scene_object_by_id(world: &mut World, device_id: u32) -> Option<u32> {
-        let entity = Entity::from_raw(device_id);
+    pub(super) fn remove_scene_object_by_id(
+        world: &mut World,
+        device_id: ObjectId,
+    ) -> Option<ObjectId> {
+        let entity = Entity::from_raw(*device_id);
 
         let Some(_) = world.get_mut::<SceneObjectEntity>(entity) else {
             return None;
@@ -238,16 +272,16 @@ pub mod commands {
                     }
                 }
                 let id = system::add_scene_object(world, object);
-                Ok(Some(CommandReply::EntityId(id)))
+                Ok(Some(CommandReply::EntityId(*id)))
             }
             Command::UpdateObject(id, object) => {
                 match system::set_scene_object(world, id, object) {
-                    Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                    Some(id) => Ok(Some(CommandReply::EntityId(*id))),
                     None => Err(CommandError::NotFound),
                 }
             }
             Command::RemoveObject(id) => match system::remove_scene_object_by_id(world, id) {
-                Some(id) => Ok(Some(CommandReply::EntityId(id))),
+                Some(id) => Ok(Some(CommandReply::EntityId(*id))),
                 None => Err(CommandError::NotFound),
             },
         }

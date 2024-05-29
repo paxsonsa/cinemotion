@@ -63,9 +63,6 @@ There are a number of commands and events that are apart of the protocol for int
 - RemoveObject
 - UpdateObject
 
-TOOD: Remodel Device and Scene to share attributes
-    - Use Ref Modeling
-    - Look for places to use Arc
 TODO: Add Global Settings for Mode
     - only update scene when in live mode
 TODO: Add Reset for Scene
