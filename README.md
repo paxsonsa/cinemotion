@@ -48,9 +48,15 @@ the protobuf bytes message. The server will not send ACKs only errors and state 
 
 There are a number of commands and events that are apart of the protocol for interacting with the server. This is an overview of them.
 
-TODO: Add Global Settings for Mode
-    - only update scene when in live mode
-TODO: Add Reset for Scene
+git clone git@gitlab.lucasfilm.com:data-eng-team/qicollect.git
+cd qicollect 
+git checkout DATA-7884
+cd ..
+rm -f coda-resource-manager-cron
+echo '#\!/usr/bin/tcsh\npython3.7 /dept/pe/qicollect/qicollect/bin/coda-resource-manager --timeline "07:45=250,8:0=50,21:50=50,21:55=100,23:30=250" --resource qicollect\n' > coda-resource-manager-cron
+chmod a+x coda-resource-manager-cron
+./coda_resource-manager-cron
+tail -n 10 coda-resource-manager.log
 
 TODO: Server Start Up
 TODO: Networking Layer (QUIC?)
@@ -62,6 +68,8 @@ TODO: Prototype Blender Integration
 - RegisterDevice(device) -> id
 - UpdateDevice(device)
 - RemoveDevice(id) -> id 
+- Sample(id, Vec<samples>)
+- Reset(id)
 
 ### Scene Commands
 - ResetScene
